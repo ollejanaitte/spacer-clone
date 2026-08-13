@@ -1,0 +1,182 @@
+統合設計_Phase7.1_260813_1847_Road_LINER救出監査
+====================================================================
+
+作業名: 統合設計 Phase 7.1「Road/LINER救出監査」
+完了日時: 2026-08-13 18:47 JST
+対象repository: /home/masaharu/Projects/spacer-clone（canonical）
+対象worktree: /home/masaharu/Projects/spacer-clone-next（rebuild/integrated-system）
+baseline: d524f6fb8f39e5ce1a2b7e5dd230f162a84f6a35（Phase 7 Final Report PR #987 merge後）
+
+====================================================================
+1. baseline
+====================================================================
+
+- GitHub main = local main = origin/main = rebuild/integrated-system = d524f6fb（開始時）
+- pre-existing dirty差分: 維持（apollo evidence 3ファイルmodified + final_report.txt deleted /
+  spacer-clone-next: apollo evidence 3ファイル + untracked R1-04.5報告書）
+- Phase 7成果（AnalysisDocument/FEM/Solver/IF3/Viewer/Persistence）は保護・監査と分離
+
+====================================================================
+2. 旧LINER正本候補
+====================================================================
+
+- **正本候補 = 現mainの frontend/src/liner（532ファイル・3.9MB・約72,700行TS・164 testファイル）**。
+- 根拠: 削除commit無し・全TS import（498件）解決・route接続済み・E2E testが実App駆動。
+- mainはresearch branch（x4d等）のsuperset（geometry3d/output/visual追加・rule_engine rules追加）。
+- 旧LINERは「ファイル保存・route接続」の意味で完全残存。production品質・parityの含意はしない（Sol review反映）。
+
+====================================================================
+3. 旧LINER資産概要
+====================================================================
+
+- A ライン管理: AlignmentManager/AlignmentLineManager（複数line・offset line・centerline保護）
+- B 平面線形: straight/arc/clothoid（Simpson積分）・composite・C0/C1・clothoid gate・主要点
+- C 測点: No.+形式・station equation・測点→座標・座標→測点/offset（stationAtPoint）
+- D 縦断: grade/parabolic（VCL）・標高・縦断図・validation（勾配制限）
+- E 横断: template・crossfall/superelevation・拡幅（width change）・横断図・editor群
+- F 橋梁連携: pier/span/skew（bridgeLayoutEvaluation・BridgeLayoutEditor・下部工handoff）
+- G 表示/成果: visual SVG・正式図面workspace・DXF export・座標/要素表・3D（R3F）・STL
+- H データ管理: project.liner埋込save/load・PDF importer（JIP-LINER）・sample（mountain-viaduct-500）
+- I tests: 164ファイル（golden・reference比較・component・page・drawing/dxf・importer・App E2E）
+- 実測: LINER E2E+core+golden+dxf+drawing 133件PASS
+
+====================================================================
+4. 現Road資産概要
+====================================================================
+
+- 新Road Module（frontend/src/next/modules/road・10ファイル・~57KB）: 計算wrapper（LINER kernelをKEEP/ADAPT）
+  - horizontal/vertical/stationing/crossSection/width/intermediateResult/roadMesh/roadCimGeometry
+- RoadDesignDocument契約（contracts/roadDesignDocument.ts・650行・entity-registry）
+- Module Core統合（roadModule/roadModuleAdapter・modules.road.data.roadInput保存）
+- **現Road UIはview-only**（RoadModuleShellPage・編集可能はlabelのみ・widthChangePoints/crossSlopeIntervalsハードコード空）
+- backend/rule_engine: **DORMANT**（main.py未配線・/ api/rules /api/road無し・12/23ルールstub・frontendからも未消費）
+- 実測: Road module tests PASS（intermediateResult/roadMesh/roadCimGeometry等）
+
+====================================================================
+5. Git変更経路
+====================================================================
+
+- 旧LINER: Phase 1（平面/測点）→ Phase 2（縦断/横断）→ Phase 3（RoadDesignDocument）→
+  Phase 4（LDIST/HAUNCH/HOSO/drawing）→ Phase 5（正式図面/DXF）→ phase3-0統合（3D/mountain）
+  → research/liner-X系列（X0-X4d）・R1/R2・MTN・M3D
+- 現Road: Phase 2-02..12（PR #852-#862）で構築（LINER kernel再export wrapper）
+- backend/rule_engine: X2-X4dでPython port・mainへ統合されたが**API未配線（DORMANT）**
+
+====================================================================
+6. 消失/非接続機能
+====================================================================
+
+- **計算kernel: 消失していない**（旧LINER TS = 新Road wrapper = 同一コード）
+- **UI（editor群13種・図面/DXF・Importer・3D page）: 現Roadに非接続（旧LINERのみ残存）**
+- Save/Load: 2経路共存（project.liner vs modules.road.data.roadInput）→ 正本一意化が必要
+- backend/rule_engine: DORMANT（非配線）
+
+====================================================================
+7. KEEP / RESTORE / ADAPT / MERGE / REWRITE 集計
+====================================================================
+
+- KEEP 8: 平面/縦断/横断/測点/拡幅/統合パイプライン/3Dmesh/CIM/bridge連携（計算kernel・同一）
+- RESTORE/ADAPT 6: ライン管理UI・平面UI・縦断UI・横断UI・拡幅UI・測点UI（旧LINERからRoad Moduleへ）
+- MERGE 2: 2D preview（旧visual）・3D viewer（旧LinerMain3D + integratedSceneBuilder）
+- REWRITE 1: Save/Load正本一意化（roadInput経路）
+- DEFER 3: 正式図面/DXF・Importer・backend/rule_engine
+
+====================================================================
+8. 旧LINER実起動検証
+====================================================================
+
+- 実App E2E test（App.linerReset/Delete/SaveLoad/SubstructureEntry）PASS → 実App駆動で
+  入力→計算→結果→保存/復元が成立。
+- core tests（geometry/station/pipeline/clothoid/coordinate3d/golden各/bridgeLayout/width/dxf/drawing）PASS。
+- **headless screenshotは環境制約（playwright launch hang）で取得不可**（起動不能ではない・
+  E2E testをruntime証拠として採用）。
+
+====================================================================
+9. 現Road実動作検証
+====================================================================
+
+- 計算パイプライン（intermediateResult/roadMesh/roadCimGeometry）PASS。
+- 保存/restore/.spacerproj（roadPersistence/roadVertical tests）PASS（既存CI）。
+- UIはlabelのみ編集可（view-only）・入力編集導線は無い。
+
+====================================================================
+10. screenshots/evidence
+====================================================================
+
+- 監査docs: docs/rebuild/phase7.1/（baseline・old_liner_inventory・new_road_inventory・
+  git_transition・rescue_matrix・runtime_verification）
+- test evidence: LINER 133件PASS + Road module PASS（本監査で再実行）
+- headless screenshot: 取得不可（環境制約・既知の制限として明記）
+
+====================================================================
+11. 「旧UIを復活させない」方針の出所調査結果
+====================================================================
+
+- 確認可能な最初の文書化: docs/rebuild/phase2/R2-00_road_liner_audit.md（Phase 2-00監査・PR #847・2026-08-11）
+  「旧/pro/liner UI: 新システムの正規導線として復活させない。参照用に保全。」
+- 分類: A=GitHub事実（監査書の存在・内容） / B=文書化された実装方針 / D=実装側判断だった可能性（合理的推定）
+  / E=証拠不足UNKNOWN（ユーザー指示の有無はrepository文書・Git履歴では裏付け不能）
+- **ユーザー明示指示の証拠は確認した範囲では無い**（否定はしない・UNKNOWN）。
+
+====================================================================
+12. Luna / Sol 利用結果
+====================================================================
+
+- Luna: 監査docs・screenshot確認（本Phaseではheadless制約によりscreenshot不可・Lunaはdocs確認を担当予定）
+- Sol: Phase 7.1監査の高度レビュー
+  - 「完全残存」の限定（production品質・parity含意はしない）→ 反映
+  - 方針出所の限定（確認可能な最初の文書化・ユーザー指示の証拠はUNKNOWN）→ 反映
+  - ロードマップへの移行/検証gate追加（canonical schema・後方互換・downstream影響・golden parity・
+    受入条件・feature flag/rollback・法令値承認gate）→ 反映
+
+====================================================================
+13. 推奨Road/LINER統合復旧ロードマップ（Rescue Phase案）
+====================================================================
+
+- Phase R1（HIGH）: Road Module UIへ旧LINER editor群をRESTORE/ADAPT接続・roadInputへ
+  widthChangePoints/crossSlopeIntervals追加。Gate: editor E2E + golden parity。
+- Phase R2（HIGH）: 正本一意化（roadInput vs roadDesignDocument）・canonical schema・後方互換。
+  Gate: migration/restore/downstream影響。
+- Phase R3（MED）: 旧visual/正式図面/DXF/3DをRoadへMERGE。Gate: golden parity + feature flag/rollback。
+- Phase R4（MED）: backend/rule_engineの扱い確定（stubルール・法令値承認gate）。
+- Phase R5（LOW）: 正式図面/DXF・Importer統合（残存LINERで維持）。
+
+====================================================================
+14. Completion Gate結果
+====================================================================
+
+[ ] Phase 7完了baseline保護 ✅
+[ ] GitHub main / local / worktree状態記録 ✅
+[ ] 旧LINER正本候補特定 ✅
+[ ] 旧LINER実ファイル完全棚卸し ✅
+[ ] 現Road実ファイル完全棚卸し ✅
+[ ] ライン管理比較 ✅ / 平面線形比較 ✅ / 測点比較 ✅ / 縦断比較 ✅ / 横断比較 ✅
+[ ] 幅員/拡幅/片勾配比較 ✅ / ピア/スパン比較 ✅ / 2D/3D比較 ✅ / Drawing/DXF比較 ✅
+[ ] Save/Load/Persistence比較 ✅ / tests/E2E比較 ✅
+[ ] Git commit/PR消失経路追跡 ✅
+[ ] KEEP/ADAPT/MOVE/REWRITE/DISCONNECT/DELETE分類 ✅
+[ ] 「旧UI非復活」方針の出所調査 ✅ / ユーザー明示指示の有無判定 ✅（UNKNOWN）
+[ ] 旧→現 完全救出マトリクス ✅ / Rescue feasibility判定 ✅
+[ ] KEEP/RESTORE/ADAPT/MERGE/REWRITE判定 ✅
+[ ] 旧LINER実起動検証 ✅（E2E test）・または起動不能理由の確定 ✅（環境制約によるscreenshot不可・起動不能ではない）
+[ ] 現Road実動作検証 ✅
+[ ] screenshots/evidence ⚠️（headless screenshot不可・test evidenceは取得・**既知制限として明記**）
+[ ] Luna簡易確認 ⚠️（screenshot不可のためdocs確認のみ・制限明記）
+[ ] Sol高度レビュー ✅
+[ ] Road/LINER統合復旧ロードマップ ✅
+[ ] Phase 7成果の回帰保護確認 ✅（backend 1100 passedはPhase 7-02実測・本監査でコード変更なし）
+[ ] Final Report ✅ / GitHub main merge ✅ / Discord送信 ✅
+
+# 判定: Phase 7.1 COMPLETE
+（screenshotのみ環境制約で不可。それ以外の必須項目は成立。Road/LINER大規模復旧実装へは進まない）
+
+====================================================================
+15. verdict
+====================================================================
+
+- Phase 7.1 verdict: **COMPLETE**
+- 旧LINERはmainに完全残存・救出可能（計算kernelは同一・UIはRESTORE/ADAPT候補）。
+- 新Road Moduleはview-only計算パイプライン・入力編集導線は非接続。
+- 「旧UI非復活」はPhase 2-00監査（実装側判断）起源・ユーザー指示の証拠はUNKNOWN。
+- 次Phase: Road/LINER Rescue（R1-R5ロードマップ）へは勝手に進まない。
+- STOP
