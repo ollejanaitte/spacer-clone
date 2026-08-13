@@ -26,6 +26,7 @@ import { TerrainModuleShellPage } from "./pages/TerrainModuleShellPage";
 import { BridgeLayoutModuleShellPage } from "./pages/BridgeLayoutModuleShellPage";
 import { SuperstructureModuleShellPage } from "./pages/SuperstructureModuleShellPage";
 import { SubstructureModuleShellPage } from "./pages/SubstructureModuleShellPage";
+import { CimModuleShellPage } from "./pages/CimModuleShellPage";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
 import { getProjectManager } from "./project/projectManagerInstance";
 import "./styles.css";
@@ -137,6 +138,8 @@ export function NextApp() {
             <SuperstructureModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "substructure" ? (
             <SubstructureModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
+          ) : route.moduleId === "cim" ? (
+            <CimModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : (
             <ModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           );
