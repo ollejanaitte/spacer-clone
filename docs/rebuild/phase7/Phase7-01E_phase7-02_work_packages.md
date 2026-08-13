@@ -64,14 +64,14 @@ Phase 7-02を一括実装できるようWork Packageを完全定義する。
 
 ### WP-D: Bearing/Support/Spring/Foundation Spring
 
-| files | `frontend/src/next/modules/analysis/bearingSpring.ts`・backend `engine/spring.py`（対角加算ADAPT） |
+| files | `frontend/src/next/modules/analysis/bearingSpring.ts`・backend `engine/spring.py`（**assembly.pyのspring対角加算はWP-D所有・最小ADAPT・回帰責任明示・#13**） |
 | deps | WP-B/C |
 | order | 4 |
 | acceptance | mapping table全ケース・spring対角加算（A-BRG・A-SPR） |
 | tests | A-BRG-001..004・A-SPR・A-FDN |
 | PR | `feat/phase7-02-wpd-bearing-spring` |
-| reused | engine assembly（ADAPT） |
-| rollback | spring加算はfeature flag or 別関数で切替可能 |
+| reused | engine assembly（最小ADAPT・WP-D所有） |
+| rollback | spring加算は**WP-D所有の別関数**で切替可能 |
 
 ### WP-E: FEM Model / Grillage / Section / Material
 
@@ -95,7 +95,7 @@ Phase 7-02を一括実装できるようWork Packageを完全定義する。
 
 ### WP-G: Solver Adapter / Grillage Production Path
 
-| files | `backend/engine/solver_input.py`（新）or `grillage.py`再設計・`backend/app/main.py`（/api/design/analyze再設計）・`frontend/src/api/client.ts` |
+| files | `backend/engine/solver_input.py`（新）・`backend/engine/grillage.py`再設計・`backend/app/main.py`（solver endpointはWP-G所有）・`frontend/src/api/client.ts` |
 | deps | WP-E/F |
 | order | 7 |
 | acceptance | **grillage解析成功（R1）**・横桁OK・load転送・fail-closed（A-SLV-001..007） |
@@ -162,12 +162,29 @@ WP-A → WP-B → WP-C → WP-D → WP-E → WP-F → WP-G → WP-H → WP-I →
 
 - WP-DはWP-B/Cに依存（bearing/supportが先）。
 - WP-GはWP-E/Fに依存（model/loadが先）。
-- WP-KはWP-E/F/Gに依存（goldenはmodel/load/solver後）。
+- WP-KはWP-D/E/F/Gに依存（spring goldenはWP-D・goldenはmodel/load/solver後）。
+- WP-FはWP-Eに依存（member IDs/FEM modelを使用・**#16追加**）。
 
-## 5. PR boundary / rollback（Freeze）
+## 5. PR boundary / rollback（Freeze・Sol review #25）
 
 - 各WPは**独立PR**（`feat/phase7-02-wpX-*`）・mainへ個別merge。
-- 各PRはrollback可能（個別revert・相互依存は順序のみ）。
+- **依存PRはstacked（順序merge）**：下流WP（WP-B以降）は上流WPのmerge後にmerge。
+- **「個別revert可能」は撤回**（#16）：依存PRは個別revertすると上流と不整合になるため、
+  依存する場合のrevertは**stack単位**（下流→上流の順でrevert）で行う。
+- **file ownership（一意・#16/#25）**:
+  - WP-A: `frontend/src/next/modules/analysis/analysisDocumentTypes.ts`・`analysisDocument.ts`・`schemas/contracts/v0.1/analysis-document.schema.json`
+  - WP-B: `analysis/superstructureAdapter.ts`（buildGrillageModel再構成は`apollo/design/grillageModel.ts`をWP-B所有で修正）
+  - WP-C: `analysis/substructureAdapter.ts`
+  - WP-D: `analysis/bearingSpring.ts`・`backend/engine/spring.py`（**assembly.pyのspring対角加算はWP-D所有・回帰責任明示**）
+  - WP-E: `analysis/femModel.ts`・`analysis/sectionMaterial.ts`（fixtures）
+  - WP-F: `analysis/loadModel.ts`・`analysis/loadCombination.ts`
+  - WP-G: `backend/engine/solver_input.py`（新）・`backend/engine/grillage.py`再設計・`backend/app/main.py`（**solver endpointはWP-G所有**）
+  - WP-H: `backend/app/main.py`（**IF3 publishはWP-HがWP-G merge後に拡張**・`frontend/src/results/`）
+  - WP-I: `analysis/persistence.ts`・`analysis/staleness.ts`・`backend/app/contract_document_store.py`（AnalysisDocument schemaId受入）
+  - WP-J: `frontend/src/viewer/`
+  - WP-K: `examples/analysis/*`・`backend/tests/test_analysis_reference.py`
+  - WP-L: e2e・completion gate検証
+  - **注**: `backend/app/main.py`はWP-G→WP-Hの順で拡張（stacked・同時編集しない）。`persistence.ts`はWP-A（PDC）とWP-I（解析persistence）で**別ファイル**に分離。
 - 巨大PR禁止（WP単位を超えない）。
 
 ## 6. evidence（Freeze）

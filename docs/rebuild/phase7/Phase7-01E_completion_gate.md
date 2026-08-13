@@ -61,6 +61,9 @@ Phase 7-02 COMPLETE条件を先に凍結する。全項目PASS時のみPhase 7-0
 | CG-SLV-02 | linear static PASS | closed-form照合（A-SLV-003） | C/T |
 | CG-SLV-03 | instability fail-close PASS | MODEL_UNSTABLE（A-SLV-004） | C/T |
 | CG-SLV-04 | deterministic PASS | 同一入力→同一結果（A-SLV-006） | C/T |
+| CG-SLV-05 | **横桁member解析 PASS（R1・#25）** | INVALID_ORIENTATION回避（A-SLV-008） | C/T |
+| CG-SLV-06 | **fail-close UI PASS（R21・#25）** | solver失敗で成功表示しない（A-SLV-005） | C/T |
+| CG-SLV-07 | **性能 PASS** | 中規模grillage制限時間内（A-SLV-007） | C/T |
 
 ### 2.6 Result
 
@@ -109,6 +112,37 @@ Phase 7-02 COMPLETE条件を先に凍結する。全項目PASS時のみPhase 7-0
 | CG-Q-04 | build PASS | `npm run build` | T |
 | CG-Q-05 | Electron PASS | `npm run electron:compile` + 起動 | T/E |
 | CG-Q-06 | E2E PASS | A-E2E（上部工→解析→結果→表示） | T/E |
+
+## 2b. R1-R24 ↔ Completion Gate traceability（Freeze・Sol review #25）
+
+各Phase 7-00課題が少なくとも1つのCG-IDに対応することを凍結。
+
+| R | 課題 | CG-ID |
+|---|---|---|
+| R1 | grillage解析実行不能 | CG-SLV-01/05（A-SLV-001/008） |
+| R2 | 死荷重配分/転送 | CG-LD-01/02/03（A-LD-001..005） |
+| R3 | Super→Analysis未接続 | CG-ADP-01 |
+| R4 | spring/foundation spring | CG-ADP-05/06 |
+| R5 | bearing→support mapping | CG-ADP-03 |
+| R6 | generator並存 | CG-FEM-01/02（canonical化） |
+| R7 | section/material未接続 | CG-FEM-03/04 |
+| R8 | stale invalidation | CG-PER-03 |
+| R9 | 統合golden | CG-REF-05 |
+| R10 | reaction key alias | CG-RES-02 |
+| R11 | sign/unit/axis | CG-RES-02/03・CG-UI-02 |
+| R12 | ID契約 | CG-RES-05 |
+| R13 | result persistence | CG-RES-04・CG-PER-01/02 |
+| R14 | 二重実装 | CG-FEM-01（canonical） |
+| R16 | 統合規模検証 | CG-REF-04/05 |
+| R18 | authorization gate | CG-DOC-03（STALE表示） |
+| R19 | 性能 | CG-SLV-07 |
+| R20 | bridge_fem cutover | CG-ADP-01・CG-Q-04（旧API compat） |
+| R21 | solver fail-close | CG-SLV-06 |
+| R22 | /api/design/analyze→IF3 | CG-RES-04 |
+| R23 | release/MPC | CG-FEM-07 |
+| R24 | buildGrillageModel再構成 | CG-ADP-01 |
+
+- DEFER系（R15/R17等）はCompletion Gate対象外（Phase 7-02 OUT-OF-SCOPE）を明示。
 
 ## 3. Completion手続き（Freeze）
 

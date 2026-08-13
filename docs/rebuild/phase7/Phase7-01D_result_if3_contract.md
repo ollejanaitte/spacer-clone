@@ -88,11 +88,30 @@ R10（reaction key alias）・R11（sign/unit/axis統一）・R22（IF3接続）
 - `if3ResultViewModel.ts` の `extractLinearStaticAnalysisResultFromResource`（KEEP）でIF3→raw消費。
 - **`buildIf3ResultViewModel`（dead export）は使用しない**（REMOVE候補）。
 
-## 8. source entity mapping（Freeze）
+## 8. source entity mapping（Freeze・Sol review #13/#20）
 
 - resultのentityId（node/member/support）はAnalysisDocument entityIdをsourceにIF3 UUID5で決定論生成。
+- **IF3 payload行に `entitySourceId`（= AnalysisDocument entityId）を保持**（normalizerの既存`entitySourceId`機構を活用・#13）。
 - AnalysisDocument entityId → sourceEntityId → 上流正本entityへ**2段追跡**可能。
 - loadCaseId/combinationIdはAnalysisDocument loadCases/loadCombinationsと一致。
+- **node→support mapping（#20）**: Phase 7-02では **1 support = 1 node**（grillage `N-{supportId}-{girderId}`）。
+  - raw resultのreaction（nodeId）→ result adapterが `node→support` 逆引き（AnalysisDocument.supports）で
+    **supportReaction行へ supportId を付与**（`entitySourceId=support entityId`）。
+  - 複数supportが同一nodeを参照する場合 → `SUPPORT_NODE_COLLISION` reject（設計上発生しないようguard）。
+
+## 8b. member force sign（Freeze・Sol review #21）
+
+- member forceはengine KEEPのlocal座標・i端/j端で表現（`k_local·u_local − f_equiv`）。
+- **正符号**（Freeze）:
+  - N（fx）: 引張 +。
+  - Vy（fy）: local y方向せん断（正=local y正方向）。
+  - Vz（fz）: local z方向せん断（正=local z正方向）。
+  - T / Mt（mx）: local x軸まわりねじり（right-hand rule）。
+  - My（my）・Mz（mz）: 各local軸まわり曲げ（right-hand rule）。
+  - **i端・j端は作用方向が反対**（i端正=部材がnode iへ作用する向き・j端正=node jへ）。
+- **viewer diagram変換**: viewerはmember local frame（deterministic生成・Phase7-01B §6）で
+  縦断平面（Mz）・横断（My）図を描画。符号は上記規約をそのまま使用（viewer層での反転は行わない）。
+- local y/zの生成規則はAnalysisDocument生成時に固定（§6・node順序整序でlocalZ=+up）。
 
 ## 9. fail-closed
 

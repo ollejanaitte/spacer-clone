@@ -70,11 +70,16 @@ nodalLoad: {
 | COMBO-1 | DL-STRUCTURAL + DL-DECK | 1.0 / 1.0 | **実行**（linear staticで組合わせる） |
 | 他（LL含む） | 宣言のみ | — | **DEFER**（宣言構造・実行しない） |
 
-- **実行方法（Freeze）**: COMBO-1は
-  ① 各caseを別々にsolver実行→結果を係数で線形合成（superposition）、または
-  ② 荷重ベクトルを係数合成して1回solver実行（loadVector = Σ factor×loadVector(case)）。
-  **Phase 7-02既定: ② を採用**（決定論的・1回solve・solver KEEP）。
+- **実行方法（Freeze・Sol review #17）**: 各base case（DL-STRUCTURAL・DL-DECK）を**個別にsolver実行**
+  （KEEP solverは1回の`run_analysis`で複数loadCaseを解決・`model.loadCases`ループ）。
+  COMBO-1結果 = **base case結果の線形合成**（result adapterで `Σ factor×case_result`・後処理）。
+  - 個別case結果はViewerのcase選択表示に利用（#17解決）。
+  - COMBO-1は合成後結果をIF3 resourceへ。
+  - 合成は決定論（同一case結果→同一COMBO-1）。
 - result case: `resultCaseId = "COMBO-1"`。
+- **MISSING成分の扱い（#19）**: DL-STRUCTURAL/DL-DECK のいずれかがMISSINGの場合、
+  COMBO-1は利用可能な成分のみで実行し `analysisStatus=PARTIAL` を明示。
+  両方MISSING → COMBO-1はNOT_RUN。
 - 部分係数・envelope・施工段階: DEFER。
 
 ## 5. solver入力（Freeze）

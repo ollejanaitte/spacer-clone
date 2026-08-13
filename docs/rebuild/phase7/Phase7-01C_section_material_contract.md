@@ -19,7 +19,7 @@ SuperstructureDocument実断面・実材料からAnalysis Modelへ正式接続�
 |---|---|
 | `SuperstructureDocument.girderConfiguration.girderSectionModel` | depthM / webThicknessM / topFlange / bottomFlange / areaM2 / unitWeightPerM |
 | `SuperstructureDocument.deckConfiguration` | deck（床版）断面 |
-| `crossBeamConfiguration.crossBeams[]` | 横桁（depthM/widthM） |
+| `crossBeamConfiguration.crossBeams[]` | 横桁（depthM/widthM・**矩形断面導出・Phase7-01B_superstructure §7.1**） |
 
 ### 2.2 断面性能（A / Iy / Iz / J）
 
@@ -49,10 +49,13 @@ SuperstructureDocument実断面・実材料からAnalysis Modelへ正式接続�
 
 ## 3. Material Contract（Freeze）
 
-### 3.1 source（正本）
+### 3.1 source（正本・Sol review #15）
 
 - SuperstructureDocumentに `materialConfiguration`（E/G/ν/ρ）を**任意fieldとして追加設計**（Phase 7-02）。
-- 未設定時の既定: 既存宣言steel（E=2.05e8 kN/m²・G=8.0e7・ν=0.3・ρ=78.5）を `CONFIRMED` かつ `source="structuralSteel_default"` として明示使用（**無根拠固定値ではなく明示宣言**）。
+- 未設定時の既定steel（E=2.05e8 kN/m²・G=8.0e7・ν=0.3・ρ=78.5）:
+  `valueState="DERIVED"`・`source="structuralSteel_default"` として明示記録（無根拠固定ではなく**凍結された工学的既定値**）。
+  解析結果は常にNOT_AUTHORIZED維持（#15）。
+- 既定値を変更する場合は上流 `materialConfiguration` でAUTHORIZED入力として設定する（既定steelは上流設定で上書き）。
 
 ### 3.2 コンクリート（床版）
 

@@ -37,33 +37,43 @@ Bearing（支承）・Support（支持）・Spring（弾性バネ）の責任境
 
 ### 3.2 bearing種別
 
-| enum | 意味 | Phase 7-02 DOF拘束 |
+| enum | 意味 | Phase 7-02 DOF拘束（下記§3.3唯一mapping table） |
 |---|---|---|
-| fixed | 固定支承 | 全DOF拘束（ux,uy,uz,rx,ry,rz = true） |
-| movable | 可動支承 | 橋軸方向(x)解放・他拘束（uz,uy + 回転はモデル依存） |
-| rubber | ゴム支承（弾性） | spring（弾性support）or bool拘束（値が無ければNOT_AVAILABLE） |
-| pot | pot支承 | 未対応→UNSUPPORTED（DEFER）or movable扱い（明示） |
-| custom | カスタム | NOT_AVAILABLE（明示） |
-| null | 未定義 | UNDECIDED（下記default） |
+| fixed | 固定支承 | §3.3参照（並進3拘束・回転は解放が既定） |
+| movable | 可動支承 | §3.3参照（縦方向解放） |
+| rubber | ゴム支承（弾性） | spring（弾性support）or §3.3既定（値が無ければmapping既定） |
+| pot | pot支承 | **UNSUPPORTED（DEFER・明示）** |
+| custom | カスタム | **NOT_AVAILABLE（明示）** |
+| null | 未定義 | UNDECIDED（§3.3既定） |
 
-### 3.3 fixedOrMovable → DOF拘束 mapping table（D-08 Freeze）
+### 3.3 fixedOrMovable → DOF拘束 mapping table（唯一・Freeze・Sol review #7/#8）
+
+**本表を唯一のmapping tableとする**（全adapter・test・viewerから参照。他文書に別mappingを置かない）。
 
 | fixedOrMovable | ux | uy | uz | rx | ry | rz | 備考 |
 |---|---|---|---|---|---|---|---|
-| FIXED | T | T | T | T | T | T | 固定支承 |
+| FIXED | T | T | T | F | F | F | 固定支承＝**並進3拘束・回転解放**（grillageモデル化・#8。完全固定端は別扱い） |
 | MOVABLE（縦可動） | F | T | T | F | F | F | 橋軸方向解放・橋軸直角+鉛直拘束（既定） |
 | MOVABLE（縦横可動） | F | F | T | F | F | F | 両方向可動（設計条件で指定時） |
 | UNDECIDED | F | T | T | F | F | F | **既定**（全支持・縦解放・D-08） |
 
 - T=拘束（constrained）・F=解放（free）。
-- 回転拘束はモデル化方針により変更可（FEM model contractで定義）。Phase 7-02既定は上表。
+- **回転DOF（rx/ry/rz）はPhase 7-02で常に解放**（部材端は剛接合で回転伝達・#8）。
+- **完全固定端**（全6DOF拘束）はsupportの別enum `constraintKind="FULL_FIXED"` として明示（bearing固定とは区別）。
+- **唯一mappingのauthority**: `BearingSupportResolver`（Sol review #5・Phase7-01B_superstructure_adapter §10）が参照。
 
-### 3.4 rubber支承の扱い（R4・D-09）
+### 3.4 local→global変換（Freeze・Sol review #9）
 
-- rubber支承は**弾性spring**としてモデル化する契約。
-- 剛性値（縦/横/回転）がsourceに存在する場合のみCONFIRMED。
-- **値が無い場合**: `valueState=SOURCE_NOT_AVAILABLE` → **解析modelではbool拘束（UNDECIDED既定）にフォールバックし、source記録**（補完しない）。
-- フォールバック時は `analysisStatus` に注意（NOT_AUTHORIZED維持）。
+- bearingのDOF拘束は**bearing local frame**（longitudinal/transverse/vertical）で定義。
+- solver（KEEP）は**global bool DOF（ux/uy/uz）のみ**支持。
+- **変換規則**:
+  - local vertical(z) → global uz（常に一致）。
+  - local longitudinal(x) → global ux（**skew=0時のみ正確**）。
+  - local transverse(y) → global uy（同上）。
+  - **skew≠0時**: 縦/横解放方向はglobal軸と一致しないため、`constraintApproximation="globalAxisApproximation"` を
+    supportに明示し、global ux/uy解放で近似（工学的近似・明示記録・結果NOT_AUTHORIZED維持）。
+  - 正確な斜角拘束はMPCを要するため**DEFER**（Phase 7-02では近似+明示）。
+- **skip条件**: skew≠0かつ近似が不適切な場合 → `UNSUPPORTED_SKEW_BEARING` でfail-closed（WP-Dで確定）。
 
 ## 4. Support Contract（Freeze）
 
@@ -81,10 +91,11 @@ Bearing（支承）・Support（支持）・Spring（弾性バネ）の責任境
 - `{ux, uy, uz, rx, ry, rz: boolean}`（§3.3 mapping結果）。
 - supportのsource種別を記録（FROM_BEARING / FROM_SUPPORT / FROM_BEARING_DEFAULT）。
 
-### 4.3 springId（elastic support時）
+### 4.3 springIds（elastic support時）
 
-- spring要素を持つsupportは `springId` で参照。
-- Phase 7-02: solverはspring supportを**剛性行列へ加算**（assembly ADAPT・詳細foundation_spring_release_mpc）or bool fallback。
+- spring要素を持つsupportは `springIds: string[]` で複数参照（#10）。
+- Phase 7-02: solverはspring supportを**剛性行列へ加算**（KEEP engine `assembly.py`へ最小ADAPT・詳細foundation_spring_release_mpc）。
+  値が無い場合は§3.5のAUTHORIZED bearing拘束mapping（`springFallback="authorizedBearingConstraint"`）。
 
 ## 5. Spring Contract（Freeze・R4）
 
@@ -93,9 +104,10 @@ Bearing（支承）・Support（支持）・Spring（弾性バネ）の責任境
 | field | 値 |
 |---|---|
 | entityId | uuid5(analysis-namespace, `spring:{sourceEntityId}`) |
+| sourceKind | spring |
 | source | TRANSLATIONAL / ROTATIONAL |
 | dof | ux / uy / uz / rx / ry / rz |
-| coordinateSystem | local / global（既定: local=bearing local frame） |
+| coordinateSystem | local / global（既定: global） |
 | stiffness | number（kN/m or kNm/rad・正有限）|
 | valueState | CONFIRMED / SOURCE_NOT_AVAILABLE / NOT_AUTHORIZED / NOT_AVAILABLE |
 
@@ -105,9 +117,11 @@ Bearing（支承）・Support（支持）・Spring（弾性バネ）の責任境
 - **stiffness=∞**: bool拘束（ux=true等）で表現。spring要素では表さない。
 - 曖昧を避けるため、springは `valueState` で状態を明示。
 
-### 5.3 solver実装（Phase 7-02）
+### 5.3 solver実装（Phase 7-02・Sol review #11）
 
-- **elastic support（spring）**: 対角stiffness加算 `K[dof,dof] += k` をassemblyへ実装（KEEP engineへ最小ADAPT）。
+- **global spring**: 対角stiffness加算 `K[dof,dof] += k` をassemblyへ実装（KEEP engineへ最小ADAPT・WP-D所有・回帰責任明示）。
+- **local spring**: **軸一致時のみ**対角加算。軸不一致（斜角）のlocal springは `TᵀKlocalT` によるglobal組立を契約化し、
+  Phase 7-02で未実装の場合は `UNSUPPORTED_LOCAL_SPRING` でfail-closed（#11）。
 - 回転spring: `K[dof,dof] += k_rot`（kNm/rad）。
 - サポートされない場合（MPC等）はDEFER（契約のみ）。
 

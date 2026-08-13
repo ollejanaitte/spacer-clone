@@ -17,8 +17,8 @@ solver実装はPhase 7-02で対応するものとDEFERするものを明示。
 
 | field | 値 |
 |---|---|
-| entityId | uuid5(analysis-namespace, `foundationSpring:{supportId}:{dof}`) |
-| sourceEntityId | `{supportId}:{dof}` |
+| entityId | uuid5(analysis-namespace, `spring:{sourceEntityId}`)（**kind統一=`spring`・Sol review #12**） |
+| sourceEntityId | `foundation:{supportId}:{dof}` |
 | sourceKind | foundationSpring |
 | supportId | 対象support |
 | nodeId | 対応Analysis node |
@@ -32,9 +32,11 @@ solver実装はPhase 7-02で対応するものとDEFERするものを明示。
 
 - source候補: `SubstructureDocument.support.pier/abutment.footing/pileGroup` に地盤定数がある場合。
 - 現状のSubstructureDocumentには**地盤ばね定数のfieldが存在しない**。
-- **決定**: 
+- **決定**:
   - Phase 7-02でSubstructureDocumentへ `foundationSpringConfiguration`（縦/横/鉛直のkN/m・source/provenance）を**任意fieldとして追加設計**。
-  - 未設定時は `valueState=SOURCE_NOT_AVAILABLE` → **解析modelではbool support（UNDECIDED既定）で実行**（補完禁止・fail-closed）。
+  - 未設定時は `valueState=SOURCE_NOT_AVAILABLE` → **foundation springは使用しない**。
+    解析modelでは§3.3の **AUTHORIZEDなbearing DOF拘束mapping**（FIXED/MOVABLE/UNDECIDED）が適用される
+    （未知剛性の創作ではなく凍結された工学的支持条件。`springFallback="authorizedBearingConstraint"` を明示記録・#12）。
   - foundation springは「実装できるが値が無ければ使わない」契約。
 
 ### 2.3 solver実装（Phase 7-02）
@@ -94,7 +96,8 @@ solver実装はPhase 7-02で対応するものとDEFERするものを明示。
 | releaseに値が無い | NOT_AVAILABLE（solver非対応） |
 | release指定memberがsolverへ渡る | UNSUPPORTED_RELEASE fail-closed |
 | rigidLink/MPCがsolverへ渡る | UNSUPPORTED_CONSTRAINT fail-closed |
-| foundation spring値が無い | SOURCE_NOT_AVAILABLE・bool fallback（明示記録） |
+| foundation spring値が無い | SOURCE_NOT_AVAILABLE・spring不使用・AUTHORIZED bearing拘束mapping適用（明示記録） |
+| local spring軸不一致 | UNSUPPORTED_LOCAL_SPRING fail-closed（#11） |
 
 ## 8. tests観点
 

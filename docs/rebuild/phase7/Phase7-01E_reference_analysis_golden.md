@@ -27,15 +27,17 @@
 
 | 項目 | 値 |
 |---|---|
-| source | `examples/verification/simple_beam_center_load.json` + `sample_models.py:simply_supported_center_load`（KEEP） |
+| source | `examples/verification/beam/simple_beam_center_load.json` + `sample_models.py:simply_supported_center_load`（KEEP・**既存fixtureをそのまま使用**） |
 | geometry | 支間4.0m・単純支持 |
-| material/section | E=205 MPa・A=0.02 m²・I=0.0001 m⁴・J=0.00005 m⁴（既存KEEP） |
+| material/section | E=**205,000,000 kN/m²（205 GPa）**・G=78,846,153.8・A=0.02 m²・Iy=Iz=0.0001 m⁴・J=0.00005 m⁴（**fixture実値・Sol review #22**） |
 | supports | 両端ピン+ローラー（既存） |
-| loads | 中央集中 P=10kN・分布 w=2kN/m（別case） |
-| expected | 集中: δ=PL³/48EI・反力P/2・Mmax=PL/4／分布: δ=5wL⁴/384EI・反力wL/2・Mmax=wL²/8（closed-form） |
-| unit/sign | m・kN・kNm・+z up |
-| tolerance | 既存meta（KEEP） |
+| loads | 中央集中 P=10kN（fixtureは **-y方向・fy=-10**）・分布 w=2kN/m は別fixture（`simple_beam_uniform`） |
+| expected | δ(uy)=PL³/48EI=-0.0006504065・反力 fy=±5.0・Mmax Mz=10.0（**fixtureのy平面規約をそのまま・#15/#22**） |
+| axis/unit | **既存fixture規約**（y平面・kN・m・kNm）・**+z up規約は統合解析（grillage/RB）に適用** |
+| tolerance | **relative 1e-4 / absolute 1e-10（fixture meta実値）** |
 | analysis type | linear_static |
+
+> 注: 既存fixtureはy平面（fy/uy/Mz）規約。統合解析経路の`+z up`反力規約は別途grillage/RB goldenで検証（両者を混在させない）。
 
 ### 3.2 continuous beam / frame
 
@@ -63,8 +65,8 @@
 | source | RB001_GRILLAGE（`test_grillage.py` fixture・KEEP）を正規fixtureへ昇格（`examples/analysis/grillage.json`） |
 | geometry | 4 support × 2 girder・3径間（40.201/51.000/40.200） |
 | loads | DL配分（部材分布載荷）+ COMBO-1 |
-| expected | 総反力=総荷重（**COMBO-1総荷重との釣合い**）・支間対称性（等分布COMBO-1・外径間対称）・**regression snapshot**（決定論出力凍結・NOT_AUTHORIZED） |
-| tolerance | 釣合い1e-9相対・regression 1e-12（snapshot一致） |
+| expected | 総反力=総荷重（**COMBO-1総荷重との釣合い**）・支間対称性（等分布COMBO-1・外径間対称）・**独立部分モデル照合**（#23）・**regression snapshot**（決定論出力凍結・NOT_AUTHORIZED） |
+| tolerance | 釣合い1e-9相対・**regression 1e-6相対（現実的数値許容・#23）** |
 
 ### 3.5 RB-S10-001統合Bridge解析
 
@@ -93,8 +95,8 @@ Phase 7-00でRB-S10-001のanalysis goldenはNOT_AVAILABLE（`analysis_result_par
 |---|---|
 | 入力golden（geometry/model/design） | **KEEP・昇格**（AnalysisDocument生成のsource・変更禁止） |
 | 解析expected値（displacement/reaction/member force） | **sourceに存在しないため発明しない**。`SOURCE_NOT_AVAILABLE` として閉じる |
-| 解析結果（実測） | **regression goldenとして凍結**（Phase 7-02実装で決定論出力snapshot・`NOT_AUTHORIZED`・development用） |
-| 検証照合 | 反力釣合い（**ΣR=COMBO-1総荷重**）・**支間対称性**（等分布COMBO-1・外径間対称・横断方向は非対称のため対象外）・非負剛性等の**invariant検証**をacceptanceに使用（発明値ではなく数学的不変量） |
+| 解析結果（実測） | **regression goldenとして凍結**（Phase 7-02実装で決定論出力snapshot・`NOT_AUTHORIZED`・development用・**tolerance 1e-6相対**） |
+| 検証照合 | 反力釣合い（**ΣR=COMBO-1総荷重**）・**支間対称性**（等分布COMBO-1・外径間対称・横断方向は非対称のため対象外）・非負剛性等の**invariant検証**・**独立部分モデル照合**（#23・単径間セグメントをbeam closed-formで照合）をacceptanceに使用（発明値ではなく数学的不変量） |
 | 原文候補（phase2_ii candidates AN-039/040等） | 既存 `EXCLUDED_ANALYSIS_RESULT` を維持（`KNOWN_DATA_DISCREPANCY` 相当として閉じる） |
 
 - **Phase 7-02のRB-S10-001 Completion条件**: 解析が実行でき・invariant検証（釣合い・対称性）をPASSし・regression snapshotが安定（決定論）すること。設計用expected値は未認証。

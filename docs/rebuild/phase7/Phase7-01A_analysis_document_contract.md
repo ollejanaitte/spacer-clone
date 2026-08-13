@@ -51,14 +51,19 @@
 | bridgeLayout | object | AnalysisModule | derived | 必須 | `{bridgeId, documentVersion, layoutFingerprint}` |
 | superstructure | object | 同上 | derived | 必須 | `{superstructureDocumentId, documentVersion, dataFingerprint, geometrySnapshotFingerprint}` |
 | substructure | object | 同上 | derived | 必須 | `{substructureDocumentId, documentVersion, dataFingerprint}` |
+| loadFingerprint | string | 同上 | derived | 必須 | load model digest（D-14のLoad変更検知・Sol review #4） |
+| solverSettingsFingerprint | string | 同上 | derived | 必須 | analysisSettings digest（D-14のSolver Settings変更検知・#4） |
 
 - **Fingerprint**: 各上流documentの確定性digest（superstructure/structure moduleが既存保有のfingerprint方式を継承）。
 - 上流変更検知 = fingerprint/version比較（Phase7-01D_persistence_stalenessで詳細）。
+- **STALE判定式**: 現行上流fingerprint（bridgeLayout/superstructure/substructure/load/solverSettings）が
+  AnalysisDocument.sourceReferencesと不一致 → AnalysisDocument STALE → 結果STALE（Phase7-01D_persistence_staleness §4.2）。
 
-### 3.3 coordinateContext（R11）
+### 3.3 coordinateContext（R11・単一context・Sol review #3）
 
 | field | type | 種別 | required | 内容 |
 |---|---|---|---|---|
+| entityId | UUID | derived | 必須 | 固定ID（`coordinateContext`として単一） |
 | coordinatePolicyId | string|null | derived | 必須 | LINER/Project政策参照 |
 | axisConvention | const | derived | 必須 | `"x-along/y-transverse/z-up"` |
 | handedness | const | derived | 必須 | `"right"` |
@@ -66,6 +71,9 @@
 | positionConvention | const | derived | 必須 | `"project-global-XYZ"` |
 | signConvention | object | derived | 必須 | `{reactionZ:"up-positive", moment:"right-hand-rule", skew:"counterclockwise-positive"}` |
 | globalOrigin | Vec3 | derived | 必須 | m |
+
+- **決定（#3）**: coordinateContextは**単一**（document全体で1つ）。nodeは `coordinateContextId` fieldを持たず、
+  常にこの単一contextを参照する（dangling参照排除）。
 
 ### 3.4 unitContext
 
@@ -86,9 +94,10 @@
 | sourceEntityId | string | derived | 必須 | — | GeometrySnapshot supportPoint.id / girder交点 |
 | sourceKind | enum | derived | 必須 | — | supportPoint / girderPanel / crossBeamPoint / deckPoint / substructureNode |
 | x/y/z | number | derived | 必須 | m・project-global | 有限必須 |
-| coordinateContextId | UUID | derived | 必須 | — | coordinateContext参照 |
 | stationM | number | derived | 任意 | m | 有限 |
 | offsetM | number | derived | 任意 | m | 有限 |
+
+- **決定（Sol review #3）**: nodeは `coordinateContextId` を持たない（単一coordinateContextを暗黙参照・dangling排除）。
 
 ### 3.6 members/elements
 
@@ -148,10 +157,11 @@
 | sourceKind | enum | derived | 必須 | bridgeLayoutSupport / bearingSeat / substructureSupport |
 | nodeId | UUID | canonical | 必須 | AnalysisDocument node参照 |
 | seatId | string|null | derived | 任意 | `BRG-{supportId}-{girderId}`（bearing seat対応時） |
-| constraint | object | derived | 必須 | `{ux,uy,uz,rx,ry,rz: boolean}`（bool DOF・D-08 mapping結果） |
-| springId | UUID|null | derived | 任意 | spring参照（elastic support時） |
+| constraint | object | derived | 必須 | `{ux,uy,uz,rx,ry,rz: boolean}`（bool DOF・D-08 mapping結果・**global軸**） |
+| constraintApproximation | enum|null | derived | 任意 | `null`（正確）/ `globalAxisApproximation`（斜角時・明示） |
+| springIds | string[] | derived | 任意 | 6DOF spring参照（**配列・Sol review #10**） |
 | localFrame | object | derived | 任意 | tangent/transverse/vertical |
-| source | enum | derived | 必須 | FROM_BEARING / FROM_SUPPORT / NOT_AVAILABLE |
+| source | enum | derived | 必須 | FROM_BEARING / FROM_SUPPORT / FROM_BEARING_DEFAULT |
 
 ### 3.10 constraints / releases / rigidLinks（R23）
 
@@ -175,8 +185,9 @@
 | fixedOrMovable | enum | derived | 必須 | FIXED / MOVABLE / UNDECIDED |
 | position | Vec3 | derived | 必須 | m・project-global |
 | localFrame | object | derived | 必須 | longitudinal/transverse/vertical axis |
-| dofConstraint | object | derived | 必須 | mapping結果（Phase7-01B_bearing_support_spring_contractのtable） |
-| springId | UUID|null | derived | 任意 | rubber等のspring時 |
+| dofConstraint | object | derived | 必須 | §3.3唯一mapping結果（Phase7-01B_bearing_support_spring_contract・local frameで定義） |
+| constraintApproximation | enum|null | derived | 任意 | null / globalAxisApproximation（#9） |
+| springIds | string[] | derived | 任意 | rubber等のspring（**配列・#10**） |
 
 ### 3.12 springs / foundationSprings（R4解決）
 
@@ -184,6 +195,7 @@
 |---|---|---|---|---|
 | entityId | UUID | canonical | 必須 | uuid5(`spring:<sourceEntityId>`) |
 | sourceEntityId | string | derived | 必須 | substructure/superstructure source id（無ければNOT_AVAILABLEで閉じる） |
+| sourceKind | enum | derived | 必須 | spring / foundationSpring |
 | source | enum | derived | 必須 | TRANSLATIONAL / ROTATIONAL |
 | nodeId | UUID | canonical | 必須 | 適用node |
 | dof | enum | derived | 必須 | ux/uy/uz/rx/ry/rz |
@@ -191,6 +203,9 @@
 | stiffness | number|null | derived | 必須 | kN/m or kNm/rad |
 | valueState | enum | derived | 必須 | CONFIRMED / SOURCE_NOT_AVAILABLE / NOT_AUTHORIZED / NOT_AVAILABLE |
 | zero/infinite表現 | — | — | — | 0=rigid解放ではない（0は無支持・無限はbool拘束で表現） |
+
+- **決定（#10/#11）**: springは1 entity = 1 DOF。support/bearingは `springIds: string[]` で複数参照。
+  6×6 stiffness集合体は `springIds` の集合で表現（local springのglobal組立は `TᵀKlocalT`・#11）。
 
 - **値が資料に存在しない場合は補完しない**。valueStateで閉じる（fail-closed）。
 
@@ -223,9 +238,9 @@
 
 | field | type | 種別 | required | 内容 |
 |---|---|---|---|---|
-| analysisStatus | enum | canonical | 必須 | NOT_RUN / RUNNING / SUCCEEDED / FAILED / STALE / PARTIAL / NOT_AVAILABLE |
+| analysisStatus | enum | canonical | 必須 | NOT_RUN / RUNNING / SUCCEEDED / FAILED / STALE / PARTIAL / NOT_AVAILABLE / **NOT_AUTHORIZED** |
 | resultReferences[] | array | canonical | 任意 | IF3 `persistedResultRef`互換（`{documentKind, documentId, revisionId, contentChecksum, uri}`） |
-| modelDigest | sha256 | canonical | 必須 | AnalysisDocument（解析model部）のdigest |
+| modelChecksum | sha256 | canonical | 必須 | **解析入力（解析model部+load+settings）のdigest＝IF3 bindingの正本**（#1） |
 | resultDigest | sha256 | canonical | 任意 | 最新結果digest |
 
 ### 3.16 validation / provenance / revision
@@ -240,11 +255,21 @@
 ## 4. ID規約（D-11確定）
 
 - 全entity IDは `uuid5(namespace, "<kind>:<sourceEntityId>")` で決定論生成。
-- 全entityに **`sourceEntityId` + `sourceKind`** を保持（統一命名。kind=node/member/material/section/support/bearing/spring）。
+- 全entityに **`sourceEntityId` + `sourceKind`** を保持（統一命名。kind=node/member/material/section/support/bearing/spring/foundationSpring）。
 - namespace: **`a12d8c1e-11f4-4d6b-9a2e-7f8c5d0e1b3a`（analysis専用・固定・Phase 7-02で変更禁止）**
   （IF3 namespace `f7d7c8b4-24b2-47d8-8f8f-e91fc9a95ed5` とは別。IF3行IDは既存IF3 namespaceを使用）。
 - sourceEntityIdは上流（GeometrySnapshot / SuperstructureDocument / SubstructureDocument）由来。
 - **source entity IDへ追跡可能**（sourceEntityId保持・resultのentityIdも同system）。
+
+## 4b. Checksum / 決定論スコープ（Sol review #1/#2）
+
+- **contentChecksum**: 解析入力（`sourceReferences`（fingerprint）+ 解析model部 + loadCases/loadCombinations +
+  analysisSettings）のcanonical JSON（sort_keys）のsha256。**除外field**: documentId・revisionId・
+  timestamps・status・analysisStatus・resultReferences・validation・extensions（結果参照追加で自己STALE化しない）。
+- **modelChecksum**: contentChecksumと同scope（IF3 bindingのsourceContentChecksumに使用。**binding正本**）。
+- **決定論スコープ**: 同一上流入力 → 同一解析model部・loads・settings・entity ID（完全一致）。
+  documentId（UUID v4）・timestamps・revisionIdは**決定論対象外**（checksum比較から分離・#2）。
+- 再生成時: 上流fingerprintが変わった場合のみrevisionId++・再生成（決定論）。
 
 ## 5. validation / fail-closed
 
@@ -276,4 +301,4 @@
 
 - TypeScript型（`frontend/src/next/modules/analysis/analysisDocumentTypes.ts`）＋JSON Schema（`schemas/contracts/v0.1/analysis-document.schema.json`）。
 - backend `model.py`の解析projectはAnalysisDocumentからsolver input adapterで生成（AnalysisDocument自身はbackend solverへ直接渡さない）。
-- validationはzod or 既存contract validation方式を踏襲（Phase 5/6と統一）。
+- validationは**既存contract validation方式（zod踏襲・Phase 5/6と統一・Sol review #18）**。

@@ -18,7 +18,7 @@ solver（backend engine）はKEEPし、AnalysisDocument→solver入力への変�
 | `frame` | 12DOF Euler-Bernoulli 3D beam（既存engine element.py KEEP） | **対応** | せん断変形無し（MVP維持） |
 | shell | — | **DEFER** | 未採用・明示DEFER |
 | rigidLink | — | **契約のみ**（solver非対応） | R23 |
-| spring | elastic support（対角加算） | **対応**（新規・KEEP engineへADAPT） | R4 |
+| spring | elastic support（対角加算） | **対応**（新規・**assembly.py最小ADAPT（WP-D所有・#13）**） | R4 |
 | release / MPC | — | **契約のみ**（solver非対応） | R23 |
 
 ## 3. Node Contract（Freeze）
@@ -42,7 +42,7 @@ solver（backend engine）はKEEPし、AnalysisDocument→solver入力への変�
 | elementType | `frame` |
 | materialId / sectionId | 参照 |
 | memberKind | mainGirder / crossBeam / crossFrame / swayBracing / lateralBracing / stiffener |
-| orientationVector | **member毎に指定**（横桁=橋軸方向・主桁=横断方向・R1解決） |
+| orientationVector | **決定論生成**（Phase7-01B_superstructure §6・member tangent + global upから右手系local frame・#16） |
 | localAxis | 導出local frame（x=member軸・y/z=主軸） |
 | release | 契約のみ（i/j端DOF・DEFER） |
 | eccentricity | 契約のみ（DEFER） |

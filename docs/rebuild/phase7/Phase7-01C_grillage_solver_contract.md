@@ -67,7 +67,7 @@ POST /api/design/analyze
 
 ## 4. Solver Input Adapter（Freeze）
 
-- 新 `SolverInputAdapter`（`backend/engine/solver_input.py` 新規 or `grillage.py`再設計）:
+- 新 `SolverInputAdapter`（`backend/engine/solver_input.py` 新規・**既定確定・#18**）:
   - AnalysisDocument → 上記backend projectへ変換。
   - section/material: AnalysisDocument実断面・実材料（R7・Phase7-01C_section_material）。
   - supports: bearing mapping結果のbool DOF + spring（対角加算はbackend engineへADAPT）。
@@ -92,12 +92,23 @@ POST /api/design/analyze
 | analysisType | `linear_static`（Phase 7-02 IMPLEMENT） |
 | eigen / response spectrum | KEEP接続（massCaseId/modeCount等はanalysisSettings） |
 | DOF | 6/node・node list順（KEEP） |
-| BC | bool DOF拘束 + spring対角加算（KEEP+ADAPT） |
+| BC | bool DOF拘束 + spring対角加算（**engine coreはKEEP・`assembly.py`のみ最小ADAPT（WP-D所有・回帰責任明示）・Sol review #13**） |
 | 特異検出 | MODEL_UNSTABLE（KEEP） |
 | error | 構造化error envelope（KEEP） |
-| **HTTP error（R21）** | solver失敗時はHTTP 200に成功envelopeを返さない。`status="failed"` + errorsを含むenvelopeを返し、**UIは成功表示しない**（`authorization`のみで成功表示する現行挙動を廃止）。error code: `GRILLAGE_ERROR` / `MODEL_UNSTABLE` / `SOLVER_ERROR` 等 |
 | deterministic | 同一入力→同一結果（numpy/scipy・オーダー固定） |
 | 性能 | 疎spsolve。大規模は`toarray()+eigvalsh`（health warning）の段階的回避（phase 7-02で検証） |
+
+## 6b. HTTP status / error mapping（Freeze・Sol review #18・R21解決）
+
+| HTTP | 条件 | body |
+|---|---|---|
+| 400 | 入力validation不正（ANALYSIS_DOCUMENT_INVALID / SECTION_NOT_AVAILABLE / INVALID_NUMERIC_VALUE / UNSUPPORTED_ANALYSIS / UNSUPPORTED_RELEASE / UNSUPPORTED_CONSTRAINT / UNSUPPORTED_LOCAL_SPRING / UNSUPPORTED_SKEW_BEARING / BEARING_SOURCE_MISMATCH） | `{error: {code, message, path?, entityType?, entityId?}}` |
+| 422 | backend `parse_model` schema不整合（envelope不正等） | `{error: {code:"SCHEMA_ERROR", ...}}` |
+| 500 | 予期せぬ例外（SOLVER_ERROR） | `{error: {code:"SOLVER_ERROR", message}}` |
+| 200（status="failed"） | solver実行は完了し**モデル不安定**（MODEL_UNSTABLE）等のsolver-level失敗 | 構造化result envelope `{result: {analysisSummary:{status:"failed"}, errors:[...]}}` |
+
+- **UIは `status="failed"` を成功表示しない**（R21・Phase7-01D_analysis_viewer_ui §6）。
+- 全errorは構造化codeで返す（文字列自由文のみの返却禁止）。
 
 ## 7. Result Response（Freeze）
 
@@ -113,8 +124,10 @@ POST /api/design/analyze
 ## 8. IF3 handoff（R22解決・Freeze）
 
 - `/api/design/analyze`（および統合解析経路）で raw result → `normalize_linear_static_result_resource`（KEEP）→ IF3 resource。
-- **sourceDocumentId = AnalysisDocument.documentId・sourceContentChecksum = AnalysisDocument checksum・loadContext = AnalysisDocument loadCases**（D-04）。
-- frame context指定時（frameDocumentPath+checksum）はpersist_if3_result_with_ref（KEEP）でsidecar+ref登録。
+- **sourceDocumentId = AnalysisDocument.documentId・sourceContentChecksum = AnalysisDocument.modelChecksum・loadContext = AnalysisDocument loadCases**（D-04・Sol review #1/#19）。
+- **persist（新API・#19）**: AnalysisDocument context（project/analysis module所有のresults dir）から
+  **無条件にsidecar（`results/<uuid>.if3.json`）+ persistedResultRef を生成**する新保存APIを定義
+  （旧 `frameDocumentPath+checksum` 指定に依存しない）。`analysisDocumentId + modelChecksum` をCAS鍵に使用。
 - **AnalysisDocumentをIF3 bindingのsource documentとして受入**（`contract_document_store`のschemaId受入拡張・D-03）。
 - eigen/RS/THは既存 `attach_if3_unsupported_result`（KEEP）のまま（統合経路でも同様）。
 
