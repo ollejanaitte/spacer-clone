@@ -15,7 +15,7 @@
  */
 import { Component, useEffect, useMemo, type ErrorInfo, type ReactNode } from "react";
 import { Canvas, useThree } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { Line, OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
 import type { BuildIntermediateInput } from "../../core/pipeline/pipeline";
 import { buildUnified3DScene, type Unified3DScene } from "./scene";
@@ -31,6 +31,10 @@ export type MountainViewerProps = {
   selectedSupportId?: string;
   /** Phase 3-6: fused ② superstructure + ③ substructure solids (three-space). */
   integrated?: import("../../../bridgeProject/integratedScene3d").IntegratedScene3d;
+  /** Optional camera override (three coords). Falls back to the preset camera. */
+  cameraOverride?: import("./camera").CameraState;
+  /** Optional road surface half-width (m) to draw edge lines in the road layer. */
+  roadHalfWidth?: number;
 };
 
 const TERRAIN_COLOR = "#4d7c4f";
@@ -144,15 +148,43 @@ function SuperstructureLayer({ scene }: { scene: Unified3DScene }) {
   );
 }
 
-function RoadLayer({ scene }: { scene: Unified3DScene }) {
-  const points = useMemo(() => {
-    const arr: number[] = [];
-    for (const p of scene.road.points) {
-      arr.push(p.x, p.z, -p.y);
-    }
-    return arr;
+function RoadLayer({ scene, roadHalfWidth }: { scene: Unified3DScene; roadHalfWidth?: number }) {
+  const center = useMemo(() => {
+    return scene.road.points.map((p) => [p.x, p.z, -p.y] as [number, number, number]);
   }, [scene]);
-  return <Polyline points={points} color={CENTERLINE_COLOR} />;
+  const edges = useMemo(() => {
+    if (!roadHalfWidth || roadHalfWidth <= 0) {
+      return null;
+    }
+    const left: [number, number, number][] = [];
+    const right: [number, number, number][] = [];
+    const pts = scene.road.points;
+    for (let i = 0; i < pts.length; i += 1) {
+      const current = pts[i];
+      const prev = pts[Math.max(i - 1, 0)];
+      const next = pts[Math.min(i + 1, pts.length - 1)];
+      const dx = next.x - prev.x;
+      const dy = next.y - prev.y;
+      const len = Math.hypot(dx, dy) || 1;
+      // perpendicular in the horizontal plane (domain), then to three coords
+      const px = -dy / len;
+      const py = dx / len;
+      left.push([current.x + px * roadHalfWidth, current.z, -(current.y + py * roadHalfWidth)]);
+      right.push([current.x - px * roadHalfWidth, current.z, -(current.y - py * roadHalfWidth)]);
+    }
+    return { left, right };
+  }, [scene, roadHalfWidth]);
+  return (
+    <group>
+      {edges && (
+        <group>
+          <Line points={edges.left} color="#93c5fd" lineWidth={2} transparent opacity={0.9} />
+          <Line points={edges.right} color="#93c5fd" lineWidth={2} transparent opacity={0.9} />
+        </group>
+      )}
+      <Line points={center} color={CENTERLINE_COLOR} lineWidth={8} />
+    </group>
+  );
 }
 
 /** Optional frame overlay (points/members from the existing frame project). */
@@ -235,6 +267,8 @@ export function MountainViaduct3dViewer({
   layerState = {},
   selectedSupportId,
   integrated,
+  cameraOverride,
+  roadHalfWidth,
 }: MountainViewerProps) {
   const scene = useMemo(() => buildUnified3DScene(draft, presetId), [draft, presetId]);
   const layers: Record<SceneLayer, boolean> = {
@@ -245,7 +279,7 @@ export function MountainViaduct3dViewer({
     frame: layerState.frame ?? true,
   };
 
-  const camera = scene.camera;
+  const camera = cameraOverride ?? scene.camera;
   // camera presets are ALREADY in three coords (x, y=height, z): pass through.
   const camX = camera.position.x;
   const camY = camera.position.y;
@@ -265,7 +299,7 @@ export function MountainViaduct3dViewer({
           {/* grid at the terrain floor (three Y = domain height minZ), 500m fits the route */}
           <gridHelper args={[500, 20, "#334155", "#223047"]} position={[250, scene.bounds.minZ, 0]} />
           {layers.terrain && <TerrainLayer scene={scene} />}
-          {layers.road && <RoadLayer scene={scene} />}
+          {layers.road && <RoadLayer scene={scene} roadHalfWidth={roadHalfWidth} />}
           {layers.superstructure && <SuperstructureLayer scene={scene} />}
           {layers.substructure && (
             <SubstructureLayer scene={scene} selectedSupportId={selectedSupportId} />

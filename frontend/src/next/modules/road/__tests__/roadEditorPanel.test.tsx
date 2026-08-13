@@ -50,6 +50,18 @@ describe("RoadEditorPanel (Phase 7.3 WP-G)", () => {
     cleanup(root);
   });
 
+  it("renders the Phase 7.4 rescued editors when enabled", async () => {
+    const projectId = setupProject();
+    const root = await render(<RoadEditorPanel projectId={projectId} featureFlagEnabled />);
+    expect(document.querySelector('[data-testid="road-editor-line-management"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="road-editor-stationing"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="road-editor-crossfall"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="road-editor-width"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="road-editor-superelevation"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="road-editor-3d"]')).toBeTruthy();
+    cleanup(root);
+  });
+
   it("returns null when feature flag is disabled (rollback)", async () => {
     const projectId = setupProject();
     const root = await render(<RoadEditorPanel projectId={projectId} featureFlagEnabled={false} />);
@@ -73,6 +85,48 @@ describe("RoadEditorPanel (Phase 7.3 WP-G)", () => {
     expect(roadData).toBeDefined();
     if (roadData) {
       expect(roadData.domainDraft.alignments.length).toBeGreaterThanOrEqual(1);
+      expect(roadData.contentChecksum).toMatch(/^[0-9a-f]{64}$/);
+    }
+    cleanup(root);
+  });
+
+  it("writes canonical roadData on width change point add (Phase 7.4)", async () => {
+    const projectId = setupProject();
+    const manager = getProjectManager();
+    const root = await render(<RoadEditorPanel projectId={projectId} featureFlagEnabled />);
+
+    const addButton = document.querySelector('[data-testid="add-width-change-point"]');
+    expect(addButton).toBeTruthy();
+    await act(async () => {
+      (addButton as HTMLButtonElement).click();
+    });
+
+    const roadData = readRoadData(manager, projectId);
+    expect(roadData).toBeDefined();
+    if (roadData) {
+      const widthPoints = roadData.domainDraft.alignments[0]?.widthChangePoints ?? [];
+      expect(widthPoints.length).toBeGreaterThanOrEqual(1);
+      expect(roadData.contentChecksum).toMatch(/^[0-9a-f]{64}$/);
+    }
+    cleanup(root);
+  });
+
+  it("writes canonical roadData on crossfall interval add (Phase 7.4)", async () => {
+    const projectId = setupProject();
+    const manager = getProjectManager();
+    const root = await render(<RoadEditorPanel projectId={projectId} featureFlagEnabled />);
+
+    const addButton = document.querySelector('[data-testid="add-crossfall-interval"]');
+    expect(addButton).toBeTruthy();
+    await act(async () => {
+      (addButton as HTMLButtonElement).click();
+    });
+
+    const roadData = readRoadData(manager, projectId);
+    expect(roadData).toBeDefined();
+    if (roadData) {
+      const intervals = roadData.domainDraft.alignments[0]?.crossSlopeIntervals ?? [];
+      expect(intervals.length).toBeGreaterThanOrEqual(1);
       expect(roadData.contentChecksum).toMatch(/^[0-9a-f]{64}$/);
     }
     cleanup(root);
