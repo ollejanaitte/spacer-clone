@@ -1,0 +1,200 @@
+統合設計_Phase7-02_260813_1748_統合構造解析一括実装_検証_CompletionGate
+====================================================================
+
+作業名: Phase 7-02 統合構造解析一括実装・検証・Completion Gate
+完了日時: 2026-08-13 17:48 JST
+Phase 7 Completion Gate: PASS
+verdict: Phase 7-02 COMPLETE・Phase 7「FEM / 統合構造解析」COMPLETE
+next-phase readiness: READY（Phase 8「CIM / 統合3D完成」）
+STOP: Phase 8へは進まずSTOP
+
+====================================================================
+1. Baseline
+====================================================================
+
+- Phase 7-01 Final Report PR #974（MERGED・SHA 2ed1e13）
+- true Phase 7-01 final SHA: 2ed1e136bba81c0b9b980ef40a991e91fb22ced0
+- Phase 7-02開始baseline: 2ed1e13（4系統一致）
+- pre-existing dirty差分: 維持（spacer-clone: apollo evidence 3ファイルmodified+final_report.txt deleted /
+  spacer-clone-next: apollo evidence 3ファイルmodified+untracked R1-04.5報告書）
+- Design Freeze Violation: **なし**（FROZEN仕様を唯一正本として実装）
+
+====================================================================
+2. WP-A〜L結果
+====================================================================
+
+| WP | 内容 | PR | merge SHA |
+|---|---|---|---|
+| WP-A | AnalysisDocument/Schema/PDC | #975 | 2df357b |
+| WP-B | Superstructure→Analysis Adapter | #976 | f446a1d |
+| WP-C | Substructure→Analysis Adapter | #977 | 10d9cbc |
+| WP-D | BearingSupportResolver/Spring | #978 | 234973d |
+| WP-E | FEM Model組立 | #979 | fbe96ce |
+| WP-F | Load/Load Combination | #980 | ba804e8 |
+| WP-G | Solver Adapter/Grillage Path | #981 | 78927c0 |
+| WP-H | Result/IF3 | #982 | 76f2e45 |
+| WP-I | Persistence/stale | #983 | 5411bec |
+| WP-J | Viewer/UI | #984 | dab5c75 |
+| WP-K | Reference/Golden | #985 | 2f2623f |
+| WP-L | Completion Gate | #986 | 89ba5d1 |
+
+====================================================================
+3. R1〜R24実装状況（全クローズ）
+====================================================================
+
+- R1 grillage SCHEMA_ERROR解消 ✅（solver_input.py・grillage.py envelope修正・live success）
+- R2 部材分布載荷+nodal/member load転送 ✅（loadModel.ts・solver_input）
+- R3 Superstructure→Analysis正式接続 ✅（superstructureAdapter）
+- R4 spring/elastic support/foundation spring ✅（engine spring対角加算・SOURCE_NOT_AVAILABLE閉じ）
+- R5 Bearing→Support唯一mapping ✅（BearingSupportResolver）
+- R6 FEM generator production path一本化 ✅（Analysis Generation Layer）
+- R7 Superstructure実section/material接続 ✅（girder実断面・横桁矩形断面）
+- R8 upstream変更→stale invalidation ✅（3段Gate）
+- R9 Reference Analysis/Golden ✅（5種golden）
+- R10 reaction key alias解消 ✅（IF3 fz直接）
+- R11 sign/unit/axis統一 ✅（AnalysisDocument契約）
+- R12 stable ID/source entity mapping ✅（uuid5+sourceEntityId）
+- R13 result persistence ✅（IF3 sidecar+module data）
+- R14 二重実装整理 ✅（production path一本化）
+- R16 統合規模検証 ✅（RB-S10-001統合解析）
+- R18 authorization gate ✅（NOT_GRANTED維持）
+- R19 performance ✅（疎spsolve・live完了）
+- R20 bridge_fem cutover ✅（legacy API COMPATIBILITY）
+- R21 solver fail-closed ✅（HTTP 400/422/500/200-failed）
+- R22 /api/design/analyze→IF3 ✅（modelChecksum binding・SUCCEEDED）
+- R23 release/MPC guard ✅（契約のみ・UNSUPPORTED fail-closed）
+- R24 buildGrillageModel再構成 ✅（superstructureAdapter）
+
+====================================================================
+4. 再利用した既存資産（KEEP）
+====================================================================
+
+- backend engine（solver.py/model.py/element.py/dof.py/results.py/errors.py・IF3全層）→ KEEP
+- engine assembly.py → 最小ADAPT（spring対角加算・WP-D所有）
+- frontend viewer・results VM・api client・superstructureLoadModel・computeSuperstructureSectionProperties
+- examples/verification・sample_models
+
+====================================================================
+5. 新規/更新実装ファイル
+====================================================================
+
+frontend/src/next/modules/analysis/:
+- analysisDocumentTypes.ts・analysisId.ts・analysisChecksum.ts・analysisDocument.ts
+- analysisValidation.ts・analysisPersistence.ts・analysisModuleData.ts
+- superstructureAdapter.ts・substructureAdapter.ts・bearingSpring.ts
+- analysisModel.ts・loadModel.ts・resultAdapter.ts・analysisStaleness.ts
+- analysisViewerModel.ts・index.ts
+- __tests__/（11テストファイル・fixtures）
+schemas/contracts/v0.1/analysis-document.schema.json
+backend:
+- engine/solver_input.py（新）・engine/combination.py（新）・engine/grillage.py（修正）
+- engine/model.py（Spring dataclass）・engine/assembly.py（spring対角加算）
+- app/main.py（/api/design/analyze再設計・IF3）
+- tests/test_solver_input.py・test_design_analyze_api.py・test_combination.py・test_analysis_reference.py・test_analysis_document_schema.py
+frontend/src/api/client.ts（runAnalysisDocument）
+
+====================================================================
+6. AnalysisDocument（実装）
+====================================================================
+
+- spacer.contracts.analysis-document v1.0.0・uuid5決定論ID（namespace a12d8c1e-11f4-4d6b-9a2e-7f8c5d0e1b3a）
+- modelChecksum=binding正本・sourceReferences fingerprint
+- 全entity sourceEntityId+sourceKind・単一coordinateContext
+- JSON Schema・PDC module data・3段Gate staleness
+
+====================================================================
+7. 統合解析縦断（成立確認）
+====================================================================
+
+SuperstructureDocument + SubstructureDocument + GeometrySnapshot
+ → buildAnalysisModel（fragment統合+BearingSupportResolver）
+ → AnalysisDocument
+ → solver_input（Solver Input Adapter）
+ → engine（scipy_sparse）
+ → raw result + COMBO-1合成 + IF3 FrameAnalysisResultResource（SUCCEEDED）
+ → resultAdapter/analysisViewerModel → Viewer/UI
+
+live E2E（RB-S10-001）: 8 node/10 member/8 support → status=success・IF3 SUCCEEDED・
+  evidence（docs/rebuild/phase7/evidence/）
+
+====================================================================
+8. tests / regression / quality
+====================================================================
+
+- backend全tests: **1100 passed**
+- frontend subset（analysis/super/sub/api/results/if3）: 271 passed
+- frontend subset（viewer/timeHistory/verification/bridgeProject）: 575 passed（計846）
+- typecheck: PASS・lint: PASS（exit 0）・build: PASS・electron:compile: PASS
+- 新規tests: AnalysisDocument 24・adapters 39・bearing 7・model 5・load 6・solver 10・combination 4・
+  reference 5・staleness 8・viewer 4・schema 4
+
+====================================================================
+9. performance
+====================================================================
+
+- 疎spsolve（KEEP）・live解析（RB-S10-001規模）即時完了
+- toarray+eigvalshはhealth warningのみ（大規模時段階的対応）
+
+====================================================================
+10. Luna利用結果
+====================================================================
+
+- 各WPの設計書/実装レビュー・UI・evidence screenshot目視
+- RB-S10-001解析evidence（status=success・IF3 SUCCEEDED・表崩れなし）確認
+
+====================================================================
+11. Sol利用結果
+====================================================================
+
+- WP-A〜Gの高度レビュー（uuid5決定論・envelope・orientation・load転送・IF3接続等）
+- WP-Gはsandbox read-only制約でレビュー中断（自身でlive検証により担保）
+- 各WPで指摘反映（sourceEntityId統一・codepoint sort・spring対角加算・COMBO-1合成等）
+
+====================================================================
+12. screenshots / evidence
+====================================================================
+
+- p702_analysis_result.png（統合解析結果: 反力・部材力表+IF3 status・Luna目視OK）
+- docs/rebuild/phase7/evidence/rb_s10_001_analysis_document.json
+- docs/rebuild/phase7/evidence/rb_s10_001_analysis_result.json
+- docs/rebuild/phase7/Phase7-02_completion_gate_evidence.md
+
+====================================================================
+13. Completion Gate（全項目PASS）
+====================================================================
+
+Document（3/3）・Adapter（6/6）・FEM（7/7）・Load（5/5）・Solver（7/7）・Result（5/5）・
+Persistence（4/4）・Reference（5/5）・UI（3/3）・Quality（6/6）→ **全PASS**
+（詳細: Phase7-02_completion_gate_evidence.md）
+
+====================================================================
+14. unresolved / deferred
+====================================================================
+
+- unresolved: なし（Completion Gate全項目PASS）
+- deferred: 下部工詳細FEM・LL実用・高度組合せ・本格設計照査・非線形・動的非線形・
+  construction stage・shell FEM・release/MPC solver実装（FROZEN DEFER維持）
+
+====================================================================
+15. 各branch / commit / PR / merge SHA
+====================================================================
+
+- WP-A〜L: #975〜#986（§2表参照）
+- Final Report: docs/phase7-02-final-report / PR #987 / SHA（merge後取得）
+
+====================================================================
+16. 最終4系統同期
+====================================================================
+
+Final Report merge後に実施（local main / origin/main / GitHub main / rebuild/integrated-system 同一SHA・
+既存dirty差分破棄しない）。
+
+====================================================================
+17. verdict / STOP
+====================================================================
+
+- Phase 7-02 verdict: COMPLETE
+- Phase 7「FEM / 統合構造解析」verdict: COMPLETE
+- Phase 7 Completion Gate: PASS
+- next-phase readiness: READY
+- STOP: Phase 8「CIM / 統合3D完成」へは進まずSTOP
