@@ -85,40 +85,47 @@ def build_grillage_project(grillage: dict[str, Any]) -> dict[str, Any]:
 
     return {
         "project": {
-            "metadata": {"id": grillage.get("bridgeId", "grillage")},
-            "units": {"length": "m", "force": "kN", "moment": "kN_m", "modulus": "kN_per_m2"},
-            "nodes": [{k: n[k] for k in ("id", "x", "y", "z")} for n in nodes],
-            "materials": [STEEL_MATERIAL],
-            "sections": section_list,
-            "members": [
-                {
-                    "id": m["id"],
-                    "nodeI": m["nodeI"],
-                    "nodeJ": m["nodeJ"],
-                    "materialId": m.get("materialId", STEEL_MATERIAL["id"]),
-                    "sectionId": m.get("sectionId", "SECTION-GIRDER"),
-                    "orientationVector": {"x": 0, "y": 1, "z": 0},
-                }
-                for m in members
-            ],
-            "supports": norm_supports,
-            "loadCases": load_cases,
-            "analysisSettings": {
-                "analysisType": "linear_static",
-                "solver": "scipy_sparse",
-                "includeShearDeformation": False,
-                "largeDisplacement": False,
-            },
-        }
+            "id": grillage.get("bridgeId", "grillage"),
+            "name": grillage.get("bridgeId", "grillage"),
+            "schemaVersion": "1.0.0",
+        },
+        "units": {"length": "m", "force": "kN", "moment": "kN_m", "modulus": "kN_per_m2"},
+        "nodes": [{k: n[k] for k in ("id", "x", "y", "z")} for n in nodes],
+        "materials": [STEEL_MATERIAL],
+        "sections": section_list,
+        "members": [
+            {
+                "id": m["id"],
+                "nodeI": m["nodeI"],
+                "nodeJ": m["nodeJ"],
+                "materialId": m.get("materialId", STEEL_MATERIAL["id"]),
+                "sectionId": m.get("sectionId", "SECTION-GIRDER"),
+                "orientationVector": m.get("orientationVector", {"x": 0, "y": 1, "z": 0}),
+            }
+            for m in members
+        ],
+        "supports": norm_supports,
+        "loadCases": load_cases,
+        "nodalLoads": grillage.get("nodalLoads", []),
+        "memberLoads": grillage.get("memberLoads", []),
+        "analysisSettings": {
+            "analysisType": "linear_static",
+            "solver": "scipy_sparse",
+            "includeShearDeformation": False,
+            "largeDisplacement": False,
+        },
     }
 
 
 def run_grillage_analysis(grillage: dict[str, Any]) -> dict[str, Any]:
-    """Run the linear-static solver on the grillage model and gate the result."""
+    """Run the linear-static solver on the grillage model and gate the result.
+
+    The built envelope is `{project: ProjectInfo, units, nodes, ...}` (top
+    level) which is the exact shape `parse_model` expects (R1 SCHEMA_ERROR fix).
+    """
     built = build_grillage_project(grillage)
-    project = built["project"]
     try:
-        result = run_analysis(project)
+        result = run_analysis(built)
     except AnalysisError as exc:
         raise GrillageError(f"grillage analysis failed: {exc}") from exc
     result = dict(result)

@@ -195,6 +195,18 @@ export const apiClient = {
   },
 
   /**
+   * Run an AnalysisDocument through the backend linear-static solver
+   * (Phase 7-02 WP-G production path). Returns raw result + IF3 resource.
+   */
+  runAnalysisDocument(analysisDocument: unknown): Promise<{
+    result: unknown;
+    if3Result: unknown;
+    persistedResultRef?: unknown;
+  }> {
+    return postJson("/api/design/analyze", { analysisDocument });
+  },
+
+  /**
    * Authoritative App paths must pass `if3` metadata from `buildRunAnalysisIf3Metadata`.
    * When omitted, the request body stays `{ project, options }` and the backend remains
    * fail-closed for IF3 normalization (no client-side silent defaults).
