@@ -1,0 +1,108 @@
+Phase 9-01 救出監査: Git変更経路・救出マトリクス
+====================================================================
+
+baseline: 6cbc2e0b（Phase 9-00 merge後）
+
+====================================================================
+1. 上部工 Git変更経路
+====================================================================
+
+| 機能 | 旧実装 | commit/PR | 移行先 | 現file | 分類 |
+|---|---|---|---|---|---|
+| Document契約 | — | Phase 5-02 WP-A（0f88564） | 新PDC | next/modules/superstructure/superstructureTypes.ts | NEVER_MIGRATED（新設） |
+| 主桁/断面入力UI | apollo/BridgeStructureInputPanel | Phase 5-00（89f3321 inventory） | 未移行 | 同（旧）/ —（新） | DISCONNECT |
+| GA図面/DXF | apollo/GeneralArrangementPanel | Phase 5-00 | 未移行 | 同（旧）/ —（新） | DISCONNECT |
+| 断面性能 | apollo/bridgeStructure/sectionProperties | Phase 5-02 WP-D（5250525） | 流用 | superstructureComponents.ts | ADAPT（移行済み） |
+| GeometrySnapshot | apollo/geometry（Phase 3-3/3-4: 81ac6da） | Phase 5-02 WP-C1 | KEEP | apollo/geometry + superstructureGeometry.ts | KEEP |
+| 床版/横桁 | apollo/geometry/{deck,members}.ts | Phase 5-02 | KEEP | 同 + superstructureComponents.ts | KEEP |
+| 照査 | apollo/design（Phase 5-00） | Phase 5-02 WP-G（e12d875） | 再実装 | superstructureBasicChecks.ts（6種・NOT_AUTHORIZED） | REWRITE |
+| 支承 | — | Phase 5-02（d2be84a） | 自動配置 | superstructureComponents.ts | NEVER_MIGRATED |
+| 荷重 | apollo/load | Phase 5-02 WP-F（65b7aeb） | 再実装 | superstructureLoadModel.ts | REWRITE |
+| Shell UI | — | Phase 5-02 WP-J（37acc0e） | 新設 | SuperstructureModuleShellPage.tsx（view-only） | NEVER_MIGRATED（新設） |
+| ダイヤフラム | 0件 | — | — | なし | NEVER_MIGRATED（未実装） |
+
+上部工関連の削除/rename commit: 0件
+
+====================================================================
+2. 下部工 Git変更経路
+====================================================================
+
+| 機能 | 旧実装 | commit/PR | 移行先 | 現file | 分類 |
+|---|---|---|---|---|---|
+| データモデル | substructure/model.ts（b07fda1・I01） | Phase 6-01（7cc802e） | ADAPT参照 | next/modules/substructure/substructureTypes.ts | KEEP（参照継続） |
+| 3ペインCAD UI | substructure/planning/*（M2-01〜M3-05） | 未移行 | 未移行 | 同（旧・route生き） | DISCONNECT |
+| ソリッド | SolidGenerators（M2系） | Phase 6-02（4509d98） | 再使用 | substructureGeometry.ts | KEEP（流用） |
+| 配置 | SupportPlacementEngine（M2-07） | Phase 6-02 | 再使用 | substructurePlacement.ts | KEEP（流用） |
+| 基礎/杭 | FoundationSolidGenerator（M3-01） | Phase 6-02 | 再使用 | substructureFoundation.ts | KEEP（流用） |
+| 数量 | design/geometricQuantity（M3-05） | Phase 6-02 | 再使用 | substructureDesign.ts | KEEP（流用） |
+| 設計framework | design/designEngine（M3-02） | Phase 6-02 | 再使用 | substructureDesign.ts | KEEP（流用） |
+| 照査/配筋/耐震 | design/{reinforcement,seismic}Design | — | HOLD維持 | — | KEEP（test-only） |
+| Phase5支承/反力 | — | Phase 6-02 | 新設 | substructurePhase5Adapter.ts | NEVER_MIGRATED（新設） |
+| Shell UI | — | Phase 6-02 | 新設 | SubstructureModuleShellPage.tsx（view-only） | NEVER_MIGRATED（新設） |
+| Save/Load | planning/persistence.ts（download/upload） | 未移行 | 未移行 | 同（旧）/ PDC（新） | ADAPT（→PDC接続要） |
+
+下部工関連の削除/rename commit: 0件
+
+====================================================================
+3. 上部工 救出マトリクス
+====================================================================
+
+| 機能 | 旧file | 旧UI | 旧Core | 現file | 現UI | 現Core | route | 接続 | 実画面 | Git経路 | 難易度 | 判定 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 主桁入力 | BridgeStructureInputPanel | ○ | ○ | superstructureTypes | — | ○ | /app module | 切断 | なし | DISCONNECT | 中 | RESTORE/ADAPT |
+| 断面 | 同 | ○ | ○ | superstructureComponents | — | ○ | 同 | 切断 | なし | DISCONNECT | 中 | RESTORE/ADAPT |
+| 床版 | apollo/geometry/deck | ○ | ○ | superstructureTypes | — | ○ | 同 | 切断 | なし | DISCONNECT | 中 | RESTORE/ADAPT |
+| 横桁 | apollo/geometry/members | ○ | ○ | superstructureComponents | — | ○ | 同 | 切断 | なし | DISCONNECT | 中 | RESTORE/ADAPT |
+| ダイヤフラム | — | — | — | — | — | — | — | — | — | NEVER_MIGRATED | 高 | DEFER |
+| 支承 | superstructureComponents | — | ○ | 同 | — | ○ | 同 | 切断 | なし | 自動配置のみ | 低 | ADAPT |
+| 荷重 | apollo/load | ○ | ○ | superstructureLoadModel | — | ○ | 同 | 切断 | なし | REWRITE | 中 | ADAPT |
+| 断面性能 | sectionProperties | ○ | ○ | superstructureComponents | — | ○ | 同 | — | — | ADAPT済 | 低 | KEEP |
+| 応力度 | DemandCheckDevelopmentPanel | ○ | △候補 | — | — | — | — | — | — | REWRITE | 高 | DEFER |
+| 照査6種 | apollo/design | — | ○ | superstructureBasicChecks | — | ○ | 同 | 切断 | なし | REWRITE | 中 | ADAPT |
+| 2D/DXF | GeneralArrangementPanel | ○ | ○ | — | — | — | /pro/apollo | 切断 | 要flag | DISCONNECT | 中 | RESTORE |
+| 計算書 | reportModel | ○ | ○ | — | — | — | 同 | 切断 | 要flag | DISCONNECT | 中 | DEFER |
+| 数量 | quantityModel | ○ | ○ | — | — | — | 同 | 切断 | 要flag | DISCONNECT | 中 | ADAPT |
+| 3D | sceneBuilder/snapshot3d | — | ○ | superstructureSceneBuilder | — | ○ | CIM | 接続 | ○ | KEEP | 低 | KEEP |
+
+====================================================================
+4. 下部工 救出マトリクス
+====================================================================
+
+| 機能 | 旧file | 旧UI | 旧Core | 現file | 現UI | 現Core | route | 接続 | 実画面 | Git経路 | 難易度 | 判定 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 3ペインCAD | planning/* | ○ | ○ | — | — | — | /pro/liner/substructure | 生き | ○ | DISCONNECT | 中 | RESTORE（→PDC接続） |
+| 橋台入力 | AbutmentInputForm | ○ | ○ | substructureTypes | — | ○ | 同 | 切断 | ○(旧) | DISCONNECT | 中 | RESTORE/ADAPT |
+| 橋脚入力 | PierInputForm | ○ | ○ | 同 | — | ○ | 同 | 切断 | ○(旧) | DISCONNECT | 中 | RESTORE/ADAPT |
+| フーチング/基礎 | FoundationInputForm | ○ | ○ | substructureFoundation | — | ○ | 同 | 切断 | ○(旧) | DISCONNECT | 中 | RESTORE/ADAPT |
+| 杭配置 | PileLayoutPanel | ○ | ○ | substructureFoundation | — | ○ | 同 | 切断 | 要配線 | DISCONNECT | 中 | RESTORE/ADAPT |
+| 座標表 | CoordinateTable | ○ | — | — | — | — | 同 | 生き | ○ | DISCONNECT | 低 | RESTORE |
+| 設計計算結果 | DesignResultPanel | ○ | ○HOLD | substructureDesign | — | ○ | 同 | 生き | ○ | KEEP | 低 | KEEP/ADAPT |
+| 計算書CSV/JSON | calculationOutput | ○ | ○ | — | — | — | 同 | 生き | ○ | DISCONNECT | 低 | ADAPT |
+| Save/Load | planning/persistence | ○ | ○ | PDC | — | ○ | 同 | 未接続 | ○(旧JSON) | ADAPT要 | 中 | ADAPT（→PDC） |
+| サンプル | sampleGenerator | ○ | ○ | — | — | — | 同 | 生き | ○ | KEEP | 低 | KEEP |
+| 3D | SubstructureViewer3D | ○ | ○ | substructureSceneBuilder | — | ○ | 同/CIM | 生き | ○ | KEEP | 低 | KEEP |
+| 照査/配筋/耐震 | design/{reinforcement,seismic} | — | HOLD | — | — | — | — | — | — | KEEP | 高 | DEFER |
+
+====================================================================
+5. 最終判定サマリ
+====================================================================
+
+- 上部工: RESTORE/ADAPT 多数（主桁/断面/床版/横桁/2D-DXF/数量）・DEFER（ダイヤフラム/応力度）・KEEP（断面性能/3D/GeometrySnapshot）
+- 下部工: RESTORE 多数（3ペインCAD/橋台/橋脚/基礎/杭/座標表）・ADAPT（Save/Load→PDC）・KEEP（ソリッド/配置/数量/3D/サンプル）・DEFER（照査/配筋/耐震）
+- 共通: 旧toolを新PDC（SuperstructureDocument/SubstructureDocument）へ接続し、入力UIを新moduleに統合するのが救出方針
+
+====================================================================
+6. 非接続原因確定
+====================================================================
+
+上部工:
+1. toolBindings が superstructure → /pro/apollo（Apollo feature flag・デフォルトOFF）にbinding
+2. 新module Shell UI が view-only（入力UI未実装）
+3. ダイヤフラム未実装・応力度/照査 NOT_AUTHORIZED
+
+下部工:
+1. 新 /app は SubstructureModuleShellPage（view-only）を使用
+2. 旧3ペインCAD は /pro/liner/substructure（LINERレビュー経由のみ）に残存
+3. 旧tool は旧ProjectModel+ブラウザJSON永続化で新PDC未接続
+
+両者とも「削除・消失」ではなく「埋没・非接続」。

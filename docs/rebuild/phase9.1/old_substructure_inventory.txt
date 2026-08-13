@@ -1,0 +1,110 @@
+Phase 9-01 救出監査: 旧下部工設計ツール Inventory
+====================================================================
+
+baseline: 6cbc2e0b（Phase 9-00 merge後）
+調査: frontend/src/substructure 全ソース（~80 files + 42 tests）・git全履歴・route・実起動
+
+====================================================================
+1. 結論（要約）
+====================================================================
+
+旧下部工ツールは frontend/src/substructure/（Phase C1: I01〜M3-05 / A-01〜A-05）として
+**完全現存**。git履歴で削除・renameは0件。/pro/liner/substructure に route接続が生きており、
+実起動も成功（3ペインCAD）。新システムで「見えない」のは、新 /app 系が
+SubstructureModuleShellPage（view-only）を使い、旧3ペインCADへ導線が無いため。
+
+====================================================================
+2. 正本候補
+====================================================================
+
+- データ正本: substructure/model.ts（Support/PierData/AbutmentData/Footing/PileGroup/
+  BearingSeat v0.2.0）
+- 配置正本: SupportPlacementEngine.ts（LINER line→XYZ/tangent/transverse）
+- ソリッド正本: SubstructureSolidGenerator / PierSolidGenerator / FoundationSolidGenerator
+- 設計正本: design/{geometricQuantity（実計算）, designEngine（HOLD framework）}
+- 新PDC正本: next/modules/substructure/substructureTypes.ts（SubstructureDocument・Phase 6-02）
+- 最有力: 新moduleの SubstructureDocument を正本とし、旧 planning 3ペインCAD UIを
+  ADAPT（PDC接続）して救出する案が本命。
+
+====================================================================
+3. 資産分類
+====================================================================
+
+【Planning UI（3ペインCAD）】
+- planning/SubstructurePlanningHost.tsx | 統合ホスト・state/undo/save/load・設計計算 | KEEP/ADAPT（PDC接続要）
+- planning/SubstructurePlanningPage.tsx | 3ペインShell | KEEP
+- planning/SubstructureViewport.tsx | 2D SVG / 3D R3F 切替 | KEEP
+- planning/SubstructureToolbar.tsx / TreePanel.tsx / ContextMenu.tsx /
+  PropertyPanel.tsx / FormPanel.tsx | UI部品 | KEEP
+- planning/forms/{StructureTypeSelector,PlacementFields,PierInputForm,AbutmentInputForm,FoundationInputForm,FieldInput}.tsx | 入力フォーム | KEEP
+- planning/formModel.ts / formToSupport.ts | フォーム⇄Support | KEEP
+- planning/piles/{pileLayoutModel,PileLayoutPanel,PilePlanPreview,PileCoordinateTable}.tsx | 杭UI | KEEP（Host未配線）
+- planning/dimensions/{dimensionModel,Dimension2DLayer,Dimension3DLayer}.tsx | 寸法 | KEEP
+- planning/useUndoRedo.ts / useKeyboardShortcuts.ts / selectionState.tsx | 状態 | KEEP
+- planning/samples/{sampleGenerator,SampleCreationDialog}.tsx | 9種サンプル+組合せ | KEEP
+- planning/persistence.ts | download/upload JSON | ADAPT（→PDC）
+- planning/DesignResultPanel.tsx / AdapterResultPanel.tsx / CoordinateTable.tsx / StatusArea.tsx | 結果表 | KEEP
+- planning/linerHandoff.ts | LINER→Support | KEEP
+
+【計算・設計コア】
+- model.ts / validation.ts / geometryBase.ts | データモデル | KEEP
+- SubstructureSolidGenerator / PierSolidGenerator / FoundationSolidGenerator | ソリッド | KEEP
+- SupportPlacementEngine.ts | 配置 | KEEP
+- PlanProjection.ts | 2D投影 | KEEP
+- design/geometricQuantity.ts | 数量実計算 | KEEP
+- design/designEngine.ts | 設計framework（数値照査はHOLD_NOT_AVAILABLE）| KEEP
+- design/{reinforcementDesign,seismicDesign}.ts | 配筋/耐震（HOLD）| KEEP（test-only）
+- design/{calculationAdapter,adapterMapper,testCalculationEngine,calculationOutput,adapterPersistence}.ts | A-01..05 | KEEP
+- design/superstructureInterface.ts / superstructureEnvelope.ts | 上部工接続/外形 | KEEP/ADAPT
+
+【3D Viewer】
+- viewer3d/SubstructureViewer3D.tsx | R3F・raycast選択・camera preset・Fit | KEEP
+- viewer3d/threeFactory.ts | SolidGroup→THREE | KEEP
+
+【新PDC module】
+- next/modules/substructure/* | Document/Core 完全実装・UI未接続（監査3で詳細）
+
+====================================================================
+4. 機能カバレッジ
+====================================================================
+
+| 機能 | 状態 |
+|---|---|
+| 橋台（逆T/ラーメン）・橋脚（単柱/壁式/門型） | 入力UI+ソリッド実装済み |
+| 柱/梁/フーチング/基礎/杭配置 | 入力UI+ソリッド実装済み（杭head/tipはFoundationSolidGenerator） |
+| 支承反力 | データあり（上部工接続）+ Phase5アダプタ |
+| 2D平面図 / 3D立体 | 実装済み（Viewport切替） |
+| 寸法表示（2D/3D） | 実装済み |
+| 座標表 / 設計計算結果表 / 計算書CSV / 結果JSON | 実装済み |
+| Save/Load（ブラウザJSON） | 実装済み（→PDC接続が必要） |
+| サンプル（9種+組合せ） | 実装済み |
+| 安定/断面力/応力/照査/配筋/耐震 | **全HOLD_NOT_AVAILABLE**（AUTO-DETERMINATION BANNED） |
+| 杭頭/地形地盤/材料 | 未接続（新moduleのsubstructureFoundation/substructureTerrainが派生提供） |
+| 図面（DXF） | 下部工専用なし（liner formalDrawingDxfは上部工図のみ） |
+
+====================================================================
+5. Git経路
+====================================================================
+
+- Phase C1: b07fda1（I01 model/validation）→ M2-01〜M2-10A → M3-01〜M3-05 → A-01〜A-05
+- Phase 3-5: d70959e（bound mode・bridgeProject）
+- Phase 6-00: c6d7c08（既存下部工資産inventory）
+- Phase 6-01/02: 7cc802e / 4509d98（新SubstructureDocument設計実装）
+- 削除/rename: 0件
+
+====================================================================
+6. 実起動（本Phaseで確認済み）
+====================================================================
+
+- /pro/liner/substructure: 3ペインCAD起動成功（ツリー/2D-3D/プロパティ/座標表）
+- サンプル「標準構成 (A1-P1-P2-A2)」作成成功 → 座標表 A1@0/P1@30/P2@60/A2@90・Validation OK
+- 設計計算実行 → 結果表 OK 0 / NG 0 / HOLD 4（A1/P1/P2/A2 全HOLD=NOT_AUTHORIZED）
+- screenshots: p9_old_substructure.png / p9_sub_standard_2d.png / _3d.png / p9_sub_design_result.png
+
+====================================================================
+7. 現システムで見えない理由
+====================================================================
+
+1. 新 /app 系は SubstructureModuleShellPage（view-only）で、旧3ペインCADを呼ばない
+2. 旧route /pro/liner/substructure は LINERレビュー経由のみ（新ナビに導線なし）
+3. 旧tool は旧ProjectModel+ブラウザJSON永続化で、新PDC（Project Data Core）未接続

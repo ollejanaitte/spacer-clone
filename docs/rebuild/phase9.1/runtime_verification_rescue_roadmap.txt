@@ -1,0 +1,66 @@
+Phase 9-01 救出監査: 実起動検証・unresolved・rescue roadmap
+====================================================================
+
+baseline: 6cbc2e0b（Phase 9-00 merge後）
+
+====================================================================
+1. 実起動検証（Chromium headed・DISPLAY=:0）
+====================================================================
+
+【旧下部工ツール /pro/liner/substructure】動作確認済み
+- 3ペインCAD（ツリー/2D-3Dビュー/プロパティ/座標表）表示
+- サンプル「標準構成 (A1-P1-P2-A2)」作成成功
+  → 座標表: A1@0 / P1@30 / P2@60 / A2@90（X/Y/Z）・Validation OK
+- 設計計算実行 → 結果表: OK 0 / NG 0 / HOLD 4（全HOLD=NOT_AUTHORIZED）
+- ボタン: サンプル新規作成/保存/読込/上部工接続/設計計算/Adapter計算(TEST)/
+  計算書CSV/結果JSON/2D/3D/寸法/undo-redo
+- screenshots: p9_old_substructure.png / p9_sub_standard_2d.png /
+  p9_sub_standard_3d.png / p9_sub_design_result.png
+
+【旧上部工 Apollo /pro/apollo】（VITE_APOLLO_PHASE1_ENABLED=true時）
+- Apollo shell起動確認（新規/初期化/開く/橋梁モデル作成/線形座標計算/保存/
+  静的解析/固有値/応答/影響線/移動荷重/出力CSV-PDF-DXF-STL）
+- 数値実行/結果公開はデフォルトブロック（numericReleaseBlocked=true）
+- screenshot: p9_old_apollo.png
+
+【現Super/Sub Module /app/projects/{id}/modules/*】
+- 生成ボタン→Document Auto Save→Gate表示（view-only）
+- CIM / 統合3D で 3D表示・GLB export（Phase 8/9-00で実画面確認済み）
+- pageerrorなし
+
+====================================================================
+2. unresolved / risk
+====================================================================
+
+- 旧下部工2D/3Dビューに構造物形状が映らない場合がある（選択/ズーム依存・
+  実証は座標表と結果表で代替確認）→ Phase 9-02で要精査
+- 旧Apollo上部工は feature flag + NOT_AUTHORIZED で本格入力UIの実画面確認は
+  モデル作成後（要モデル）→ 入力UIの実起動は Phase 9-02/9-03で
+- ダイヤフラムは全ソース0件（旧・新とも未実装）→ DEFER
+- 応力度/照査の正式数値は NOT_AUTHORIZED（AUTO-DETERMINATION BANNED）→
+  認可方針（Phase 9-02 Design Freeze）で定義
+- 旧toolのpersistence（ブラウザJSON）と新PDCの二重化 → ADAPTでPDCへ統合
+
+====================================================================
+3. rescue roadmap（Phase 9-02以降の推奨）
+====================================================================
+
+1. Phase 9-02: Superstructure/Substructure Rescue 完全設計・Design Freeze
+   - 旧UI（Apollo入力/planning 3ペインCAD）を新moduleへ統合する接続契約
+   - PDC接続（Save/Load・derived再生成・STALE）
+   - ダイヤフラム・応力度・照査のスコープ凍結（DEFER vs 実装）
+2. Phase 9-03: Rescue実装
+   - 上部工: BridgeStructureInputPanel 等をSuperstructureDocumentへ接続
+     （主桁/断面/材料/床版/横桁/支承/荷重の入力UI・2D-DXF・計算書・数量）
+   - 下部工: planning 3ペインCAD をSubstructureDocumentへ接続
+     （橋台/橋脚/フーチング/基礎/杭/座標表/設計計算・PDC Save/Load）
+   - E2E・実画面・screenshot・Completion Gate
+
+====================================================================
+4. 最終判定サマリ（監査結論）
+====================================================================
+
+- 旧上部工・旧下部工とも「消失」ではなく「埋没・非接続」
+- 旧ツールの資産価値は高い（UI・ソリッド・配置・数量・サンプルすべてKEEP可能）
+- 救出は「新module Core を正本とし、旧UI を ADAPT して接続」する方針で実現可能
+- 救出難易度: 中（UI接続・PDC接続が主作業・計算Coreは既に流用済み）
