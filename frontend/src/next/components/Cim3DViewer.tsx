@@ -183,8 +183,16 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
       raycaster.setFromCamera(pointer, camera);
       const hits = raycaster.intersectObject(sceneGroup, true);
-      const hit = hits[0] ?? null;
-      const meta = hit ? resolveCimMetadata(hit.object) : null;
+      // Skip invisible objects (Three.js raycast does not filter visibility).
+      const visibleHit = hits.find((hit) => {
+        let current: THREE.Object3D | null = hit.object;
+        while (current) {
+          if (current.visible === false) return false;
+          current = current.parent;
+        }
+        return true;
+      }) ?? null;
+      const meta = visibleHit ? resolveCimMetadata(visibleHit.object) : null;
       onSelectRef.current?.(meta);
     };
     renderer.domElement.addEventListener("pointerdown", onPointerDown);
@@ -268,6 +276,27 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
           }}
         >
           Fit（道路）
+        </button>
+        <button
+          type="button"
+          className="next-secondary"
+          data-testid="cim-fit-structure"
+          onClick={() => {
+            const box = new THREE.Box3();
+            let any = false;
+            for (const layer of ["bridgeLayout", "superstructure", "substructure", "foundation", "bearing"]) {
+              const group = layerClonesRef.current.get(layer as CimLayerId);
+              if (group && group.children.length > 0) {
+                box.union(new THREE.Box3().setFromObject(group));
+                any = true;
+              }
+            }
+            if (any && !box.isEmpty()) {
+              fitRef.current?.(box);
+            }
+          }}
+        >
+          Fit（橋梁）
         </button>
         <button type="button" className="next-secondary" data-testid="cim-view-perspective" onClick={() => presetRef.current?.("perspective")}>透視</button>
         <button type="button" className="next-secondary" data-testid="cim-view-plan" onClick={() => presetRef.current?.("plan")}>平面</button>
