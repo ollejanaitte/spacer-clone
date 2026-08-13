@@ -8,9 +8,11 @@ import { FilesystemProjectPersistence } from "../filesystemProjectPersistence";
 import { setPersistenceForTest, resetProjectManagerForTest, getProjectManager } from "../../project/projectManagerInstance";
 import { applyBusinessMetadata } from "../../project/businessMetadata";
 import { createEmptyProject } from "../../project/projectDataCore";
-import { writeRoadInputs, readRoadInputs } from "../../modules/roadModuleAdapter";
+import { writeRoadInputs, readRoadInputs, writeRoadData, ensureRoadData } from "../../modules/roadModuleAdapter";
 import { buildRoadIntermediate } from "../../modules/road/intermediateResult";
 import { buildRoadCimGeometry } from "../../modules/road/roadCimGeometry";
+import { commitRoadEditorDraft } from "../../modules/road/roadEditorDraft";
+import { createDefaultLinerDraft } from "../../../liner/adapters/linerUiAdapter";
 import { buildProjectPackage } from "../package/projectPackageBuilder";
 import { inspectPackageContent, extractProjectFromPackage } from "../package/projectPackageImporter";
 import type { LinearAlignment } from "../../../liner/core/types";
@@ -160,5 +162,46 @@ describe("Phase 2-11 Road persistence / auto-save / .spacerproj vertical", () =>
     // nothing bad written; project untouched
     const restored = readRoadInputs(manager, project.projectId);
     expect(restored.label).toBeUndefined();
+  });
+
+  it("exports the canonical roadData inside .spacerproj (Phase 7.4)", async () => {
+    const persistence = createPersistence();
+    setPersistenceForTest(persistence);
+    const manager = getProjectManager();
+    const project = applyBusinessMetadata(createEmptyProject("道路Canonical業務"), {
+      businessNumber: "P74-001",
+      designStage: "road-preliminary",
+    });
+    expect(manager.importProject(project)).toBe(true);
+
+    // Commit canonical roadData (the path used by the RoadEditorPanel).
+    const ensure = ensureRoadData(manager, project.projectId, {
+      project: manager.getProject(project.projectId) as never,
+    });
+    expect(ensure.ok).toBe(true);
+    if (!ensure.ok) return;
+    const draft = { ...createDefaultLinerDraft(), alignment: HORIZONTAL };
+    const committed = commitRoadEditorDraft(draft, {
+      source: "new",
+      migratedAt: new Date().toISOString(),
+    });
+    expect(committed.ok).toBe(true);
+    if (!committed.ok || !committed.canonical) return;
+    expect(writeRoadData(manager, project.projectId, committed.canonical).ok).toBe(true);
+    await manager.flushPendingSaves();
+
+    // Export .spacerproj and verify the canonical roadData is embedded.
+    const built = buildProjectPackage(manager.getProject(project.projectId)!);
+    expect(built.ok).toBe(true);
+    if (!built.ok) return;
+    const projectJson = JSON.parse(built.json);
+    const embeddedProject = JSON.parse(
+      projectJson.files.find((f: { path: string }) => f.path === "project.json").content,
+    );
+    const roadData = embeddedProject.modules?.road?.data?.roadData;
+    expect(roadData).toBeDefined();
+    expect(roadData.schemaVersion).toBe("0.3.0");
+    expect(roadData.contentChecksum).toMatch(/^[0-9a-f]{64}$/);
+    expect(roadData.domainDraft.alignments.length).toBeGreaterThanOrEqual(1);
   });
 });
