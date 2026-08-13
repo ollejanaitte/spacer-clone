@@ -6,12 +6,20 @@ import { buildRoadIntermediate } from "../modules/road/intermediateResult";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { readModuleFromManager } from "../modules/adapter";
 import { RoadPlanPreview, RoadProfilePreview, RoadCrossSectionPreview } from "../components/RoadPreviews";
+import { RoadEditorPanel } from "../components/RoadEditorPanel";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import { createReferenceMountain } from "../modules/terrain/referenceMountain";
 import type { ProjectModuleKey } from "../project/schema";
 import type { LinearAlignment } from "../../liner/core/types";
 import type { VerticalElement } from "../../liner/core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../liner/schema/types";
+
+/** Feature flag for the Road/LINER Rescue editors (Phase 7.2 FROZEN D-13). */
+export const ROAD_LINER_RESCUE_FLAG = "VITE_ROAD_LINER_RESCUE";
+export function isRoadLinerRescueEnabled(): boolean {
+  const env = (import.meta as unknown as { env?: Record<string, string> }).env;
+  return env?.[ROAD_LINER_RESCUE_FLAG] === "true";
+}
 
 // 新規Roadの既定データは Reference Mountain の計画道路（Terrain/Existingと同一座標系）。
 // Road Moduleページで「保存」すると roadInput としてProjectへ保存される。
@@ -154,6 +162,10 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
           <RoadCrossSectionPreview crossSection={crossSections[0]} />
         </div>
       </div>
+
+      {isRoadLinerRescueEnabled() && (
+        <RoadEditorPanel projectId={projectId} />
+      )}
 
       <div className="next-road-summary" data-testid="road-summary">
         <p>延長: {intermediate.totalLength.toFixed(3)} m</p>
