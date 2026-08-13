@@ -116,6 +116,22 @@ class MemberLoad:
 
 
 @dataclass(frozen=True)
+class Spring:
+    """Elastic support (Phase 7-02 WP-D/WP-K). One spring = one DOF.
+
+    `coordinateSystem` must be "global" for Phase 7-02 (local-axis springs are
+    UNSUPPORTED_LOCAL_SPRING unless the axes are aligned, FROZEN §5.3).
+    stiffness is kN/m (translational) or kNm/rad (rotational).
+    """
+
+    id: str
+    nodeId: str
+    dof: str
+    stiffness: float
+    coordinateSystem: str = "global"
+
+
+@dataclass(frozen=True)
 class MassItem:
     nodeId: str
     mx: float = 0.0
@@ -163,6 +179,7 @@ class Model:
     analysisSettings: AnalysisSettings
     groundMotions: list[dict[str, Any]] = field(default_factory=list)
     analysisResults: dict[str, Any] | None = None
+    springs: list[Spring] = field(default_factory=list)
 
     @property
     def node_by_id(self) -> dict[str, Node]:
@@ -197,6 +214,7 @@ def parse_model(data: dict[str, Any]) -> Model:
     load_cases = [LoadCase(**item) for item in require_list(data, "loadCases")]
     nodal_loads = [NodalLoad(**item) for item in data.get("nodalLoads", [])]
     member_loads = [MemberLoad(**item) for item in data.get("memberLoads", [])]
+    springs = [Spring(**item) for item in data.get("springs", [])]
     mass_cases = [parse_mass_case(item) for item in data.get("massCases", [])]
     settings_payload = data.get("analysisSettings", {})
     settings = AnalysisSettings(**settings_payload)
@@ -226,6 +244,7 @@ def parse_model(data: dict[str, Any]) -> Model:
         loadCases=load_cases,
         nodalLoads=nodal_loads,
         memberLoads=member_loads,
+        springs=springs,
         massCases=mass_cases,
         analysisSettings=settings,
         groundMotions=ground_motions_payload,

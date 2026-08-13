@@ -224,6 +224,30 @@ def build_project_from_analysis_document(analysis: dict[str, Any]) -> dict[str, 
             }
         )
 
+    # Elastic supports: pass CONFIRMED springs (stiffness present) through.
+    # SOURCE_NOT_AVAILABLE / null-stiffness springs are never fabricated.
+    project_springs = []
+    for index, spring in enumerate(analysis.get("springs", []) + analysis.get("foundationSprings", [])):
+        if not isinstance(spring, dict):
+            raise SolverInputError(f"/springs[{index}]: must be an object.")
+        if spring.get("valueState") != "CONFIRMED":
+            continue
+        stiffness = spring.get("stiffness")
+        if not isinstance(stiffness, (int, float)):
+            continue
+        node_id = str(spring.get("nodeId", ""))
+        if node_id not in node_ids:
+            raise SolverInputError(f"/springs[{index}]: node must exist.")
+        project_springs.append(
+            {
+                "id": str(spring.get("entityId") or f"spring{index + 1}"),
+                "nodeId": node_id,
+                "dof": str(spring.get("dof", "uz")),
+                "stiffness": _finite(stiffness, f"/springs[{index}].stiffness"),
+                "coordinateSystem": str(spring.get("coordinateSystem", "global")),
+            }
+        )
+
     analysis_settings = analysis.get("analysisSettings") or {}
     settings = {
         "analysisType": "linear_static",
@@ -261,6 +285,7 @@ def build_project_from_analysis_document(analysis: dict[str, Any]) -> dict[str, 
         "loadCases": project_load_cases,
         "nodalLoads": project_nodal_loads,
         "memberLoads": project_member_loads,
+        "springs": project_springs,
         "analysisSettings": settings,
     }
 
