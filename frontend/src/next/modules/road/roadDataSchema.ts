@@ -36,7 +36,7 @@ function isPlainObject(value: unknown): value is Record<string, unknown> {
 
 /** Deterministic canonical JSON (codepoint-sorted keys; rejects non-finite). */
 export function canonicalJson(value: unknown): string {
-  if (value === null) return "null";
+  if (value === null || value === undefined) return "null"; // JSON-compatible (undefined ~ omitted/null)
   const t = typeof value;
   if (t === "string" || t === "boolean") return JSON.stringify(value);
   if (t === "number") {
