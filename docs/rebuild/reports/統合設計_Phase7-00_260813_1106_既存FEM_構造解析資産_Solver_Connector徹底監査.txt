@@ -1,0 +1,331 @@
+統合設計_Phase7-00_260813_1106_既存FEM_構造解析資産_Solver_Connector徹底監査
+====================================================================
+
+作業名: Phase 7-00 既存FEM・構造解析資産 / Solver / Connector徹底監査
+完了日時: 2026-08-13 11:06 JST
+Phase 7-01 readiness: READY（Design Freeze対象として・CONDITIONAL）/
+  NOT_READY_FOR_IMPLEMENTATION（統合縦断 Level 2）
+verdict: COMPLETE（Phase 7-00完了・Phase 7-01へは進まずSTOP）
+
+====================================================================
+1. Baseline（GitHub正本で実確認）
+====================================================================
+
+- Phase 6-02 Final Report PR: #961（docs/phase6-02-final）
+  state=MERGED（mergedAt 2026-08-13T00:23:11Z）
+- Final Report merge SHA: 739312b0a919e767320be9d73800237bd92f2b8d
+- true GitHub main SHA（baseline時）: 739312b0a919e767320be9d73800237bd92f2b8d
+- local main SHA（spacer-clone）: 739312b0a919e767320be9d73800237bd92f2b8d
+- origin/main SHA: 739312b0a919e767320be9d73800237bd92f2b8d
+- rebuild/integrated-system SHA（spacer-clone-next）: 739312b0a919e767320be9d73800237bd92f2b8d
+- 4系統同期: 一致
+- Phase 6-02 WP PR群: #949-#960 すべてMERGED確認
+- Baseline Gate: PASS
+
+[pre-existing dirty差分（破棄・混入禁止・成果に含めず記録のみ）]
+- spacer-clone（main）: modified docs/apollo/step4c_appurtenance_haunch/evidence/
+  load.json / quantity.json / stl-metadata.json（timestamp改変）+ deleted final_report.txt
+- spacer-clone-next（rebuild/integrated-system）: modified 同evidence 3ファイル
+  + untracked docs/rebuild/reports/R1-04.5_GPT-5.6-Luna_Vision_Delegation_検証結果.txt
+- 各Stepは origin/main から切った専用worktreeで作業し、dirty差分に触れていない。
+
+====================================================================
+2. 各Step結果
+====================================================================
+
+Step A: Baseline + FEM/Solver Asset Inventory（PR #962 / SHA 5d3a870）
+  - backend/engine 31ファイル・IF3・frontend・reference・schemasの網羅的inventory
+  - production path追跡（import/caller/callee/runtime/tests/persistence/status）
+  - backend tests 1077 passed / typecheck PASS 実測
+Step B: FEM/Grillage + Solver + Load + Result監査（PR #963 / SHA c768dd9）
+  - element/dof/assembly/solver/results直接読取監査
+  - Solver production path・Load/Combination（DL-STRUCTURAL/DL-DECK/COMBO-1）・Result（IF3）監査
+  - Sol高度review反映（B1-B8・support節点のみ載荷・grillage error handling抜け）
+Step C: Connector/Adapter/Binding + UI/3D + Persistence + Tests監査（PR #964 / SHA 109ffd4）
+  - CRITICAL C1実測（grillage production pathがSCHEMA_ERROR）
+  - UI live確認（Playwright capture + Luna目視・クラッシュなし）
+  - Persistence・Tests/Fixtures/Referenceカタログ
+Step D: Production/Dead判定 + KEEP分類 + Maturity（PR #965 / SHA d15c545）
+  - 全主要資産のproduction/dead判定（根拠付き）
+  - KEEP/ADAPT/REWRITE/DEFER/REMOVE分類・統合縦断Maturity=Level 2断定
+Step E: Migration Map + Risk/Gap + Readiness判定（PR #966 / SHA e0c7ed9）
+  - Migration Map・Risk 24項目・Readiness=CONDITIONAL READY
+
+====================================================================
+3. Asset Inventory（要約）
+====================================================================
+
+[Backend FEM Core（KEEP）]
+  - model.py（Node/Member/Section/Support/LoadCase/parse/validate）
+  - solver.py（scipy.sparse.spsolve・free/constrained・MODEL_UNSTABLE検出）
+  - assembly.py（12x12部材k_global→COO→CSR）
+  - element.py（Euler-Bernoulli 12DOF frame・せん断変形無し）
+  - dof.py（node list順・6DOF/node・bool support制約）
+  - results.py（reaction K·u−f・member端力 local）
+  - errors.py / constants.py
+[解析モジュール（KEEP）]
+  - eigen.py（scipy.linalg.eigh）・mass.py・influence.py（spsolve）
+  - moving_load.py（influence reuse）・response_spectrum.py（SRSS/CQC）
+  - time_history_*.py（Newmark-β・Rayleigh減衰・TH-5c契約）
+[IF3 Result Contract（KEEP）]
+  - if3_normalizer/checksum/diagnostics/persistence/staleness/availability
+  - if3_legacy_compatibility.py（backend・test-only parity）
+[Frontend]
+  - api/client.ts（backend接続）・if3/（binding）
+  - results/resultViewModel・if3ResultGate・if3ResultViewModel
+  - viewer/（3D表示・変形/force図/反力/color map/比較）
+  - timeHistory/（Newmark-βUI）・bridgeProject/（CBDM）
+  - apollo/design/grillageModel.ts（buildGrillageModel）
+  - next/modules/superstructure/superstructureAnalysisAdapter.ts（DORMANT）
+  - next/modules/substructure/substructurePhase4/5Adapter.ts（handoff受領）
+[Reference/Legacy]
+  - examples/verification/*+meta・backend/tests/sample_models.py・fixtures/replay
+  - docs/apollo/step1_numeric_core・step10/reference_bridge_001・scripts/apollo/evidence
+
+====================================================================
+4. FEM / Frame / Grillage監査
+====================================================================
+
+- node: Node(id,x,y,z)・global Cartesian。grillageはsnapshot supportPoint座標を直接使用。
+  bridge_fem_generatorは自前メッシュ（z=0平面・ID生成順）
+- member: 12DOF Euler-Bernoulli frame・せん断変形・shell・rigid link・eccentricity無し
+- material/section: grillageは宣言値（backend側 E=2.05e8/G=8.0e7/ρ=78.5・A=0.1等）。
+  SuperstructureDocument実断面とは未接続（R7）
+- support: bool DOF制約のみ。spring/elastic support/penalty/MPC/release無し（R4/R23）
+- bearing: 種別→拘束mapping無し（位置ベース一律拘束）（R5）
+- foundation: foundation spring無し（NEW DESIGN）
+- 3系統FEM generator並存（grillage / bridge_fem_generator / bridgeDefinition）（R6）
+
+====================================================================
+5. Solver監査
+====================================================================
+
+- 線形静解析: scipy.sparse.linalg.spsolve・COO→CSR・DOF=node list順6/node
+ ・homogeneous Dirichlet・MODEL_UNSTABLE/SOLVER_ERROR検出・health warning
+- eigen: scipy.linalg.eigh / influence: spsolve / moving_load: influence reuse
+  / response_spectrum: SRSS+CQC / time_history: newmark_beta
+- external solver: 無し（全てin-process numpy/scipy・subprocess/requests無し）
+- production path（実コード確認）:
+  buildGrillageModel → apiClient.analyzeGrillage → POST /api/design/analyze
+   → run_grillage_analysis → run_analysis → parse_model → assemble → spsolve
+- 検証: backend tests 1077 passed・closed-form照合（sample_models 7・examples/verification 8）
+
+====================================================================
+6. Load / Combination監査
+====================================================================
+
+- Load Case: DL-STRUCTURAL（主桁+横桁+横構+支承）/ DL-DECK（床版）/ DL-PAVEMENT
+  / DL-APPURTENANCE（入力境界・MISSING）/ LL（未実装）
+- Combination: COMBO-1 = DL-STRUCTURAL + DL-DECK（係数1.0・宣言のみ・実行実装なし）
+- 単位: kN・kNm・m / 符号: 荷重 -z（下向き負）・反力 +z up-positive
+- 配分: 死荷重はsupport節点のみ載荷（R2 CRITICAL）・production pipelineは無載荷
+
+====================================================================
+7. Result監査
+====================================================================
+
+- raw: displacements/reactions/memberEndForces（m/rad・kN/kNm・local座標）
+- IF3正規化: FrameAnalysisResultResource v0.1.0・UUID5 stable ID・resultChecksum
+- sign/unit/coordinate: 反力up-positive整合・member force local・設計用符号は実装層未確定
+- persistence: linear static=IF3 sidecar（frame context指定時）・timeHistory=project.json
+ ・他=transient（UNSUPPORTED資源）
+- staleness: sourceDocumentVersion/analysisSettingsChecksum/loadContext不一致でSTALE
+  → authoritative export gateでブロック（frame内は堅牢・Document連動は未設計 R8）
+- stress/strain: 未算出（member end forcesまで）
+
+====================================================================
+8. Connector / Adapter / Binding監査
+====================================================================
+
+- Superstructure→Analysis: superstructureAnalysisAdapter（DORMANT・C3）+ productionは
+  buildGrillageModel直送（無載荷）
+- Substructure→Analysis: 受領側のみ（substructurePhase4/5Adapter）・下部工→解析出力は無し
+- Bearing→Analysis: 未実装（R5） / Foundation→Analysis: 未実装（R4）
+- Load→Analysis: 死荷重配分adapterはsupport節点のみ+backendがnodalLoadsを転送しない（R2）
+- Analysis→Solver: engine/grillage.py（C1で実効解析不能）
+- Solver→Result: results.py+if3_normalizer（ACTIVE）
+- Result→Viewer: resultViewModel/if3ResultViewModel（ACTIVE）
+- CRITICAL C1: run_grillage_analysisがenvelope誤渡しでSCHEMA_ERROR。
+  さらにbuild_grillage_projectのproject構造自体が不正（ProjectInfoと不一致・横桁
+  INVALID_ORIENTATION）。テストは解析成功を検証していない
+
+====================================================================
+9. UI / 3D監査
+====================================================================
+
+- Viewer: node/member/support/load表示・変形図・反力・N/Q/My/Mz図・color map・
+  eigen/spectrum選択・A/B比較（表示専用・解析はbackend委譲）
+- live確認（Playwright headless + Luna目視）: /proに3Dビューワー表示・クラッシュ/白画面なし。
+  /proと/pro/analyzeは実質同一。モデル未ロード（node/member/support=0）
+
+====================================================================
+10. Persistence監査
+====================================================================
+
+- 解析model/settings: project.json（Electronダイアログ/ダウンロード）に保存
+- autosave: 無効（AUTOSAVE_ENABLED=false）・backend save API未使用
+- 解析結果: IF3 sidecar（frame context指定時）+ timeHistory（project.json）
+- stale: IF3機構でframe内STALE検出・上部工/下部工Document→frame binding連動は未設計（R8）
+
+====================================================================
+11. Tests / Fixtures / Reference Models監査
+====================================================================
+
+- backend全tests: 1077 passed（11.71s・warning 4=Deprecation）
+- FEM core: 81 passed / frontend typecheck: PASS
+- frontend subsets: if3/results/api/verification 86・apollo/substructure/bridgeDefinition 485
+ ・viewer/timeHistory 449（計1020 passed）
+- reference: sample_models 7モデル・examples/verification 8モデル（closed-form照合）
+ ・RB-S10-001 goldens（解析goldenはNOT_AVAILABLE・統合golden未整備 R9）
+
+====================================================================
+12. Production Path / Dead Code判定（要約）
+====================================================================
+
+- ACTIVE_PRODUCTION: backend engine全層（solver/assembly/element/dof/results等）・
+  IF3系・app層・frontend api/if3/results/viewer/timeHistory/grillageModel/handoff
+- ACTIVE_UI_ONLY: viewer・timeHistory UI・checkFramework（宣言のみ）
+- DORMANT: superstructureAnalysisAdapter・superstructureBasicChecks
+- ACTIVE_TEST_ONLY: if3_legacy_compatibility(backend)・mass.build_mass_vector（test oracle）
+ ・verification/・if3LegacyCompatibility.ts
+- REFERENCE_ONLY: apollo step1_numeric_core・RB-S10-001・scripts/apollo/evidence
+- DEAD_CANDIDATE: level0/・buildIf3ResultViewModel
+- 注意: legacyPdfBypassGuard.tsはACTIVE（resultPdfReport.ts:447）・build_mass_vectorはtest
+  oracle用途で維持（REMOVE候補でない）
+- production到達性とruntime健全性は別軸（C1は到達しているが実行不能）
+
+====================================================================
+13. KEEP / ADAPT / REWRITE / DEFER / REMOVE
+====================================================================
+
+KEEP: engine core（solver/model/assembly/element/dof/results/errors/constants）・
+  eigen/influence/moving_load/response_spectrum/time_history・IF3系・app層・
+  api/client・viewer・timeHistory UI・if3 binding・results VM/gate・bridgeProject・
+  handoff・schemas・examples/sample_models/verification
+ADAPT: superstructureAnalysisAdapter（配線+荷重生成REWRITE）・superstructureBasicChecks・
+  if3_availability UI接続・IF3 Document連動
+REWRITE: engine/grillage.py（envelope再設計・横桁orientation・load受渡し）・
+  buildGrillageModel（骨格KEEP・荷重/mesh/topology）・bridge_fem_generator（grillage置換・cutover要）
+NEW DESIGN: spring/elastic support/foundation spring（+ engine model/schema/assembly/result/test ADAPT）
+DEFER: 下部工FEM解析・LL実用・組合せ実行・設計照査・非線形/動的非線形・construction stage・
+  autosave有効化・IF3 availability UI
+REMOVE候補: level0/・buildIf3ResultViewModel（Phase 7-01以降に無根拠で削除しない）
+
+====================================================================
+14. Maturity Level
+====================================================================
+
+- FEM model（engine core）: 6（component closed-form検証済み）
+- FEM model（grillage経路）: 2（C1でsolver実行不能）
+- solver（linear static）: 6 / solver（eigen）: 6 / solver（response spectrum）: 6
+- solver（influence/moving_load/time history）: 5
+- load（上部工DL Model）: 2 / combination: 2
+- support（bool DOF）: 3 / bearing剛性/spring: 0 / foundation spring: 0
+- result（raw/IF3）: 6 / viewer: 5 / persistence: 4
+- superstructure connector: 2 / substructure connector: 2 / reference model: 4
+- 統合解析縦断: Level 2
+
+====================================================================
+15. Migration Map（要約）
+====================================================================
+
+Project Data Core（BridgeLayout/Superstructure/SubstructureDocument）
+ → Analysis Compatibility/Generation Layer（superstructure/substructure/load/bearing adapter）
+ → Integrated Analysis Model（新Contract・Design Freeze対象）
+ → Solver Adapter（engine/grillage.py REWRITE + solver.py KEEP）
+ → Solver（scipy_sparse等 KEEP）
+ → Result Adapter（IF3 KEEP）
+ → Analysis Result（FrameAnalysisResultResource）
+ → 3D/UI/Persistence（viewer/results/IF3 persistence KEEP）
+
+====================================================================
+16. Risk / Gap（要約・Severity）
+====================================================================
+
+CRITICAL:
+  R1 grillage解析実行不能（envelope再設計・横桁orientation・test未検証）
+  R2 死荷重配分がsupport節点のみ+production無載荷+nodalLoads未転送
+  R4 spring/elastic support/foundation spring無し（Phase 7-01必須範囲とする場合）
+  R7 section/materialが宣言値（有効な工学結果を阻害・CRITICAL候補）
+HIGH:
+  R3 superstructure→Analysis adapter未接続 / R5 bearing→support mapping無し
+  R6 3系統generator並存 / R8 Document→frame binding連動未設計 / R16 統合規模未検証
+  R20 bridge_fem_generator cutover / R21 solver失敗envelopeのfail-close不備
+  R22 /api/design/analyzeがIF3未接続 / R23 release/MPC契約不在 / R24 buildGrillageModelのADAPT/REWRITE
+MEDIUM: R9 統合golden未整備 / R10 reaction key alias / R11 sign/unit/axis統一
+  R12 ID契約 / R13 結果persist限定 / R14 二重実装 / R18 authorization gate
+  R19 性能（toarray()+eigvalsh）
+LOW: R15 dead connector候補 / R17 non-deterministic
+
+====================================================================
+17. Luna利用結果
+====================================================================
+
+- Step A: Asset Inventory簡易確認（main.py行番号・engineファイル数2点修正）
+- Step C: UIスクリーンショット目視（/proに3Dビューワー・クラッシュなし・/analyze実質同一）
+ ・C1記述の「有効な非空grillage入力では常に」の正確化
+- Step E: docs表・Risk表の表構造/Severity一貫性確認
+- Lunaはread-only reviewerとして使用（git status/diffで差分増加なしを確認）
+
+====================================================================
+18. Sol利用結果
+====================================================================
+
+- Step B: FEM/解析責任境界・solver構成・BC/DOF・load/result mappingの高度レビュー
+  （B1-B8修正・grillage error handling抜け・support節点のみ載荷・IF3 resource非対応）
+- Step D: production/dead判定・KEEP分類・Maturityのcross-review
+  （統合縦断=Level 2断定・legacyPdfBypassGuard ACTIVE・build_mass_vector test oracle・cutover条件）
+- Step E: Migration Map・Risk/Gap・Readinessのcross-review
+  （run_analysis(built)修正案誤り・build_grillage_project構造不正・横桁INVALID_ORIENTATION・
+   nodalLoads未転送・fail-close不備・IF3未接続・release/MPC・CONDITIONAL READY）
+
+====================================================================
+19. Unresolved（Phase 7-01で設計確定すべき論点・UNKNOWNではない）
+====================================================================
+
+- R1 grillage project envelope再設計の詳細（ProjectInfo/schema整合・横桁orientation・load受渡し）
+- R4 spring/柔支持のContract詳細（model.py/schema/assembly/result/test）
+- R8 上部工/下部工Document変更→解析invalidation連動の設計
+- R9 統合Bridge解析golden（RB-S10-001解析golden化）
+- 統合縦断 Level 7到達のための検証計画
+
+====================================================================
+20. Phase 7-01 readiness判定
+====================================================================
+
+# READY（Design Freeze対象として・CONDITIONAL）
+- READY_FOR_PHASE_7-01_DESIGN = CONDITIONAL
+  （主要論点は全て特定・実測済み。設計開始を妨げる未知なし）
+- NOT_READY_FOR_IMPLEMENTATION / CUTOVER
+  （統合縦断Level 2・CRITICAL R1/R2/R4/R7の修正設計・実装・統合検証が必要）
+
+====================================================================
+21. 各branch / 各commit / 各PR / 各merge SHA
+====================================================================
+
+- baseline（Phase 6-02 Final Report）: PR #961 / SHA 739312b0
+- Step A: branch docs/phase7-00-step-a / commit 2cb79f0 / PR #962 / SHA 5d3a870
+- Step B: branch docs/phase7-00-step-b / commit 96f5e5f / PR #963 / SHA c768dd9
+- Step C: branch docs/phase7-00-step-c / commit 34cd7d1 / PR #964 / SHA 109ffd4
+- Step D: branch docs/phase7-00-step-d / commit e46ebc3 / PR #965 / SHA d15c545
+- Step E: branch docs/phase7-00-step-e / commit 9e3299d / PR #966 / SHA e0c7ed9
+- Final Report: branch docs/phase7-00-final-report / PR #967 / SHA（merge後取得）
+
+====================================================================
+22. 最終4系統同期
+====================================================================
+
+Final Report merge後に実施（local main / origin/main / GitHub main / rebuild/integrated-system
+を同一SHAに同期・既存dirty差分は破棄せず維持）。
+
+====================================================================
+23. verdict / STOP
+====================================================================
+
+- verdict: COMPLETE（Phase 7-00全COMPLETE条件充足）
+  baseline Gate PASS / FEM・Solver資産inventory完了 / production path追跡完了 /
+  FEM・Solver・Load・Result・Connector・UI/3D・Persistence・Tests監査完了 /
+  Production/Dead判定・KEEP分類・Maturity評価・Migration Map・Risk/Gap完了 /
+  Phase 7-01 readiness判定完了 / 各Step main merge済み / Final Report merge済み /
+  Final Report TXT Discord送信済み / 最終4系統SHA一致
+- STOP: Phase 7-01「統合構造解析全体完全設計・Design Freeze」へは進まずSTOP。
