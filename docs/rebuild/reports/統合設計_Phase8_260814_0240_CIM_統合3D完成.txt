@@ -1,0 +1,105 @@
+統合設計_Phase8_260814_0240_CIM_統合3D完成
+====================================================================
+
+作業名: 統合設計 Phase 8「CIM / 統合3D完成」
+完了日時: 2026-08-14 02:40 JST
+baseline: cfdbb98d12ba490fc276b633948164f38a18294a（Phase 7.4 merge後）
+Phase 7.4: COMPLETE（Road/LINER Rescue実画面完成・実操作受入検証）
+Phase 8-00: COMPLETE（PR #999・3b5bd37・監査）
+Phase 8-01: Design Freeze Gate PASS（PR #1000・359f6615）
+Phase 8-02 Completion Gate: PASS
+verdict: Phase 8 COMPLETE
+STOP: 後続Phaseへは進まずSTOP
+
+====================================================================
+1. Phase 8-00 監査結果
+====================================================================
+
+- 3D/CIM資産をKEEP/ADAPT/MERGE/REWRITE/DEFER/UNKNOWNに分類（Viewer/Scene・Terrain/Existing・Road CIM・Bridge Layout・Super/Sub/Foundation/Bearing・Analysis・Persistence/Export・Tests/Evidence/Electron）
+- 主要欠落: CIMモジュール本体・Road CIM面・Super/Sub/Bearingレイヤ統合・FEM/Result overlay・Viewer UI・座標変換統一・glTF export・統合3D Electron E2E
+- 早期実画面確認: Terrain+Road+Existing統合シーン表示OK
+
+====================================================================
+2. Phase 8-01 Design Freeze
+====================================================================
+
+- Integrated3D Scene Contract（CimLayerId 18層・CimEntityMetadata sourceModule/sourceEntityId/stableId/coordinateContext/metadata・buildIntegrated3DScene）
+- Coordinate統一（renderCoordinateのみ・表示変換MERGE方針）・units（m）
+- stable ID/sourceEntityId規則・layer構成・Road CIM Surface方針・Analysis Overlay（stale guard）・Viewer UI・Persistence・Export（STL/glTF・IFC DEFER）・Reference Scene・Performance・WP-A〜L・Completion Gate
+
+====================================================================
+3. Phase 8-02 WP結果
+====================================================================
+
+| WP | 内容 | PR | SHA |
+|---|---|---|---|
+| WP-A | Scene Contract・Coordinate/ID・CIMページ新設（CimModuleShellPage・Cim3DViewer・18レイヤー・選択） | #1001 | 3ecdbaba |
+| WP-B/C/D | Terrain/Existing・Road CIM Surface（幅員/拡幅/横断勾配）・Bridge Layoutレイヤ・camera fit | #1002 | 316e8f43 |
+| WP-E/F/G | Superstructure/Substructure/Foundation/Bearing CIMレイヤ（snapshot再生成・実寸支承ソリッド） | #1003 | 2ccf6496 |
+| WP-H | Analysis/FEM Overlay（nodes/members/supports/springs/loads + IF3 result: deformed/reaction/N-Q-M-T color map・stale guard） | #1004 | 3a6a8842 |
+| WP-I/J/K | Viewer UI（view presets/transparency/legend/STALE表示）・layer状態永続化・glTF export・analysisIdブラウザ互換fix | #1005 | a4163977 |
+| WP-L | 全Module統合integration test・substructure fail-closed・Completion Gate evidence・Final Report | （本PR） | — |
+
+====================================================================
+4. Scene Architecture
+====================================================================
+
+- `frontend/src/next/modules/cim/integrated3dScene.ts`: 契約（CimLayerId 18層・CimEntityMetadata・Integrated3DScene・attachCimMetadata/resolveCimMetadata）
+- `cimSceneBuilder.ts`: buildIntegrated3DScene — 各Module正本からレイヤを決定論生成（terrain/existing/roadPavement/bridgeLayout/superstructure/substructure/foundation/bearing/fem/…）
+- `roadCimSurface.ts`: Road CIM面（left/center/rightリボン・幅員+widthChangePoints拡幅+左右横断勾配）
+- `superstructureCimLayer.ts` / `substructureCimLayer.ts`: Super/Sub/Foundation/Bearingレイヤ
+- `analysisCimLayer.ts`: FEM/Result overlay（IF3 stale guard）
+- `cimExport.ts`: glTF（GLB）export
+- `CimModuleShellPage.tsx` + `Cim3DViewer.tsx`: CIM/統合3Dページ（レイヤー/選択/カメラ/透過/export/永続化）
+
+====================================================================
+5. Coordinate / Terrain / Road CIM / Bridge / Super / Sub / Foundation / Bearing / FEM / Result / Viewer UI / Persistence / STALE / Export / Reference
+====================================================================
+
+- Coordinate: renderCoordinate（domain→three: x, z, -y）単一。全レイヤ同一world空間。
+- Terrain: Reference Mountain地形（緑メッシュ）。Existing: tube/cylinder。位置整合OK。
+- Road CIM: 幅員9m（路肩含む）・拡幅・左右横断勾配反映の面。実画面で帯状表示。
+- Bridge: BridgeLayoutDocument→A1/A2/P1..Pn/span/skew。
+- Superstructure: GeometrySnapshot再生成→主桁/床版/横桁。Substructure: 下部工ソリッド+footing/pile。
+- Foundation: footing/pile抽出レイヤ。Bearing: 実寸ソリッド（w×d×h・向き・色分け）。
+- FEM/Result: nodes/members/supports/springs/loads + deformed/reaction/N-Q-M-T color map。IF3 stale guard（stale時は結果非描画）。
+- Viewer UI: 18レイヤーON/OFF・raycast選択+sourceEntityId/stableId表示・camera fit/presets・transparency・解析結果ステータス。
+- Persistence: Save/restart/.spacerproj確立。統合3Dは再生成（第2正本なし）。layer状態はlocalStorage per-project復元。
+- STALE: IF3 gate + roadDownstream + analysisStaleness。
+- Export: glTF（.glb）96KB書き出し成功。STL既存。IFC DEFER。
+- Reference: Reference Mountain + RB-S10-001 fixture。
+
+====================================================================
+6. 検証結果
+====================================================================
+
+| 項目 | 結果 |
+|---|---|
+| frontend typecheck（tsc -b） | PASS |
+| frontend tests（src/next + src/liner） | 1721 passed（CIM: contract/surface/super-sub/foundation/bearing/analysis/export/integration 17件含む） |
+| analysisId tests（SHA-1互換・UUIDv5一致） | 5 passed |
+| frontend build | PASS |
+| 実画面（Chromium headed・DISPLAY=:0） | 地形+道路+選択メタデータ・view presets・transparency・glTF export・ページエラーなし |
+| Discord | 各WP完了報告・早期/最終screenshots送信 |
+| Luna | 画像判定（3D・view・transparency・selection・CIMページ）複数回OK |
+
+====================================================================
+7. unresolved / deferred / risk
+====================================================================
+
+- DEFER: IFC/IFC4 export（実装済みとしない）・isolate/section/cut/clipping/wireframe/measurement・super/sub full-sceneの実画面同時表示（Reference Bridge生成フロー依存）
+- PARTIAL: superstructure/substructureのfull-scene同時表示（RB-S10-001 Reference Bridgeで要検証）
+- risk: 統合3Dの大規模シーン性能（terrainTiles LOD・draw skip方針はFROZEN）
+- Electron固有E2Eは既存verifyApolloElectron（Electron起動検証）+ Chromium headed実画面（レンダラー同一）で代替
+
+====================================================================
+8. final SHA
+====================================================================
+
+Phase 8 全PR merge後の最新SHA（本PR merge後に4系統同期で確定）
+
+====================================================================
+9. verdict
+====================================================================
+
+Phase 8 COMPLETE（STOP）

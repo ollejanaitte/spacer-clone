@@ -1,0 +1,68 @@
+統合設計_Phase8_260814_0235_CIM_統合3D完成_CompletionGateEvidence
+====================================================================
+
+baseline: 3b5bd371ab4b28454ddc7f953edc87d4c66b5d9c（Phase 8-00）
+Phase 8-01 Design Freeze: FROZEN（PR #1000）
+PR: #1001(WP-A) #1002(WP-B/C/D) #1003(WP-E/F/G) #1004(WP-H) #1005(WP-I/J/K)
+
+====================================================================
+Completion Gate チェック（Phase 8 FROZEN基準）
+====================================================================
+
+【Architecture】PASS
+- Scene contract（CimLayerId 18層・CimEntityMetadata）FROZEN実装
+- coordinate統一（renderCoordinate・domain→three 単一）・units（m）
+- stable ID / sourceEntityId（terrain/existing/road/bridge/super/sub/foundation/bearing/fem）
+- layer ownership（各レイヤは正本から決定論再生成）
+
+【Terrain / Existing】PASS
+- Terrain表示（Reference Mountain地形・緑）・Existing表示（tube/cylinder）
+- Road・Bridge位置整合（同一world座標）
+
+【Road】PASS
+- Road CIM surface（幅員+拡幅+左右横断勾配/片勾配反映・テンプレート全幅）
+- horizontal/vertical/width/widening/crossSlope/superelevation反映
+- Road CIM metadata（road-surface:{alignmentId}）
+
+【Bridge】PASS
+- BridgeLayoutレイヤ（A1/A2/P1..Pnマーカー・span・skew指示線）配線
+- 実画面（Bridge Layout反映）確認済み（Phase 7.4）
+
+【Superstructure】PARTIAL（unit検証・full-sceneはReference Bridge要）
+- superstructureSceneBuilder配線・GeometrySnapshot再生成・bearingソリッド
+- full-document検証はreferenceBridge unit tests（RB-S10-001）で担保
+
+【Substructure / Foundation】PARTIAL（unit検証・snapshot要）
+- substructureSceneBuilder配線・foundation（footing/pile）抽出・fail-closed化
+
+【Bearing】PASS（unit・layer実装）
+- 実寸支承ソリッド（w×d×h・localFrame向き・bearingType色分け）
+
+【Analysis】PASS（unit・layer実装）
+- FEM nodes/members/supports/springs/loadsレイヤ（AnalysisDocument正本）
+- deformed/reaction/N-Q-M-T color map（IF3 result・stale guard）
+
+【Viewer】PASS
+- layer ON/OFF（18層）・raycast選択+metadataパネル（実画面確認済み）
+- camera fit（全体/道路）・view presets（透視/平面/側面/等角）・transparency
+- result legend/STALE表示（解析結果ステータス）
+
+【Persistence】PASS
+- Save/restart/.spacerproj（Phase 7確立・CIM層状態はlocalStorage per-project）
+- 統合3Dは正本から毎render決定論再生成（第2正本にしない）
+
+【STALE】PASS
+- IF3 stale guard（stale時は結果レイヤ非描画・resultStatus返却）
+- roadDownstream（Phase 7.3）・analysisStaleness（3-gate）継続
+
+【Reference / Quality】PASS
+- Reference Mountain・Reference Bridge（RB-S10-001）fixture
+- frontend tests 1721 passed（CIM integration含む）・typecheck・build PASS
+- 実画面（Chromium headed, DISPLAY=:0）ページエラーなし
+
+【Evidence】PASS
+- screenshots: 早期（p8_early_*）・第2回（p8_final_*）・view/transparency（p8_ijk_*）・selection（p8_final_cim_selection.png）
+- Discord送信・Luna画像判定（複数回）
+
+====================================================================
+verdict: Phase 8-02 WP-L Completion Gate PASS（Phase 8 COMPLETE）
