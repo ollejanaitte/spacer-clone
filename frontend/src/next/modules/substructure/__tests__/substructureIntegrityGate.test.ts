@@ -14,10 +14,6 @@ import { buildBearingReactionFromHandoff } from "../substructurePhase5Adapter";
 import { computeSubstructureQuantity, runSubstructureDesign } from "../substructureDesign";
 import { readSubstructureDocument, writeSubstructureDocument } from "../../substructureModuleAdapter";
 import { runSubstructureIntegrityGate } from "../substructureIntegrityGate";
-import { validateSubstructureData } from "../substructureValidation";
-function validateDraft(doc: unknown) {
-  return validateSubstructureData({ substructureDocument: doc } as Record<string, unknown>);
-}
 
 describe("Substructure Completion Gate (WP-K)", () => {
   function seed(projectId: string) {
@@ -61,7 +57,6 @@ describe("Substructure Completion Gate (WP-K)", () => {
     };
     const write = writeSubstructureDocument(manager, projectId, withQty);
     if (!write.ok) {
-      console.log("WRITE FAIL", JSON.stringify(validateDraft(withQty)));
     }
     expect(write.ok).toBe(true);
 
