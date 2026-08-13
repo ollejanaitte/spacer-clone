@@ -27,6 +27,8 @@ import { buildBridgeLayoutThreeScene, type BridgeLayoutSceneBuildResult } from "
 import { readRoadAlignmentContext } from "../bridgeLayout/bridgeLayoutDomain";
 import { verticalDraftAlignmentToElements } from "../road/verticalDraftBridge";
 import { buildRoadCimSurface } from "./roadCimSurface";
+import { buildSuperstructureCimLayer } from "./superstructureCimLayer";
+import { buildSubstructureCimLayer } from "./substructureCimLayer";
 import {
   attachCimMetadata,
   defaultCimLayerState,
@@ -276,11 +278,29 @@ export function buildIntegrated3DScene(
     layers.bridgeLayout = bridgeGroup;
   }
 
-  // --- superstructure / substructure / foundation / bearing / fem (WP-E/F/G/H) ---
-  // Layers always exist in the scene (empty until their WP); visibility is a
-  // separate layerState concern handled by the viewer.
+  // --- superstructure / substructure / foundation / bearing (WP-E/F/G) ---
+  const superLayer = new THREE.Group();
+  const subLayer = new THREE.Group();
+  const foundationLayer = new THREE.Group();
+  const bearingLayer = new THREE.Group();
+
+  const superCim = buildSuperstructureCimLayer(manager, projectId);
+  superLayer.add(superCim.superstructureGroup);
+  bearingLayer.add(superCim.bearingGroup);
+  metadata.push(...superCim.metadata);
+
+  const subCim = buildSubstructureCimLayer(manager, projectId);
+  subLayer.add(subCim.substructureGroup);
+  foundationLayer.add(subCim.foundationGroup);
+  metadata.push(...subCim.metadata);
+
+  layers.superstructure = superLayer;
+  layers.substructure = subLayer;
+  layers.foundation = foundationLayer;
+  layers.bearing = bearingLayer;
+
+  // --- fem / labels / reference (WP-H / WP-I) ---
   const deferredLayers: CimLayerId[] = [
-    "superstructure", "substructure", "foundation", "bearing",
     "femNodes", "femMembers", "supports", "springs", "loads",
     "deformed", "reaction", "result", "labels", "reference",
   ];
