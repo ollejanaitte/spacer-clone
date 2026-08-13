@@ -1,10 +1,10 @@
 /**
- * CIM Integrated 3D viewer (Phase 8-01 FROZEN / Phase 8-02 WP-A).
+ * CIM Integrated 3D viewer (Phase 8-01 FROZEN / Phase 8-02 WP-A / WP-I).
  *
  * Renders the derived CIM scene with per-layer visibility, raycast selection
  * (resolving CimEntityMetadata), camera fit/reset and view presets
- * (perspective / plan / side). All geometry lives in the shared Render
- * Coordinate space (domain -> three).
+ * (perspective / plan / side / iso) plus a transparency slider. All geometry
+ * lives in the shared Render Coordinate space (domain -> three).
  */
 
 import { useEffect, useRef, useState } from "react";
@@ -12,14 +12,38 @@ import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { resolveCimMetadata, type CimEntityMetadata, type CimLayerId, type Integrated3DScene } from "../modules/cim/integrated3dScene";
 
+export type CimViewPreset = "perspective" | "plan" | "side" | "iso";
+
 export interface Cim3DViewerProps {
   readonly scene: Integrated3DScene;
   readonly layerState: Record<CimLayerId, boolean>;
   readonly onSelect?: (metadata: CimEntityMetadata | null) => void;
   readonly background?: number;
+  /** Optional camera preset (perspective / plan / side / iso). */
+  readonly viewPreset?: CimViewPreset;
+  /** Optional global transparency (0..1 opacity). */
+  readonly transparency?: number;
+  /** Called with the new transparency (slider value 0..1, 1 = transparent). */
+  readonly onTransparencyChange?: (transparency: number) => void;
 }
 
-export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4 }: Cim3DViewerProps) {
+function applyTransparency(root: THREE.Object3D, opacity: number): void {
+  root.traverse((obj) => {
+    const mesh = obj as THREE.Mesh;
+    if (mesh.isMesh && Array.isArray(mesh.material)) {
+      for (const m of mesh.material) {
+        m.transparent = opacity < 1;
+        m.opacity = opacity;
+      }
+    } else if (mesh.isMesh && mesh.material) {
+      const mat = mesh.material as THREE.Material & { transparent?: boolean; opacity?: number };
+      mat.transparent = opacity < 1;
+      mat.opacity = opacity;
+    }
+  });
+}
+
+export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4, viewPreset = "perspective", transparency = 1, onTransparencyChange }: Cim3DViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const controlsRef = useRef<OrbitControls | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
@@ -28,6 +52,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
   onSelectRef.current = onSelect;
   const layerClonesRef = useRef<Map<CimLayerId, THREE.Group>>(new Map());
   const fitRef = useRef<((box?: THREE.Box3) => void) | null>(null);
+  const presetRef = useRef<((preset: CimViewPreset) => void) | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -109,8 +134,39 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
     };
     fitRef.current = fitCamera;
 
+    const setViewPreset = (preset: CimViewPreset) => {
+      if (!camera || !controls) return;
+      const box = scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup);
+      if (box.isEmpty()) return;
+      const size = box.getSize(new THREE.Vector3());
+      const center = box.getCenter(new THREE.Vector3());
+      const radius = Math.max(size.x, size.y, size.z) * 0.5;
+      const dist = radius * 2.2;
+      let pos: [number, number, number];
+      if (preset === "plan") {
+        pos = [center.x, center.y + dist * 1.6, center.z + radius * 0.1];
+      } else if (preset === "side") {
+        pos = [center.x, center.y, center.z + dist * 1.6];
+      } else if (preset === "iso") {
+        pos = [center.x + dist * 0.8, center.y + dist * 0.8, center.z + dist * 0.8];
+      } else {
+        pos = [center.x + size.x * 0.65, center.y + Math.max(size.z, size.y) * 0.75, center.z + size.x * 0.65 + radius];
+      }
+      camera.near = Math.max(0.01, radius / 10000);
+      camera.far = Math.max(1000, radius * 400);
+      camera.position.set(...pos);
+      camera.lookAt(center);
+      controls.target.copy(center);
+      controls.update();
+    };
+    presetRef.current = setViewPreset;
+
     const initialBox = scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup);
-    fitCamera(initialBox);
+    if (viewPreset === "perspective") {
+      fitCamera(initialBox);
+    } else {
+      setViewPreset(viewPreset);
+    }
 
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
@@ -166,13 +222,19 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       return undefined;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [scene, scene.bounds, layerState]);
+  }, [scene, scene.bounds, layerState, viewPreset]);
 
   useEffect(() => {
     for (const [layer, clone] of layerClonesRef.current.entries()) {
       clone.visible = layerState[layer] ?? false;
     }
   }, [scene, layerState]);
+
+  useEffect(() => {
+    for (const clone of layerClonesRef.current.values()) {
+      applyTransparency(clone, transparency);
+    }
+  }, [scene, transparency]);
 
   return (
     <div
@@ -207,6 +269,24 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
         >
           Fit（道路）
         </button>
+        <button type="button" className="next-secondary" data-testid="cim-view-perspective" onClick={() => presetRef.current?.("perspective")}>透視</button>
+        <button type="button" className="next-secondary" data-testid="cim-view-plan" onClick={() => presetRef.current?.("plan")}>平面</button>
+        <button type="button" className="next-secondary" data-testid="cim-view-side" onClick={() => presetRef.current?.("side")}>側面</button>
+        <button type="button" className="next-secondary" data-testid="cim-view-iso" onClick={() => presetRef.current?.("iso")}>等角</button>
+      </div>
+      <div className="cim-transparency" data-testid="cim-transparency">
+        <label>
+          <span>透明度</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.05"
+            value={1 - transparency}
+            data-testid="cim-transparency-input"
+            onChange={(e) => onTransparencyChange?.(Number(e.target.value))}
+          />
+        </label>
       </div>
     </div>
   );
