@@ -26,6 +26,7 @@ import { readBridgeLayoutDocument } from "../bridgeLayoutModuleAdapter";
 import { buildBridgeLayoutThreeScene, type BridgeLayoutSceneBuildResult } from "../bridgeLayout/bridgeLayoutScene";
 import { readRoadAlignmentContext } from "../bridgeLayout/bridgeLayoutDomain";
 import { verticalDraftAlignmentToElements } from "../road/verticalDraftBridge";
+import { buildRoadCimSurface } from "./roadCimSurface";
 import {
   attachCimMetadata,
   defaultCimLayerState,
@@ -69,6 +70,20 @@ function buildRoadMeshFromCanonical(manager: ProjectManager, projectId: string) 
     stationInterval: 5,
   });
   return mesh.vertices.length > 0 ? mesh : null;
+}
+
+/** Load the canonical roadData and build the Road CIM surface (width/widening/cross-slope aware). */
+function buildRoadSurfaceFromCanonical(manager: ProjectManager, projectId: string) {
+  const roadData = readRoadData(manager, projectId);
+  if (!roadData) {
+    return null;
+  }
+  const loaded = loadRoadEditorDraft(roadData);
+  if (!loaded.ok) {
+    return null;
+  }
+  const surface = buildRoadCimSurface(loaded.draft, { sampleInterval: 5 });
+  return surface.vertices.length > 0 ? surface : null;
 }
 
 export interface BuildCimSceneInput {
@@ -155,7 +170,7 @@ export function buildIntegrated3DScene(
 
   // --- roadPavement ---
   const roadGroup = layerGroup(layerState, "roadPavement") ?? new THREE.Group();
-  const roadMeshData = buildRoadMeshFromCanonical(manager, projectId);
+  const roadMeshData = buildRoadSurfaceFromCanonical(manager, projectId);
   if (roadMeshData) {
     const triples = new Float32Array(roadMeshData.vertices.length * 3);
     for (let i = 0; i < roadMeshData.vertices.length; i += 1) {
@@ -173,6 +188,8 @@ export function buildIntegrated3DScene(
     }
     geo.setIndex(indices);
     geo.computeVertexNormals();
+    // Raise slightly above the terrain to avoid z-fighting at equal elevation.
+    geo.translate(0, 0.2, 0);
     geo.computeBoundingBox();
     const mesh = new THREE.Mesh(
       geo,
@@ -184,7 +201,7 @@ export function buildIntegrated3DScene(
       stableId: `road-surface:${roadMeshData.stationCount > 0 ? "canonical" : "empty"}`,
       coordinateContext: "world",
       label: "道路面（Road CIM）",
-      meta: { stations: roadMeshData.stationCount, offsets: roadMeshData.offsetCount },
+      meta: { stations: roadMeshData.stationCount, width: Math.round(roadMeshData.width) },
     };
     attachCimMetadata(mesh, roadMeta);
     roadGroup.add(mesh);
@@ -197,10 +214,11 @@ export function buildIntegrated3DScene(
   const bridgeDoc = readBridgeLayoutDocument(manager, projectId);
   const roadContext = readRoadAlignmentContext(manager, projectId);
   const bridgeGroup = layerGroup(layerState, "bridgeLayout") ?? new THREE.Group();
+  const roadMeshForBridge = buildRoadMeshFromCanonical(manager, projectId);
   if (bridgeDoc) {
     const bridgeInput = {
       terrain: null as TerrainMesh | null,
-      road: roadMeshData,
+      road: roadMeshForBridge,
       existing: existingEntities,
       roadContext: roadContext.ok ? roadContext : null,
       bridgeRange: bridgeDoc.bridgeRange ?? null,
