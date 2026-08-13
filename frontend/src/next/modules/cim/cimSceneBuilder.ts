@@ -29,6 +29,7 @@ import { verticalDraftAlignmentToElements } from "../road/verticalDraftBridge";
 import { buildRoadCimSurface } from "./roadCimSurface";
 import { buildSuperstructureCimLayer } from "./superstructureCimLayer";
 import { buildSubstructureCimLayer } from "./substructureCimLayer";
+import { buildAnalysisCimLayer } from "./analysisCimLayer";
 import {
   attachCimMetadata,
   defaultCimLayerState,
@@ -299,11 +300,31 @@ export function buildIntegrated3DScene(
   layers.foundation = foundationLayer;
   layers.bearing = bearingLayer;
 
-  // --- fem / labels / reference (WP-H / WP-I) ---
-  const deferredLayers: CimLayerId[] = [
-    "femNodes", "femMembers", "supports", "springs", "loads",
-    "deformed", "reaction", "result", "labels", "reference",
+  // --- analysis / FEM overlay (WP-H) ---
+  const regeneratedFrom: { module: string; checksum?: string }[] = [
+    { module: "terrain", checksum: "reference-mountain" },
+    { module: "road" },
+    { module: "bridgeLayout" },
+    { module: "superstructure" },
+    { module: "substructure" },
+    { module: "analysis" },
   ];
+  const analysis = buildAnalysisCimLayer(manager, projectId);
+  layers.femNodes = analysis.femNodesGroup;
+  layers.femMembers = analysis.femMembersGroup;
+  layers.supports = analysis.supportsGroup;
+  layers.springs = analysis.springsGroup;
+  layers.loads = analysis.loadsGroup;
+  layers.deformed = analysis.deformedGroup;
+  layers.reaction = analysis.reactionGroup;
+  layers.result = analysis.resultGroup;
+  metadata.push(...analysis.metadata);
+  if (analysis.resultStatus !== "none") {
+    regeneratedFrom.push({ module: "analysisResult", checksum: analysis.resultStatus });
+  }
+
+  // --- labels / reference (WP-I) ---
+  const deferredLayers: CimLayerId[] = ["labels", "reference"];
   for (const layer of deferredLayers) {
     layers[layer] = new THREE.Group();
   }
@@ -316,11 +337,6 @@ export function buildIntegrated3DScene(
     layers,
     metadata,
     bounds: merged,
-    regeneratedFrom: [
-      { module: "terrain", checksum: "reference-mountain" },
-      { module: "road" },
-      { module: "bridgeLayout" },
-      ...(roadContext.ok ? [{ module: "roadAlignment" }] : []),
-    ],
+    regeneratedFrom,
   };
 }
