@@ -11,7 +11,7 @@ import type { FrameAnalysisResultResource } from "../../../../contracts/frameAna
 
 function makeProject() {
   resetProjectManagerForTest();
-  const project = applyBusinessMetadata(createEmptyProject("Stale"), { businessNumber: "S-1" });
+  const project = applyBusinessMetadata(createEmptyProject("Stale"), { businessNumber: "S-1", designStage: "bridge-detailed" });
   getProjectManager().importProject(project);
   return getProjectManager().listProjects()[0]!;
 }
