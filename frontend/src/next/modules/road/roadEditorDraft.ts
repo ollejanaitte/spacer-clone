@@ -75,6 +75,12 @@ export function buildDomainDraftFromLinerDraft(
         bundle.id === draft.activeAlignmentId || bundle.id === draft.alignment.id || index === 0
           ? {
               ...bundle,
+              // The active bundle is the ACTIVE alignment: keep its identity in
+              // sync with the alignment id so the canonical round-trip preserves
+              // the alignment id (avoids bundle/alignment id drift breaking
+              // downstream references such as the Bridge Layout roadReference).
+              id: draft.alignment.id,
+              name: draft.alignment.id,
               alignment: draft.alignment,
               stationDefinition: draft.stationDefinition,
               verticalAlignment: draft.verticalAlignment,
@@ -91,7 +97,7 @@ export function buildDomainDraftFromLinerDraft(
     linerModelId: draft.alignment.linerModelId ?? "road",
     coordinatePolicyId: draft.alignment.coordinatePolicyId ?? null as unknown as string,
     alignments,
-    activeAlignmentId: draft.activeAlignmentId,
+    activeAlignmentId: draft.alignment.id,
     activeLineId: draft.activeLineId,
     ...(draft.measuredGrid ? { measuredGrid: draft.measuredGrid } : {}),
     ...(draft.drawingSettings ? { drawingSettings: draft.drawingSettings } : {}),
