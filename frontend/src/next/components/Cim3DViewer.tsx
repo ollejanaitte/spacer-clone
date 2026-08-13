@@ -27,6 +27,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
   const onSelectRef = useRef(onSelect);
   onSelectRef.current = onSelect;
   const layerClonesRef = useRef<Map<CimLayerId, THREE.Group>>(new Map());
+  const fitRef = useRef<((box?: THREE.Box3) => void) | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -85,13 +86,13 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
     threeScene.add(sceneGroup);
 
 
-    const fitCamera = (boundsBox: THREE.Box3) => {
+    const fitCamera = (boundsBox?: THREE.Box3) => {
       if (!camera || !controls) return;
-      const box = boundsBox.clone();
-      if (box.isEmpty()) {
-        box.setFromObject(sceneGroup);
+      const box = boundsBox ? boundsBox.clone() : (scene.bounds ? scene.bounds.clone() : null);
+      if (!box || box.isEmpty()) {
+        box?.setFromObject(sceneGroup);
       }
-      if (box.isEmpty()) return;
+      if (!box || box.isEmpty()) return;
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
@@ -106,6 +107,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       controls.target.copy(center);
       controls.update();
     };
+    fitRef.current = fitCamera;
 
     const initialBox = scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup);
     fitCamera(initialBox);
@@ -181,6 +183,31 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       {renderError !== null && (
         <div className="next-error" data-testid="cim-3d-error">{renderError}</div>
       )}
+      <div className="cim-viewer-tools" data-testid="cim-viewer-tools">
+        <button
+          type="button"
+          className="next-secondary"
+          data-testid="cim-fit-all"
+          onClick={() => fitRef.current?.()}
+        >
+          Fit（全体）
+        </button>
+        <button
+          type="button"
+          className="next-secondary"
+          data-testid="cim-fit-road"
+          onClick={() => {
+            const road = layerClonesRef.current.get("roadPavement");
+            if (!road) return;
+            const box = new THREE.Box3().setFromObject(road);
+            if (!box.isEmpty()) {
+              fitRef.current?.(box);
+            }
+          }}
+        >
+          Fit（道路）
+        </button>
+      </div>
     </div>
   );
 }
