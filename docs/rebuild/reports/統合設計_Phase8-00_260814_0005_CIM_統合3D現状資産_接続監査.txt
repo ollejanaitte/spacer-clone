@@ -1,0 +1,156 @@
+統合設計_Phase8-00_260814_0005_CIM_統合3D現状資産_接続監査
+====================================================================
+
+作業名: 統合設計 Phase 8-00「CIM / 統合3D 現状資産・接続監査」
+完了日時: 2026-08-14 00:05 JST
+baseline: cfdbb98d12ba490fc276b633948164f38a18294a（Phase 7.4 Final Report PR #998 merge後）
+Phase 7.4: COMPLETE（Road/LINER Rescue 実画面完成・実操作受入検証）
+verdict: Phase 8-00 COMPLETE（Phase 8-01 Design Freezeへ進む）
+
+====================================================================
+1. 目的
+====================================================================
+
+- 既存3D/CIM関連資産を網羅棚卸しし、KEEP / ADAPT / MERGE / REWRITE /
+  DEFER / UNKNOWN に分類する。
+- 各Module正本（Terrain/Road/Bridge Layout/Superstructure/Substructure/
+  Foundation/Bearing/Analysis）から決定論的に統合3Dを再生成できる構成を
+  把握し、欠落・重複・座標変換・sourceEntityId追跡の現状を確定する。
+
+====================================================================
+2. 監査結果サマリ
+====================================================================
+
+## 2-1. Viewer / Scene
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| MountainViaduct3dViewer（viewer.tsx） | ADAPT | R3F Canvas・layer別visibility・support選択ハイライト・camera preset |
+| buildUnified3DScene（scene.ts） | KEEP | terrain/road/bridge/substructure/frameを安定IDで合成（P03正本） |
+| camera.ts / threeCoords.ts / terrain.ts / substructure.ts / markers.ts / selection.ts / viewerSwitch.ts | KEEP | 決定論的地形・markers解決・selection/ID |
+| renderCoordinate.ts | KEEP | domain→Three 単一正本（three.x=x, y=z, z=-y） |
+| SceneViewer.tsx | ADAPT | 共有THREEホスト。fit/reset・view切替・legend・transparency UI無し |
+| IntegratedSceneViewer.tsx / integratedSceneBuilder.ts | ADAPT | Terrain+Road+Existing のみ（super/sub未統合） |
+| TerrainViewer.tsx / BridgeLayoutSceneViewer.tsx | KEEP | 各モジュール3D表示 |
+| superstructureSceneBuilder.ts | ADAPT | 主桁=端点間直線box近似・曲線追従の要修正・I桁断面実形状未実装 |
+| substructureSceneBuilder.ts | ADAPT | 実装済みだがUI未配線・全solid同一名 |
+| substructure/viewer3d/SubstructureViewer3D.tsx・threeFactory.ts | KEEP | R3F・raycast選択・camera preset・Fit All/Selection（旧route実稼働） |
+| viewer/SceneBuilder.ts・renderers/* | KEEP | 既存解析モデル描画（nodes/members/supports/loads/deformed/result） |
+| coordinateTransform.ts（viewer） | MERGE | liner swap=ONで(x,z,-y)=renderCoordinateと同じ→統合対象 |
+| threeFactory.swapToYUp（substructure） | MERGE | 下部工Z-up正本用。renderCoordinateと方向一致・別実装→統合対象 |
+| viewer.tsx内インライン変換 [p.x,p.z,-p.y] 等 | MERGE | renderCoordinate委譲へ統一 |
+
+## 2-2. Terrain / Existing
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| terrainModule.ts / terrainModuleAdapter.ts | KEEP | TerrainDocument正本（メタデータ文書・実メッシュ非保持） |
+| terrainSurface.ts / terrainViewerBuilder.ts / terrainCoordinate.ts / terrainImport.ts / terrainTiles.ts | KEEP | 決定論メッシュ生成・インポート・LOD |
+| referenceMountain.ts | ADAPT | 41×41/1000mグリッド＋既設＋計画道路。3D生成の実質フォールバック |
+| terrainCimGeometry.ts | ADAPT | 統計・メタデータのみのCIMサマリ |
+| existingConditions.ts / existingViewerBuilder.ts | KEEP | entityId安定ID・coordinateContextId・metadata・THREE tube/cylinder |
+| TerrainModuleShellPage.tsx | ADAPT | Reference Mountainサンプル表示。正本documentから直接メッシュ生成なし |
+
+## 2-3. Road CIM
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| roadDataSchema.ts / roadDataMigration.ts / roadEditorDraft.ts | KEEP | Canonical Road Data正本・checksum・atomic migration |
+| roadCimGeometry.ts | KEEP | RoadCimGeometry（metadata/stations/sections/centerline/surface/pavementEnvelope）。generatedAt有り（決定論分離要） |
+| roadMesh.ts | ADAPT | 上面サーフェスメッシュ。widthChangePoints（拡幅）非反映・leftSlopePercent非反映 |
+| roadDownstream.ts | DEFER | STALE/INVALID判定実装済み・UI未配線 |
+| intermediateResult.ts / width.ts / crossSection.ts / horizontal.ts / vertical.ts / stationing.ts | KEEP | 決定論コア |
+| road3dCamera.ts / RoadPreviews.tsx | KEEP | 3Dカメラ・2D SVGプレビュー |
+| RoadEditorPanel.tsx / RoadModuleShellPage.tsx | ADAPT | Road正本からeditor draft→2D preview。Road3DMesh/CIMの3D表示は無し |
+| referenceSamples.ts | KEEP | 直線/クロソイド/円弧+拡幅+crossSlopeサンプル |
+
+## 2-4. Bridge Layout
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| bridgeLayoutTypes.ts / bridgeLayoutDomain.ts / bridgeLayoutModuleAdapter.ts | KEEP | BridgeLayoutDocument正本・supportId=A1/Pn/A2・spanId=S n |
+| bridgeLayoutPlacement.ts / bridgeLayoutPiers.ts / bridgeLayoutSpans.ts | KEEP | 配置候補・support station・skew・span導出 |
+| bridgeLayoutSupportHandoff.ts / bridgeLayoutSpanHandoff.ts | KEEP | supportId/XYZ/elevation/tangent/skew・coordinateContext明示 |
+| bridgeLayoutReferences.ts / bridgeLayoutIntegrityGate.ts | KEEP | dangling参照検出・最終ゲート |
+| bridgeLayoutScene.ts / BridgeLayoutSceneViewer.tsx | KEEP | A1/A2/P1..Pnマーカー・skew指示線・spanラベル。躯体ソリッド無し |
+| BridgeLayoutModuleShellPage.tsx | KEEP | UI統合 |
+
+## 2-5. Superstructure / Substructure / Foundation / Bearing
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| superstructureTypes.ts / superstructureDocumentDomain.ts / superstructureGenerator.ts / superstructureGeometry.ts | KEEP | SuperstructureDocument正本・GeometrySnapshot生成 |
+| superstructureSceneBuilder.ts | ADAPT | 主桁直線box・床版bbox・横桁box・支承marker。曲線橋追従・実形状要修正 |
+| apollo/geometry/*（engine/types/placement/alignmentConnector/deck/members） | KEEP | 曲線追従の基盤・GeometrySnapshot（GirderLine/DeckReference/BearingPoint/MemberKind） |
+| substructure/model.ts / SubstructureSolidGenerator.ts / PierSolidGenerator.ts / FoundationSolidGenerator.ts / SupportPlacementEngine.ts | KEEP | 下部工v0.2.0正本・橋台/橋脚/基礎一体ソリッド・杭グリッド・placement |
+| substructureTypes.ts / substructureDocumentDomain.ts / substructurePlacement.ts / substructureGeometry.ts / substructureFoundation.ts / substructureTerrain.ts | KEEP | SubstructureDocument正本・基礎標高・embedment・杭配置・地形関係 |
+| substructureSceneBuilder.ts | ADAPT | 実装済み・UI未配線・ID規則 sub-*/sub:* |
+| superstructure/substructure SceneBuilder 未配線 | DEFER | Super/SubStructureModuleShellPage に3D viewer無し |
+| bearingSpring.ts（BearingSupportResolver） | KEEP | seatId join・DOFマッピング・spring解決＝単一正本 |
+| superstructureHandoff.ts / substructurePhase5Adapter.ts | KEEP | 支承seat position/elevation/orientation/localOffset・seatId正規化 |
+| Bearing 3Dソリッド（実寸w×d×h・向き反映） | REWRITE | 欠落。現状はmarker/旧Apollo装飾boxのみ |
+| ダイヤフラム（diaphragm） | DEFER | 既存3D資産に存在せず |
+| geometryReference.solidsDigest | ADAPT | 両documentでnull・digest算出未実装 |
+
+## 2-6. Analysis / FEM
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| analysisDocumentTypes.ts / analysisDocument.ts / analysisModel.ts / analysisViewerModel.ts / resultAdapter.ts | KEEP | AnalysisDocument正本・sourceEntityId（D-11）・model/contentChecksum |
+| analysisStaleness.ts / if3ResultGate.ts / if3ExportGate.ts | KEEP | 3-gate stale guard・IF3 authoritative gate |
+| bearingSpring.ts / loadModel.ts / superstructureAdapter.ts / substructureAdapter.ts | KEEP | 支承spring・荷重・部材/支承フラグメント |
+| viewer/memberForceColorMap.ts・renderers/ResultDiagramRenderer.ts・DeformedShapeRenderer.ts・LoadRenderer.ts | KEEP | N/Qy/Qz/My/Mz diagram・変形・荷重・色マップ |
+| timeHistory/*（前後端） | KEEP | 時刻歴アニメーション・チャート |
+| backend/engine/*（solver/results/combination/eigen/response_spectrum/moving_load/influence/time_history/if3_*） | KEEP | 線形静/固有/応答/移動荷重/影響線/時刻歴 |
+| Analysis overlay の統合3D組込み | ADAPT | 従来/Viewer3Dのみ。統合3Dへ未接続 |
+| QuickAnalysisPage.tsx | REWRITE | プレースホルダのまま |
+
+## 2-7. Persistence / Export
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| persistence/*（projectPersistence/filesystem/node/ipc/memory/package） | KEEP | Save/restart/.spacerproj/backup完備 |
+| projectDataCore.ts / schema.ts / projectManager系 | KEEP | PDC統合（analysis含む） |
+| 統合3Dのlayer/UI状態の永続化 | ADAPT | 欠落。localStorage（displaySize/spacerAxisSwap）のみ |
+| apolloStlExport.ts / linerFrameStl.ts | KEEP | STL export（Apollo/liner） |
+| liner/dxf/*・formalDrawingDxf.ts | KEEP | 正式図DXF |
+| resultCsvExport.ts / memberForceReport.ts / resultPdfReport.ts | KEEP | IF3結果 CSV/PDF |
+| glTF/GLB export | REWRITE | 欠落（コード0件） |
+| IFC/IFC4 export | DEFER | 欠落（Phase 8-01でFreeze） |
+
+## 2-8. Tests / Evidence / Electron
+
+| 資産 | 分類 | 備考 |
+|---|---|---|
+| integratedSceneBuilder.test.ts / referenceMountainScene.test.ts / roadCimGeometry.test.ts / renderCoordinate.test.ts | KEEP | CIM/scene単体テスト |
+| referenceBridge.test.ts（RB-S10-001）・referenceBridgeSubstructure.test.ts・designGolden.test.ts | KEEP | Reference Bridge/下部工 golden |
+| mountain-viaduct-500 系テスト + tests/e2e/mountain-*.spec.ts | KEEP | 3D viewer E2E（旧route） |
+| desktop/electron/*（main/preload/ipc/closeGuard/gpuMode） | KEEP | Electron本体・FS persistence IPC |
+| verifyApolloElectron.mjs / verifyApolloUnit2Electron.mjs | KEEP | `_electron`起動検証（旧Apollo viewer対象） |
+| 統合3D/CIM向け Electron E2E | REWRITE | 欠落 |
+
+====================================================================
+3. 主要欠落（Phase 8-02対象）
+====================================================================
+
+1. CIM/統合3Dモジュール本体（registry "cim"登録済み・ページ/シーン未実装）
+   → 全Module正本から全レイヤーを1画面合成する統合3Dページ
+2. Road CIM面（roadMesh: 拡幅/leftSlope非反映・RoadCimGeometry UI未接続）
+3. Super/Sub/Foundation/Bearingレイヤの統合3Dへの配線・Bearing実寸ソリッド
+4. FEM/Result overlay（nodes/members/supports/springs/loads/deformed/reaction/
+   N/Q/M/T/color map・stale guard）の統合3D組込み
+5. Viewer UI（layer ON/OFF・selection+metadata(source module/sourceEntityId)・
+   camera fit/reset・plan/side/perspective・transparency・legend・STALE表示）
+6. 座標変換の単一化（viewer.tsxインライン/threeFactory/coordinateTransform
+   → renderCoordinate委譲）
+7. 統合3Dのlayer/UI状態の永続化・統合3D Electron E2E
+8. glTF export（IFCはPhase 8-01でDEFER Freeze）
+
+====================================================================
+4. 次フェーズ
+====================================================================
+
+- Phase 8-01: Integrated3D Scene Contract・Coordinate/ID統合・layer構造・
+  sourceEntityId/metadata・stale/invalidation・persistence・export・
+  viewer behavior・test specification を完全Freeze。
+- Design Freeze Gate PASS後に Phase 8-02 WP実装へ。
