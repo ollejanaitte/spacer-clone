@@ -44,16 +44,22 @@ RB001_GRILLAGE = {
 
 class TestGrillageAnalysis(unittest.TestCase):
     def test_build_project_is_runnable(self):
-        project = build_grillage_project(json.loads(json.dumps(RB001_GRILLAGE)))["project"]
-        self.assertEqual(8, len(project["nodes"]))
-        self.assertEqual(6, len(project["members"]))
-        self.assertEqual(8, len(project["supports"]))
-        self.assertEqual(1, len(project["materials"]))
-        self.assertEqual("MAT-STEEL", project["materials"][0]["id"])
+        built = build_grillage_project(json.loads(json.dumps(RB001_GRILLAGE)))
+        self.assertEqual("RB-S10-001", built["project"]["id"])
+        self.assertEqual(8, len(built["nodes"]))
+        self.assertEqual(6, len(built["members"]))
+        self.assertEqual(8, len(built["supports"]))
+        self.assertEqual(1, len(built["materials"]))
+        self.assertEqual("MAT-STEEL", built["materials"][0]["id"])
+        self.assertIn("nodalLoads", built)
+        self.assertIn("memberLoads", built)
 
     def test_run_grillage_analysis_returns_gated_result(self):
         result = run_grillage_analysis(json.loads(json.dumps(RB001_GRILLAGE)))
         self.assertEqual("NOT_GRANTED", result["authorization"])
+        # R1 regression: the analysis must actually run (was SCHEMA_ERROR).
+        # Unloaded test frame is genuinely near-singular -> "warning" is valid.
+        self.assertIn(result["analysisSummary"]["status"], ("success", "warning"))
         self.assertIn("reactions", result)
         self.assertIn("displacements", result)
         self.assertIn("memberEndForces", result)

@@ -30,6 +30,8 @@ from backend.engine import (
 from backend.engine.bridge_model import parse_bridge_project, bridge_default, BridgeDomainError
 from backend.engine.bridge_fem_generator import generate_fem_model, BridgeFemGenerationError, analyze_generation
 from backend.engine.grillage import run_grillage_analysis, GrillageError
+from backend.engine.solver_input import run_analysis_document, SolverInputError
+from backend.engine.errors import AnalysisError
 from backend.engine.if3_normalizer import (
     build_unsupported_result_resource,
     normalize_linear_static_result_resource,
@@ -146,12 +148,56 @@ def run_analysis_endpoint(payload: dict[str, Any]) -> JSONResponse:
 
 @app.post("/api/design/analyze")
 def design_analyze_endpoint(payload: dict[str, Any]) -> JSONResponse:
-    """Run the design grillage model through the linear-static solver.
+    """Run the AnalysisDocument (or legacy grillage) through the linear-static solver.
 
-    Input: a grillage design model (nodes/members/supports/loadCases) derived
-    from GeometrySnapshot on the frontend. Output: analysis results gated
-    NOT_AUTHORIZED (Phase A numeric-authorization policy).
+    New envelope (Phase 7-02 WP-G): `{analysisDocument, solverSettings?}` ->
+    Solver Input Adapter -> KEEP solver -> raw result -> IF3 normalization.
+    Legacy envelope (COMPATIBILITY): `{grillage, nodalLoads?, memberLoads?}`.
+    Output is gated NOT_AUTHORIZED (Phase A numeric-authorization policy).
     """
+    if isinstance(payload.get("analysisDocument"), dict):
+        analysis_document = payload["analysisDocument"]
+        try:
+            result = run_analysis_document(analysis_document)
+        except (SolverInputError, AnalysisError) as exc:
+            return JSONResponse(
+                {"error": {"code": "ANALYSIS_DOCUMENT_INVALID", "message": str(exc)}},
+                status_code=400,
+            )
+        if3_metadata = extract_if3_metadata(payload)
+        if not if3_metadata and isinstance(analysis_document, dict):
+            model_checksum = analysis_document.get("modelChecksum")
+            load_cases = analysis_document.get("loadCases") or []
+            if3_metadata = {
+                "sourceDocumentId": analysis_document.get("documentId"),
+                "sourceDocumentVersion": analysis_document.get("revisionId"),
+                "sourceContentChecksum": (
+                    {"algorithm": "sha256", "hexDigest": model_checksum}
+                    if isinstance(model_checksum, str) and len(model_checksum) == 64
+                    else None
+                ),
+                "analysisSettings": analysis_document.get("analysisSettings"),
+                "loadContext": {
+                    "entries": [
+                        {
+                            "kind": "loadCase",
+                            "sourceId": str(entry.get("caseId", f"LC{index + 1}")),
+                            "label": str(entry.get("caseId", f"LC{index + 1}")),
+                        }
+                        for index, entry in enumerate(load_cases)
+                        if isinstance(entry, dict)
+                    ]
+                },
+                "solverName": "scipy_sparse",
+                "solverVersion": "0.3.0",
+            }
+        if3_result = normalize_linear_static_result_resource(result, if3_metadata or {})
+        response: dict[str, Any] = {"result": result, "if3Result": if3_result}
+        persisted_ref = maybe_persist_linear_static_if3_result(if3_metadata or {}, if3_result)
+        if persisted_ref is not None:
+            response["persistedResultRef"] = persisted_ref
+        return safe_json_response(response)
+
     grillage = payload.get("grillage", payload)
     try:
         result = run_grillage_analysis(grillage)
