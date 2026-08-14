@@ -1,0 +1,143 @@
+統合設計_Phase9-04R2_260814_1650_残PARTIALゼロ化_旧実務UI完全救出_IF3実解析Overlay_1フォルダー化_CIMViewer視認性改善_最終完遂.txt
+====================================================================
+
+作業名: 統合設計 Phase 9-04R2「残PARTIALゼロ化・旧実務UI完全救出・IF3実解析Overlay・1フォルダー化・CIM Viewer視認性改善 最終完遂」
+完了日時: 2026-08-14 16:50 JST
+baseline: f771009f（Phase 9-04R2 開始時・4系統一致）
+final:    7391a478（PR #1025 merge後・4系統一致）
+Phase 9-02 Design Freeze: 唯一のarchitecture契約（維持）
+verdict: Phase 9-04R2 PARTIAL（NOT COMPLETE・再開地点を記録）
+STOP
+
+====================================================================
+1. Sol事前レビュー（Pre-Implementation Review Gate）
+====================================================================
+
+- Codex CLI GPT-5.6 SolへPhase 9-04R2全体の事前レビューを委任（12項目）
+- 反映した指摘:
+  A. bridgeLayoutReferencesのterrain/existing参照がnullの場合にfail-closedとなり、
+     上部工生成（superstructure generator）がUIフローで失敗 → null参照はresolved扱いに修正
+  B. IF3 consumer gateに抜け道（status判定が契約と不一致・SUCCEEDED fixture不足）→
+     契約SUCCEEDED/STALE判定に修正・実SUCCEEDED fixture gate testを追加
+  C. canonical load schema / pile grid canonical表現 / 正式IF3 consumer gate の3点をFreeze対象と認識
+- 採用しない指摘: なし（重大blockerは上記A/Bで実装前対策済み）
+- レビュー反映後のClose List Freeze・Discord報告済み
+
+====================================================================
+2. WP-R2D/E AUTHORIZED Load→Solver→IF3縦断（S-03・I-06/07/08 メカニズム）DONE
+====================================================================
+
+【AUTHORIZED Load生成】（PR #1025・authorizedDeadLoad.ts）
+- FROZEN load model（Phase 5-01/5-02・superstructureLoadModel）のDL値のみを使用:
+  DL-STRUCTURAL（主桁自重）+ DL-DECK（床版自重）→ 発明禁止
+- 断面/床版幅が未宣言ならMISSING→LoadCaseなし（fail-closed・値の捏造なし）
+- 宣言時: LoadCase LC1（kind=dead・totalKN）を生成し、FEM girder nodeへ
+  tributary length加重でnodal loads（fz<0）を分布
+- buildDerivedAnalysisDocumentに接続・finalizeAnalysisDocumentでchecksum再計算
+
+【上部工生成UIフローfix】（Sol指摘A）
+- bridgeLayoutReferences: terrainReference.surfaceReference / existingConditionsReference
+  .documentReferenceId がnullならresolved（danglingではない）
+- 結果: ブラウザUIフロー（Road→BridgeLayout→Superstructure生成）が成立
+
+【IF3 solver縦断】
+- superstructureAdapter: girder sectionを常時emit（NOT_AVAILABLE時は退化section +
+  NOT_AVAILABLE issue）→ member参照のdangling解消。退化時はsolverが
+  MODEL_UNSTABLEを誠実に返す（fail-closed・0/虚偽値なし）
+- node integration検証: derived doc（loadCase 1 + nodal loads）→ POST /api/design/analyze
+  → HTTP 200・IF3 status=SUCCEEDED（authoritative）
+- browser検証: default生成橋（断面未宣言）→ HTTP 200（前回の400/500解消）・
+  solver failed（MODEL_UNSTABLE）→ resultStatus=INVALID・メッセージにstatus明記
+- analysisCimLayer: IF3 status判定を契約（SUCCEEDED/STALE/FAILED）に修正
+- CimModuleShellPage: IF3 status別の正確なメッセージ表示
+
+【IF3 consumer gate強化】（Sol指摘B）
+- analysisCimLayer.test.ts に実SUCCEEDED fixture（reaction/deformed/result overlay生成・
+  resultStatus=authoritative）とFAILED fail-closed testを追加
+
+【残】: 上部工断面入力UI（S-01/B-01）導入後のbrowserで、宣言断面に基づく
+authoritative N/Q/M/T・Reaction・Deformedの実値overlay表示が未成立（PARTIAL）
+
+====================================================================
+3. WP-R2F CIM Viewer軽微な視認性改善 DONE（PR #1024）
+====================================================================
+
+- ラベルscreen-space scaling: A1/A2/P1/P2（target 30px）・S1-S3（22px・優先度）を
+  一定の画面高に維持・world [10,240] clamp → zoom近接でラベルが巨大化しない
+- Fit box 8% padding + Fit margin拡大（fill 72%）→ 画面端（S3等）ラベル見切れ解消
+- 実画面検証（bridge付きproject・4種Fit）: Luna目視 初期4/5・Fit全体4/5・
+  Fit橋梁5/5・Fit道路4/5 → 総合OK（S3見切れ解消・近接巨大化なし）
+- tests 128 passed（bridgeLayout+components）・typecheck PASS
+
+====================================================================
+4. 残PARTIAL Close List（Phase 9-04/9-04Rからの持ち越し）
+====================================================================
+
+- B-01 旧3ペインCAD完全統合: PARTIAL（新Substructure Moduleの主要実務入力は未成立・未完）
+- B-06 杭layout grid: PARTIAL（入力fieldのみ・rows/cols grid・3D/CIM反映は未完）
+- S-01 BridgeStructureInputPanel/本格入力UI完全統合: PARTIAL
+  （生成summary UIのみ・断面/床版/横桁/支承/材料/荷重の本格入力UIは未完）
+- S-03 AUTHORIZED荷重: メカニズムDONE・UI入力→document縦断はS-01依りPARTIAL
+- S-07 旧Apollo実務UI完全統合: PARTIAL（救出対象の本格UIは未完）
+- I-06/07/08 IF3 N/Q/M/T・Reaction・Deformed実画面: PARTIAL
+  （メカニズム+gate実証DONE・authoritative実値は断面入力UI後に成立）
+- 環境: 正規作業フォルダー=spacer-clone（main）確立・GitHub main=唯一正本DONE・
+  spacer-clone-nextはpre-existing dirty（evidence files・canonicalと異なる未コミット内容）を
+  破棄せぬためsync worktreeとして残置（ユニーク必須成果なし）
+
+====================================================================
+5. 検証結果
+====================================================================
+
+- src/next: 125 test files / 731 tests PASS（全変更モジュール含む）
+- legacy dirs: apollo 636・liner 1010・bridge 255・viewer 228・substructure 328・
+  level0 11・timeHistory 221・verification 20・results 29・components/contracts/desktop/
+  draft/exports/if3/input/i18n/platform/polyfills/types/api/data/compare 535 全PASS
+- typecheck PASS・build（vite dev）動作
+- App.* 組み合わせtestはbaseline（f771009）でもhang（pre-existing・本変更起因でない）
+- 実画面: CIM Viewerラベル改善4種screenshot・Luna総合OK・解析HTTP 200（fail-closed表示）
+
+====================================================================
+6. PR一覧（Phase 9-04R2）
+====================================================================
+
+| PR | 内容 | SHA |
+|---|---|---|
+| #1024 | CIM Viewerラベル視認性改善（screen-space scaling・Fit padding/margin・span優先度） | f771009f |
+| #1025 | AUTHORIZED DL LoadCase→Solver縦断・IF3 gate強化・上部工生成UIフローfix | 7391a478 |
+
+====================================================================
+7. Completion Gate判定
+====================================================================
+
+- Close List: B-01/B-06/S-01/S-03/S-07/I-06/I-07/I-08 = 全てPARTIAL → NOT COMPLETE
+- Superstructure救出: PARTIAL
+- Substructure救出: PARTIAL
+- Analysis/IF3: メカニズムDONE（node SUCCEEDED・browser fail-closed誠実表示）・
+  authoritative実値browser表示 = PARTIAL
+- CIM Viewer: PASS（Luna総合OK）
+- Persistence/Integrity: 変更なし・PDC唯一正本・dual-writeなし・fail-closed維持
+- Repository: canonical=spacer-clone・GitHub main=唯一正本・4系統一致
+  required worktree=1はspacer-clone-next残置のため未達（理由: pre-existing dirty破棄禁止）
+- Quality: targeted tests・frontend regression（src/next全+legacy各dir）・typecheck・
+  実ブラウザ・screenshots・Luna・Sol（事前+blocker調査）全て実施
+
+====================================================================
+8. unresolved / deferred（FROZEN境界）
+====================================================================
+
+- unresolved（次Session候補）: B-01 3ペインCAD統合・B-06 杭grid・S-01/S-07 旧Apollo
+  本格入力UI救出・断面入力後のIF3 authoritative実値overlay・spacer-clone-next統合
+- deferred（FROZEN）: 正式応力度/照査 NOT_AUTHORIZED・diaphragm DEFER・配筋/耐震 HOLD・
+  SOURCE_NOT_AVAILABLE値発明禁止・NOT_AUTHORIZED荷重disabled/HOLD
+
+====================================================================
+9. verdict
+====================================================================
+
+Phase 9-04R2 PARTIAL（NOT COMPLETE）
+- WP-R2F（CIM Viewer視認性）COMPLETE・WP-R2D/E（AUTHORIZED Load→Solver→IF3メカニズム+
+  gate実証+UIフローblocker根治）DONE・Sol事前レビュー反映済み
+- 旧実務UI救出（B-01/B-06/S-01/S-07）とIF3 authoritative実値のbrowser実表示は
+  追加Sessionが必要（再開地点: 上部工断面入力UI→宣言断面でsolver→IF3 overlay）
+STOP
