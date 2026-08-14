@@ -1,0 +1,54 @@
+====================================================================
+Phase10_Phase12_ReferenceBusiness_AcceptanceGate（STEP 15 Phase 12 Gate）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+【Reference Business（最終受入案件）】
+- 種別: 山岳道路＋曲線高架橋の統合案件（Reference Mountain系・既存fixture再利用）
+- シナリオ: 空Projectから成果品出力まで実操作で完走（Electron headed・実画面）
+- Phase 12では新仕様追加なし・Phase 11成果の受入のみ
+
+【受入シナリオ（空Project→成果品出力）】
+1. 空Project作成（/app/business/new）
+2. Terrain / Existing（Reference Mountain）
+3. Road Alignment（平面/縦断/横断/幅員/横断勾配）
+4. Road CIM（3D表示）
+5. Bridge Layout（橋梁区間・支間割・支持点）
+6. Superstructure（主桁/断面/横桁/材料/支承/荷重入力・declared section）
+7. Bearing（FIXED/MOVABLE設定）
+8. Substructure / Foundation（3-pane・pile grid）
+9. FEM Model（自動組立）
+10. Solver（declared sectionでSUCCEEDED）
+11. IF3（authoritative・source binding・非零実値）
+12. Analysis Results（Reaction/N-Q-M/T/Deformed）
+13. Integrated 3D（CIM・GLB export）
+14. Road図面（平面/縦断/横断・DXF実ファイル）
+15. Super/Sub成果（2D/DXF/Quantity/座標）
+16. 道路計算書（HTML/CSV）
+17. 解析結果CSV export
+18. Save（Auto Save）
+19. Electron Restart（復元）
+20. .spacerproj Export
+21. Import
+22. Restore
+
+【Completion Gate（Phase 12判定条件）】
+各成果品:
+- 実画面で生成可能
+- production route経由
+- 実ファイル出力（DXF/CSV/GLB/HTML/.spacerproj）
+- canonicalから決定論的生成・dual-writeなし
+- FROZEN境界維持（NOT_AUTHORIZED/HOLD表示・値を発明しない）
+- 非零実値（IF3・Quantity・座標）・ダミーでない
+
+【判定】
+- 全V1.0必須成果が受入可能 → Version 1.0 COMPLETE
+- 1件でも必須成果が未達 → NOT COMPLETE（Phase 11 backlogへ戻す）
+
+【前提】
+- Phase 11実装（P0-01〜P0-06・P1任意）完了後
+- Sol最終レビューGO
+- FROZEN境界・V1.0 scope確定済み
+====================================================================

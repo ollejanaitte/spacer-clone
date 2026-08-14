@@ -1,0 +1,92 @@
+====================================================================
+Phase10_V1_Required_Deliverables（STEP 11 V1.0必須成果品を確定）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+V1.0 COMPLETEをPhase 12で判定するための必須成果。
+「候補」から監査結果・既存資産・実務価値・実装コスト・FROZEN境界を踏まえて確定。
+
+【Road】
+| 成果 | 状態 | 備考 |
+|---|---|---|
+| 平面線形/座標/要素表 | 必須（KEEP・新module） | 既にCOMPLETE |
+| 平面図 | 必須（RESTORE/ADAPT） | 旧LINER資産を新アプリへ接続・DXF実出力 |
+| 縦断図 | 必須（RESTORE/ADAPT） | 同上 |
+| 横断図 | 必須（RESTORE/ADAPT） | 同上 |
+| 道路計算書（HTML/CSV） | 必須（ADAPT） | 旧roadReportを新アプリへ接続 |
+
+【Bridge】
+| 成果 | 状態 | 備考 |
+|---|---|---|
+| Bridge Layout（支間割/支持点/span表） | 必須（KEEP） | 既にCOMPLETE |
+| span/support表の出力 | 必須（REWRITE小） | Phase 11で軽量実装 |
+
+【Superstructure】
+| 成果 | 状態 | 備考 |
+|---|---|---|
+| 本格入力UI | 必須（KEEP） | Phase 9-04R3 COMPLETE |
+| 2D | 必須（KEEP） | 同上 |
+| DXF | 必須（KEEP） | 新アプリ実出力 |
+| Quantity | 必須（KEEP） | 実数値 |
+| 3D/CIM | 必須（KEEP） | 同上 |
+| 設計結果（N/Q/M/T・Reaction） | 必須（KEEP） | IF3 authoritative由来 |
+
+【Substructure】
+| 成果 | 状態 | 備考 |
+|---|---|---|
+| 3-pane CAD | 必須（KEEP） | Phase 9-04R3 COMPLETE |
+| pile grid | 必須（KEEP） | 同上 |
+| 座標表 | 必須（KEEP） | 同上 |
+| Quantity | 必須（KEEP） | 実数値 |
+| 2D/3D/CIM | 必須（KEEP） | 同上 |
+
+【Analysis】
+| 成果 | 状態 | 備考 |
+|---|---|---|
+| Solver/IF3 authoritative | 必須（KEEP） | Phase 9-04R3 COMPLETE |
+| Reaction/N/Q/M/T/Deformed | 必須（KEEP） | AuthoritativeResultPanel |
+| result CSV export | 必須（ADAPT） | 旧exportsを新アプリへ接続 |
+
+【System】
+| 成果 | 状態 | 備考 |
+|---|---|---|
+| Integrated 3D | 必須（KEEP） | 既にCOMPLETE |
+| GLB export | 必須（KEEP） | 実出力 |
+| .spacerproj export/import | 必須（KEEP） | 既にCOMPLETE |
+| Auto Save/Restart/Electron restart | 必須（KEEP） | 既にCOMPLETE |
+| deliverables module（成果品ページ） | 必須（REWRITE新設） | Phase 11で図面/報告/export統合UI |
+
+====================================================================
+Phase10_Deferred_Frozen_List（STEP 12 V1.0外項目を明示）
+====================================================================
+
+【DEFER（V1.0外・未完扱いしない）】
+| 項目 | 理由 |
+|---|---|
+| バイナリPDF生成 | 現状はprint-based HTML・実PDF生成基盤なし・Phase 11で方針決定 |
+| IFC export | コードベースに根拠なし・将来候補 |
+| GA sheet（Apollo drawingSet） | legacy資産・ADAPT候補・V1.0任意 |
+| STL（Apollo/liner frame） | legacy稼働・新アプリ接続は任意 |
+| pier/abutment/footing正式図 | Phase 11候補（REWRITE小）・V1.0必須判断は要調整 |
+| レポートPDF統合 | 任意 |
+
+【NOT_AUTHORIZED（FROZEN・上部工）】
+- 応力度/照査6種
+- diaphragm（DEFER）
+
+【HOLD_NOT_AVAILABLE（FROZEN・下部工）】
+- 照査/配筋/耐震
+- AUTO-DETERMINATION: BANNED
+
+【SOURCE_NOT_AVAILABLE（共通）】
+- 値の発明禁止（欠損はSOURCE_NOT_AVAILABLEとして閉じる）
+
+【optional/future】
+- IFC・PDFバイナリ・STL新アプリ接続・screenshot/report統合
+
+【V1.0に入らない＝未完成でない】
+- 上記DEFER/FROZENは明示的境界としてV1.0外に位置づけ
+- Phase 12では「V1.0必須成果」の受入のみ判定
+====================================================================

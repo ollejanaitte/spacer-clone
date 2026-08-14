@@ -1,0 +1,108 @@
+====================================================================
+Phase10_Phase11_Implementation_Backlog（STEP 14 Phase 11実装Backlog）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+優先度: P0（V1.0必須・Phase 12完走に必須）/ P1（V1.0必須・RESTORE/ADAPT）/ P2（品質・補助）/ DEFER（V1.0外）
+
+--------------------------------------------------------------------
+P0-01 deliverables module 新設（成果品ページ）
+- goal: /app/projects/{id}/modules/deliverables を正式ページ化し、図面/報告/exportを統合
+- source: 既存成果品各（Road図面/Super DXF/Sub 2D/解析export）
+- target: next/pages/DeliverablesModuleShellPage.tsx
+- policy: registry既存・ModuleShellPageへ実装・canonical各moduleから読み出し
+- module: deliverables
+- tests: shell UI test・integration
+- E2E: /app 成果品ページ表示・export実行
+- acceptance: 成果品一覧→各exportボタン→実ファイル
+- risk: 低
+
+P0-02 Road図面（平面/縦断/横断）を新アプリへ接続
+- goal: 新Road canonical（CanonicalRoadData）から平面図/縦断図/横断図を生成・DXF実出力
+- source: liner/drawing/・liner/dxf/（legacy資産）
+- target: 新road module or deliverables内でhost
+- policy: CanonicalRoadData→loadRoadEditorDraft→buildIntermediateInputFromDomainDraft→
+  formal drawing pipeline（ADAPT・bridge実装）
+- module: road/deliverables
+- tests: drawing bridge unit・DXF byte test
+- E2E: 新アプリで平面図DXFダウンロード
+- acceptance: 実画面で図面SVG+DXF実ファイル・Luna確認
+- risk: 中（data interface bridge）
+
+P0-03 Road計算書（HTML/CSV）を新アプリへ接続
+- goal: 新canonicalから道路計算書（HTML+CSV bundle）を出力
+- source: liner/exports/roadReport.ts・roadReportExport.ts
+- target: deliverables module内
+- policy: 同上bridge・ADAPT
+- module: road/deliverables
+- tests: roadReport接続test
+- E2E: HTML/CSVダウンロード
+- acceptance: 実ファイル・内容検証
+- risk: 低
+
+P0-04 解析結果export（CSV）を新アプリへ接続
+- goal: AuthoritativeResultPanelにCSV export（displacements/reactions/member forces）
+- source: exports/resultCsvExport.ts・memberForceReport.ts（IF3 gate）
+- target: analysis/deliverables or AuthoritativeResultPanel拡張
+- policy: IF3 resource→CSV・authoritative gate維持（ADAPT）
+- module: analysis
+- tests: IF3→CSV test
+- E2E: authoritative後CSVダウンロード
+- acceptance: 実CSV・非零値・IF3 gate
+- risk: 低
+
+P0-05 analysis module 専用shellページ新設
+- goal: /app/.../modules/analysis を正式ページ化（解析実行+結果表示+export）
+- source: CimModuleShellPageのhandleRunAnalysis＋AuthoritativeResultPanel
+- target: next/pages/AnalysisModuleShellPage.tsx
+- policy: CIM shellから解析UIを分離・共用コンポーネント化（REWRITE小）
+- module: analysis
+- tests: shell UI test
+- E2E: /app analysisで解析→IF3→export
+- acceptance: 実画面・authoritative・export
+- risk: 中
+
+P0-06 Bridge Layout span/support表出力
+- goal: span table/support表を成果品として出力（CSV/DXF候補）
+- source: bridgeLayoutSpans/bridgeLayoutPlacement
+- target: deliverables内
+- policy: 軽量REWRITE小・canonicalから導出
+- module: bridgeLayout/deliverables
+- tests: 表生成test
+- acceptance: 実画面+export
+- risk: 低
+
+--------------------------------------------------------------------
+P1-01 旧/新画面切り替え時の導線整理（/pro legacy と /app の関係）
+- goal: legacy /pro を「資産確認・参照」とし、新 /app をproduction正とする明示
+- source: App.tsx routes
+- target: ガイド（lobby/home）・不要導線は非推奨化
+- policy: 非破壊（legacy残す・新appを正式化）
+- risk: 低
+
+P1-02 STL exportの新アプリ接続（任意）
+- goal: 鋼桁/下部工STLを新アプリから出力
+- source: apollo/export/apolloStlExport.ts
+- target: deliverables内（optional）
+- policy: ADAPT・P2扱い可
+
+--------------------------------------------------------------------
+P2-01 成果品E2E byte検証強化
+- goal: Super DXF/CIM GLB/CSVの実バイト検証E2E
+- source: 現E2Eパターン
+- risk: 低
+
+P2-02 evidence/screenshot統合
+- goal: 成果品画面をdocs/rebuild/evidenceへ自動収集
+
+--------------------------------------------------------------------
+DEFER（V1.0外）
+- バイナリPDF生成（方針決定後）
+- IFC export
+- GA sheet（Apollo drawingSet）新アプリ統合
+- pier/abutment/footing正式図（要調整・候補）
+- 下部工計算書（HOLD_NOT_AVAILABLE維持）
+
+====================================================================

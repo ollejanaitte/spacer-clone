@@ -1,0 +1,88 @@
+====================================================================
+Phase10_Final_Design_Freeze（STEP 16 Final Design Freeze）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+status: DRAFT（Sol最終レビュー反映後にPASS確定）
+====================================================================
+
+【1. V1.0 scope】
+- Road: 平面線形/座標/要素表・平面図・縦断図・横断図・道路計算書（HTML/CSV）・3D/CIM
+- Bridge: Bridge Layout（支間割/支持点）・span/support表出力
+- Superstructure: 本格入力UI・2D・DXF・Quantity・3D/CIM・設計結果（N/Q/M/T・Reaction）
+- Substructure: 3-pane CAD・pile grid・座標表・Quantity・2D/3D/CIM
+- Analysis: Solver/IF3 authoritative・Reaction/N/Q/M/T/Deformed・結果CSV export
+- System: Integrated 3D・GLB・.spacerproj・Auto Save/restart/Electron restart・deliverables module
+
+【2. V1.0 deliverables（必須）】
+上記Phase10_V1_Required_Deliverables.txt の「必須」一覧
+
+【3. canonical architecture】
+- PDC（Project Data Core）唯一正本・modules.{road,terrain,bridgeLayout,superstructure,substructure,analysis,cim,deliverables}
+- 各module: canonical document + schema + validator + adapter（read/write fail-closed）
+- derived: snapshot/handoff/analysis/scene はcanonicalから決定論的再生成
+- checksum: contentChecksum/modelChecksum（sha256・canonical JSON）
+- stale/invalid: fingerprint比較・3-gate・fail-closed
+
+【4. module responsibilities】
+| module | responsibility |
+|---|---|
+| road | 線形計算・canonical road data・CIM面・図面/報告はdeliverables連携 |
+| terrain | 地形mesh・既設参照 |
+| bridgeLayout | 橋梁区間・支間割・支持点・span/support handoff |
+| superstructure | 主桁/断面/材料/支承/荷重・2D/DXF/Quantity/3D |
+| substructure | 下部工形状・pile grid・座標/Quantity/2D/3D |
+| analysis | FEM組立・IF3 authoritative・結果表示/export |
+| cim | Integrated 3D・GLB/glTF・analysis overlay |
+| deliverables | 図面/報告/export統合（Phase 11で新設） |
+
+【5. old asset rescue policy】
+- 原則: 捨てて作り直さない・既存資産をADAPT/RESTOREで接続
+- Road図面/DXF/報告: liner/drawing・liner/dxf・liner/exports（ADAPT）
+- 解析export: exports/*（ADAPT）
+- STL: apollo/export（ADAPT候補・任意）
+- 埋没: substructure-planningはresearch扱い（build外）・vendor PDFは参照用に復元候補
+- dead code（if3DraftEligibility・makerDxfSpike）: 記録のみ（救出しない）
+
+【6. production routes】
+- 正式: /app/*（NextApp）・新appをproduction正とする
+- legacy: /pro/*（App.tsx）は資産参照・非推奨化（破壊しない）
+- 解析実行: CIM shell（Phase 11でanalysis専用shellへ分離予定）
+- deliverables: /app/.../modules/deliverables（Phase 11で実装）
+
+【7. persistence】
+- PersistentProjectManager（Auto Save・restart restore）
+- .spacerproj export/import（sha256・integrity inspect）
+- Electron: FilesystemProjectPersistence via IPC
+- 既存dirty差分は保護対象
+
+【8. stale/invalidation】
+- 各module fingerprint/stale/invalid・3-gate・fail-closed・IF3 source binding
+- STALE表示は非authoritative・計算済みと誤表示しない
+
+【9. export formats（V1.0）】
+- DXF（Road plan/profile/cross-section・Superstructure plan/cross-section）
+- CSV（道路計算書・解析結果displacements/reactions/member forces）
+- HTML（道路計算書）
+- GLB（CIM integrated 3D）
+- .spacerproj（project package）
+- バイナリPDF・IFC: DEFER（V1.0外）
+
+【10. Phase 11 backlog】
+Phase10_Phase11_Implementation_Backlog.txt（P0-01〜P0-06・P1・P2・DEFER）
+
+【11. Phase 12 reference business / gate】
+Phase10_Phase12_ReferenceBusiness_AcceptanceGate.txt（山岳道路＋曲線高架橋・空Project→成果品）
+
+【12. DEFER / NOT_AUTHORIZED / SOURCE_NOT_AVAILABLE / HOLD】
+- DEFER: バイナリPDF・IFC・GA sheet・STL新接続（任意）・pier/abutment/footing正式図（要調整）
+- NOT_AUTHORIZED: 上部工応力度/照査6種・diaphragm
+- SOURCE_NOT_AVAILABLE: 値発明禁止（欠損は閉じる）
+- HOLD_NOT_AVAILABLE: 下部工照査/配筋/耐震・AUTO-DETERMINATION BANNED
+
+【13. 制約】
+- Freeze後はPhase 11/12で仕様を勝手に増やさない
+- 新規成果品実装はPhase 11・受入はPhase 12・3ステップ完走方針
+- Phase 9-04R3 FROZEN境界を勝手に解除しない
+
+====================================================================
