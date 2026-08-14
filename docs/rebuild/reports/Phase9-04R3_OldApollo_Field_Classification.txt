@@ -23,11 +23,9 @@ Phase 9-04R3 S-07 旧Apollo 上部工 field 最終分類表
 | overhangLeft/Right（新規） | deckConfiguration.overhangLeftM/RightM | new | 編集・canonical commit |
 | crossBeamSpacing | crossBeamConfiguration.crossBeamSpacingM | direct | 編集・canonical commit |
 | crossBeams[]（配置） | crossBeamConfiguration.crossBeams[]（kind/stationM/depthM/widthM） | derive/direct | 生成+せい/幅編集 |
-| swayBracingInterval（本） | crossFrameConfiguration.swayBracing.intervalM | convert（本→間隔m） | FROZEN mapping維持 |
-| lateralBracingEnabled | crossFrameConfiguration.lateralBracing.intervalM | convert | FROZEN mapping維持 |
 | spanLength | spanReferences.spans[].spanLength | DERIVED（Bridge Layout handoff） | 生成時に派生・reload復元 |
 | bridgeLength | spanReferences（sum） | DERIVED | 同上 |
-| steelUnitWeight | materialConfiguration（E/G/nu/rho）＋girderSectionModel.unitWeightPerM | convert | 材料編集・solver反映 |
+| steelUnitWeight | girderSectionModel.unitWeightPerM（鋼材換算） | convert | 荷重モデルは固定77.0（FROZEN定数）で計算・材料E/G/nu/rhoはmaterialConfiguration編集 |
 | bearingSeats（BRG-{s}-{g}） | bearingConfiguration.bearingSeats[] | new/自動配置 | 支承種別/固定可動編集 |
 
 【FROZEN-DEFER（Freezeにて非対応と明示）】
@@ -39,6 +37,8 @@ Phase 9-04R3 S-07 旧Apollo 上部工 field 最終分類表
 | haunch | 新docに非対応・DEFER |
 | roadMarkings | 新docに非対応・DEFER |
 | lateralAngleSection | 新docに非対応・DEFER |
+| swayBracingInterval | 新docのcrossFrameConfigurationにfield有りだがRescue UI編集経路が未実装→FreezeどおりDERIVED/DEFERとして明示（CLOSEDにしない） |
+| lateralBracingEnabled | 同上・FreezeどおりDERIVED/DEFERとして明示 |
 
 【NOT_AUTHORIZED（HOLD維持・計算済み表示禁止）】
 | 項目 | 状態 |

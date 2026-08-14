@@ -147,22 +147,15 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     await setField("鋼ポアソン比", "0.3");
     // deck
     await setField("床版厚", "0.25");
-    // cross beam
+    // cross beam (mandatory: the field must exist and be settable)
     const crossSpacing = page.locator("[data-testid=super-field-横桁間隔]");
-    if ((await crossSpacing.count()) > 0) {
-      await setField("横桁間隔", "8");
-    }
+    await expect(crossSpacing).toBeVisible();
+    await setField("横桁間隔", "8");
 
-    // bearing FIXED on the first support (solver stability)
-    const firstBearingFixed = page.locator("[data-testid=super-bearing-fixed-A1]").first();
-    if ((await firstBearingFixed.count()) > 0) {
-      await firstBearingFixed.selectOption("FIXED");
-    } else {
-      const anyBearing = page.locator("[data-testid^=super-bearing-fixed-]").first();
-      if ((await anyBearing.count()) > 0) {
-        await anyBearing.selectOption("FIXED");
-      }
-    }
+    // bearing FIXED on the first support (solver stability, mandatory)
+    const anyBearing = page.locator("[data-testid^=super-bearing-fixed-]").first();
+    await expect(anyBearing).toBeVisible();
+    await anyBearing.selectOption("FIXED");
 
     await expect(page.locator("[data-testid=super-rescue-message]")).toBeVisible();
     await page.screenshot({ path: evidencePath("p9-04r3-05-super-full-input.png"), fullPage: true });
@@ -261,11 +254,26 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
       return parsed.some((n) => Number.isFinite(n) && Math.abs(n) > 1e-6);
     });
     expect(hasNonZeroMember).toBe(true);
+    // N/Q/M/T: N, Q, M must contain a non-zero value (real bending under the
+    // distributed dead load). T (torsion, mx) is expected 0 for the symmetric
+    // vertical-load model and is not required to be non-zero.
+    for (const col of [2, 3, 4]) {
+      const colValues: string[] = [];
+      for (let i = col; i < memberCells.length; i += 6) {
+        colValues.push(memberCells[i]!);
+      }
+      const hasNonZero = colValues.some((v) => {
+        const parsed = v.split("/").map((s) => Number(s.replace(/[^0-9.\-]/g, "")));
+        return parsed.some((n) => Number.isFinite(n) && Math.abs(n) > 1e-6);
+      });
+      expect(hasNonZero, `N/Q/M column ${col} must contain a non-zero value`).toBe(true);
+    }
 
-    // deformed summary must exist with node count > 0
+    // deformed summary must exist with non-zero max displacement
     await expect(page.locator("[data-testid=if3-deformed-summary]")).toBeVisible();
     const deformedText = await page.locator("[data-testid=if3-deformed-summary]").textContent();
     expect(deformedText).toBeTruthy();
+    expect(deformedText).toMatch(/node数\s*\d+/);
     await page.screenshot({ path: evidencePath("p9-04r3-09-if3-reaction-nqm.png"), fullPage: true });
   });
 
@@ -308,13 +316,12 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     expect(await page.locator("[data-testid^=pile-coord-]").count()).toBeGreaterThan(0);
 
     // 3-pane bidirectional sync (Sol review #5/#7): click the 2D plan support
-    // and verify the property editor reflects it.
+    // and verify the property editor reflects it (mandatory).
     const planSupport = page.locator("[data-testid^=sub-plan-support-]").first();
-    if ((await planSupport.count()) > 0) {
-      const planSupportId = (await planSupport.getAttribute("data-testid"))!.replace("sub-plan-support-", "");
-      await planSupport.click();
-      await expect(page.locator("[data-testid=sub-pane-properties]")).toContainText(planSupportId);
-    }
+    await expect(planSupport).toBeVisible();
+    const planSupportId = (await planSupport.getAttribute("data-testid"))!.replace("sub-plan-support-", "");
+    await planSupport.click();
+    await expect(page.locator("[data-testid=sub-pane-properties]")).toContainText(planSupportId);
   });
 
   test("06 persistence restart + pile grid reload (Sol review #7)", async ({ page }) => {
@@ -332,13 +339,13 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     const firstSupport = page.locator("[data-testid^=sub-support-]").first();
     await firstSupport.click();
     const pileDiameter = page.locator("[data-testid=sub-field-杭径], [data-testid=sub-field-abutment-pile-diameter]").first();
+    await expect(pileDiameter).toBeVisible();
     await pileDiameter.fill("1.2");
     await pileDiameter.blur();
     const gridRows = page.locator("[data-testid=sub-field-X方向本数（rows）]");
-    if ((await gridRows.count()) > 0) {
-      await gridRows.fill("3");
-      await gridRows.blur();
-    }
+    await expect(gridRows).toBeVisible();
+    await gridRows.fill("3");
+    await gridRows.blur();
 
     // the PDC document is committed (Auto Save). Re-enter the module to verify
     // the canonical value restores (persistence across navigation).
@@ -350,8 +357,7 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     const restoredSupport = page.locator("[data-testid^=sub-support-]").first();
     await restoredSupport.click();
     const restoredRows = page.locator("[data-testid=sub-field-X方向本数（rows）]");
-    if ((await restoredRows.count()) > 0) {
-      expect(await restoredRows.inputValue()).toBe("3");
-    }
+    await expect(restoredRows).toBeVisible();
+    expect(await restoredRows.inputValue()).toBe("3");
   });
 });

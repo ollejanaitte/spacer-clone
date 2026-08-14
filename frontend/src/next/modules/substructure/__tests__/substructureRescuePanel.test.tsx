@@ -58,6 +58,9 @@ function setupProject(): string {
         },
       },
     ],
+    pileConfigurations: [
+      { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 18, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: null, cols: null, edgeX: null, edgeY: null },
+    ],
   });
   expect(built.ok).toBe(true);
   if (built.ok) {

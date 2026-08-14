@@ -9,6 +9,13 @@ function makeIf3(status: string) {
   return { ...REAL_IF3_RESULT_RAW, status } as never;
 }
 
+/** Source document matching REAL_IF3_RESULT_RAW's binding fields. */
+const MATCHING_SOURCE = {
+  documentId: "11111111-1111-4111-8111-111111111111",
+  revisionId: 1,
+  modelChecksum: "a".repeat(64),
+};
+
 async function render(node: ReactNode): Promise<Root> {
   const container = document.createElement("div");
   document.body.appendChild(container);
@@ -42,7 +49,7 @@ describe("AuthoritativeResultPanel (Phase 9-04R3 I-06/07/08)", () => {
   });
 
   it("renders authoritative Reaction / NQM / Deformed tables from the IF3 result", async () => {
-    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED")} />);
+    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED")} sourceDocument={MATCHING_SOURCE} />);
     expect(document.querySelector('[data-testid="if3-result-status"]')?.textContent).toContain("authoritative");
     const reactionRows = document.querySelectorAll('[data-testid="if3-reaction-row"]');
     expect(reactionRows.length).toBe(1);
@@ -55,9 +62,21 @@ describe("AuthoritativeResultPanel (Phase 9-04R3 I-06/07/08)", () => {
   });
 
   it("shows entityId + resolved load case label in the tables (traceability)", async () => {
-    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED")} />);
+    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED")} sourceDocument={MATCHING_SOURCE} />);
     expect(document.querySelector('[data-testid="if3-reaction-table"]')?.textContent).toContain("LC1");
     expect(document.querySelector('[data-testid="if3-reaction-table"]')?.textContent).toContain("6a27c03d");
+    act(() => root.unmount());
+  });
+
+  it("does NOT treat a SUCCEEDED result as authoritative when source binding mismatches (Sol #2)", async () => {
+    const root = await render(
+      <AuthoritativeResultPanel
+        if3Result={makeIf3("SUCCEEDED")}
+        sourceDocument={{ documentId: "other-doc", revisionId: 99, modelChecksum: "x".repeat(64) }}
+      />,
+    );
+    expect(document.querySelector('[data-testid="if3-result-status"]')?.textContent).toContain("invalid");
+    expect(document.querySelector('[data-testid="if3-reaction-table"]')).toBeNull();
     act(() => root.unmount());
   });
 });

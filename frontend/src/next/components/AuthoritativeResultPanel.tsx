@@ -14,27 +14,27 @@
  */
 
 import type { FrameAnalysisResultResource } from "../../contracts/frameAnalysisResultResource";
-import { validateFrameAnalysisResultResource } from "../../contracts/frameAnalysisResultResource";
-import { extractLinearStaticResultFromIf3 } from "../modules/analysis/resultAdapter";
+import { extractLinearStaticResultFromIf3, isAuthoritativeIf3For, type If3SourceDocumentRef } from "../modules/analysis/resultAdapter";
 
 export interface AuthoritativeResultPanelProps {
   readonly if3Result: FrameAnalysisResultResource | null;
+  /** Current AnalysisDocument used for source-binding (Sol review #2). */
+  readonly sourceDocument?: If3SourceDocumentRef | null;
 }
 
 function fmt(value: number | undefined, digits = 1): string {
   return value === undefined ? "—" : value.toFixed(digits);
 }
 
-function statusOf(resource: FrameAnalysisResultResource): string {
-  const status = (resource as { status?: string }).status;
-  if (status !== "SUCCEEDED") {
-    return status === "STALE" ? "stale" : "invalid";
+function statusOf(resource: FrameAnalysisResultResource, sourceDocument?: If3SourceDocumentRef | null): string {
+  if (isAuthoritativeIf3For(resource, sourceDocument ?? null)) {
+    return "authoritative";
   }
-  const validation = validateFrameAnalysisResultResource(resource as never);
-  return validation.status === "valid" && validation.issues.length === 0 ? "authoritative" : "invalid";
+  const status = (resource as { status?: string }).status;
+  return status === "STALE" ? "stale" : "invalid";
 }
 
-export function AuthoritativeResultPanel({ if3Result }: AuthoritativeResultPanelProps) {
+export function AuthoritativeResultPanel({ if3Result, sourceDocument }: AuthoritativeResultPanelProps) {
   if (!if3Result) {
     return (
       <section className="next-integrity-block" data-testid="if3-result-panel">
@@ -43,7 +43,7 @@ export function AuthoritativeResultPanel({ if3Result }: AuthoritativeResultPanel
       </section>
     );
   }
-  const status = statusOf(if3Result);
+  const status = statusOf(if3Result, sourceDocument);
   if (status !== "authoritative") {
     return (
       <section className="next-integrity-block" data-testid="if3-result-panel">
@@ -55,7 +55,12 @@ export function AuthoritativeResultPanel({ if3Result }: AuthoritativeResultPanel
 
   const view = extractLinearStaticResultFromIf3(if3Result);
   const metadata = (if3Result as unknown as Record<string, unknown>);
-  const maxUz = Math.max(0, ...view.displacements.map((d) => (d.uz === undefined ? 0 : Math.abs(d.uz))));
+  // maxUz only considers finite displacement values (missing is never 0).
+  const finiteUz = view.displacements
+    .map((d) => d.uz)
+    .filter((v): v is number => v !== undefined && Number.isFinite(v))
+    .map(Math.abs);
+  const maxUz = finiteUz.length > 0 ? Math.max(...finiteUz) : null;
   const DEFORMATION_SCALE = 100;
 
   return (
@@ -116,7 +121,7 @@ export function AuthoritativeResultPanel({ if3Result }: AuthoritativeResultPanel
       <h4 className="next-hint">Deformed Shape（最大変位・表示倍率 {DEFORMATION_SCALE} 倍）</h4>
       <dl className="next-integrity-meta" data-testid="if3-deformed-summary">
         <div><dt>node数</dt><dd>{view.displacements.length}</dd></div>
-        <div><dt>最大|uz|</dt><dd>{maxUz.toFixed(4)} m</dd></div>
+        <div><dt>最大|uz|</dt><dd>{maxUz === null ? "—" : maxUz.toFixed(4)} m</dd></div>
         <div><dt>倍率</dt><dd>{DEFORMATION_SCALE} 倍（表示専用・DERIVED・Documentへ書き戻さない）</dd></div>
       </dl>
     </section>

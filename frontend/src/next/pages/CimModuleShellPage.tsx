@@ -26,7 +26,7 @@ import {
 import { Cim3DViewer, type CimViewPreset } from "../components/Cim3DViewer";
 import { AuthoritativeResultPanel } from "../components/AuthoritativeResultPanel";
 import { exportCimSceneAsGlb, downloadGlb } from "../modules/cim/cimExport";
-import { validateFrameAnalysisResultResource } from "../../contracts/frameAnalysisResultResource";
+import { isAuthoritativeIf3For, type If3SourceDocumentRef } from "../modules/analysis/resultAdapter";
 import type { ProjectModuleKey } from "../project/schema";
 
 const CIM_UI_STATE_KEY = "spacer.cim.uiState.v1";
@@ -80,6 +80,7 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
 
   const [resultComponent, setResultComponent] = useState<"N" | "Q" | "M" | "T">("N");
   const [if3Result, setIf3Result] = useState<unknown>(null);
+  const [analysisSourceDoc, setAnalysisSourceDoc] = useState<If3SourceDocumentRef | null>(null);
   const [analysisMsg, setAnalysisMsg] = useState<string | null>(null);
   const [runningAnalysis, setRunningAnalysis] = useState(false);
 
@@ -116,15 +117,20 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
         return;
       }
       const status = (data.if3Result as { status?: string })?.status ?? "";
-      // Runtime schema validation (Sol review #2): malformed SUCCEEDED results
-      // are NOT treated as authoritative.
-      const validation = validateFrameAnalysisResultResource(data.if3Result as never);
-      const schemaOk = validation.status === "valid" && validation.issues.length === 0;
+      // Runtime schema + source binding validation (Sol review #2): malformed
+      // SUCCEEDED results or results not bound to the current AnalysisDocument
+      // are NOT authoritative.
+      const sourceDoc: If3SourceDocumentRef = { documentId: doc.documentId, revisionId: doc.revisionId, modelChecksum: doc.modelChecksum };
+      const authoritative = isAuthoritativeIf3For(
+        data.if3Result as import("../../contracts/frameAnalysisResultResource").FrameAnalysisResultResource,
+        sourceDoc,
+      );
       setIf3Result(data.if3Result);
-      if (status === "SUCCEEDED" && schemaOk) {
+      setAnalysisSourceDoc(sourceDoc);
+      if (status === "SUCCEEDED" && authoritative) {
         setAnalysisMsg("解析実行完了・authoritative IF3 Resultをoverlayしました。");
       } else {
-        setAnalysisMsg(`解析は実行されましたがIF3 Resultはauthoritativeではありません（status=${status}${schemaOk ? "" : "・schema違反"}）。上部工断面/荷重の入力を確認してください。`);
+        setAnalysisMsg(`解析は実行されましたがIF3 Resultはauthoritativeではありません（status=${status}${authoritative ? "" : "・schema/source違反"}）。上部工断面/荷重の入力を確認してください。`);
       }
     } catch (error) {
       setAnalysisMsg(`解析実行エラー: ${String(error)}`);
@@ -297,6 +303,7 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
 
       <AuthoritativeResultPanel
         if3Result={if3Result as import("../../contracts/frameAnalysisResultResource").FrameAnalysisResultResource | null}
+        sourceDocument={analysisSourceDoc}
       />
     </section>
   );

@@ -16,6 +16,7 @@
  */
 
 import type { FrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
+import { validateFrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
 
 export interface ReactionRow {
   readonly loadCaseId: string;
@@ -90,8 +91,7 @@ function loadCaseLabelOf(resource: FrameAnalysisResultResource, loadContextId: u
  * Extract a linear-static result view from an IF3 FrameAnalysisResultResource.
  * Each payload entry is {schemaVersion, rows[]}; rows carry canonical keys.
  */
-export function extractLinearStaticResultFromIf3(
-  resource: FrameAnalysisResultResource,
+export function extractLinearStaticResultFromIf3(  resource: FrameAnalysisResultResource,
 ): LinearStaticResultView {
   const payload = (resource.payload ?? {}) as unknown as Record<string, unknown>;
 
@@ -174,4 +174,43 @@ export function extractLinearStaticResultFromIf3(
     memberForces,
     combinations: [{ caseId: "COMBO-1", displacements: comboCount("nodeDisplacement"), reactions: comboCount("supportReaction"), memberForces: comboCount("memberForce") }],
   };
+}
+
+/** Minimal AnalysisDocument shape needed for authoritative binding checks. */
+export interface If3SourceDocumentRef {
+  readonly documentId: string;
+  readonly revisionId: number;
+  readonly modelChecksum: string;
+}
+
+/**
+ * Determine whether an IF3 resource is authoritative for the given
+ * AnalysisDocument (Phase 9-04R3 Sol #2). Authoritative = explicit SUCCEEDED
+ * AND runtime schema valid AND source binding (documentId / revision /
+ * modelChecksum) matches the current AnalysisDocument AND all required result
+ * kinds are present. Any failure -> not authoritative (fail-closed).
+ */
+export function isAuthoritativeIf3For(
+  if3Result: FrameAnalysisResultResource | null | undefined,
+  analysisDocument: If3SourceDocumentRef | null | undefined,
+): boolean {
+  if (!if3Result || !analysisDocument) return false;
+  const status = (if3Result as { status?: string }).status;
+  if (status !== "SUCCEEDED") return false;
+
+  const validation = validateFrameAnalysisResultResource(if3Result as never);
+  if (validation.status !== "valid" || validation.issues.length > 0) return false;
+
+  if (if3Result.sourceDocumentId !== analysisDocument.documentId) return false;
+  if (Number(if3Result.sourceDocumentVersion) !== analysisDocument.revisionId) return false;
+  const sourceChecksum = if3Result.sourceContentChecksum?.hexDigest;
+  if (sourceChecksum !== undefined && sourceChecksum !== analysisDocument.modelChecksum) return false;
+
+  // required result kinds present
+  const payload = (if3Result.payload ?? {}) as Record<string, { rows?: unknown }>;
+  for (const kind of ["nodeDisplacement", "supportReaction", "memberForce"]) {
+    const entry = payload[kind];
+    if (!entry || !Array.isArray(entry.rows) || entry.rows.length === 0) return false;
+  }
+  return true;
 }

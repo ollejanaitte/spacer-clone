@@ -71,4 +71,15 @@ describe("Phase 9-04R3 Sol #4: distributed dead load on main girders", () => {
       expect(memberNodeIds.has(n.entityId)).toBe(true);
     }
   });
+
+  it("conserves the total load: sum(-Fz) == loadCase.totalKN (Sol review #7)", () => {
+    const pid = setupFullBridge();
+    const doc = buildDerivedAnalysisDocument(getProjectManager(), pid)!;
+    expect(doc.loadCases.length).toBeGreaterThan(0);
+    const totalKN = doc.loadCases[0]!.totalKN!;
+    const applied = doc.nodalLoads.reduce((sum, l) => sum + Math.abs(l.fz), 0);
+    expect(Math.abs(applied - totalKN)).toBeLessThan(totalKN * 1e-6);
+    // all loads are downward (fz < 0)
+    expect(doc.nodalLoads.every((l) => l.fz < 0)).toBe(true);
+  });
 });

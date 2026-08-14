@@ -121,6 +121,9 @@ describe("Analysis CIM layer (Phase 8-02 WP-H)", () => {
     const if3 = {
       ...REAL_IF3_RESULT_RAW,
       status: "SUCCEEDED",
+      sourceDocumentId: doc.documentId,
+      sourceDocumentVersion: doc.revisionId,
+      sourceContentChecksum: { algorithm: "sha256", hexDigest: doc.modelChecksum },
       payload: {
         nodeDisplacement: {
           schemaVersion: "0.1.0",

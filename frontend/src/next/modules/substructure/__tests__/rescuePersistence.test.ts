@@ -92,6 +92,9 @@ function seedSubWithRescue(projectId: string) {
         pier: { id: "p1", formType: "single_column_rect", column: { id: "c1", width: 3.0, depth: 2.5, height: 9.0 }, footing: { id: "ft-p1", length: 7.0, width: 7.0, thickness: 2.2, topElevation: 98.0 }, pileGroup: { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 20, pileCount: 6, spacing: { x: 3.6, y: 3.6 }, rows: 3, cols: 2, edgeX: 0.5, edgeY: 0.5 } },
       },
     ],
+    pileConfigurations: [
+      { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 20, pileCount: 6, spacing: { x: 3.6, y: 3.6 }, rows: 3, cols: 2, edgeX: 0.5, edgeY: 0.5 },
+    ],
   });
   expect(built.ok).toBe(true);
   if (built.ok) writeSubstructureDocument(manager, projectId, built.document);

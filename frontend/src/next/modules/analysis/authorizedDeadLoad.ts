@@ -78,6 +78,12 @@ export function buildAuthorizedDeadLoad(
     byGirder.set(girderId, list);
   }
   if (byGirder.size === 0) return null;
+  // Fail-closed conservation (Sol review #7): the number of resolved girder
+  // lines must match the declared girderCount, otherwise the distributed total
+  // would not equal the original load (silent under-distribution).
+  if (byGirder.size !== girderCount) {
+    return null;
+  }
 
   const girderShareKN = totalKN / girderCount;
   const nodalLoads: AnalysisNodalLoad[] = [];

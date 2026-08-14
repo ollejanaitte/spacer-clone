@@ -157,9 +157,32 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
 
   function updateSupport(next: SubstructureSupport): void {
     if (!doc) return;
+    // Keep document.pileConfigurations[] in sync with the support's nested
+    // pileGroup (Sol review #3/#4): both must reflect the same canonical values.
+    const pg = next.pier?.pileGroup ?? next.abutment?.pileGroup ?? null;
+    let pileConfigurations = doc.pileConfigurations;
+    if (pg) {
+      const entry: PileConfiguration = {
+        id: pg.id,
+        pileType: pg.pileType,
+        diameter: pg.diameter,
+        length: pg.length,
+        pileCount: pg.pileCount,
+        spacing: { x: pg.spacing.x, y: pg.spacing.y },
+        rows: pg.rows ?? null,
+        cols: pg.cols ?? null,
+        edgeX: pg.edgeX ?? null,
+        edgeY: pg.edgeY ?? null,
+      };
+      const exists = pileConfigurations.some((pc) => pc.id === pg.id);
+      pileConfigurations = exists
+        ? pileConfigurations.map((pc) => (pc.id === pg.id ? entry : pc))
+        : [...pileConfigurations, entry];
+    }
     commit({
       ...doc,
       supports: doc.supports.map((s) => (s.supportId === next.supportId ? next : s)),
+      pileConfigurations,
     });
   }
 
