@@ -30,10 +30,10 @@ baseline: e3e2d3b
 【3. DXF export】
 - formal DXF（5 kind）: liner/dxf/export/exportFormalDrawingDxf.ts
   - plan-type-a（road_shape）・plan-type-b-centerline・plan・profile-band・cross-section
-- V1必須kind決定:
-  - 平面図: plan（またはplan-type-a）→ RD-02
-  - 縦断図: profile-band → RD-03
-  - 横断図: cross-section → RD-04
+- V1必須kind決定（固定）:
+  - RD-02 平面図: plan-type-a（road_shape・全幅道路形）に固定
+  - RD-03 縦断図: profile-band に固定
+  - RD-04 横断図: cross-section に固定
   - plan-type-b-centerline・plan（重複）: 任意（V1.0必須にしない）
 - legacy Toolbar DXF: liner/exports/{linerPlanDxf,linerProfileDxf}.ts
 - E2E: tests/e2e/phase5-step3-dxf-export.spec.ts・p3-d07-print-dxf-parity.spec.ts（byte検証）

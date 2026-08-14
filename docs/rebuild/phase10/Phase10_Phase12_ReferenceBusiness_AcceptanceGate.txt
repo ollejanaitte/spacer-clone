@@ -15,7 +15,7 @@ status: FINAL（Sol指摘2回反映）
   fixture投入地点・操作・provenanceを証跡として記録。
 - Phase 12では新仕様追加なし・Phase 11成果の受入のみ
 
-【Reference Mountain 数値oracle（固定）】
+【Reference Mountain 数値oracle（固定・Phase 9-04R3実測）】
 - 平面線形（roadHorizontal）:
   - S1 straight: azimuth 0・length 300
   - C1 clothoid: A=90・R 0→70・length 60
@@ -29,16 +29,21 @@ status: FINAL（Sol指摘2回反映）
   - G2 grade -0.02・370→760・startElevation 108.1（→100.3）
 - 横断: 幅員 9.0 m（±4.5・路肩/車線5線）・crossSlope 2%
 - 橋梁（Phase 4-03デフォルト）: 開始station 100・終了450・P1 @ 300（3支持・2支間）
-- 解析（declared section・Phase 9-04R3既定）:
-  - 節点数・部材数・支持数: Phase 11でfixture実行後に固定値を記録（本Gateはその登録枠を定義）
-  - 荷重: DL-STRUCTURAL+DL-DECK合計 → 反力合計と釣合い（許容 1e-6 相対）
-  - 代表N/Q/M/T・最大|uz|: Phase 11でfixture実行後に期待値+許容範囲を登録
-  - T（ねじり）: 対称鉛直荷重で0が正しい（該当荷重ケースLC1・代表部材を特定）
-- 座標・数量: Phase 11でfixture実行後に期待値を登録
-- 比較精度: 相対 1e-3・絶対（m/kN）登録値による
+- 解析（declared section・Phase 9-04R3既定・実測値）:
+  - 節点=72・部材=70・断面=1・材料=1・支持=6・支承=6・節点荷重=72
+  - LC1 dead・totalKN=27905.5 kN
+  - 釣合い: Σ|Fz|(applied) = Σ|Fz|(reaction) = 27905.5 kN（相対許容 1e-6）
+  - 反力fz実測: 3986.19 / 3986.15 / 6977.29 kN（代表3）
+  - 部材力: N/Q/M 全70部材非零・代表 i.fx=103.705・i.fz=3785.443・j.my=-37868.637 kN/kNm
+  - 最大|uz|=190.88（表示倍率100・実変位≈1.91 m）
+  - T（ねじり）: 対称鉛直荷重LC1で0が正しい（該当荷重ケースLC1・全部材）
+- 比較精度: 相対 1e-3・絶対（m/kN）上記実測値による
+- 独立照合要件: 荷重-反力釣合い（自己矛盾なし）・非零実値・
+  期待値は「Phase 11開始前に独立計算またはレビュー済みgolden」で再確認し、
+  釣合い・解析解との照合とレビュー承認をGate条件とする（実測値自己参照の回避）
 
-※ 数値はPhase 11でfixture実測し「期待値表」（受入用oracle）へ固定する。
-本Gateは「oracleの登録枠・評価方法」を凍結する。
+※ 数値はPhase 9-04R3実測値。Phase 12受入時は同fixture・同手順で再現し、
+  釣合い・非零・期待値範囲を機械判定する。
 
 【受入シナリオ（空Project→成果品出力）】
 1. 空Project作成（/app/business/new）
@@ -65,13 +70,19 @@ status: FINAL（Sol指摘2回反映）
 22. Restore
 
 【Completion Gate（Phase 12判定条件・Deliverable ID単位）】
-各必須成果（Deliverable ID: RD-01..RD-05 / BL-01..02 / SS-01..05 / SB-01..05 /
-AN-01..05 / CIM-01..02 / SYS-01..03）:
+各必須成果（Deliverable ID: RD-01..RD-05 / BL-01..BL-02 / SS-01..SS-05 / SB-01..SB-05 /
+AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
 - 実画面で生成可能（新/app production route）
 - 実ファイル出力（DXF/CSV/GLB/HTML/.spacerproj）・byte/content検証
 - 生成元canonical checksum対応（決定論的・dual-writeなし）
 - FROZEN境界維持（NOT_AUTHORIZED/HOLD表示・値を発明しない）
 - 数値oracle適合（釣合い＋期待値）
+
+【生成host所有権（凍結）】
+- canonical読取: 各source module（road/bridgeLayout/superstructure/substructure/analysis）が所有
+- builder: road図面はroad moduleが所有・他成果品は各source moduleが所有
+- manifest生成・download開始・stale判定: deliverables moduleが所有（P0-01で実装）
+- 一意・dual-writeなし
 
 【stale / persistence / 再生成 Gate】
 - 編集→stale化→export禁止→再生成で解除
