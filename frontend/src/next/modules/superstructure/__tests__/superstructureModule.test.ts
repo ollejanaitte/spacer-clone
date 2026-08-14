@@ -227,6 +227,25 @@ describe("SuperstructureDocument validation (WP-A)", () => {
     const bad = parseSuperstructureDocument({ ...built.document, schemaVersion: "9.9.9" });
     expect(bad.ok).toBe(false);
   });
+
+  it("validates materialConfiguration (Phase 7-01C §3.1): finite + consistency", () => {
+    const built = buildSuperstructureDocument({
+      projectId: "PROJ-1",
+      bridgeLayoutReference: bridgeRef("BR-900"),
+      roadReference: roadRef(),
+      girderConfiguration: makeGirderConfig(),
+      deckConfiguration: makeDeckConfig(),
+      materialConfiguration: { elasticModulusKN_M2: 205000000, shearModulusKN_M2: 80000000, poissonRatio: 0.3, densityKN_M3: 78.5 },
+    });
+    if (!built.ok) throw new Error("build failed");
+    expect(validateSuperstructureDocument(built.document)).toEqual([]);
+
+    const badNu = { ...built.document, materialConfiguration: { elasticModulusKN_M2: 205000000, shearModulusKN_M2: 80000000, poissonRatio: 0.6, densityKN_M3: 78.5 } };
+    expect(validateSuperstructureDocument(badNu).some((i) => i.message.includes("poissonRatio"))).toBe(true);
+
+    const badE = { ...built.document, materialConfiguration: { elasticModulusKN_M2: 0, shearModulusKN_M2: 80000000, poissonRatio: 0.3, densityKN_M3: 78.5 } };
+    expect(validateSuperstructureDocument(badE).some((i) => i.message.includes("elasticModulusKN_M2"))).toBe(true);
+  });
 });
 
 describe("Superstructure module + adapter (WP-A)", () => {

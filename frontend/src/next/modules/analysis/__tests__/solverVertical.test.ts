@@ -168,4 +168,25 @@ describe("Phase 9-04R3 WP-B solver vertical (declared section)", () => {
     // all supports carry at least uz (vertical restraint)
     expect(doc.supports.every((s) => s.constraint.uz === true)).toBe(true);
   });
+
+  it("upstream edit changes the derived AnalysisDocument (STALE-ready regeneration)", () => {
+    const pid = setupFullBridge();
+    const manager = getProjectManager();
+    const superDoc = readSuperstructureDocument(manager, pid)!;
+    writeSuperstructureDocument(manager, pid, declareSectionAndMaterial(superDoc));
+    const before = buildDerivedAnalysisDocument(manager, pid)!;
+    const checksumBefore = before.modelChecksum;
+
+    // commit a section change (UI path: materialConfiguration edit)
+    const current = readSuperstructureDocument(manager, pid)!;
+    writeSuperstructureDocument(manager, pid, {
+      ...current,
+      materialConfiguration: { ...current.materialConfiguration!, elasticModulusKN_M2: 210000000 },
+    });
+    const after = buildDerivedAnalysisDocument(manager, pid)!;
+    expect(after.modelChecksum).not.toBe(checksumBefore);
+    // derived regeneration is deterministic within the same input
+    const again = buildDerivedAnalysisDocument(manager, pid)!;
+    expect(again.modelChecksum).toBe(after.modelChecksum);
+  });
 });

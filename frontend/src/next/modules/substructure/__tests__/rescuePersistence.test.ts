@@ -59,8 +59,15 @@ function seedSuperWithRescue(projectId: string) {
     roadReference: { moduleId: "road", alignmentId: "ROAD-MTN-1", stationReferenceId: null, coordinatePolicyId: null },
     structuralSystem: { spanSystem: "continuous", bridgeSystem: "CONTINUOUS" },
     girderConfiguration: { girderCount: 4, girderSpacingM: 3.0, girderLines: [], girderSectionModel: { depthM: 2.2, webThicknessM: 0.014, topFlange: { widthM: 0.5, thicknessM: 0.03 }, bottomFlange: { widthM: 0.6, thicknessM: 0.035 }, areaM2: null, unitWeightPerM: null } },
+    materialConfiguration: { elasticModulusKN_M2: 205000000, shearModulusKN_M2: 80000000, poissonRatio: 0.3, densityKN_M3: 78.5 },
     deckConfiguration: { deckId: "DECK-1", deckKind: "rc_non_composite", thicknessM: 0.24, unitWeight: 24.5, overhangLeftM: 0.6, overhangRightM: 0.6, resolvedWidthM: 12 },
-    crossBeamConfiguration: null, crossFrameConfiguration: null,
+    crossBeamConfiguration: {
+      crossBeamSpacingM: 8,
+      crossBeams: [
+        { crossBeamId: "XB-1", kind: "intermediate", stationM: 8, depthM: 0.9, widthM: 0.5 },
+      ],
+    },
+    crossFrameConfiguration: null,
     bearingConfiguration: { bearingSupportRelation: [], bearingSeats: [] },
     superstructureType: "plate_girder_rc_slab_non_composite",
   });
@@ -82,7 +89,7 @@ function seedSubWithRescue(projectId: string) {
         placement: { source: "liner", alignmentId: "ROAD-MTN-1", station: 300, offset: 0 },
         skewRad: 0,
         bearingSeats: [],
-        pier: { id: "p1", formType: "single_column_rect", column: { id: "c1", width: 3.0, depth: 2.5, height: 9.0 }, footing: { id: "ft-p1", length: 7.0, width: 7.0, thickness: 2.2, topElevation: 98.0 }, pileGroup: { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 20, pileCount: 6, spacing: { x: 3.6, y: 3.6 } } },
+        pier: { id: "p1", formType: "single_column_rect", column: { id: "c1", width: 3.0, depth: 2.5, height: 9.0 }, footing: { id: "ft-p1", length: 7.0, width: 7.0, thickness: 2.2, topElevation: 98.0 }, pileGroup: { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 20, pileCount: 6, spacing: { x: 3.6, y: 3.6 }, rows: 3, cols: 2, edgeX: 0.5, edgeY: 0.5 } },
       },
     ],
   });
@@ -112,6 +119,10 @@ describe("Rescue persistence round-trip (Phase 9-03 WP-H)", () => {
       expect(restored.girderConfiguration.girderCount).toBe(4);
       expect(restored.girderConfiguration.girderSectionModel.depthM).toBe(2.2);
       expect(restored.deckConfiguration.thicknessM).toBe(0.24);
+      // Phase 9-04R3: material + cross beam fields survive the round-trip
+      expect(restored.materialConfiguration?.elasticModulusKN_M2).toBe(205000000);
+      expect(restored.crossBeamConfiguration?.crossBeamSpacingM).toBe(8);
+      expect(restored.crossBeamConfiguration?.crossBeams[0]?.depthM).toBe(0.9);
     }
   });
 
@@ -135,6 +146,10 @@ describe("Rescue persistence round-trip (Phase 9-03 WP-H)", () => {
     if (restored) {
       expect(restored.supports[0]?.pier?.column?.width).toBe(3.0);
       expect(restored.supports[0]?.pier?.pileGroup?.pileCount).toBe(6);
+      // Phase 9-04R3: pile grid rows/cols/edge survive the round-trip
+      expect(restored.supports[0]?.pier?.pileGroup?.rows).toBe(3);
+      expect(restored.supports[0]?.pier?.pileGroup?.cols).toBe(2);
+      expect(restored.supports[0]?.pier?.pileGroup?.edgeX).toBe(0.5);
     }
   });
 });
