@@ -19,7 +19,8 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | RD-03 | 縦断図 | liner/drawing（profile） | 同上 | [L] .../profile | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | RD-04 | 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | RD-05 | 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | [N] deliverables | HTML/CSV✓ | ✓/✓ | ADAPT | 必須 |
-| RD-02..04 | DXF（formal・5 kind） | liner/dxf | 同上 | [L] | [N] deliverables | DXF✓ | ✓/✓ | ADAPT | 必須 |
+| RD-02..04 | DXF（plan-type-a/profile-band/cross-section） | liner/dxf | 同上 | [L] | [N] deliverables | DXF✓ | ✓/✓ | ADAPT | 必須 |
+| - | DXF（plan-type-b-centerline・plan） | liner/dxf | 同上 | [L] | - | DXF✓ | ✓/✓ | ADAPT | 任意 |
 | - | 2D Preview（新module） | - | next/components/RoadPreviews | [N] | [N] | - | ✓ | KEEP | 補助 |
 | - | 3D/CIM | - | roadCimSurface | [N] | [N] | - | ✓ | KEEP | CIM-01内 |
 | - | PDF（バイナリ） | なし | - | - | - | - | - | DEFER | 外 |
@@ -70,7 +71,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 |---|---|---|---|---|---|---|---|---|---|
 | CIM-01 | Integrated 3D | viewer | cimSceneBuilder | [N] | [N] | - | ✓ | KEEP | 必須 |
 | CIM-02 | GLB | - | cimExport | [N] | [N] | GLB✓ | ✓ | KEEP | 必須 |
-| CIM-03 | glTF JSON | - | cimExport | [N] | [N] | JSON | ✓ | KEEP | 任意 |
+| CIM-03 | glTF JSON | - | cimExport | [N] | [N] | JSON | ✓ | KEEP | 任意（V1必須にしない） |
 | - | STL | apollo/liner STL | [L] | - | - | STL✓ | ✓ | ADAPT候補 | 任意 |
 | - | IFC | なし | - | - | - | - | - | DEFER | 外 |
 
