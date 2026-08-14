@@ -20,6 +20,7 @@ import { domainToThree } from "../renderCoordinate";
 import { attachCimMetadata, type CimEntityMetadata, type CimLayerId } from "./integrated3dScene";
 import { buildAnalysisModel } from "../analysis/analysisModel";
 import { readSuperstructureDocument } from "../superstructureModuleAdapter";
+import { regenerateSuperstructureDerived } from "../superstructure/superstructurePersistence";
 import { readSubstructureDocument } from "../substructureModuleAdapter";
 import { buildLinerIntermediateFromRoad, generateSuperstructureSnapshot } from "../superstructure/superstructureGeometry";
 import { readRoadData } from "../roadModuleAdapter";
@@ -79,7 +80,7 @@ export function buildDerivedAnalysisDocument(
   if (!intermediate) {
     return undefined;
   }
-  const generated = generateSuperstructureSnapshot(intermediate, superDoc);
+  const generated = generateSuperstructureSnapshot(intermediate, regenerateSuperstructureDerived(manager, projectId, superDoc));
   if (!generated.ok) {
     return undefined;
   }

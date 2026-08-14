@@ -93,6 +93,10 @@ export interface BuildCimSceneInput {
   readonly layerState?: CimLayerState;
   /** Reference Mountain fallback terrain when the terrain document has no mesh data. */
   readonly useReferenceTerrain?: boolean;
+  /** Authoritative IF3 result to overlay (deformed / reaction / N-Q-M-T). */
+  readonly if3Result?: import("../../../contracts/frameAnalysisResultResource").FrameAnalysisResultResource | null;
+  /** Result component for the member force color map. */
+  readonly resultComponent?: "N" | "Q" | "M" | "T";
 }
 
 /**
@@ -309,7 +313,10 @@ export function buildIntegrated3DScene(
     { module: "substructure" },
     { module: "analysis" },
   ];
-  const analysis = buildAnalysisCimLayer(manager, projectId);
+  const analysis = buildAnalysisCimLayer(manager, projectId, {
+    if3Result: input.if3Result ?? null,
+    resultComponent: input.resultComponent ?? "N",
+  });
   layers.femNodes = analysis.femNodesGroup;
   layers.femMembers = analysis.femMembersGroup;
   layers.supports = analysis.supportsGroup;

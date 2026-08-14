@@ -13,6 +13,9 @@ import { readModuleFromManager } from "../modules/adapter";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
 import { buildIntegrated3DScene } from "../modules/cim/cimSceneBuilder";
+import { readAnalysisDocument, buildDerivedAnalysisDocument } from "../modules/cim/analysisCimLayer";
+import { readSuperstructureDocument } from "../modules/superstructureModuleAdapter";
+import { readRoadData } from "../modules/roadModuleAdapter";
 import {
   CIM_LAYER_IDS,
   CIM_LAYER_LABELS,
@@ -73,9 +76,51 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
     }
   }
 
+  const [resultComponent, setResultComponent] = useState<"N" | "Q" | "M" | "T">("N");
+  const [if3Result, setIf3Result] = useState<unknown>(null);
+  const [analysisMsg, setAnalysisMsg] = useState<string | null>(null);
+  const [runningAnalysis, setRunningAnalysis] = useState(false);
+
   const scene = useMemo(() => {
-    return buildIntegrated3DScene(getProjectManager(), projectId);
-  }, [projectId]);
+    return buildIntegrated3DScene(getProjectManager(), projectId, {
+      if3Result: if3Result as import("../../contracts/frameAnalysisResultResource").FrameAnalysisResultResource | null,
+      resultComponent,
+    });
+  }, [projectId, if3Result, resultComponent]);
+
+  async function handleRunAnalysis() {
+    setRunningAnalysis(true);
+    setAnalysisMsg(null);
+    try {
+      const superDoc = readSuperstructureDocument(getProjectManager(), projectId);
+      const roadData = readRoadData(getProjectManager(), projectId);
+      const doc = readAnalysisDocument(getProjectManager(), projectId) ?? buildDerivedAnalysisDocument(getProjectManager(), projectId);
+      if (!doc) {
+        setAnalysisMsg(`解析Documentを生成できませんでした（上部工/Bridge Layoutの構成を確認してください）。`);
+        return;
+      }
+      const res = await fetch("/api/design/analyze", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ analysisDocument: doc }),
+      });
+      if (!res.ok) {
+        setAnalysisMsg(`解析実行失敗（HTTP ${res.status}）。`);
+        return;
+      }
+      const data = (await res.json()) as { if3Result?: unknown };
+      if (!data.if3Result) {
+        setAnalysisMsg("IF3 Resultが返りませんでした。");
+        return;
+      }
+      setIf3Result(data.if3Result);
+      setAnalysisMsg("解析実行完了・IF3 Resultをoverlayしました。");
+    } catch (error) {
+      setAnalysisMsg(`解析実行エラー: ${String(error)}`);
+    } finally {
+      setRunningAnalysis(false);
+    }
+  }
 
   useEffect(() => {
     try {
@@ -202,18 +247,41 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
             onTransparencyChange={(t) => setTransparency(1 - t)}
           />
         </div>
-        <div className="cim-viewer-actions" data-testid="cim-viewer-actions">
-          <button
-            type="button"
-            className="next-secondary"
-            data-testid="cim-export-glb"
-            disabled={exportingGlb}
-            onClick={() => void handleExportGlb()}
-          >
-            {exportingGlb ? "書き出し中..." : "glTF（.glb）書き出し"}
-          </button>
-          <span className="next-hint" data-testid="cim-export-message">{exportMessage}</span>
-        </div>
+         <div className="cim-viewer-actions" data-testid="cim-viewer-actions">
+           <button
+             type="button"
+             className="next-secondary"
+             data-testid="cim-export-glb"
+             disabled={exportingGlb}
+             onClick={() => void handleExportGlb()}
+           >
+             {exportingGlb ? "書き出し中..." : "glTF（.glb）書き出し"}
+           </button>
+           <button
+             type="button"
+             className="next-secondary"
+             data-testid="cim-run-analysis"
+             disabled={runningAnalysis}
+             onClick={() => void handleRunAnalysis()}
+           >
+             {runningAnalysis ? "解析実行中..." : "解析実行（IF3 Result overlay）"}
+           </button>
+           <label className="next-field">
+             <span>結果成分</span>
+             <select
+               data-testid="cim-result-component"
+               value={resultComponent}
+               onChange={(e) => setResultComponent(e.target.value as "N" | "Q" | "M" | "T")}
+             >
+               <option value="N">N</option>
+               <option value="Q">Q</option>
+               <option value="M">M</option>
+               <option value="T">T</option>
+             </select>
+           </label>
+           {analysisMsg !== null && <span className="next-hint" data-testid="cim-analysis-message">{analysisMsg}</span>}
+           <span className="next-hint" data-testid="cim-export-message">{exportMessage}</span>
+         </div>
       </div>
     </section>
   );
