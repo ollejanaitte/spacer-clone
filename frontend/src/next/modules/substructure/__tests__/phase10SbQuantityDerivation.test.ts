@@ -2,11 +2,15 @@
  * SB-04 quantity derivation (REF-MOUNTAIN-1) — 独立照合のための再現test。
  *
  * fixture_constants.json（support形式・station）からcomputeSubstructureQuantityを
- * 実際に実行し、出力を /tmp/opencode/p10-oracle/sb_quantity_output.json へ書く。
- * verify_oracle_evidence.py が本testを実行し、固定 sb_quantity_input.json と厳密比較する。
+ * 実際に実行し、出力をP10_SB_OUTPUTが指すパスへ書く。
+ * verify_oracle_evidence.py が専用config（vitest.sb.config.ts）で本testを実行し、
+ * 固定 sb_quantity_input.json と厳密比較する。
  *
- * 実行（リポジトリルートの frontend/ から）:
- *   npx vitest run src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts
+ * 注意: 通常のnpm testからは除外済み（vitest.config.ts exclude）・P10_SB_OUTPUT必須。
+ *
+ * 実行:
+ *   P10_SB_OUTPUT=/tmp/opencode/p10-oracle/sb_quantity_output.json \
+ *   npx vitest run --config vitest.sb.config.ts
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { describe, it, expect } from "vitest";

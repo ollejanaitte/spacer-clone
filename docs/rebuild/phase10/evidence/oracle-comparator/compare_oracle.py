@@ -263,6 +263,8 @@ def main():
     bundle["fixtureConstantsSha256"] = fx_sha
     bundle["sbDerivationScriptPath"] = "frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts"
     bundle["sbDerivationScriptSha256"] = sha("frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts")
+    bundle["sbVitestConfigPath"] = "frontend/vitest.sb.config.ts"
+    bundle["sbVitestConfigSha256"] = sha("frontend/vitest.sb.config.ts")
     verify_runner = os.path.join(bundle_dir, "verify_oracle_evidence.py")
     if os.path.exists(verify_runner):
         bundle["verifyRunnerPath"] = verify_runner
@@ -282,7 +284,7 @@ def main():
             "loadCaseId": "LC1",
             "section": "declared(Phase9-04R3)",
             "solverBuild": args.solver_build,
-            "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(generateSample declared geometry) via sb_quantity_derivation.test.ts",
+            "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(generateSample declared geometry) via phase10SbQuantityDerivation.test.ts (vitest.sb.config.ts)",
             "deckVolumeDerivation": "fixture_constants.json deck.widthM * thicknessM * bridgeLengthM",
             "command": "python3 compare_oracle.py --oracle <oracle.json> --input <solver-input.json> --raw <solver-raw-result.json> --sb-quantity sb_quantity_input.json --out <report.json> (PYTHONPATH=backend)",
         },

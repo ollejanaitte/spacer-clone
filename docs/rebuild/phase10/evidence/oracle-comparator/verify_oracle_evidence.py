@@ -105,6 +105,7 @@ def main():
     ap.add_argument("--result", required=True)
     ap.add_argument("--comparator", default="docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py")
     ap.add_argument("--frontend-dir", default="frontend")
+    ap.add_argument("--sb-config", default="vitest.sb.config.ts")
     args = ap.parse_args()
 
     runner_sha = sha(os.path.abspath(__file__))
@@ -123,7 +124,7 @@ def main():
     env = dict(os.environ)
     env["P10_SB_OUTPUT"] = args.sb_output
     proc = subprocess.run(
-        ["npx", "vitest", "run", args.sb_derivation_test],
+        ["npx", "vitest", "run", "--config", args.sb_config],
         cwd=args.frontend_dir, capture_output=True, text=True, env=env,
     )
     print("sb derivation vitest rc:", proc.returncode)
@@ -210,6 +211,7 @@ def main():
             "rawResult": {"path": args.raw, "sha256": sha(args.raw)},
             "sbQuantityFixed": {"path": args.sb_quantity, "sha256": sha(args.sb_quantity)},
             "sbDerivationTest": {"path": args.sb_derivation_test, "sha256": sha(os.path.join(args.frontend_dir, args.sb_derivation_test))},
+            "sbVitestConfig": {"path": args.sb_config, "sha256": sha(os.path.join(args.frontend_dir, args.sb_config))},
             "fixtureConstants": {"path": args.fixture_constants, "sha256": sha(args.fixture_constants)},
             "negativesSpec": {"path": args.negatives, "sha256": sha(args.negatives)},
             "reportSchema": {"path": args.report_schema, "sha256": sha(args.report_schema)},

@@ -416,7 +416,9 @@
     "verifyRunnerPath",
     "verifyRunnerSha256",
     "oracleSchemaPath",
-    "oracleSchemaSha256"
+    "oracleSchemaSha256",
+    "sbVitestConfigPath",
+    "sbVitestConfigSha256"
    ],
    "properties": {
     "comparatorScript": {
@@ -472,6 +474,13 @@
      "type": "string"
     },
     "oracleSchemaSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "sbVitestConfigPath": {
+     "type": "string"
+    },
+    "sbVitestConfigSha256": {
      "type": "string",
      "pattern": "^[0-9a-f]{64}$"
     }
