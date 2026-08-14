@@ -60,7 +60,15 @@ function pierField(key: string, label: string, path: (p: NonNullable<Substructur
     label,
     unit: "m",
     get: (s) => (s.pier ? path(s.pier) : null),
-    set: (s, v) => s.pier ? ({ ...s, pier: write(s.pier, v) }) : s,
+    set: (s, v) => {
+      const base: NonNullable<SubstructureSupport["pier"]> = s.pier ?? {
+        id: `${s.supportId}-pier`,
+        formType: "single_column_rect",
+        column: { id: "c1", width: 2.0, depth: 2.0, height: 8.0 },
+        footing: { id: "ft", length: 6.0, width: 6.0, thickness: 2.0, topElevation: 0 },
+      };
+      return { ...s, pier: write(base, v) };
+    },
   };
 }
 
@@ -70,7 +78,17 @@ function abutmentField(key: string, label: string, path: (a: NonNullable<Substru
     label,
     unit: "m",
     get: (s) => (s.abutment ? path(s.abutment) : null),
-    set: (s, v) => s.abutment ? ({ ...s, abutment: write(s.abutment, v) }) : s,
+    set: (s, v) => {
+      const base: NonNullable<SubstructureSupport["abutment"]> = s.abutment ?? {
+        id: `${s.supportId}-abut`,
+        formType: "inverted_t",
+        backwall: { id: "bw", height: 3.0, thickness: 0.5, width: 5.0, seatElevation: 0 },
+        wingWallL: { id: "wl", length: 3.0, height: 2.0, thickness: 0.4 },
+        wingWallR: { id: "wr", length: 3.0, height: 2.0, thickness: 0.4 },
+        footing: { id: "aft", length: 5.0, width: 5.0, thickness: 1.5, topElevation: 0 },
+      };
+      return { ...s, abutment: write(base, v) };
+    },
   };
 }
 
