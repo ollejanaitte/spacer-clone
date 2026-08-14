@@ -224,16 +224,33 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     // eslint-disable-next-line no-console
     console.log("CIM result status:", statusText, "msg:", msgText);
 
+    // MANDATORY (Sol review #7): IF3 must be authoritative with real rows.
+    await expect(page.locator("[data-testid=cim-result-status]")).toContainText("authoritative");
     const reactionTable = page.locator("[data-testid=if3-reaction-table]");
-    if ((await reactionTable.count()) > 0) {
-      await expect(reactionTable).toBeVisible();
-      await page.screenshot({ path: evidencePath("p9-04r3-08-cim-if3.png"), fullPage: true });
-      const memberTable = page.locator("[data-testid=if3-memberforce-table]");
-      if ((await memberTable.count()) > 0) {
-        await expect(memberTable).toBeVisible();
-      }
-      await page.screenshot({ path: evidencePath("p9-04r3-09-if3-reaction-nqm.png"), fullPage: true });
-    }
+    await expect(reactionTable).toBeVisible();
+    await page.screenshot({ path: evidencePath("p9-04r3-08-cim-if3.png"), fullPage: true });
+
+    const reactionRows = page.locator("[data-testid=if3-reaction-row]");
+    expect(await reactionRows.count()).toBeGreaterThan(0);
+    // at least one reaction has a non-zero vertical Fz (real solver output)
+    const reactionTexts = await reactionRows.allTextContents();
+    const hasNonZeroFz = reactionTexts.some((t) => /-?\d+\.\d/.test(t) && !t.includes("0.0"));
+    expect(hasNonZeroFz).toBe(true);
+
+    const memberTable = page.locator("[data-testid=if3-memberforce-table]");
+    await expect(memberTable).toBeVisible();
+    const memberRows = page.locator("[data-testid=if3-memberforce-row]");
+    expect(await memberRows.count()).toBeGreaterThan(0);
+    // N/Q/M/T must contain non-zero real values (main-girder bending)
+    const memberTexts = await memberRows.allTextContents();
+    const hasNonZeroMember = memberTexts.some((t) => /-?\d+\.\d/.test(t) && !t.includes("0.0 / 0.0"));
+    expect(hasNonZeroMember).toBe(true);
+
+    // deformed summary must exist with node count > 0
+    await expect(page.locator("[data-testid=if3-deformed-summary]")).toBeVisible();
+    const deformedText = await page.locator("[data-testid=if3-deformed-summary]").textContent();
+    expect(deformedText).toBeTruthy();
+    await page.screenshot({ path: evidencePath("p9-04r3-09-if3-reaction-nqm.png"), fullPage: true });
   });
 
   test("05 substructure generate + 3-pane + pile grid", async ({ page }) => {
@@ -255,24 +272,64 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
 
     // select a support and set a pile dimension to initialize the pile group
     const firstSupport = page.locator("[data-testid^=sub-support-]").first();
-    if ((await firstSupport.count()) > 0) {
-      await firstSupport.click();
-      await expect(page.locator("[data-testid=sub-pane-properties]")).toBeVisible();
+    expect(await firstSupport.count()).toBeGreaterThan(0);
+    await firstSupport.click();
+    await expect(page.locator("[data-testid=sub-pane-properties]")).toBeVisible();
 
-      // edit a pile dimension so the pile group + grid editor materialize
-      const pileDiameter = page.locator("[data-testid=sub-field-杭径], [data-testid=sub-field-abutment-pile-diameter]").first();
-      if ((await pileDiameter.count()) > 0) {
-        await pileDiameter.fill("1.2");
-        await pileDiameter.blur();
-      }
-      await page.screenshot({ path: evidencePath("p9-04r3-11-sub-property-pilegrid.png"), fullPage: true });
+    // edit a pile dimension so the pile group + grid editor materialize
+    const pileDiameter = page.locator("[data-testid=sub-field-杭径], [data-testid=sub-field-abutment-pile-diameter]").first();
+    await pileDiameter.fill("1.2");
+    await pileDiameter.blur();
+    await page.screenshot({ path: evidencePath("p9-04r3-11-sub-property-pilegrid.png"), fullPage: true });
 
-      // pile grid editor + coordinate table visible
-      const gridEditor = page.locator("[data-testid=pile-grid-editor]");
-      if ((await gridEditor.count()) > 0) {
-        await gridEditor.scrollIntoViewIfNeeded();
-        await page.screenshot({ path: evidencePath("p9-04r3-12-sub-pile-grid.png"), fullPage: true });
-      }
+    // pile grid editor + coordinate table MUST exist (Sol review #7)
+    const gridEditor = page.locator("[data-testid=pile-grid-editor]");
+    await expect(gridEditor).toBeVisible();
+    await gridEditor.scrollIntoViewIfNeeded();
+    await page.screenshot({ path: evidencePath("p9-04r3-12-sub-pile-grid.png"), fullPage: true });
+    const coordTable = page.locator("[data-testid=pile-coordinate-table]");
+    await expect(coordTable).toBeVisible();
+    expect(await page.locator("[data-testid^=pile-coord-]").count()).toBeGreaterThan(0);
+
+    // 3-pane bidirectional sync (Sol review #5/#7): click the 2D plan support
+    // and verify the property editor reflects it.
+    const planSupport = page.locator("[data-testid^=sub-plan-support-]").first();
+    if ((await planSupport.count()) > 0) {
+      const planSupportId = (await planSupport.getAttribute("data-testid"))!.replace("sub-plan-support-", "");
+      await planSupport.click();
+      await expect(page.locator("[data-testid=sub-pane-properties]")).toContainText(planSupportId);
+    }
+  });
+
+  test("06 persistence restart + pile grid reload (Sol review #7)", async ({ page }) => {
+    await openProject(page);
+    await ensureRoadSaved(page);
+    await ensureBridgeLayout(page);
+    await page.locator("[data-testid=module-open-substructure]").click();
+    const subDoc = page.locator("[data-testid=sub-document]");
+    if ((await subDoc.textContent()) === "なし") {
+      await page.locator("[data-testid=sub-generate-button]").click();
+    }
+    await expect(page.locator("[data-testid=sub-rescue]")).toBeVisible();
+
+    // set a pile grid value
+    const firstSupport = page.locator("[data-testid^=sub-support-]").first();
+    await firstSupport.click();
+    const pileDiameter = page.locator("[data-testid=sub-field-杭径], [data-testid=sub-field-abutment-pile-diameter]").first();
+    await pileDiameter.fill("1.2");
+    await pileDiameter.blur();
+    const gridRows = page.locator("[data-testid=sub-field-X方向本数（rows）]");
+    if ((await gridRows.count()) > 0) {
+      await gridRows.fill("3");
+      await gridRows.blur();
+    }
+
+    // reload -> document restores from PDC (Auto Save)
+    await page.reload();
+    await expect(page.locator("[data-testid=sub-rescue]")).toBeVisible();
+    const restoredRows = page.locator("[data-testid=sub-field-X方向本数（rows）]");
+    if ((await restoredRows.count()) > 0) {
+      expect(await restoredRows.inputValue()).toBe("3");
     }
   });
 });
