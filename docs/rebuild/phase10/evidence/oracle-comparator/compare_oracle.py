@@ -263,6 +263,10 @@ def main():
     bundle["fixtureConstantsSha256"] = fx_sha
     bundle["sbDerivationScriptPath"] = os.path.join(bundle_dir, "sb_quantity_derivation.test.ts")
     bundle["sbDerivationScriptSha256"] = sha(os.path.join(bundle_dir, "sb_quantity_derivation.test.ts"))
+    verify_runner = os.path.join(bundle_dir, "verify_oracle_evidence.py")
+    if os.path.exists(verify_runner):
+        bundle["verifyRunnerPath"] = verify_runner
+        bundle["verifyRunnerSha256"] = sha(verify_runner)
 
     report = {
         "schemaVersion": "1.0.0",

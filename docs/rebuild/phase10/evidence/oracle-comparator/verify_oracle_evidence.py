@@ -3,72 +3,90 @@
 spacer-oracle-comparator-v1 検証runner（fail-closed・決定論的）
 
 手順:
-  1. oracle JSON が Phase10_Reference_NumberOracle.schema.json をPASSすること
-  2. 7件のnegative fixtures が全てrejectされること
-  3. compare_oracle.py を実行して comparison report を生成（rawConsistency含む）
-  4. comparison report が comparison_report.schema.json をPASSすること
-  5. 全結果とvalidator version を検証結果JSONに構造化記録
+  1. SB-04導出test（vitest）を実行し、固定 sb_quantity_input.json と厳密比較する
+  2. oracle JSON が Phase10_Reference_NumberOracle.schema.json をPASSすること
+  3. schema_negative_fixtures.json（唯一正本）の7件が全てrejectされること
+  4. compare_oracle.py を実行して comparison report を生成（rawConsistency含む）
+  5. comparison report が comparison_report.schema.json をPASSすること
+  6. 全結果・runner SHA・全入力SHA・生成report SHA を検証結果JSONに構造化記録
 
-Usage:
-    python3 verify_oracle_evidence.py \
-      --oracle <oracle.json> \
-      --input <solver-input.json> \
-      --raw <solver-raw-result.json> \
-      --sb-quantity <sb_quantity_input.json> \
-      --out <report.json> \
-      --report-schema <comparison_report.schema.json> \
-      --oracle-schema <oracle.schema.json> \
-      --result <verify-result.json>
+Usage (repository root):
+    python3 docs/rebuild/phase10/evidence/oracle-comparator/verify_oracle_evidence.py \
+      --oracle docs/rebuild/phase10/Phase10_Reference_NumberOracle.json \
+      --input docs/rebuild/phase10/evidence/Phase10_Reference_SolverInput.json \
+      --raw docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json \
+      --sb-quantity docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json \
+      --sb-output /tmp/opencode/p10-oracle/sb_quantity_output.json \
+      --sb-derivation-test src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts \
+      --fixture-constants docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json \
+      --negatives docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json \
+      --out docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json \
+      --report-schema docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json \
+      --oracle-schema docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json \
+      --result docs/rebuild/phase10/evidence/oracle-comparator/verification_result.json
 """
 import argparse
 import copy
+import hashlib
 import json
+import os
 import subprocess
 import sys
 
 import jsonschema
 
 
-def apply_mutations(oracle):
-    """negative fixtures を決定論的に適用した 7 個の不正JSONを生成。"""
-    cases = []
+def sha(path):
+    return hashlib.sha256(open(path, "rb").read()).hexdigest()
 
-    def make():
-        return copy.deepcopy(oracle)
 
-    c = make()
-    c["coverage"]["components"].pop("i.mx")
-    cases.append(("NEG-1", "coverage.components missing i.mx", c))
+def apply_mutation(oracle, mut):
+    """schema_negative_fixtures.json の mutation 仕様に従い決定論的に不正JSONを生成。
 
-    c = make()
-    c["coverage"]["components"]["i.fx"].pop("nonZeroCount")
-    cases.append(("NEG-2", "coverage.i.fx missing nonZeroCount", c))
+    仕様: ";"区切りの操作列。各操作 = "pop:PATH" | "set:PATH=VALUE"
+    PATHは">"区切り・数値は配列index。VALUEはJSONとして解釈（"*"/"X"等の文字列はそのまま）。"""
+    c = copy.deepcopy(oracle)
 
-    c = make()
-    c["coverage"]["components"]["i.mx"] = {"nonZeroCount": 70}
-    cases.append(("NEG-3", "coverage.i.mx has nonZeroCount instead of maxAbsBound", c))
+    def resolve(parent, pathparts):
+        node = parent
+        for p in pathparts:
+            if isinstance(node, list):
+                node = node[int(p)]
+            else:
+                node = node[p]
+        return node
 
-    c = make()
-    c["coverage"]["components"]["j.fy"] = {"nonZeroCount": 70}
-    cases.append(("NEG-4", "coverage extra component j.fy", c))
+    for op_spec in mut["mutation"].split(";"):
+        op_spec = op_spec.strip()
+        if not op_spec:
+            continue
+        op, _, rest = op_spec.partition(":")
+        parts = rest.split(">")
+        if op == "set":
+            path, _, raw = rest.partition("=")
+            pathparts = path.split(">")
+            parent = resolve(c, pathparts[:-1])
+            if isinstance(parent, list):
+                parent[int(pathparts[-1])] = _parse_val(raw)
+            else:
+                parent[pathparts[-1]] = _parse_val(raw)
+        elif op == "pop":
+            pathparts = rest.split(">")
+            parent = resolve(c, pathparts[:-1])
+            if isinstance(parent, list):
+                del parent[int(pathparts[-1])]
+            else:
+                parent.pop(pathparts[-1], None)
+        else:
+            raise ValueError(f"unknown mutation op: {op}")
+    return c
 
-    c = make()
-    row = c["rows"][0]
-    row["entityId"] = "*"
-    row.pop("wildcard", None)
-    cases.append(("NEG-5", "row entityId='*' without wildcard", c))
 
-    c = make()
-    row = c["rows"][0]
-    row["wildcard"] = "all-members"
-    row["entityId"] = "X"
-    cases.append(("NEG-6", "row wildcard=all-members but entityId!='*'", c))
-
-    c = make()
-    c["coverage"]["components"] = {}
-    cases.append(("NEG-7", "coverage empty components object", c))
-
-    return cases
+def _parse_val(raw):
+    raw = raw.strip()
+    if raw.startswith("{") or raw.startswith("[") or raw.lower() in ("null", "true", "false"):
+        return json.loads(raw)
+    return raw
 
 
 def main():
@@ -77,39 +95,69 @@ def main():
     ap.add_argument("--input", required=True)
     ap.add_argument("--raw", required=True)
     ap.add_argument("--sb-quantity", required=True)
+    ap.add_argument("--sb-output", required=True)
+    ap.add_argument("--sb-derivation-test", required=True)
+    ap.add_argument("--fixture-constants", required=True)
+    ap.add_argument("--negatives", required=True)
     ap.add_argument("--out", required=True)
     ap.add_argument("--report-schema", required=True)
     ap.add_argument("--oracle-schema", required=True)
     ap.add_argument("--result", required=True)
     ap.add_argument("--comparator", default="docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py")
+    ap.add_argument("--frontend-dir", default="frontend")
     args = ap.parse_args()
 
+    runner_sha = sha(os.path.abspath(__file__))
     oracle = json.load(open(args.oracle))
     oracle_schema = json.load(open(args.oracle_schema))
     report_schema = json.load(open(args.report_schema))
-
+    negatives_spec = json.load(open(args.negatives))
     validator = f"jsonschema {jsonschema.__version__} Draft202012Validator"
+
+    # 0) run SB derivation test and strictly compare with fixed input
+    derive_ok = False
+    derive_detail = {}
+    if os.path.exists(args.sb_output):
+        os.remove(args.sb_output)
+    proc = subprocess.run(
+        ["npx", "vitest", "run", args.sb_derivation_test],
+        cwd=args.frontend_dir, capture_output=True, text=True,
+    )
+    print("sb derivation vitest rc:", proc.returncode)
+    if proc.returncode == 0 and os.path.exists(args.sb_output):
+        derived = json.load(open(args.sb_output))
+        fixed = json.load(open(args.sb_quantity))
+        norm = lambda v: round(v, 6) if isinstance(v, float) else v
+        derived_norm = {k: norm(v) for k, v in derived.items() if k != "derivation"}
+        fixed_norm = {k: norm(v) for k, v in fixed.items()}
+        derive_ok = derived_norm == fixed_norm
+        derive_detail = {"derivedMatchesFixed": derive_ok, "outputPath": args.sb_output, "fixedPath": args.sb_quantity}
+    else:
+        derive_detail = {"derivedMatchesFixed": False, "error": "vitest failed or output missing", "stderr": (proc.stderr or "")[-1500:]}
+    print("SB derivation matches fixed input:", derive_ok)
 
     # 1) oracle validates
     ov = jsonschema.Draft202012Validator(oracle_schema)
     oracle_ok = ov.is_valid(oracle)
     print("oracle validates:", oracle_ok)
 
-    # 2) negative fixtures all reject
+    # 2) negative fixtures all reject (loaded from single-source JSON)
     neg_results = []
-    for fid, name, mutated in apply_mutations(oracle):
+    for c in negatives_spec["cases"]:
+        mutated = apply_mutation(oracle, c)
         rejected = not ov.is_valid(mutated)
-        neg_results.append({"id": fid, "name": name, "expected": "reject", "result": ("reject" if rejected else "PASS(!!)")})
-        print(f"{fid} rejected:", rejected)
+        neg_results.append({"id": c["id"], "name": c["name"], "mutation": c["mutation"], "expected": "reject", "result": ("reject" if rejected else "PASS(!!)")})
+        print(f"{c['id']} rejected:", rejected)
     neg_ok = all(r["result"] == "reject" for r in neg_results)
 
     # 3) run comparator
     cmd = [sys.executable, args.comparator, "--oracle", args.oracle, "--input", args.input,
-           "--raw", args.raw, "--sb-quantity", args.sb_quantity, "--out", args.out]
+           "--raw", args.raw, "--sb-quantity", args.sb_quantity,
+           "--fixture-constants", args.fixture_constants, "--out", args.out]
     proc = subprocess.run(cmd, capture_output=True, text=True)
     print("comparator rc:", proc.returncode)
     if proc.returncode != 0:
-        print(proc.stderr[-2000:])
+        print((proc.stderr or "")[-2000:])
         sys.exit(1)
     report = json.load(open(args.out))
     report_pass = report.get("pass") is True
@@ -120,15 +168,30 @@ def main():
     report_ok = rv.is_valid(report)
     print("report validates:", report_ok)
 
-    # 5) record
+    # 5) record (chain: runner SHA + all input SHAs + generated report SHA)
     result = {
         "comparatorId": "spacer-oracle-comparator-v1",
+        "runnerSha256": runner_sha,
         "validator": validator,
+        "inputs": {
+            "oracle": {"path": args.oracle, "sha256": sha(args.oracle)},
+            "solverInput": {"path": args.input, "sha256": sha(args.input)},
+            "rawResult": {"path": args.raw, "sha256": sha(args.raw)},
+            "sbQuantityFixed": {"path": args.sb_quantity, "sha256": sha(args.sb_quantity)},
+            "sbDerivationTest": {"path": args.sb_derivation_test, "sha256": sha(os.path.join(args.frontend_dir, args.sb_derivation_test))},
+            "fixtureConstants": {"path": args.fixture_constants, "sha256": sha(args.fixture_constants)},
+            "negativesSpec": {"path": args.negatives, "sha256": sha(args.negatives)},
+            "reportSchema": {"path": args.report_schema, "sha256": sha(args.report_schema)},
+            "oracleSchema": {"path": args.oracle_schema, "sha256": sha(args.oracle_schema)},
+            "comparator": {"path": args.comparator, "sha256": sha(args.comparator)},
+        },
+        "generatedReportSha256": sha(args.out),
+        "sbDerivation": {"executed": True, **derive_detail},
         "oracleSchemaValid": oracle_ok,
         "negativeFixtures": {"count": len(neg_results), "allRejected": neg_ok, "cases": neg_results},
         "comparison": {"pass": report_pass, "rows": len(report.get("rows", [])), "failures": len(report.get("failures", [])), "rawConsistency": report.get("rawConsistency")},
         "reportSchemaValid": report_ok,
-        "overallPass": oracle_ok and neg_ok and report_pass and report_ok,
+        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok,
     }
     json.dump(result, open(args.result, "w"), indent=1)
     print("OVERALL PASS:", result["overallPass"])

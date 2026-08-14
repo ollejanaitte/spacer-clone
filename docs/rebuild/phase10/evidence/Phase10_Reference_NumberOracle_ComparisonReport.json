@@ -1,7 +1,7 @@
 {
  "schemaVersion": "1.0.0",
  "comparatorId": "spacer-oracle-comparator-v1",
- "generatedAt": "2026-08-14T23:07:59.438654+00:00",
+ "generatedAt": "2026-08-14T23:14:15.355018+00:00",
  "runConditions": {
   "solver": "scipy_sparse",
   "document": "Phase10_Reference_SolverInput.json(fixed)",
@@ -27,17 +27,19 @@
  },
  "comparatorBundle": {
   "comparatorScript": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
-  "comparatorScriptSha256": "01c6ae34d239fa40146109b5453ab1b614ae31f9f2960463511a84cfffba1b28",
+  "comparatorScriptSha256": "94f7c2f91d4f931eb942fd4260b8dac80a1958a3349f34e2c77b37b773d1eb21",
   "reportSchemaPath": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
-  "reportSchemaSha256": "015ca6a49bc048b08cc865bb983acf954d4e91b1e5cfe026a3b8c91e1e492d2f",
+  "reportSchemaSha256": "df7f89406fc1f24b71f9ff867876321c0b4358e35a16a7274143acf79abc3a69",
   "negativeFixturesPath": "docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json",
-  "negativeFixturesSha256": "60bbb7a76eccd081844c9f162828b3ed7d073a0fd6d07c8f63d069d00ab6e6a6",
+  "negativeFixturesSha256": "0ec294025a6d0f16704ba4afbd3c4589e9543c63faaa9d8f70ae31a4ed372495",
   "sbQuantityInputPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json",
   "sbQuantityInputSha256": "c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306",
   "fixtureConstantsPath": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
   "fixtureConstantsSha256": "59fa8fff6275e973c8e1c87803ace081a50afebfad8549f00a2ab215dde711c5",
   "sbDerivationScriptPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_derivation.test.ts",
-  "sbDerivationScriptSha256": "9fea5754b59934dd40ab1efe0bb396fe75599bfbc87265159be0a24be0e6657b"
+  "sbDerivationScriptSha256": "1233505e3b86eb8432c7bc64180b9f6f00ef50c4dd61edf4f995fb726f2d2f34",
+  "verifyRunnerPath": "docs/rebuild/phase10/evidence/oracle-comparator/verify_oracle_evidence.py",
+  "verifyRunnerSha256": "fec5a73ebea5f29d06ffb4f50e98edd4e97a860acf72eead69f3f3ca4b96bde6"
  },
  "rows": [
   {

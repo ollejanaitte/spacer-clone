@@ -46,13 +46,19 @@ status: FINAL（Sol指摘2回反映）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 062ac97f03afe28890b46d96e62ad1e2a51d7b68ebf66f8e8ed29de22deab0ff）
+    （sha256 8831141c963b2eeb0972023bfd5209404e701fd0a2a172d7dd5d995854875a2b）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
-  - 再現bundle（evidence/oracle-comparator/）: compare_oracle.py（1ebac395...）・comparison_report.schema.json（2e40bbbb...）・
-    schema_negative_fixtures.json（65242c3b...）・sb_quantity_input.json（c3c6eafe...）・fixture_constants.json（59fa8fff...）・
-    sb_quantity_derivation.test.ts（9fea5754...）・verify_oracle_evidence.py（f1f26399...）
+  - 再現bundle（evidence/oracle-comparator/）:
+    compare_oracle.py = 94f7c2f91d4f931eb942fd4260b8dac80a1958a3349f34e2c77b37b773d1eb21
+    verify_oracle_evidence.py = fec5a73ebea5f29d06ffb4f50e98edd4e97a860acf72eead69f3f3ca4b96bde6
+    comparison_report.schema.json = df7f89406fc1f24b71f9ff867876321c0b4358e35a16a7274143acf79abc3a69
+    Phase10_Reference_NumberOracle.schema.json = 4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f
+    schema_negative_fixtures.json = 0ec294025a6d0f16704ba4afbd3c4589e9543c63faaa9d8f70ae31a4ed372495
+    sb_quantity_input.json = c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306
+    fixture_constants.json = 59fa8fff6275e973c8e1c87803ace081a50afebfad8549f00a2ab215dde711c5
+    sb_quantity_derivation.test.ts = 1233505e3b86eb8432c7bc64180b9f6f00ef50c4dd61edf4f995fb726f2d2f34
   - report.comparatorBundleに全bundle完全SHA格納・verify_oracle_evidence.pyが「oracle PASS→7件reject→比較→report schema PASS」を一括実行し
-    verification_result.json（df78a87b...）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
+    verification_result.json（8ab5ed9e4bb807d1cdb81ef339c5e14f1bf8629cf9e23513c2ec274dbe46ed34）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
   - negative fixtures 7件全reject + oracle本体PASS（jsonschema 4.26.0）を機械確認
     inputChainOfCustody{oracleSha256, rawResultSha256, solverInputSha256, fixtureId=REF-MOUNTAIN-1, projectId}・各rowにdAbs/dRel/判定根拠
   - 結果: 46 row・46 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
