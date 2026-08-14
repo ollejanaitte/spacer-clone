@@ -45,9 +45,10 @@ describe("loadModel (Phase 7-01 C FROZEN / WP-F)", () => {
     const structuralTotal = result.loadCases.find((c) => c.caseId === LC_STRUCTURAL)!.totalKN!;
     const deckTotal = result.loadCases.find((c) => c.caseId === LC_DECK)!.totalKN!;
 
-    // 4 main girder members x 10 m = 40 m total loaded length.
+    // 8 main girder members (subdivided through intermediate girderPanel
+    // nodes, Sol #4) x 5 m = 40 m total loaded length.
     const structural = result.memberLoads.filter((l) => l.loadCaseId === LC_STRUCTURAL);
-    expect(structural).toHaveLength(4);
+    expect(structural).toHaveLength(8);
     const qStructural = structuralTotal / 40;
     for (const load of structural) {
       expect(load.type).toBe("distributed");
@@ -57,7 +58,7 @@ describe("loadModel (Phase 7-01 C FROZEN / WP-F)", () => {
     }
 
     const deck = result.memberLoads.filter((l) => l.loadCaseId === LC_DECK);
-    expect(deck).toHaveLength(4);
+    expect(deck).toHaveLength(8);
     const qDeck = deckTotal / 40;
     for (const load of deck) {
       expect(load.magnitude).toBeCloseTo(-qDeck, 12);

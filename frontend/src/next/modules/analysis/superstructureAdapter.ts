@@ -248,6 +248,42 @@ export function buildSuperstructureAnalysisFragment(
     }
   }
 
+  // Phase 9-04R3 Sol #4: subdivide each support-to-support span with
+  // intermediate girderPanel nodes so the AUTHORIZED distributed dead load
+  // acts on the main girders (producing bending / shear / deflection) rather
+  // than being lumped at the support points. The subdivision interval follows
+  // the load model's panel logic (uniform nodal loads); no stiffness is faked.
+  for (const line of snapshot.girderLines) {
+    const supportNodes = snapshot.supportPoints
+      .filter((sp) => sp.girderId === line.girderId)
+      .sort((a, b) => a.stationM - b.stationM);
+    for (let i = 0; i < supportNodes.length - 1; i += 1) {
+      const start = supportNodes[i]!;
+      const end = supportNodes[i + 1]!;
+      const spanM = end.stationM - start.stationM;
+      if (!(spanM > 0)) continue;
+      const segments = Math.max(2, Math.ceil(spanM / 10));
+      for (let k = 1; k < segments; k += 1) {
+        const t = k / segments;
+        const stationM = start.stationM + t * spanM;
+        const sourceEntityId = `girderPanel:${line.girderId}:${String(stationM)}`;
+        if (nodeBySource.has(sourceEntityId)) continue;
+        const node: AnalysisNode = {
+          entityId: deriveAnalysisEntityId("node", sourceEntityId),
+          sourceEntityId,
+          sourceKind: "girderPanel",
+          x: start.position.x + t * (end.position.x - start.position.x),
+          y: start.position.y + t * (end.position.y - start.position.y),
+          z: start.position.z + t * (end.position.z - start.position.z),
+          stationM,
+          offsetM: start.offsetM + t * (end.offsetM - start.offsetM),
+        };
+        nodeBySource.set(sourceEntityId, node);
+        nodes.push(node);
+      }
+    }
+  }
+
   // crossBeamPoint nodes (cross girder station x girder)
   for (const cg of snapshot.crossGirderReferences) {
     for (const line of snapshot.girderLines) {
@@ -350,15 +386,47 @@ export function buildSuperstructureAnalysisFragment(
     }
   }
 
-  // main girder members per span (support point -> support point along each girder)
+  // main girder members: consecutive nodes (support + intermediate girderPanel)
+  // along each girder line. Intermediate nodes carry the AUTHORIZED distributed
+  // dead load, so bending / shear / deflection develop in the main girders
+  // (Phase 9-04R3 Sol #4). Members are never fabricated: they connect real
+  // nodes resolved from the snapshot (including the interpolated panels).
   for (const line of snapshot.girderLines) {
-    const stationNodes = snapshot.supportPoints
-      .filter((sp) => sp.girderId === line.girderId)
-      .sort((a, b) => a.stationM - b.stationM);
-    for (let i = 0; i < stationNodes.length - 1; i += 1) {
-      const nodeI = nodeBySource.get(`supportPoint:${stationNodes[i].supportId}:${line.girderId}`);
-      const nodeJ = nodeBySource.get(`supportPoint:${stationNodes[i + 1].supportId}:${line.girderId}`);
-      if (!nodeI || !nodeJ) continue;
+    const ordered: { stationM: number; node: AnalysisNode }[] = [];
+    for (const sp of snapshot.supportPoints) {
+      if (sp.girderId !== line.girderId) continue;
+      const node = nodeBySource.get(`supportPoint:${sp.supportId}:${line.girderId}`);
+      if (node) ordered.push({ stationM: sp.stationM, node });
+    }
+    for (const point of line.points) {
+      const isSupport = snapshot.supportPoints.some(
+        (sp) => sp.girderId === line.girderId && near(sp.stationM, point.stationM),
+      );
+      if (isSupport) continue;
+      const node = nodeBySource.get(`girderPanel:${line.girderId}:${String(point.stationM)}`);
+      if (node) ordered.push({ stationM: point.stationM, node });
+    }
+    // interpolated panel nodes (Sol #4) are in `nodes` under the girder prefix
+    for (const node of nodes) {
+      if (node.sourceKind !== "girderPanel") continue;
+      const prefix = `girderPanel:${line.girderId}:`;
+      if (!node.sourceEntityId.startsWith(prefix)) continue;
+      const station = Number(node.sourceEntityId.slice(prefix.length));
+      if (!Number.isFinite(station)) continue;
+      if (ordered.some((o) => near(o.stationM, station))) continue;
+      ordered.push({ stationM: station, node });
+    }
+    ordered.sort((a, b) => a.stationM - b.stationM);
+    // de-duplicate same-station nodes (e.g. support coincident with panel)
+    const unique: typeof ordered = [];
+    for (const entry of ordered) {
+      if (unique.length === 0 || !near(unique[unique.length - 1]!.stationM, entry.stationM)) {
+        unique.push(entry);
+      }
+    }
+    for (let i = 0; i < unique.length - 1; i += 1) {
+      const nodeI = unique[i]!.node;
+      const nodeJ = unique[i + 1]!.node;
       const { frame, orientationVector } = buildMemberLocalFrame(
         { x: nodeI.x, y: nodeI.y, z: nodeI.z },
         { x: nodeJ.x, y: nodeJ.y, z: nodeJ.z },

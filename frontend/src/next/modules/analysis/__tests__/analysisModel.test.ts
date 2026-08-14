@@ -34,8 +34,8 @@ describe("analysisModel (Phase 7-01 C FROZEN / WP-E)", () => {
       sourceReferences: refs(),
     });
     expect(result.ok).toBe(true);
-    expect(result.document.nodes).toHaveLength(6);
-    expect(result.document.members.filter((m) => m.memberKind === "mainGirder")).toHaveLength(4);
+    expect(result.document.nodes).toHaveLength(10); // 6 supports + 4 intermediate girderPanel (Sol #4)
+    expect(result.document.members.filter((m) => m.memberKind === "mainGirder")).toHaveLength(8); // subdivided through intermediate nodes (Sol #4)
     expect(result.document.sections.length).toBeGreaterThanOrEqual(4);
     expect(result.document.materials).toHaveLength(1);
     // supports resolved per bearing seat (6) with no extra placement-only supports
@@ -77,7 +77,7 @@ describe("analysisModel (Phase 7-01 C FROZEN / WP-E)", () => {
       snapshot: TEST_GEOMETRY_SNAPSHOT,
       sourceReferences: refs(),
     });
-    expect(result.document.nodes).toHaveLength(6);
+    expect(result.document.nodes).toHaveLength(10); // 6 supports + 4 intermediate girderPanel (Sol #4)
     expect(result.document.foundationSprings).toHaveLength(0);
     expect(result.document.validation.ok).toBe(true);
   });

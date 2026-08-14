@@ -9,8 +9,12 @@ describe("superstructureAdapter (Phase 7-01 B FROZEN / WP-B)", () => {
     expect(fragment.issues).toHaveLength(0);
     // 6 support points
     expect(fragment.nodes.filter((n) => n.sourceKind === "supportPoint")).toHaveLength(6);
-    // main girder members: 2 girders x 2 spans
-    expect(fragment.members.filter((m) => m.memberKind === "mainGirder")).toHaveLength(4);
+    // main girder members: 2 girders x 2 spans, subdivided through an
+    // intermediate girderPanel node per span (Sol #4) => 2 spans x 2 members
+    // per girder x 2 girders = 8 members
+    expect(fragment.members.filter((m) => m.memberKind === "mainGirder")).toHaveLength(8);
+    // intermediate girderPanel nodes exist so distributed dead load acts on the girders
+    expect(fragment.nodes.filter((n) => n.sourceKind === "girderPanel")).toHaveLength(4);
     // cross beam members: 3 stations x 1 (between 2 girders)
     expect(fragment.members.filter((m) => m.memberKind === "crossBeam")).toHaveLength(3);
     // sections: 1 girder + 3 cross beams

@@ -79,7 +79,7 @@ describe("analysisViewerModel (Phase 7-01 D FROZEN / WP-J)", () => {
     const before = JSON.stringify(doc);
     const model = buildViewerAnalysisModel(doc, makeIf3());
     expect(JSON.stringify(doc)).toBe(before); // display-only, no mutation
-    expect(model.nodes).toHaveLength(6);
+    expect(model.nodes).toHaveLength(10); // 6 supports + 4 intermediate girderPanel (Sol #4)
     expect(model.members.length).toBeGreaterThan(0);
     expect(model.supports).toHaveLength(6);
     expect(model.bearings).toHaveLength(6);
