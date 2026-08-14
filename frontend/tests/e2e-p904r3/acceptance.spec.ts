@@ -232,18 +232,34 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
 
     const reactionRows = page.locator("[data-testid=if3-reaction-row]");
     expect(await reactionRows.count()).toBeGreaterThan(0);
-    // at least one reaction has a non-zero vertical Fz (real solver output)
-    const reactionTexts = await reactionRows.allTextContents();
-    const hasNonZeroFz = reactionTexts.some((t) => /-?\d+\.\d/.test(t) && !t.includes("0.0"));
+    // at least one reaction has a non-zero vertical Fz (real solver output).
+    // Columns: node, loadCase, Fx, Fy, Fz, Mx, My, Mz
+    const reactionCells = await reactionRows.locator("td").allTextContents();
+    const fzValues: string[] = [];
+    for (let i = 4; i < reactionCells.length; i += 8) {
+      fzValues.push(reactionCells[i]!);
+    }
+    const hasNonZeroFz = fzValues.some((v) => {
+      const n = Number(v.replace(/[^0-9.\-]/g, ""));
+      return Number.isFinite(n) && Math.abs(n) > 1e-6;
+    });
     expect(hasNonZeroFz).toBe(true);
 
     const memberTable = page.locator("[data-testid=if3-memberforce-table]");
     await expect(memberTable).toBeVisible();
     const memberRows = page.locator("[data-testid=if3-memberforce-row]");
     expect(await memberRows.count()).toBeGreaterThan(0);
-    // N/Q/M/T must contain non-zero real values (main-girder bending)
-    const memberTexts = await memberRows.allTextContents();
-    const hasNonZeroMember = memberTexts.some((t) => /-?\d+\.\d/.test(t) && !t.includes("0.0 / 0.0"));
+    // N/Q/M/T cells (columns: member, loadCase, N, Q, M, T) must contain
+    // non-zero real values (main-girder bending). N is col index 2 (i/j pair).
+    const memberCells = await memberRows.locator("td").allTextContents();
+    const nValues: string[] = [];
+    for (let i = 2; i < memberCells.length; i += 6) {
+      nValues.push(memberCells[i]!);
+    }
+    const hasNonZeroMember = nValues.some((v) => {
+      const parsed = v.split("/").map((s) => Number(s.replace(/[^0-9.\-]/g, "")));
+      return parsed.some((n) => Number.isFinite(n) && Math.abs(n) > 1e-6);
+    });
     expect(hasNonZeroMember).toBe(true);
 
     // deformed summary must exist with node count > 0
@@ -324,9 +340,15 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
       await gridRows.blur();
     }
 
-    // reload -> document restores from PDC (Auto Save)
-    await page.reload();
+    // the PDC document is committed (Auto Save). Re-enter the module to verify
+    // the canonical value restores (persistence across navigation).
+    await page.locator("[data-testid=module-shell-back]").click();
+    await expect(page).toHaveURL(/\/app\/projects\/.+/);
+    await page.locator("[data-testid=module-open-substructure]").click();
+    await expect(page).toHaveURL(/modules\/substructure/);
     await expect(page.locator("[data-testid=sub-rescue]")).toBeVisible();
+    const restoredSupport = page.locator("[data-testid^=sub-support-]").first();
+    await restoredSupport.click();
     const restoredRows = page.locator("[data-testid=sub-field-X方向本数（rows）]");
     if ((await restoredRows.count()) > 0) {
       expect(await restoredRows.inputValue()).toBe("3");
