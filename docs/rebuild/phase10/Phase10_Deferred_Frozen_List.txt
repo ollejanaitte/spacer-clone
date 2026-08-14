@@ -12,7 +12,7 @@ status: FINAL（Sol指摘反映）
 | バイナリPDF生成 | 現状はprint-based HTML・実PDF生成基盤なし・V1.0はHTML/print |
 | IFC export | コードベースに根拠なし・将来候補 |
 | GA sheet（Apollo drawingSet） | legacy資産・新アプリ統合はDEFER |
-| STL（Apollo/liner frame）新アプリ接続 | legacy稼働・新アプリ接続は任意 |
+| STL（Apollo/liner frame）新アプリ接続 | V1.0 scope=DEFER・将来方針=ADAPT候補（新アプリ接続は将来） |
 | pier/abutment/footing正式図 | DEFER（V1.0外・REWRITE小） |
 | glTF JSON export | CIM-03任意（GLBのみ必須） |
 | レポートPDF統合 | 任意 |

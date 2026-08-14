@@ -20,7 +20,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | RD-04 | 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | RD-05 | 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | [N] deliverables | HTML/CSV✓ | ✓/✓ | ADAPT | 必須 |
 | RD-02..04 | DXF（plan-type-a/profile-band/cross-section） | liner/dxf | 同上 | [L] | [N] deliverables | DXF✓ | ✓/✓ | ADAPT | 必須 |
-| - | DXF（plan-type-b-centerline・plan） | liner/dxf | 同上 | [L] | - | DXF✓ | ✓/✓ | ADAPT | 任意 |
+| - | DXF（plan-type-b-centerline・plan） | liner/dxf | 同上 | [L] | - | DXF✓ | ✓/✓ | ADAPT（将来方針） | DEFER |
 | - | 2D Preview（新module） | - | next/components/RoadPreviews | [N] | [N] | - | ✓ | KEEP | 補助 |
 | - | 3D/CIM | - | roadCimSurface | [N] | [N] | - | ✓ | KEEP | CIM-01内 |
 | - | PDF（バイナリ） | なし | - | - | - | - | - | DEFER | 外 |
@@ -40,7 +40,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | SS-03 | DXF | - | superstructureDxf | [N] | [N] | DXF✓ | ✓ | KEEP | 必須 |
 | SS-04 | Quantity | apollo/quantity | RescuePanel（実数値） | [N] | [N] | - | ✓ | KEEP | 必須 |
 | SS-05 | 3D/CIM | - | sceneBuilder/CimLayer | [N] | [N] | - | ✓ | KEEP | 必須 |
-| - | GA sheet | apollo/drawing/drawingSetModel | [L] | - | - | DXF/SVG | ✓ | ADAPT（optional） | 任意 |
+| - | GA sheet | apollo/drawing/drawingSetModel | [L] | - | - | DXF/SVG | ✓ | ADAPT（将来方針） | DEFER |
 | - | 照査/応力度 | - | NOT_AUTHORIZED | - | - | - | - | NOT_AUTHORIZED | 外 |
 
 【Substructure】
@@ -53,7 +53,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | SB-05 | 2D/3D/CIM | planning/SubstructureViewport | RescuePanel | [N] | [N] | - | ✓ | KEEP | 必須 |
 | - | pier/abutment/footing図 | なし | - | - | - | - | - | REWRITE小 | DEFER |
 | - | 照査/配筋/耐震 | design/designEngine | HOLD_NOT_AVAILABLE | - | - | - | - | HOLD_NOT_AVAILABLE | 外 |
-| - | STL（下部工） | apollo STL | [L] | - | - | STL | ✓ | ADAPT（optional） | 任意 |
+| - | STL（下部工） | apollo STL | [L] | - | - | STL | ✓ | ADAPT（将来方針） | DEFER |
 
 【Analysis / IF3】
 | ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
@@ -72,7 +72,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | CIM-01 | Integrated 3D | viewer | cimSceneBuilder | [N] | [N] | - | ✓ | KEEP | 必須 |
 | CIM-02 | GLB | - | cimExport | [N] | [N] | GLB✓ | ✓ | KEEP | 必須 |
 | CIM-03 | glTF JSON | - | cimExport | [N] | [N] | JSON | ✓ | KEEP | 任意（V1必須にしない） |
-| - | STL | apollo/liner STL | [L] | - | - | STL✓ | ✓ | ADAPT（optional） | 任意 |
+| - | STL | apollo/liner STL | [L] | - | - | STL✓ | ✓ | ADAPT（将来方針） | DEFER |
 | - | IFC | なし | - | - | - | - | - | DEFER | 外 |
 
 【System】

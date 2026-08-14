@@ -37,14 +37,16 @@ status: FINAL（Sol指摘2回反映）
   Phase 10完了前に独立照合（荷重-反力釣合い・非零実値・代表値のレビュー承認）を実施し、
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
   未実施ならCompletion Gate PASSにしない。
-- 独立照合記録（2026-08-15・証拠あり）:
-  - oracle JSON sha256 = 69b0aa9eed8b9746b7ed99c9ac1f5bbad13371b47345d03b72d94546e19fe6b6
-  - solver raw result artifact sha256 = 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e
-    （backend/engine/solver.run_analysis_document を固定生成条件で独立実行）
-  - 機械比較レポート: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （18 row・18 PASS・failures 0・sha256 fbd9889f...）
-  - 荷重-反力釣合い: Σ|Fz|(applied)=27905.5 = Σ|Fz|(reaction)=27905.5（機械確認）
-  - N/Q/M全70部材非零（機械確認）
+- 独立照合記録（2026-08-15・証拠あり・chain of custody）:
+  - oracle JSON sha256 = 845b2df794a9a87ff767dc7fcf4eacef4e893cc028a8eb0b51e7cb38d263ad7f
+    （docs/rebuild/phase10/Phase10_Reference_NumberOracle.json）
+  - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
+    （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
+  - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
+    （sha256 be35b947f3bdf4e535384ad7136f9b8172b149ab9e4122f29ae404ee1fbf6646）
+  - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
+    inputChainOfCustody{oracleSha256, rawResultSha256}・各rowにdAbs/dRel/判定根拠（absTol/relTol/FAIL）
+  - 結果: 18 row・18 PASS・failures 0（荷重-反力釣合いrelTol 1e-6・N/Q/M全70部材非零）
   - 承認: 本Sol最終レビューGO通過後に記録（完了時に追記）
 - raw/display分離: uz.displayは表示専用DERIVED（正本へ書き戻さない）
 
@@ -80,6 +82,35 @@ AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
 - 生成元canonical checksum対応（決定論的・dual-writeなし）
 - FROZEN境界維持（NOT_AUTHORIZED/HOLD表示・値を発明しない）
 - 数値oracle適合（釣合い＋期待値）
+
+【Deliverable ID別PASS条件（適用有無を明示）】
+| ID | 成果 | UI表示 | 実ファイルexport | byte/content検証 | checksum | 数値oracle | stale/restart/import後再生 |
+|---|---|---|---|---|---|---|---|
+| RD-01 | 平面線形/座標/要素表 | ○ | − | − | ○ | − | ○ |
+| RD-02 | 平面図 | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| RD-03 | 縦断図 | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| RD-04 | 横断図 | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| RD-05 | 道路計算書 | ○ | HTML/CSV | ○(P0-08) | ○ | − | ○ |
+| BL-01 | Bridge Layout | ○ | − | − | ○ | − | ○ |
+| BL-02 | span/support表 | ○ | CSV | ○(P0-08) | ○ | − | ○ |
+| SS-01 | 入力UI | ○ | − | − | ○ | − | ○ |
+| SS-02 | 2D | ○ | − | − | ○ | − | ○ |
+| SS-03 | DXF | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| SS-04 | Quantity | ○ | − | − | ○ | ○(数量oracle) | ○ |
+| SS-05 | 3D/CIM | ○ | − | − | ○ | − | ○ |
+| SB-01..05 | 下部工成果 | ○ | −(座標/Quantityは画面) | − | ○ | ○(数量/座標oracle) | ○ |
+| AN-01 | Solver/IF3 | ○ | − | − | ○ | ○(loadBalance) | ○ |
+| AN-02..04 | Reaction/N-Q-M-T/Deformed | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-05 | 結果CSV export | ○ | CSV | ○(P0-08) | ○ | ○(oracle) | ○ |
+| AN-06 | analysis専用ページ | ○ | − | − | ○ | − | ○ |
+| CIM-01 | Integrated 3D | ○ | − | − | ○ | − | ○ |
+| CIM-02 | GLB | ○ | GLB | ○(P0-08) | ○ | − | ○ |
+| SYS-01 | .spacerproj | ○ | .spacerproj | ○(P0-08) | ○ | − | ○ |
+| SYS-02 | Auto Save/restart/Electron restart | ○ | − | − | ○ | − | ○(restart/import) |
+| SYS-03 | deliverables module | ○ | − | − | ○ | − | ○ |
+
+※ 実ファイル条件はexportを持つID（RD-02..05/BL-02/SS-03/AN-05/CIM-02/SYS-01）のみ。
+  数値oracleは解析/数量/座標を持つID（SS-04/SB-04/AN-01..05）のみ。適用外は「−」。
 
 【生成host所有権（凍結）】
 - canonical読取: 各source module（road/bridgeLayout/superstructure/substructure/analysis）が所有

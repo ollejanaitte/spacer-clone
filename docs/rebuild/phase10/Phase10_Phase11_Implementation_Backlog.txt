@@ -87,7 +87,11 @@ P0-06 Bridge Layout span/support表出力（BL-02）
     terrainElevation=m（精度3桁・未設定=空文字）
   - ソート: station昇順（span行はstartStation昇順）
   - 文字コードUTF-8・改行LF・quoting規則のみRFC 4180（適用範囲を明記）
-  - checksum: canonical contentChecksumをmanifestと先頭コメント行（#spacer:checksum=...）へ格納
+  - checksum: canonical contentChecksumをmanifestとpreamble行へ格納
+  - preamble（1行目）文法（Freeze）: #spacer:type=bridge-layout;version=1.0;checksum=<hex>
+    ・BL-02 parserは1行目を検証して読み飛ばす（必須）
+    ・2行目=CSV header（superset列）・3行目以降=データ
+    ・preamble/header存在・checksum一致をP0-08で検証
 - module: bridgeLayout/deliverables
 - tests: 表生成test・CSV byte/content検証（列/単位/null=空文字/ソート/checksum/quoting）
 - acceptance: 実画面+CSV実ファイル（content検証）
@@ -122,7 +126,7 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
     |---|---|---|---|
     | road | CanonicalRoadData 0.3.0 | createReferenceMountain.roadHorizontal/Vertical/CrossSection | alignment/vertical/crossSections |
     | terrain | TerrainDocument 0.1.0 | createReferenceMountain.terrainGrid | grid/mesh |
-    | existing | ExistingConditionsDocument | createReferenceMountain.existing | entities[] |
+    | existing | ExistingConditionsDocument 0.1.0 | createReferenceMountain.existing | entities[] |
     | bridgeLayout | BridgeLayoutDocument 0.1.0 | bridgeLayoutFromRange(100,450)+P1@300 | bridgeId/range/supports/spans |
     | superstructure | SuperstructureDocument 0.1.0 | generateSuperstructureFromLayout+declared section | girder/section/material/deck/bearing |
     | substructure | SubstructureDocument 0.1.0 | generateSubstructureFromLayout | supports/placement/pile |
@@ -130,9 +134,12 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
   - 適用順序: road→terrain→existing→bridgeLayout→superstructure→substructure→analysis（固定）
   - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceに記録。
     existingはmetadata配下のためexistingChecksumとして別途記録（moduleChecksums対象外であることを明示）
-  - provenance schema: {fixtureId, version, importedAt, moduleChecksums:{moduleId: hexDigest|null}, operator}
+  - provenance schema: {fixtureId, version, importedAt, moduleChecksums:{moduleId: hexDigest|null}, existingChecksum: hexDigest|null, operator}
+  - moduleChecksums固定キー: road, terrain, bridgeLayout, superstructure, substructure, analysis（analysisSettings→analysisに正規化）
+  - digest形式: sha256 hex・null条件: module未設定時
+  - analysisSettingsは分析設定としてanalysis moduleChecksumの生成元（analysisSettings→analysis対応を確定）
   - 存在しないchecksum: module未設定時はnull・比較時はnull一致扱い（明示）
-- module: 全module横断・import経路はdeliverables/Roadに一意
+- module: 全module横断・import所有=deliverables module一意（代替なし）
 - tests: fixture import round-trip test・checksum一致test
 - E2E: 空Project→fixture import→解析→成果品（Phase 12シナリオの前段）・P0-07 PASS必須
 - acceptance: 投入地点・操作・provenance（fixtureId/version/moduleChecksums）記録
@@ -148,24 +155,15 @@ P0-08 成果品byte/content検証Gate（V1必須全export・P0）
   - AN-05 CSV: ヘッダ/列/値（非零・単位）
   - CIM-02 GLB: 生成元checksum・必須ノード（layer:*）
   - RD-05 HTML/CSV: 必須セクション・grid_points/ldist等
-  - BL-02 CSV: 列/checksum
+  - BL-02 CSV: preamble（1行目）検証・skip・2行目header検証・列/checksum一致
   - SYS-01 .spacerproj: package parser・schema/version・module集合・manifest・sha256/integrity・import後canonical一致
 - tests: 各exportのbyte/content unit test
 - E2E: 実ファイルdownload→parse/content検証
 - risk: 低
 
-P2-01 品質向上・補助（V1必須byte検証はP0-08に移管済み）
-- goal: 全V1必須exportの実バイト・parse・content検証（ファイル名・非空byteだけでPASSさせない）
-- 各Deliverable IDについて生成元checksum・parser・必須content・意味検証をP0 acceptanceで定義:
-  - RD-02 DXF（plan-type-a）: canonical checksum対応・DXF entity（LINE/ARC/TEXT/LWPOLYLINE等）・必須content（道路外郭/中心線）
-  - RD-03 DXF（profile-band）: 同上・縦断線/station/地盤線
-  - RD-04 DXF（cross-section）: 同上・横断勾配線/路肩/車線
-  - SS-03 DXF: 同様（主桁/床版/横桁）
-  - AN-05 CSV: ヘッダ/列/値（非零・単位）
-  - CIM-02 GLB: 生成元checksum・必須ノード（layer:*）
-  - RD-05 HTML/CSV: 必須セクション・grid_points/ldist等
-  - BL-02 CSV: 列/checksum
-  - SYS-01 .spacerproj: package parser・schema/version・module集合・manifest・sha256/integrity・import後canonical一致
+P2-01 品質向上・補助
+- goal: V1必須exportのbyte/content検証はP0-08が唯一の正とし、P2では追加品質項目のみ
+- 追加項目: 大規模Projectでのexport性能・多重export並列・UIレスポンス計測（P0-08対象外の補助）
 - risk: 低
 
 P2-02 evidence/screenshot統合
@@ -176,7 +174,7 @@ DEFER（V1.0外）
 - バイナリPDF生成（方針決定後）
 - IFC export
 - GA sheet（Apollo drawingSet）新アプリ統合
-- pier/abutment/footing正式図（要調整・候補）
+- pier/abutment/footing正式図（DEFER・V1.0外）
 - 下部工計算書（HOLD_NOT_AVAILABLE維持）
 
 ====================================================================

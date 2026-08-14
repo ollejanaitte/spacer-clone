@@ -36,5 +36,5 @@ baseline: e3e2d3b
 - 救出済み成果（3-pane/pile grid/座標/Quantity/2D/3D/CIM）: KEEP（V1.0必須）
 - pier/abutment/footing/foundation正式図: Phase 11候補（REWRITE小）
 - 下部工計算書: HOLD_NOT_AVAILABLE（V1.0外）
-- STL: ADAPT候補（V1.0任意）
+- STL: 将来方針=ADAPT候補・V1.0 scope=DEFER（外）
 ====================================================================
