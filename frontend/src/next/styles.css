@@ -679,6 +679,7 @@
   display: flex;
   gap: 16px;
   align-items: flex-start;
+  width: 100%;
 }
 
 .cim-layer-panel {
@@ -709,7 +710,7 @@
 }
 
 .cim-viewer {
-  flex: 1;
+  flex: 1 1 auto;
   min-width: 0;
   border: 1px solid #e5e7eb;
   border-radius: 10px;

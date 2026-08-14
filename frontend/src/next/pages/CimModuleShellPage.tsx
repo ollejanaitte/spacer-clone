@@ -135,7 +135,7 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
 
   if (!project) {
     return (
-      <section className="next-page" data-testid="module-shell-page">
+      <section className="next-page next-page-wide" data-testid="module-shell-page">
         <h1 className="next-page-title">CIM / 統合3D</h1>
         <div className="next-error" data-testid="cim-module-not-found">
           Projectが見つかりません。
@@ -163,7 +163,7 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
     : "none";
 
   return (
-    <section className="next-page" data-testid="module-shell-page">
+    <section className="next-page next-page-wide" data-testid="module-shell-page">
       <h1 className="next-page-title" data-testid="module-shell-title">CIM / 統合3D</h1>
       <button
         type="button"
@@ -247,41 +247,41 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
             onTransparencyChange={(t) => setTransparency(1 - t)}
           />
         </div>
-         <div className="cim-viewer-actions" data-testid="cim-viewer-actions">
-           <button
-             type="button"
-             className="next-secondary"
-             data-testid="cim-export-glb"
-             disabled={exportingGlb}
-             onClick={() => void handleExportGlb()}
-           >
-             {exportingGlb ? "書き出し中..." : "glTF（.glb）書き出し"}
-           </button>
-           <button
-             type="button"
-             className="next-secondary"
-             data-testid="cim-run-analysis"
-             disabled={runningAnalysis}
-             onClick={() => void handleRunAnalysis()}
-           >
-             {runningAnalysis ? "解析実行中..." : "解析実行（IF3 Result overlay）"}
-           </button>
-           <label className="next-field">
-             <span>結果成分</span>
-             <select
-               data-testid="cim-result-component"
-               value={resultComponent}
-               onChange={(e) => setResultComponent(e.target.value as "N" | "Q" | "M" | "T")}
-             >
-               <option value="N">N</option>
-               <option value="Q">Q</option>
-               <option value="M">M</option>
-               <option value="T">T</option>
-             </select>
-           </label>
-           {analysisMsg !== null && <span className="next-hint" data-testid="cim-analysis-message">{analysisMsg}</span>}
-           <span className="next-hint" data-testid="cim-export-message">{exportMessage}</span>
-         </div>
+      </div>
+      <div className="cim-viewer-actions" data-testid="cim-viewer-actions">
+        <button
+          type="button"
+          className="next-secondary"
+          data-testid="cim-export-glb"
+          disabled={exportingGlb}
+          onClick={() => void handleExportGlb()}
+        >
+          {exportingGlb ? "書き出し中..." : "glTF（.glb）書き出し"}
+        </button>
+        <button
+          type="button"
+          className="next-secondary"
+          data-testid="cim-run-analysis"
+          disabled={runningAnalysis}
+          onClick={() => void handleRunAnalysis()}
+        >
+          {runningAnalysis ? "解析実行中..." : "解析実行（IF3 Result overlay）"}
+        </button>
+        <label className="next-field">
+          <span>結果成分</span>
+          <select
+            data-testid="cim-result-component"
+            value={resultComponent}
+            onChange={(e) => setResultComponent(e.target.value as "N" | "Q" | "M" | "T")}
+          >
+            <option value="N">N</option>
+            <option value="Q">Q</option>
+            <option value="M">M</option>
+            <option value="T">T</option>
+          </select>
+        </label>
+        {analysisMsg !== null && <span className="next-hint" data-testid="cim-analysis-message">{analysisMsg}</span>}
+        <span className="next-hint" data-testid="cim-export-message">{exportMessage}</span>
       </div>
     </section>
   );
