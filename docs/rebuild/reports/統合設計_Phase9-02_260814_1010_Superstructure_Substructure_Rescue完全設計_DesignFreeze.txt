@@ -1,0 +1,175 @@
+統合設計_Phase9-02_260814_1010_Superstructure_Substructure_Rescue完全設計_DesignFreeze
+====================================================================
+
+作業名: 統合設計 Phase 9-02「Superstructure / Substructure Rescue 完全設計・Design Freeze」
+完了日時: 2026-08-14 10:10 JST
+baseline: 041f18dee0ee855251e59ee2532ea3538eca6092（Phase 9-01 Final Report merge後）
+Phase 9-01: COMPLETE（救出監査・旧ツール埋没・非接続を確定）
+Phase 9-02 Design Freeze Gate: PASS
+verdict: Phase 9-02 COMPLETE / Phase 9-03 readiness: READY
+STOP: Phase 9-03へは進まずSTOP
+
+====================================================================
+1. Target Architecture（FROZEN）
+====================================================================
+
+【上部工】旧Apollo実務Editor UI → controlled adapter（props controlled・旧ProjectModel切離し）
+→ SuperstructureDocument（正本）→ PDC → Calculation/Geometry → GeometrySnapshot（DERIVED）
+→ Bearing/Reaction Handoff → Analysis → CIM → Persistence/restart/.spacerproj
+
+【下部工】旧3ペインCAD/planning UI → controlled adapter（Host controlled・旧JSON切離し）
+→ SubstructureDocument（正本）→ PDC → Placement/Geometry/Quantity → placementSnapshot
+（DERIVED）→ Foundation/Pile → Bearing Reaction/Support Handoff → Analysis → CIM →
+Persistence/restart/.spacerproj
+
+旧ProjectModel / browser JSONは正本にしない（二重正本・dual-write禁止）。
+
+====================================================================
+2. Canonical Ownership（FROZEN）
+====================================================================
+
+- 上部工正本: modules.superstructure.data.superstructureDocument（v0.1.0）
+- 下部工正本: modules.substructure.data.substructureDocument（v0.1.0・supportsは
+  旧model.ts v0.2.0を型ADAPT）
+- Bridge Layoutはspan/supportのlayout authority
+- GeometrySnapshot / placementSnapshot: DERIVED・非永続・決定論再生成
+- 旧Apollo sidecar（apolloBridgeStructureInput/apolloBsdd/
+  apolloBridgeProjectSuperstructure）はlegacy importのみ・救出後廃止対象
+
+====================================================================
+3. 上部工 field mapping（FROZEN・要約）
+====================================================================
+
+- direct: girderCount→girderCount / girderSpacing→girderSpacingM / girderDepth→depthM /
+  webThickness→webThicknessM / flange 4件→topFlange/bottomFlange /
+  deckThickness→thicknessM / rcUnitWeight→unitWeight / crossBeamSpacing→crossBeamSpacingM /
+  bridgeSystem→structuralSystem
+- convert: width→resolvedWidthM / swayBracingInterval（本）→intervalM / steelUnitWeight→
+  unitWeightPerM（要area）
+- derive: girderLines[].offsetFromCenterline（deriveGirderOffsets）/ crossBeams[] /
+  spanReferences / supportReferences
+- new: overhangLeftM/RightM / bearingConfiguration.bearingSeats[]
+- 非対応（cut）: upperLateralBracingEnabled / stiffenerSpacing / crossFrameAttachment /
+  haunch / roadMarkings / lateralAngleSection → DEFER
+
+====================================================================
+4. 下部工 field mapping（FROZEN・要約）
+====================================================================
+
+- 1:1 ADAPT: Support全field / pier（formType/column/cap/columns/beam）/
+  abutment（backwall/wingWallL/R）
+- convert: footing→footingConfigurations[] / pileGroup→pileConfigurations[] /
+  BearingSeat→bearingSeatReferences[]（normalizeSeatId・bearingType変換）
+- new: foundationConfigurations[]（formType: spread/piled）/ bearingSeatReferences の
+  girderId/fixedOrMovable/方向/orientation
+- 非対応: BearingSeat.dimensions（placeholder 0.4×0.4×0.1は要精査）
+
+====================================================================
+5. old ProjectModel切離し / placementSnapshot DERIVED（FROZEN）
+====================================================================
+
+- BridgeStructureInputPanel: props controlled（draft: SuperstructureDocument +
+  onChange）へ・旧get/write関数はdocument view-model + controlled adapterへ
+- SubstructurePlanningHost: Host controlled化（document + onChange）・旧JSONは
+  one-way legacy import
+- placementSnapshot: DERIVED・deep-trim（serialize時）・restore順序固定
+  （handoff再生成→正規化→Phase5 seat再生成→placement再計算→quantity/geometry→
+  IntegrityGate）・fingerprintはRoad revision/digest含む・Road必須はliner supportのみ
+
+====================================================================
+6. Persistence / Migration（FROZEN）
+====================================================================
+
+- PDC唯一正本・legacy一方向import・dual-write禁止・conflict検出・backup・
+  atomic commit・fail-closed・import idempotence・rollback
+- restart restore: deserialize → regenerateDerived → IntegrityGate
+- .spacerproj: superstructureDocument/substructureDocument含む
+
+====================================================================
+7. Bridge/Bearing/Reaction・STALE/INVALID（FROZEN）
+====================================================================
+
+- 既存handoff（superstructureHandoff v1.0.0・Phase4/5 adapter）維持
+- Super/Sub変更 → snapshot stale・Bearing/Reaction stale・Analysis stale・CIM stale
+- support/line削除 → INVALID / fail-closed・analysisStaleness 3-gate継続
+
+====================================================================
+8. NOT_AUTHORIZED / HOLD policy（FROZEN）
+====================================================================
+
+- 上部工: diaphragm DEFER・応力度/照査6種 NOT_AUTHORIZED維持
+- 下部工: 安定/断面力/応力/照査/配筋/耐震 HOLD_NOT_AVAILABLE維持
+- UIはHOLD/disabled明示・「計算済み」と誤表示しない・数値ロジックは発明しない
+
+====================================================================
+9. Feature Flag / Rollback（FROZEN）
+====================================================================
+
+- VITE_SUPERSTRUCTURE_RESCUE / VITE_SUBSTRUCTURE_RESCUE（Roadパターン新設）
+- OFF時: 現view-only Shell維持・ON時: 救出UI・migration前backup・
+  legacy import fallback・rollback・no destructive conversion
+- VITE_APOLLO_PHASE1_ENABLEDとは責務分離
+
+====================================================================
+10. Phase 9-03 Work Packages（FROZEN）
+====================================================================
+
+WP-A（Super Adapter/Mapping）・WP-B（Apollo UI Host Controlled化）・
+WP-C（Super Editors Rescue・支承は新規UI明示）・WP-D（Super 2D/DXF/Quantity/3D）・
+WP-E（Sub Adapter/Mapping・正規化配列導出）・WP-F（3ペインCAD Host Controlled化）・
+WP-G（Sub Editors/Foundation/Pile）・WP-H（Persistence/legacy import/restart/
+.spacerproj・import idempotence）・WP-I（Snapshot/STALE DERIVED再生成）・
+WP-J（Analysis/CIM regression）・WP-K（Golden/Negative）・WP-L（E2E/Completion Gate）
+※ WP-HとWP-Iの依存を整理（snapshot regenerationはWP-Iで凍結・WP-Hと同時/先行）
+
+====================================================================
+11. Test / Golden / Negative Path（FROZEN）
+====================================================================
+
+mapping unit・legacy import・PDC Save/restart/.spacerproj・dual-write不存在・
+GeometrySnapshot/placementSnapshot deterministic・stale/invalid・UI validation・
+canonical commit（原子性・revision競合・autosave失敗rollback）・feature flag・
+NOT_AUTHORIZED拒否・正規化配列一意性・zOverride回帰・Golden変更禁止
+
+====================================================================
+12. Electron E2E / Screenshots / Completion Gate（FROZEN）
+====================================================================
+
+- Super: 編集→generate→result→2D/DXF→3D→Save→restart→restore→.spacerproj
+- Sub: 3ペイン編集→generate→coordinate/quantity→2D→3D→Save→restart→restore→.spacerproj
+- さらに Analysis→CIM→STALE/INVALID
+- Gate必須: typecheck・対象unit・full regression・Electron E2E個別明記
+- result/Analysisは「HOLD/NOT_AUTHORIZED維持・計算済みと表示されないこと」を明記
+
+====================================================================
+13. Solレビュー（gpt-5.6-sol・反映済み）
+====================================================================
+
+- placementSnapshot deep-trim・bearingSeats DERIVED・fingerprintにRoad revision/digest・
+  Road必須はliner supportのみ・restore順序固定・zOverride回帰試験
+- PDC方針妥当（commit原子性・revision競合・autosave失敗UI rollback・import idempotence追加）
+- WP-H/I依存修正・WP-C支承は新規UI明示・Gateにtypecheck/unit/regression/E2E個別明記
+- NOT_AUTHORIZED/HOLD・diaphragm DEFERはPhase 9-01と整合
+
+====================================================================
+14. unresolved / risk
+====================================================================
+
+- 旧Apollo上部工の本格入力UIの実画面（モデル作成後）は Phase 9-03で要確認
+- 旧下部工2D/3Dビューの構造物表示（選択/ズーム依存）は Phase 9-03で要精査
+- 断面材料のadoption status（旧ADOPTED/PENDING）→新docに概念なし・loadModel固定値
+- BearingSeat placeholder寸法の正当性（SOURCE_NOT_AVAILABLE禁止方針と整合要精査）
+
+====================================================================
+15. final SHA
+====================================================================
+
+本PR merge後の最新SHA（merge後に4系統同期で確定）
+
+====================================================================
+16. verdict
+====================================================================
+
+Phase 9-02 COMPLETE
+Phase 9-03 readiness: READY
+STOP
