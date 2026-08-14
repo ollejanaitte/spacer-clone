@@ -105,12 +105,6 @@ P1-01 旧/新画面切り替え時の導線整理（/pro legacy と /app の関�
 - policy: 非破壊（legacy残す・新appを正式化・canonical書込みは新/app経由のみ）
 - risk: 低
 
-P1-02 STL exportの新アプリ接続（任意）
-- goal: 鋼桁/下部工STLを新アプリから出力
-- source: apollo/export/apolloStlExport.ts
-- target: deliverables内（optional）
-- policy: ADAPT・P2扱い可
-
 --------------------------------------------------------------------
 P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
 - goal: 「空Project＋明示的なReference Mountain fixture import」を受入セットアップとして確立。
@@ -176,5 +170,6 @@ DEFER（V1.0外）
 - GA sheet（Apollo drawingSet）新アプリ統合
 - pier/abutment/footing正式図（DEFER・V1.0外）
 - 下部工計算書（HOLD_NOT_AVAILABLE維持）
+- STL export新アプリ接続（DEFER・V1.0外・将来方針=ADAPT候補・P1-02廃止）
 
 ====================================================================

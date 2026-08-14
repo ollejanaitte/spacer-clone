@@ -92,5 +92,5 @@ baseline: e3e2d3b（main・Phase 9-04R3 COMPLETE後）
 【総括】
 - 計算・CIM・解析・Rescue・PDC/persistence: COMPLETE
 - 成果品出力（図面/報告/export）: 新アプリへの正式統合がPhase 11の主作業
-- 特にRoad図面（平面/縦断/横断）・Analysis結果export・STLを新アプリへ接続する設計が必要
+- 特にRoad図面（平面/縦断/横断）・Analysis結果exportを新アプリへ接続する設計が必要（STLはDEFER・V1.0外）
 ====================================================================

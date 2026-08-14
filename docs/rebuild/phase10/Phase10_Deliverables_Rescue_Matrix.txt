@@ -62,7 +62,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | AN-02 | Reaction | - | AuthoritativeResultPanel | [N] | [N] | - | ✓ | KEEP | 必須 |
 | AN-03 | N/Q/M/T | - | 同上/color map | [N] | [N] | - | ✓ | KEEP | 必須 |
 | AN-04 | Deformed | - | 同上/analysisCimLayer | [N] | [N] | - | ✓ | KEEP | 必須 |
-| AN-05 | 結果CSV export | exports/resultCsvExport・memberForceReport | [L] | - | [N] analysis/deliverables | CSV✓ | ✓ | ADAPT | 必須 |
+| AN-05 | 結果CSV export | exports/resultCsvExport・memberForceReport | [L] /pro/analysis/results | [N] analysis/deliverables | CSV✓ | ✓ | KEEP+ADAPT（既存KEEP・新appへADAPT） | 必須 |
 | AN-06 | analysis専用ページ | - | プレースホルダー | - | [N] /app analysis | - | - | REWRITE小 | 必須 |
 | - | PDF報告 | exports/resultPdfReport | [L] | - | - | print-HTML | ✓ | DEFER | 外 |
 

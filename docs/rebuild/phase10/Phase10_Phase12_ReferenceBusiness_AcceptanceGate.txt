@@ -40,22 +40,27 @@ status: FINAL（Sol指摘2回反映）
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
   未実施ならCompletion Gate PASSにしない。
 - 独立照合記録（2026-08-15・証拠あり・chain of custody）:
-  - oracle JSON sha256 = 6bcd2796132f8ec73748d757a9e4e407ed221f29d317c54c36f84a6471f35bb2（43 row: reaction 6/memberForce 10/displacement 2/quantity 7/coordinate 18・coverage契約あり）
+  - oracle JSON sha256 = 6bcd2796132f8ec73748d757a9e4e407ed221f29d317c54c36f84a6471f35bb2（45 row: reaction 6/memberForce 10/displacement 2/quantity 9/coordinate 18・coverage契約あり）
+    ※SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3を含む（quantity 9）
     （docs/rebuild/phase10/Phase10_Reference_NumberOracle.json）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 1ce48c0ebdc214bc62936bb294fed6d3eaab3c97e33746d9bb04d879f398d54e）
+    （sha256 d927c8f7a1caecc316e0a4092ccd8d1209045a0f95de6f1bf8da9dc77f3d5919）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
-    inputChainOfCustody{oracleSha256, rawResultSha256}・各rowにdAbs/dRel/判定根拠（absTol/relTol/FAIL）
-  - 結果: 43 row・43 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
-  - 数量oracle: nodeCount 72・memberCount 70・totalMemberLength 657.615156m・totalSteelVolume 78.913819m3・
+  - 再現bundle（evidence/oracle-comparator/）: compare_oracle.py（sha256 f7748b24...）・comparison_report.schema.json（b668f8a7...）・schema_negative_fixtures.json（65242c3b...）
+  - negative fixtures 7件全reject + oracle本体PASS（jsonschema 4.26.0）を機械確認
+    inputChainOfCustody{oracleSha256, rawResultSha256, solverInputSha256, fixtureId=REF-MOUNTAIN-1, projectId}・各rowにdAbs/dRel/判定根拠
+  - 結果: 45 row・45 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
+  - 数量oracle: nodeCount 72・memberCount 70・totalMemberLength 657.615156m・
+    SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3・
     SB-04 concrete 616.72m3（A1 214.4/P1 187.92/A2 214.4・KEEP computeSubstructureQuantity）
   - 座標oracle: 6支承×XYZ 18行（A1-G1/G2・P1-G1/G2・A2-G1/G2）
   - N/Q/M各70部材非零・max|T|<=1e-6（coverage）
   - 数量oracle: nodeCount 72・memberCount 70・supportCount 6・totalMemberLength 657.615156m・totalSteelVolume 78.913819m3・section area 0.12m2
   - 座標oracle: A1-G1(200,496,103.08)・P1-G1(400,496,108.5592)・A2-G1(503.0568,582.7107,106.58)等 6支承
-  - solver入力固定: evidence/Phase10_Reference_SolverInput.json（sha256 450fa1ac...・modelChecksum 4685609a...・fixtureId c83b911b...）
+  - solver入力固定: evidence/Phase10_Reference_SolverInput.json（sha256 450fa1ac...・modelChecksum 4685609a...・projectId c83b911b...）
+    fixtureId=REF-MOUNTAIN-1・fixtureVersion同値（P0-07でmoduleChecksums manifest凍結）
   - 比較式（row別優先・fail-closed）: 各rowの{absTol,relTol}で dAbs<=absTol または dRel<=relTol（abs(exp)==0の場合はabsTolのみ）・
     欠損/NaN/Infinity/不一致rowは即FAIL（fail-closed）・全row PASSで適合
   - 承認: 本Sol最終レビューGO通過後に記録（完了時に追記）

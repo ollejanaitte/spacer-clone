@@ -210,26 +210,63 @@
     "components": {
      "type": "object",
      "additionalProperties": false,
-     "propertyNames": {
-      "enum": [
-       "i.fx",
-       "i.fz",
-       "j.my",
-       "i.mx"
-      ]
-     },
-     "additionalProperties": {
-      "type": "object",
-      "additionalProperties": false,
-      "minProperties": 1,
-      "properties": {
-       "nonZeroCount": {
-        "type": "integer",
-        "minimum": 0
-       },
-       "maxAbsBound": {
-        "type": "number",
-        "minimum": 0
+     "required": [
+      "i.fx",
+      "i.fz",
+      "j.my",
+      "i.mx"
+     ],
+     "properties": {
+      "i.fx": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nonZeroCount"
+       ],
+       "properties": {
+        "nonZeroCount": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "i.fz": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nonZeroCount"
+       ],
+       "properties": {
+        "nonZeroCount": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "j.my": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nonZeroCount"
+       ],
+       "properties": {
+        "nonZeroCount": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "i.mx": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "maxAbsBound"
+       ],
+       "properties": {
+        "maxAbsBound": {
+         "type": "number",
+         "minimum": 0
+        }
        }
       }
      }

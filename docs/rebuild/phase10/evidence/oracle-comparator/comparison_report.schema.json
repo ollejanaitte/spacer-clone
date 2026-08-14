@@ -1,0 +1,130 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Phase 10 Oracle Comparison Report Schema",
+  "description": "spacer-oracle-comparator-v1 の出力契約（再現可能な検証証跡）",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "comparatorId",
+    "generatedAt",
+    "runConditions",
+    "inputChainOfCustody",
+    "rows",
+    "modelCounts",
+    "loadBalance",
+    "coverage",
+    "pass",
+    "failures"
+  ],
+  "properties": {
+    "schemaVersion": { "type": "string", "const": "1.0.0" },
+    "comparatorId": { "type": "string", "const": "spacer-oracle-comparator-v1" },
+    "generatedAt": { "type": "string" },
+    "runConditions": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": ["solver", "document", "loadCaseId", "solverBuild"]
+    },
+    "inputChainOfCustody": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "oraclePath", "oracleSha256",
+        "rawResultPath", "rawResultSha256",
+        "solverInputPath", "solverInputSha256",
+        "fixtureId", "fixtureVersion", "projectId",
+        "modelChecksum", "contentChecksum"
+      ],
+      "properties": {
+        "oraclePath": { "type": "string" },
+        "oracleSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "rawResultPath": { "type": "string" },
+        "rawResultSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "solverInputPath": { "type": "string" },
+        "solverInputSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "fixtureId": { "type": "string" },
+        "fixtureVersion": { "type": "string" },
+        "projectId": { "type": "string" },
+        "modelChecksum": { "type": "string" },
+        "contentChecksum": { "type": "string" }
+      }
+    },
+    "rows": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind", "entityId", "component", "expected", "actual",
+          "unit", "absTol", "relTol", "dAbs", "dRel", "rule", "pass"
+        ],
+        "properties": {
+          "kind": { "enum": ["reaction", "memberForce", "displacement", "quantity", "coordinate"] },
+          "entityId": { "type": "string" },
+          "component": { "type": "string" },
+          "expected": { "type": ["number", "null"] },
+          "actual": { "type": ["number", "null"] },
+          "unit": { "type": "string" },
+          "absTol": { "type": "number", "minimum": 0 },
+          "relTol": { "type": "number", "minimum": 0 },
+          "dAbs": { "type": ["number", "null"] },
+          "dRel": { "type": ["number", "null"] },
+          "rule": { "enum": ["absTol", "relTol", "FAIL", "FAIL(abs0)", "missing"] },
+          "pass": { "type": "boolean" },
+          "displayScale": { "type": ["number", "null"] }
+        }
+      }
+    },
+    "modelCounts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["rows", "pass"],
+      "properties": {
+        "rows": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["expected", "actual", "delta", "tolerance", "pass"],
+            "properties": {
+              "expected": { "type": "integer" },
+              "actual": { "type": "integer" },
+              "delta": { "type": "integer" },
+              "tolerance": { "type": "integer" },
+              "pass": { "type": "boolean" }
+            }
+          }
+        },
+        "pass": { "type": "boolean" }
+      }
+    },
+    "loadBalance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected", "actual", "delta", "relTol", "pass"],
+      "properties": {
+        "expected": { "type": "object" },
+        "actual": { "type": "object" },
+        "delta": { "type": "number" },
+        "relTol": { "type": "number", "minimum": 0 },
+        "pass": { "type": "boolean" }
+      }
+    },
+    "coverage": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "entityId", "count", "expectedCount", "checks", "pass"],
+      "properties": {
+        "kind": { "type": "string" },
+        "entityId": { "type": "string" },
+        "count": { "type": "integer" },
+        "expectedCount": { "type": "integer" },
+        "checks": { "type": "object" },
+        "pass": { "type": "boolean" }
+      }
+    },
+    "pass": { "type": "boolean" },
+    "failures": { "type": "array" }
+  }
+}

@@ -57,11 +57,11 @@ baseline: e3e2d3b
 | 成果 | 判定 | 備考 |
 |---|---|---|
 | 平面線形/座標/要素表 | KEEP（新module） | V1.0必須 |
-| 平面図 | RESTORE/ADAPT（legacy→新アプリ接続） | V1.0必須・新canonicalへbridge |
-| 縦断図 | RESTORE/ADAPT（同上） | V1.0必須 |
-| 横断図 | RESTORE/ADAPT（同上） | V1.0必須 |
-| DXF | RESTORE/ADAPT（legacy→新アプリ） | V1.0必須（実ファイル） |
-| HTML/CSV報告（RD-05） | ADAPT（新アプリへ接続） | V1.0必須（P0-03） |
+| 平面図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須・新canonicalへbridge |
+| 縦断図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須 |
+| 横断図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須 |
+| DXF | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須（実ファイル） |
+| HTML/CSV報告（RD-05） | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須（P0-03） |
 | PDF | DEFER（print-based・バイナリPDFなし） | 方針決定必要 |
 | 2D Preview（新） | KEEP | 簡易プレビュー |
 

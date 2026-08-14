@@ -63,7 +63,7 @@ V1.0 COMPLETE判定の唯一のscope表。一行一Deliverable ID。
 |---|---|---|---|
 | CIM-01 | Integrated 3D | 必須（KEEP） | 既にCOMPLETE |
 | CIM-02 | GLB export | 必須（KEEP） | 実出力 |
-| CIM-03 | glTF JSON export | 任意 | V1.0必須にしない（GLBのみ必須） |
+| CIM-03 | glTF JSON export | capability（Completion Gate対象外） | 実装済み・V1.0 Gate対象外（GLBのみ必須） |
 
 【System】
 | ID | 成果 | 状態 | 備考 |

@@ -392,6 +392,24 @@
    "unit": "m3",
    "absTol": 0.01,
    "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelWeight",
+   "expected": 6076.364,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "deckVolume",
+   "expected": 672.0,
+   "unit": "m3",
+   "absTol": 0.1,
+   "relTol": 0.001
   }
  ],
  "modelCounts": {

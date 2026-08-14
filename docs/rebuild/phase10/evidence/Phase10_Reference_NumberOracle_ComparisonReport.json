@@ -1,7 +1,7 @@
 {
  "schemaVersion": "1.0.0",
  "comparatorId": "spacer-oracle-comparator-v1",
- "generatedAt": "2026-08-14T22:45:45.380548+00:00",
+ "generatedAt": "2026-08-14T22:54:03.102129+00:00",
  "runConditions": {
   "solver": "scipy_sparse",
   "document": "Phase10_Reference_SolverInput.json(fixed)",
@@ -12,7 +12,7 @@
  },
  "inputChainOfCustody": {
   "oraclePath": "docs/rebuild/phase10/Phase10_Reference_NumberOracle.json",
-  "oracleSha256": "6bcd2796132f8ec73748d757a9e4e407ed221f29d317c54c36f84a6471f35bb2",
+  "oracleSha256": "8a1963a98bee523789bdabd3d3cbf0f31b068ad89c5fcd83f702fb40d46ef7f9",
   "rawResultPath": "docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json",
   "rawResultSha256": "14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e",
   "solverInputPath": "docs/rebuild/phase10/evidence/Phase10_Reference_SolverInput.json",
@@ -667,28 +667,91 @@
    "rule": "absTol",
    "pass": true,
    "displayScale": null
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelWeight",
+   "expected": 6076.364,
+   "actual": 6076.364036956,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001,
+   "dAbs": 3.6956e-05,
+   "dRel": 6.082e-09,
+   "rule": "absTol",
+   "pass": true,
+   "displayScale": null
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "deckVolume",
+   "expected": 672.0,
+   "actual": 672.0,
+   "unit": "m3",
+   "absTol": 0.1,
+   "relTol": 0.001,
+   "dAbs": 0.0,
+   "dRel": 0.0,
+   "rule": "absTol",
+   "pass": true,
+   "displayScale": null
   }
  ],
  "pass": true,
  "failures": [],
  "modelCounts": {
-  "expected": {
-   "nodes": 72,
-   "members": 70,
-   "sections": 1,
-   "materials": 1,
-   "supports": 6,
-   "bearings": 6,
-   "nodalLoads": 72
-  },
-  "actual": {
-   "nodes": 72,
-   "members": 70,
-   "sections": 1,
-   "materials": 1,
-   "supports": 6,
-   "bearings": 6,
-   "nodalLoads": 72
+  "rows": {
+   "nodes": {
+    "expected": 72,
+    "actual": 72,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   },
+   "members": {
+    "expected": 70,
+    "actual": 70,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   },
+   "sections": {
+    "expected": 1,
+    "actual": 1,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   },
+   "materials": {
+    "expected": 1,
+    "actual": 1,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   },
+   "supports": {
+    "expected": 6,
+    "actual": 6,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   },
+   "bearings": {
+    "expected": 6,
+    "actual": 6,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   },
+   "nodalLoads": {
+    "expected": 72,
+    "actual": 72,
+    "delta": 0,
+    "tolerance": 0,
+    "pass": true
+   }
   },
   "pass": true
  },
