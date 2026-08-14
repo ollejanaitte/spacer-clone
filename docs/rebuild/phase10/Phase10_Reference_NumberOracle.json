@@ -170,51 +170,6 @@
   },
   {
    "kind": "quantity",
-   "entityId": "model",
-   "component": "nodeCount",
-   "expected": 72,
-   "unit": "nodes",
-   "absTol": 0,
-   "relTol": 0
-  },
-  {
-   "kind": "quantity",
-   "entityId": "model",
-   "component": "memberCount",
-   "expected": 70,
-   "unit": "members",
-   "absTol": 0,
-   "relTol": 0
-  },
-  {
-   "kind": "quantity",
-   "entityId": "model",
-   "component": "supportCount",
-   "expected": 6,
-   "unit": "supports",
-   "absTol": 0,
-   "relTol": 0
-  },
-  {
-   "kind": "quantity",
-   "entityId": "model",
-   "component": "totalMemberLength",
-   "expected": 657.615156,
-   "unit": "m",
-   "absTol": 0.001,
-   "relTol": 1e-06
-  },
-  {
-   "kind": "quantity",
-   "entityId": "model",
-   "component": "totalSteelVolume",
-   "expected": 78.913819,
-   "unit": "m3",
-   "absTol": 0.001,
-   "relTol": 1e-06
-  },
-  {
-   "kind": "quantity",
    "entityId": "section",
    "component": "SECTION-GIRDER.area",
    "expected": 0.12,
@@ -260,6 +215,33 @@
   },
   {
    "kind": "coordinate",
+   "entityId": "supportPoint:A1:G2",
+   "component": "x",
+   "expected": 200.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G2",
+   "component": "y",
+   "expected": 504.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G2",
+   "component": "z",
+   "expected": 102.92,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
    "entityId": "supportPoint:P1:G1",
    "component": "x",
    "expected": 400.0,
@@ -270,8 +252,44 @@
   {
    "kind": "coordinate",
    "entityId": "supportPoint:P1:G1",
+   "component": "y",
+   "expected": 496.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G1",
    "component": "z",
    "expected": 108.5592,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G2",
+   "component": "x",
+   "expected": 400.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G2",
+   "component": "y",
+   "expected": 504.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G2",
+   "component": "z",
+   "expected": 108.3992,
    "unit": "m",
    "absTol": 0.01,
    "relTol": 0.0001
@@ -302,6 +320,78 @@
    "unit": "m",
    "absTol": 0.01,
    "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G2",
+   "component": "x",
+   "expected": 495.139,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G2",
+   "component": "y",
+   "expected": 581.5667,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G2",
+   "component": "z",
+   "expected": 106.42,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure",
+   "component": "totalConcreteVolume",
+   "expected": 616.72,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure",
+   "component": "totalPileLength",
+   "expected": 0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure:A1",
+   "component": "concreteVolume",
+   "expected": 214.4,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure:P1",
+   "component": "concreteVolume",
+   "expected": 187.92,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure:A2",
+   "component": "concreteVolume",
+   "expected": 214.4,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
   }
  ],
  "modelCounts": {

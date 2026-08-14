@@ -1,7 +1,7 @@
 {
  "$schema": "https://json-schema.org/draft/2020-12/schema",
  "title": "Phase 10 Reference Number Oracle",
- "description": "\u6a5f\u68b0\u5224\u5b9a\u7528Reference Mountain\u6570\u5024oracle\uff08Phase 12\u53d7\u5165\u57fa\u6e96\uff09",
+ "description": "機械判定用Reference Mountain数値oracle（Phase 12受入基準）",
  "type": "object",
  "additionalProperties": false,
  "required": [
@@ -10,7 +10,8 @@
   "loadCaseId",
   "rows",
   "modelCounts",
-  "loadBalance"
+  "loadBalance",
+  "coverage"
  ],
  "properties": {
   "schemaVersion": {
@@ -77,43 +78,49 @@
       "type": "number"
      }
     },
-    "if": {
-     "required": [
-      "wildcard"
-     ],
-     "properties": {
-      "wildcard": {
-       "const": "all-members"
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "wildcard"
+       ],
+       "properties": {
+        "wildcard": {
+         "const": "all-members"
+        }
+       }
+      },
+      "then": {
+       "properties": {
+        "entityId": {
+         "const": "*"
+        }
+       }
+      }
+     },
+     {
+      "if": {
+       "required": [
+        "entityId"
+       ],
+       "properties": {
+        "entityId": {
+         "const": "*"
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "wildcard"
+       ],
+       "properties": {
+        "wildcard": {
+         "const": "all-members"
+        }
+       }
       }
      }
-    },
-    "then": {
-     "properties": {
-      "entityId": {
-       "const": "*"
-      }
-     }
-    },
-    "if2": {
-     "required": [
-      "entityId"
-     ],
-     "properties": {
-      "entityId": {
-       "const": "*"
-      }
-     }
-    },
-    "then2": {
-     "required": [
-      "wildcard"
-     ],
-     "properties": {
-      "wildcard": {
-       "const": "all-members"
-      }
-     }
-    }
+    ]
    }
   },
   "modelCounts": {
@@ -185,15 +192,13 @@
   },
   "coverage": {
    "type": "object",
-   "additionalProperties": true,
+   "additionalProperties": false,
    "required": [
     "kind",
     "entityId",
-    "component",
-    "expected",
+    "components",
     "count",
-    "nonZeroCount",
-    "absTol"
+    "unit"
    ],
    "properties": {
     "kind": {
@@ -202,24 +207,38 @@
     "entityId": {
      "type": "string"
     },
-    "component": {
-     "type": "string"
-    },
-    "expected": {
-     "type": "number"
+    "components": {
+     "type": "object",
+     "additionalProperties": false,
+     "propertyNames": {
+      "enum": [
+       "i.fx",
+       "i.fz",
+       "j.my",
+       "i.mx"
+      ]
+     },
+     "additionalProperties": {
+      "type": "object",
+      "additionalProperties": false,
+      "minProperties": 1,
+      "properties": {
+       "nonZeroCount": {
+        "type": "integer",
+        "minimum": 0
+       },
+       "maxAbsBound": {
+        "type": "number",
+        "minimum": 0
+       }
+      }
+     }
     },
     "count": {
      "type": "integer"
     },
-    "nonZeroCount": {
-     "type": "integer"
-    },
     "unit": {
      "type": "string"
-    },
-    "absTol": {
-     "type": "number",
-     "minimum": 0
     }
    }
   }

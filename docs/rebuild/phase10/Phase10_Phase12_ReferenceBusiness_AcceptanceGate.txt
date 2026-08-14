@@ -19,7 +19,8 @@ status: FINAL（Sol指摘2回反映）
 【Reference Mountain 数値oracle（機械判定・JSON正本）】
 - 機械判定用oracle: docs/rebuild/phase10/Phase10_Reference_NumberOracle.json（唯一正本）
   - schemaVersion 1.0.0・reference REF-MOUNTAIN-1・loadCaseId LC1
-  - rows 18件: 反力6・部材力9・変位2（raw/display分離）・T=0 wildcard 1
+  - rows 43件: reaction 6/memberForce 10/displacement 2/quantity 7/coordinate 18・coverage契約
+  （kind別内訳・wildcard=all-members 1行含む・詳細はoracle JSON参照）
   - 各レコード: {kind, entityId, component, expected, unit, absTol, relTol}
   - modelCounts: nodes 72・members 70・sections 1・materials 1・supports 6・bearings 6・nodalLoads 72（完全一致）
   - loadBalance: totalKN=27905.5・applied=27905.5・reaction=27905.5・relTol 1e-6
@@ -32,21 +33,26 @@ status: FINAL（Sol指摘2回反映）
 - 比較規則（row別優先）: 各rowの{absTol, relTol}を優先し、dAbs<=absTol または dRel<=relTol でPASS。
   全row PASSでoracle適合。loadBalanceはrelTol 1e-6。
 - oracle schema: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json（JSON Schema 2020-12・
-  rowsの7フィールド必須・wildcard=all-membersはentityId="*"で明示・displayScale=表示倍率はunitと分離）
+  rowsの7フィールド必須・wildcard↔entityId="*"双方向制約（allOf/if-then）・coverage=components構造・displayScale=unit分離）
+  - schema検証証跡: jsonschema 4.26.0 Draft202012で実oracle PASS・negative fixture 3件（entityId=* no wildcard / wildcard no *= / 旧coverage形状）全てrejectを機械確認
 - 独立照合（Freeze条件）: 本oracleはPhase 9-04R3実測値。
   Phase 10完了前に独立照合（荷重-反力釣合い・非零実値・代表値のレビュー承認）を実施し、
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
   未実施ならCompletion Gate PASSにしない。
 - 独立照合記録（2026-08-15・証拠あり・chain of custody）:
-  - oracle JSON sha256 = 992f071ac50cdeb04fa59562b6b83fa8aed2b344fd7089b89b4644991f2aec93（33 row: reaction 6/memberForce 10/displacement 2/quantity 7/coordinate 8・coverage契約あり）
+  - oracle JSON sha256 = 6bcd2796132f8ec73748d757a9e4e407ed221f29d317c54c36f84a6471f35bb2（43 row: reaction 6/memberForce 10/displacement 2/quantity 7/coordinate 18・coverage契約あり）
     （docs/rebuild/phase10/Phase10_Reference_NumberOracle.json）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 82fc8704e1df76eb83ce40ef6e53b43a25c262df8c5a1d96ce3ee622c0406107）
+    （sha256 1ce48c0ebdc214bc62936bb294fed6d3eaab3c97e33746d9bb04d879f398d54e）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
     inputChainOfCustody{oracleSha256, rawResultSha256}・各rowにdAbs/dRel/判定根拠（absTol/relTol/FAIL）
-  - 結果: 33 row・33 PASS・failures 0・coverage PASS（N/Q/M各70部材非零・max|T|<=1e-6）
+  - 結果: 43 row・43 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
+  - 数量oracle: nodeCount 72・memberCount 70・totalMemberLength 657.615156m・totalSteelVolume 78.913819m3・
+    SB-04 concrete 616.72m3（A1 214.4/P1 187.92/A2 214.4・KEEP computeSubstructureQuantity）
+  - 座標oracle: 6支承×XYZ 18行（A1-G1/G2・P1-G1/G2・A2-G1/G2）
+  - N/Q/M各70部材非零・max|T|<=1e-6（coverage）
   - 数量oracle: nodeCount 72・memberCount 70・supportCount 6・totalMemberLength 657.615156m・totalSteelVolume 78.913819m3・section area 0.12m2
   - 座標oracle: A1-G1(200,496,103.08)・P1-G1(400,496,108.5592)・A2-G1(503.0568,582.7107,106.58)等 6支承
   - solver入力固定: evidence/Phase10_Reference_SolverInput.json（sha256 450fa1ac...・modelChecksum 4685609a...・fixtureId c83b911b...）
@@ -122,8 +128,8 @@ AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
 
 ※ 実ファイル条件はexportを持つID（RD-02..05/BL-02/SS-03/AN-05/CIM-02/SYS-01）のみ。
   数値oracleは解析/数量/座標を持つID（SS-04/SB-03/SB-04/AN-01..05）のみ。適用外は「−」。
-  ※ 数量oracle（kind=quantity）と座標oracle（kind=coordinate）は同一oracle JSONのrowsに格納（33 row中15 row）。
-     SS-04/SB-04は数量・SB-03は座標を機械照合する。
+  ※ 数量oracle（kind=quantity 7）と座標oracle（kind=coordinate 18・6支承×XYZ）は同一oracle JSONのrowsに格納。
+     SS-04はmodel/section数量・SB-04は下部工concrete量（616.72m3）・SB-03は6支承座標を機械照合する。
 
 【生成host所有権（凍結）】
 - canonical読取: 各source module（road/bridgeLayout/superstructure/substructure/analysis）が所有
