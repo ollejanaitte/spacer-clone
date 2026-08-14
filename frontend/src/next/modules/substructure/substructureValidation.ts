@@ -29,6 +29,14 @@ function checkFinite(record: Record<string, unknown>, key: string, path: string,
   }
 }
 
+/** Finite AND strictly positive (diameter/length/spacing/footing dims). */
+function checkPositive(record: Record<string, unknown>, key: string, path: string, issues: SubstructureIssue[]): void {
+  const value = record[key];
+  if (!(typeof value === "number" && Number.isFinite(value) && value > 0)) {
+    issues.push({ path: `${path}.${key}`, message: `${key} must be a finite positive number` });
+  }
+}
+
 function checkOptionalFinite(record: Record<string, unknown>, key: string, path: string, issues: SubstructureIssue[]): void {
   const value = record[key];
   if (value === null || value === undefined) return;
@@ -101,28 +109,33 @@ export function validateSubstructureDocument(document: SubstructureDocument): re
     }
   }
 
-  // footing / foundation / pile dimensions
+  // footing / foundation / pile dimensions (must be positive finite)
   for (const footing of document.footingConfigurations) {
-    checkFinite(footing as unknown as Record<string, unknown>, "length", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
-    checkFinite(footing as unknown as Record<string, unknown>, "width", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
-    checkFinite(footing as unknown as Record<string, unknown>, "thickness", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "length", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "width", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "thickness", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
     checkFinite(footing as unknown as Record<string, unknown>, "topElevation", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
   }
   for (const pile of document.pileConfigurations) {
-    checkFinite(pile as unknown as Record<string, unknown>, "diameter", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
-    checkFinite(pile as unknown as Record<string, unknown>, "length", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    checkPositive(pile as unknown as Record<string, unknown>, "diameter", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    checkPositive(pile as unknown as Record<string, unknown>, "length", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
     if (!Number.isInteger(pile.pileCount) || pile.pileCount < 1) {
       issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: "pileCount must be >= 1" });
     }
-    checkFinite(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
-    checkFinite(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
     const rows = pile.rows;
     const cols = pile.cols;
-    if (rows !== null && cols !== null) {
-      if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
-        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
-      } else if (pile.pileCount !== rows * cols) {
-        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+    // rows/cols must both be set or both be null (Sol review #4)
+    if (rows !== null || cols !== null) {
+      if (rows === null || cols === null) {
+        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows and cols must both be set or both be null" });
+      } else {
+        if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
+          issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
+        } else if (pile.pileCount !== rows * cols) {
+          issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+        }
       }
       if (pile.edgeX !== null) checkOptionalFinite(pile as unknown as Record<string, unknown>, "edgeX", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
       if (pile.edgeY !== null) checkOptionalFinite(pile as unknown as Record<string, unknown>, "edgeY", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
@@ -253,9 +266,13 @@ export function validateSubstructureData(data: Record<string, unknown>): readonl
       issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}]`, message: "duplicate pileConfigurations id" });
     }
     seenPcWrite.add(pile.id);
+    checkPositive(pile as unknown as Record<string, unknown>, "diameter", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    checkPositive(pile as unknown as Record<string, unknown>, "length", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
     if (!Number.isInteger(pile.pileCount) || pile.pileCount < 1) {
       issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: "pileCount must be >= 1" });
     }
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
     const rows = pile.rows;
     const cols = pile.cols;
     if (rows !== null || cols !== null) {
@@ -269,6 +286,13 @@ export function validateSubstructureData(data: Record<string, unknown>): readonl
         }
       }
     }
+  }
+  // footing dimensions positive at write boundary
+  for (const footing of doc.footingConfigurations) {
+    checkPositive(footing as unknown as Record<string, unknown>, "length", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "width", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "thickness", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkFinite(footing as unknown as Record<string, unknown>, "topElevation", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
   }
   const pileConfigById = new Map(doc.pileConfigurations.map((pc) => [pc.id, pc]));
   // full value-consistency between nested pileGroup and normalized

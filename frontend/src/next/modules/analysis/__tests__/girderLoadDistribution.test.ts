@@ -100,8 +100,9 @@ describe("Phase 9-04R3 Sol #4: distributed dead load on main girders", () => {
         if (parts[0] === "supportPoint") girderIds.add(parts[2]!);
       }
     }
-    // declared girderCount is 2 (setup); if the model resolved MORE groups than
-    // declared, buildAuthorizedDeadLoad must fail-closed (conservation).
+    // the fixture resolves more than one girder group, so a declared
+    // girderCount of 1 is a guaranteed mismatch
+    expect(girderIds.size).toBeGreaterThan(1);
     const mismatched = {
       ...superDoc,
       girderConfiguration: { ...superDoc.girderConfiguration, girderCount: 1 },
@@ -109,6 +110,5 @@ describe("Phase 9-04R3 Sol #4: distributed dead load on main girders", () => {
     const result = buildAuthorizedDeadLoad(mismatched, doc);
     // girderCount=1 != resolved groups -> null (fail-closed)
     expect(result).toBeNull();
-    void girderIds;
   });
 });

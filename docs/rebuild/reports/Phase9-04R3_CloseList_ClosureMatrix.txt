@@ -1,0 +1,62 @@
+====================================================================
+Phase 9-04R3 Close List 最終closure matrix（Sol review #2）
+====================================================================
+基準: docs/rebuild/phase9.4/close_list.txt（Phase 9-04 FROZEN）
+Phase 9-02 Design Freeze: 唯一のarchitecture契約
+判定: 全項目 CLOSED（PARTIAL=0・unresolved=0）
+FROZEN境界（NOT_AUTHORIZED/HOLD/SOURCE_NOT_AVAILABLE）は別枠・未完扱いしない
+====================================================================
+
+【S（上部工）】
+| ID | 項目 | R3判定 | 根拠（実装/証跡） |
+|---|---|---|---|
+| S-01 | BridgeStructureInputPanel本格入力UI | CLOSED | SuperstructureRescuePanel: 主桁/断面/横桁/横構/材料/支承/AUTHORIZED荷重全UI・canonical commit・unit+実画面 |
+| S-02 | 横桁配置 | CLOSED | crossBeamSpacingM編集+crossBeams[]せい/幅・canonical commit |
+| S-03 | AUTHORIZED荷重入力 | CLOSED | DL-STRUCTURAL+DL-DECK表示・buildAuthorizedDeadLoad縦断・荷重保存Σ-Fz=totalKN |
+| S-04 | General Arrangement / 2D | CLOSED | SuperstructurePlanView・実画面 |
+| S-05 | DXF | CLOSED | buildSuperstructureDxf・export UI |
+| S-06 | Quantity | CLOSED | 鋼材重量/床版体積DERIVED表示 |
+| S-07 | 旧Apollo UI新Module完全統合 | CLOSED | 旧field全件分類表（CLOSED/FROZEN-DEFER/NOT_AUTHORIZED）・sway/lateral UI実装 |
+| S-08 | old ProjectModel残存除去確認 | CLOSED | props controlled・adapter経由のみ |
+| S-09 | Save/restart/.spacerproj全救出項目保持 | CLOSED | rescuePersistence.test.ts round-trip |
+| S-10 | CIMへ全救出geometry反映 | CLOSED | CIM実画面（superstructure layer） |
+
+【B（下部工）】
+| ID | 項目 | R3判定 | 根拠 |
+|---|---|---|---|
+| B-01 | 旧3ペインCAD完全統合 | CLOSED | 3ペイン（tree/2D+3D/properties）・双方向選択同期・2D/3Dクリック |
+| B-02 | 2Dビュー | CLOSED | SubSupportPlanView・選択ハイライト・実画面 |
+| B-03 | 寸法表示 | CLOSED | 2D plan支持配置+選択表示（B-02実装で寸法ラベル併記）※寸法annotationはFreeze scope内 |
+| B-04 | Pier/Abutment完全編集 | CLOSED | 柱幅/深さ/高/フーチング/杭property editor・canonical commit |
+| B-05 | Footing/Foundation完全編集 | CLOSED | footing/foundation/pile property editor・canonical commit |
+| B-06 | 杭レイアウト | CLOSED | rows/cols/spacing/edge UI・pileCount=rows×cols整合・杭座標DERIVED table・pileConfigurations[]同期 |
+| B-07 | 座標表 | CLOSED | Support座標表（station/XYZ/skew） |
+| B-08 | Quantity | CLOSED | computeSubstructureQuantity表示（concrete/pile） |
+| B-09 | 3Dビュー | CLOSED | Substructure3DPreview・選択ハイライト |
+| B-10 | old browser JSON直接保存残存除去確認 | CLOSED | PDC経由のみ（browser JSON save/loadは旧route限定） |
+| B-11 | Save/restart/.spacerproj全救出項目保持 | CLOSED | rescuePersistence.test.ts round-trip |
+| B-12 | CIMへ全救出geometry反映 | CLOSED | CIM実画面（substructure/foundation layer） |
+
+【I（統合）】
+| ID | 項目 | R3判定 | 根拠 |
+|---|---|---|---|
+| I-01 | Bridge Layout→Superstructure | CLOSED | 実画面生成・handoff |
+| I-02 | Superstructure→Bearing/Reaction | CLOSED | bearing seats・支承UI |
+| I-03 | Bearing/Reaction→Substructure | CLOSED | Phase5 adapter連携 |
+| I-04 | Substructure→Analysis | CLOSED | buildSubstructureAnalysisFragment |
+| I-05 | Analysis→CIM | CLOSED | buildAnalysisCimLayer |
+| I-06 | authoritative IF3 Reaction実画面 | CLOSED | AuthoritativeResultPanel・実Fz=679.1・entityId bind |
+| I-07 | authoritative IF3 N/Q/M/T実画面 | CLOSED | 実部材力表示（N/Q/M非零・T=0物理正）・entityId bind |
+| I-08 | Deformed Shape実画面 | CLOSED | 最大変位非零表示・node数 |
+| I-09 | STALE/INVALID | CLOSED | analysisStaleness.test.ts（3-gate）・IF3 stale/invalid fail-closed |
+| I-10 | Electron実画面Acceptance | CLOSED | Playwright headed 6ケースPASS・Luna確認（Electron再起動はwebモード制約のためunit test代替+Electron IPC persistenceを明記） |
+| I-11 | restart | CLOSED | substructurePersistence.test.ts（save→restart→restore）・PDC module再入場 |
+| I-12 | .spacerproj round-trip | CLOSED | rescuePersistence.test.ts（export/import値保持） |
+
+====================================================================
+FROZEN境界（PARTIAL扱いしない・CLOSED対象外）
+====================================================================
+- 上部工: 応力度/照査6種 NOT_AUTHORIZED・diaphragm DEFER（実装0件）
+- 下部工: 照査/配筋/耐震 HOLD_NOT_AVAILABLE・AUTO-DETERMINATION BANNED
+- SOURCE_NOT_AVAILABLE値発明禁止・HOLD計算済み表示禁止
+====================================================================

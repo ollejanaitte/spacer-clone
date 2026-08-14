@@ -185,12 +185,44 @@ describe("SubstructureDocument validation (WP-A)", () => {
         ? { ...s, pier: { ...s.pier!, pileGroup: { id: "pg1", pileType: "bored_pile" as const, diameter: 1.5, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 } } }
         : s),
       pileConfigurations: [
-        { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: null, edgeY: null },
+        { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 },
       ],
     };
     const write = writeSubstructureDocument(manager, projectId, mismatched as SubstructureDocument);
     expect(write.ok).toBe(false);
     expect(write.ok === false && write.reason === "invalid-substructure-data").toBe(true);
+  });
+
+  it("rejects non-positive diameter/length/spacing at write boundary (Sol review #4)", () => {
+    resetProjectManagerForTest();
+    const manager = getProjectManager();
+    manager.importProject(applyBusinessMetadata(createEmptyProject("WB2"), { businessNumber: "WB-2", designStage: "bridge-detailed" }));
+    const projectId = manager.listProjects()[0].projectId;
+    const doc = makeDocument(projectId);
+    const bad = {
+      ...doc,
+      supports: doc.supports.map((s) => s.supportId === "P1"
+        ? { ...s, pier: { ...s.pier!, pileGroup: { id: "pg1", pileType: "bored_pile" as const, diameter: 0, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 } } }
+        : s),
+      pileConfigurations: [
+        { id: "pg1", pileType: "bored_pile", diameter: 0, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 },
+      ],
+    };
+    const write = writeSubstructureDocument(manager, projectId, bad as SubstructureDocument);
+    expect(write.ok).toBe(false);
+    expect(write.ok === false && write.reason === "invalid-substructure-data").toBe(true);
+  });
+
+  it("rejects rows/cols one-sided-null at restore (deserialize) boundary (Sol review #4)", () => {
+    const doc = makeDocument("PROJ-1");
+    const bad = {
+      ...doc,
+      pileConfigurations: [
+        { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: null, edgeX: null, edgeY: null },
+      ],
+    };
+    const parsed = parseSubstructureDocument(bad as never);
+    expect(parsed.ok).toBe(false);
   });
 });
 
