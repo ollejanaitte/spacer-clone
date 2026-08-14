@@ -49,8 +49,8 @@ FROZEN境界（NOT_AUTHORIZED/HOLD/SOURCE_NOT_AVAILABLE）は別枠・未完扱�
 | I-07 | authoritative IF3 N/Q/M/T実画面 | CLOSED | 実部材力表示（N/Q/M非零・T=0物理正）・entityId bind |
 | I-08 | Deformed Shape実画面 | CLOSED | 最大変位非零表示・node数 |
 | I-09 | STALE/INVALID | CLOSED | analysisStaleness.test.ts（3-gate）・IF3 stale/invalid fail-closed |
-| I-10 | Electron実画面Acceptance | CLOSED | Playwright headed 6ケースPASS・Luna確認（Electron再起動はwebモード制約のためunit test代替+Electron IPC persistenceを明記） |
-| I-11 | restart | CLOSED | substructurePersistence.test.ts（save→restart→restore）・PDC module再入場 |
+| I-10 | Electron実画面Acceptance | CLOSED | Electron real-screen: electron-persistence.spec.ts（headed起動→project→pile grid→restart→restore PASS）・Chromium headed 6ケースPASS・Luna確認 |
+| I-11 | restart | CLOSED | Electron実プロセスrestartでfilesystem persistence復元（rows=3保持）を実画面実証・substructurePersistence.test.ts |
 | I-12 | .spacerproj round-trip | CLOSED | rescuePersistence.test.ts（export/import値保持） |
 
 ====================================================================

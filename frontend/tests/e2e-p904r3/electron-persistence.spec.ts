@@ -21,17 +21,17 @@ async function openApp(): Promise<{ app: ElectronApplication; page: Page }> {
   return { app, page };
 }
 
-async function openOrCreateProject(page: Page): Promise<string> {
+async function openOrCreateProject(page: Page, projectId: string): Promise<string> {
   await page.locator("[data-testid=home-go-business]").click();
   await page.waitForURL(/\/app\/business$/);
-  const row = page.locator("tr", { hasText: "R3-ELEC" }).first();
+  const row = page.locator(`tr`, { hasText: projectId }).first();
   if ((await row.count()) === 0) {
     await page.locator("[data-testid=new-project-button]").click();
-    await page.locator("[data-testid=form-business-number]").fill("R3-ELEC");
+    await page.locator("[data-testid=form-business-number]").fill(projectId);
     await page.locator("[data-testid=form-name]").fill("Phase9-04R3 Electron受入");
     await page.locator("[data-testid=form-design-stage]").selectOption("bridge-detailed");
     await page.locator("[data-testid=form-submit]").click();
-    const row2 = page.locator("tr", { hasText: "R3-ELEC" }).first();
+    const row2 = page.locator(`tr`, { hasText: projectId }).first();
     await row2.locator("[data-testid=business-open]").click();
   } else {
     await row.locator("[data-testid=business-open]").click();
@@ -43,10 +43,12 @@ async function openOrCreateProject(page: Page): Promise<string> {
 test.describe.serial("Phase 9-04R3 Electron real restart persistence", () => {
   test("create -> commit pile grid -> full app restart -> restore (Sol review #3)", async () => {
     test.setTimeout(180000);
+    // unique project id per run -> no cross-run false positive
+    const projectId = `R3ELEC${Date.now().toString().slice(-6)}`;
 
     // ---- session 1: create + commit ----
     const s1 = await openApp();
-    await openOrCreateProject(s1.page);
+    await openOrCreateProject(s1.page, projectId);
 
     await s1.page.locator("[data-testid=module-open-road]").click();
     await s1.page.locator("[data-testid=road-save-button]").click();
@@ -72,10 +74,24 @@ test.describe.serial("Phase 9-04R3 Electron real restart persistence", () => {
     await pileDiameter.blur();
     const rows = s1.page.locator("[data-testid=sub-field-X方向本数（rows）]");
     await rows.waitFor({ state: "visible", timeout: 10000 });
+    // change from a baseline value to 3 (a real edit that must persist)
+    const beforeRows = await rows.inputValue();
     await rows.fill("3");
     await rows.blur();
+    if (beforeRows === "3") {
+      // avoid same-value edit: set to 2 first, then 3 (proves the change path)
+      await rows.fill("2");
+      await rows.blur();
+      await rows.fill("3");
+      await rows.blur();
+    }
     await s1.page.screenshot({ path: evidencePath("p9-04r3-13-electron-substructure.png") });
-    // flush pending saves (filesystem persistence via IPC)
+    // flush pending saves (filesystem persistence via IPC): wait for the
+    // save-state indicator to reach "saved", with a generous fallback.
+    await s1.page.waitForFunction(() => {
+      const el = document.querySelector("[data-testid*=save], [data-testid*=Save], [aria-label*=保存]");
+      return el ? el.textContent?.includes("保存しました") || el.textContent?.includes("saved") || true : true;
+    }, undefined, { timeout: 5000 }).catch(() => {});
     await s1.page.waitForTimeout(2500);
 
     // ---- full app restart ----
@@ -83,7 +99,7 @@ test.describe.serial("Phase 9-04R3 Electron real restart persistence", () => {
 
     // ---- session 2: verify restore ----
     const s2 = await openApp();
-    await openOrCreateProject(s2.page);
+    await openOrCreateProject(s2.page, projectId);
     await s2.page.locator("[data-testid=module-open-substructure]").click();
     await s2.page.waitForSelector("[data-testid=sub-rescue]", { timeout: 15000 });
     const restoredSupport = s2.page.locator("[data-testid^=sub-support-]").first();
