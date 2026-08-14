@@ -147,6 +147,9 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       }
       if (!box || box.isEmpty()) return;
       const size = box.getSize(new THREE.Vector3());
+      // Pad the fit box so labels near the box edges (e.g. S3 at the last
+      // span) are not clipped by the viewport edge (WP-R2F visibility).
+      box.expandByScalar(Math.max(size.x, size.y, size.z) * 0.08);
       const center = box.getCenter(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
       camera.near = Math.max(0.01, radius / 10000);
@@ -172,6 +175,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const box = scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup);
       if (box.isEmpty()) return;
       const size = box.getSize(new THREE.Vector3());
+      box.expandByScalar(Math.max(size.x, size.y, size.z) * 0.08);
       const center = box.getCenter(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
       camera.near = Math.max(0.01, radius / 10000);
