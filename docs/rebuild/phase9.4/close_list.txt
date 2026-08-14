@@ -1,0 +1,72 @@
+Phase 9-04 Close List（FROZEN）
+====================================================================
+
+baseline: 2b504668（Phase 9-03 Final Report merge後）
+Phase 9-02 Design Freeze: 唯一のarchitecture契約
+Phase 9-03: COMPLETE（Super/Sub Rescue Editor基盤確立）
+
+本Close ListはPhase 9-04で全件CLOSEDする。HOLD/NOT_AUTHORIZED/
+SOURCE_NOT_AVAILABLEはFROZEN境界として別枠（未完扱いしない）。
+
+====================================================================
+S（上部工）
+====================================================================
+
+| ID | 項目 | current status | old asset | new host | gap | verdict |
+|---|---|---|---|---|---|---|
+| S-01 | 旧BridgeStructureInputPanel本格入力UIの残り | PARTIAL（Core編集のみ） | apollo/components/BridgeStructureInputPanel.tsx | SuperstructureRescuePanel | 横桁/荷重等追加 | OPEN |
+| S-02 | 横桁配置 | OPEN | apollo/geometry/members.ts | SuperstructureRescuePanel | crossBeamSpacing/配置 | OPEN |
+| S-03 | AUTHORIZED荷重入力 | OPEN | apollo/load系 | SuperstructureRescuePanel | 死荷重unit/数量 | OPEN |
+| S-04 | General Arrangement / 2D | OPEN | apollo/GeneralArrangementPanel | SuperstructureRescuePanel | plan/elevation/section | OPEN |
+| S-05 | DXF | OPEN | apollo/drawing/drawingExport | 新Module | export UI・実ファイル | OPEN |
+| S-06 | Quantity | OPEN | apollo/quantity/quantityModel | SuperstructureRescuePanel | steel/deck/cross girder | OPEN |
+| S-07 | 旧Apollo UIの新Module完全統合 | PARTIAL | ApolloPhase1Shell | 新Shell | rescue editor統合 | OPEN |
+| S-08 | old ProjectModel残存除去確認 | DONE（props controlled） | — | — | 確認のみ | OPEN（確認） |
+| S-09 | Save/restart/.spacerproj全救出項目保持 | DONE（Core値） | — | — | 追加項目分を再確認 | OPEN |
+| S-10 | CIMへ全救出geometry反映 | DONE（Core） | — | CIM | 追加分反映 | OPEN |
+
+====================================================================
+B（下部工）
+====================================================================
+
+| ID | 項目 | current status | old asset | new host | gap | verdict |
+|---|---|---|---|---|---|---|
+| B-01 | 旧3ペインCAD完全統合 | PARTIAL（form editor） | substructure/planning/* | SubstructureRescuePanel | 2D view/select/zoom | OPEN |
+| B-02 | 2Dビュー | OPEN | planning/SubstructureViewport | SubstructureRescuePanel | support配置plan | OPEN |
+| B-03 | 寸法表示 | OPEN | planning/dimensions/* | SubstructureRescuePanel | dimension annotation | OPEN |
+| B-04 | Pier/Abutment完全編集 | PARTIAL | planning/forms/* | SubstructureRescuePanel | cap/beam/wingWall追加 | OPEN |
+| B-05 | Footing/Foundation完全編集 | PARTIAL | planning/forms/FoundationInputForm | SubstructureRescuePanel | 既存mapping全件 | OPEN |
+| B-06 | 杭レイアウト | OPEN | planning/piles/* | SubstructureRescuePanel | rows/cols/spacing | OPEN |
+| B-07 | 座標表 | OPEN | planning/CoordinateTable | SubstructureRescuePanel | support station/xyz | OPEN |
+| B-08 | Quantity | OPEN | substructure/design/geometricQuantity | SubstructureRescuePanel | concrete/pile | OPEN |
+| B-09 | 3Dビュー | OPEN | viewer3d/SubstructureViewer3D | SubstructureRescuePanel | scene表示 | OPEN |
+| B-10 | old browser JSON直接保存残存除去確認 | DONE（PDC） | — | — | 確認のみ | OPEN（確認） |
+| B-11 | Save/restart/.spacerproj全救出項目保持 | DONE（Core値） | — | — | 追加分再確認 | OPEN |
+| B-12 | CIMへ全救出geometry反映 | DONE（Core） | — | CIM | 追加分反映 | OPEN |
+
+====================================================================
+I（統合）
+====================================================================
+
+| ID | 項目 | current status | gap | verdict |
+|---|---|---|---|---|
+| I-01 | Bridge Layout→Superstructure | DONE | — | OPEN（確認） |
+| I-02 | Superstructure→Bearing/Reaction | DONE | — | OPEN（確認） |
+| I-03 | Bearing/Reaction→Substructure | PARTIAL | Phase5付与 | OPEN |
+| I-04 | Substructure→Analysis | DONE | — | OPEN（確認） |
+| I-05 | Analysis→CIM | DONE | — | OPEN（確認） |
+| I-06 | authoritative IF3 Reaction実画面 | OPEN | IF3 result配線 | OPEN |
+| I-07 | authoritative IF3 N/Q/M/T実画面 | OPEN | 同上 | OPEN |
+| I-08 | Deformed Shape実画面 | OPEN | 同上 | OPEN |
+| I-09 | STALE/INVALID | DONE（unit） | UI表示 | OPEN（確認） |
+| I-10 | Electron実画面Acceptance | DONE（Chromium headed） | — | OPEN（確認） |
+| I-11 | restart | DONE | — | OPEN（確認） |
+| I-12 | .spacerproj round-trip | DONE | — | OPEN（確認） |
+
+====================================================================
+FROZEN境界（未完扱いしない）
+====================================================================
+
+- 上部工: 正式応力度/照査6種 NOT_AUTHORIZED・diaphragm DEFER（資産0件）
+- 下部工: 照査/配筋/耐震 HOLD_NOT_AVAILABLE・AUTO-DETERMINATION BANNED
+- SOURCE_NOT_AVAILABLE値の発明禁止・HOLDを計算済み表示禁止

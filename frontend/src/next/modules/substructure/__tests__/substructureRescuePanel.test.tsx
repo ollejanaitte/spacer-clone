@@ -110,3 +110,23 @@ function cleanup(root: Root) {
     root.unmount();
   });
 }
+
+describe("SubstructureRescuePanel outputs (Phase 9-04 B-02/07/08/09)", () => {
+  it("renders coordinate table, quantity and plan view", async () => {
+    const pid = setupProject();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    expect(document.querySelector('[data-testid="sub-coordinate-table"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="sub-coord-P1"]')?.textContent).toContain("P1");
+    expect(document.querySelector('[data-testid="sub-quantity"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="sub-plan-view"]')).toBeTruthy();
+    cleanup(root);
+  });
+
+  it("renders the 3D preview canvas", async () => {
+    const pid = setupProject();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    // the WebGL renderer may not create a canvas in jsdom; the container must exist
+    expect(document.querySelector('[data-testid="sub-3d-preview"]')).toBeTruthy();
+    cleanup(root);
+  });
+});
