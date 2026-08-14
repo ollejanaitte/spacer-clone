@@ -159,7 +159,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const fovY = (camera.fov * Math.PI) / 180;
       const fovX = 2 * Math.atan(Math.tan(fovY / 2) * Math.max(aspect, 0.1));
       const fitAngle = Math.min(fovX, fovY);
-      const dist = (radius / Math.sin(fitAngle / 2)) * 0.85;
+      const dist = (radius / Math.sin(fitAngle / 2)) * 0.72;
       const dx = dist * 0.62;
       const dy = dist * 0.45;
       const dz = dist * 0.62;
@@ -184,7 +184,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const fovY = (camera.fov * Math.PI) / 180;
       const fovX = 2 * Math.atan(Math.tan(fovY / 2) * Math.max(aspect, 0.1));
       const fitAngle = Math.min(fovX, fovY);
-      const dist = (radius / Math.sin(fitAngle / 2)) * 0.8;
+      const dist = (radius / Math.sin(fitAngle / 2)) * 0.72;
       let pos: [number, number, number];
       if (preset === "plan") {
         pos = [center.x, center.y + dist * 1.2, center.z];
