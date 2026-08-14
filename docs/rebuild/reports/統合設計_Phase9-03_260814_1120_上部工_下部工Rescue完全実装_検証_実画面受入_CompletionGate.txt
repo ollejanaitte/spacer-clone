@@ -1,0 +1,133 @@
+統合設計_Phase9-03_260814_1120_上部工_下部工Rescue完全実装_検証_実画面受入_CompletionGate
+====================================================================
+
+作業名: 統合設計 Phase 9-03「Superstructure / Substructure Rescue 完全実装・検証・実画面受入・Completion Gate」
+完了日時: 2026-08-14 11:20 JST
+baseline: 3ed2543e（Phase 9-02 Design Freeze merge後）
+Phase 9-02 Design Freeze: FROZEN（唯一の実装仕様）
+Phase 9-03 Completion Gate: PASS
+verdict: Phase 9-03 COMPLETE
+STOP: 次Phaseへは進まずSTOP
+
+====================================================================
+1. WP結果・PR一覧
+====================================================================
+
+| WP | 内容 | PR | SHA |
+|---|---|---|---|
+| WP-A/C | Superstructure Rescue Editor（正規Moduleで主桁/断面/床版/張出編集→Canonical commit・2D断面プレビュー・VITE_SUPERSTRUCTURE_RESCUE） | #1012 | 61835755 |
+| WP-E/F/G | Substructure Rescue Editor（Support選択・Pier/Abutment/Footing/Pile編集→Canonical commit・HOLD_NOT_AVAILABLE表示・VITE_SUBSTRUCTURE_RESCUE） | #1013 | 9bba5dff |
+| WP-H/I | Rescue persistence round-trip（.spacerproj export/importで編集値保持）・pier/abutment初期化setter | #1014 | 10d5afcb |
+
+====================================================================
+2. 上部工 Rescue実装（WP-A/C）
+====================================================================
+
+- SuperstructureRescuePanel: /app Superstructure Module に救出Editor
+  - 編集: 主桁本数/間隔/高さ/ウェブ厚/上下フランジ/床版厚/RC単位重量/張出
+  - 変更ごとに Canonical commit（writeSuperstructureDocument→Auto Save）・girderLines導出
+  - 断面性能表示（NOT_AUTHORIZED参考）・2D断面プレビュー（主桁配置）
+- field mapping: Apollo（girderCount/girderSpacing/girderDepth/web/flange/deck/unitWeight）→
+  SuperstructureDocument（girderConfiguration.girderCount/girderSpacingM/girderSectionModel/
+  deckConfiguration.thicknessM/unitWeight）＝Phase 9-02 FROZEN通り
+- 実画面: パネル表示・編集→「SuperstructureDocument へ保存しました」・girder count 5 が
+  restart後も保持
+
+====================================================================
+3. 下部工 Rescue実装（WP-E/F/G）
+====================================================================
+
+- SubstructureRescuePanel: /app Substructure Module に救出Editor
+  - Support選択（A1/P1..Pn/A2・station表示）
+  - Pier編集: 柱幅/深さ/高さ・フーチング長/幅/厚・杭径/長/本数
+  - Abutment編集: 背壁高/厚・フーチング長
+  - 変更ごとに Canonical commit（writeSubstructureDocument→Auto Save）
+  - pier/abutment未定義Supportへの編集で形状を初期化（single_column_rect/inverted_t・wingWall含む）
+  - HOLD_NOT_AVAILABLE（NOT_AUTHORIZED）表示・「計算済み」と誤表示しない
+- 実画面: P1選択・柱幅3.5編集→commit→restart後も保持・ページエラーなし
+
+====================================================================
+4. Persistence / Save-restart / .spacerproj（WP-H）
+====================================================================
+
+- rescuePersistence.test: 上部工編集値（girder count 4/depth 2.2/deck 0.24）・下部工編集値
+  （column width 3.0/pileCount 6）が .spacerproj export/import で保持されることを検証
+- 実画面save-restart: 上部工主桁5本・下部工柱幅3.5 が再遷移後も保持
+- PDC唯一正本・derived transient化（既存super/sub persistence）・Auto Save基盤
+
+====================================================================
+5. Snapshots / STALE（WP-I）
+====================================================================
+
+- GeometrySnapshot: DERIVED・決定論再生成（superstructureBindingNew + DefaultGeometryEngine・CIM層）
+- placementSnapshot: DERIVED・buildSubstructurePlacement（Phase 9-02 FROZEN順序）
+- integrity gate: derived不整合→STALE・support削除→INVALID/fail-closed（既存gate）
+- analysisStaleness 3-gate継続
+
+====================================================================
+6. Bridge/Bearing/Reaction/Analysis/CIM（WP-J）
+====================================================================
+
+- 既存handoff（superstructureHandoff・Phase4/5 adapter）維持・UI救出で壊さない
+- CIM/Integrated 3D: 上部工・下部工レイヤが実画面で表示（Phase 8/9-00継続・rescue後も確認）
+- Analysis: Phase 7 FEM/Solver/IF3・CIM FEM overlay継続
+
+====================================================================
+7. 検証結果
+====================================================================
+
+| 項目 | 結果 |
+|---|---|
+| frontend typecheck | PASS |
+| frontend tests（src/next + src/liner） | 1729 passed（+ rescue panel 4件・persistence 2件） |
+| build | PASS |
+| 実画面（Chromium headed・DISPLAY=:0） | 上部工/下部工Rescue UI・canonical commit・save-restart・CIM 3D・ページエラーなし |
+| screenshots | 早期（p9_super_rescue_panel / p9_sub_rescue_panel）・完成（p9_gate_*）取得・Luna判定OK・Discord送信 |
+| .spacerproj round-trip | 上部工/下部工編集値保持（test検証） |
+
+====================================================================
+8. NOT_AUTHORIZED / HOLD（FROZEN維持）
+====================================================================
+
+- 上部工: 照査・応力度・たわみ NOT_AUTHORIZED（HOLD表示・計算済みと誤表示しない）
+- 下部工: 安定/断面力/応力/照査/配筋/耐震 HOLD_NOT_AVAILABLE
+- ダイヤフラム: DEFER（未実装）
+- 数値ロジックの発明なし
+
+====================================================================
+9. Completion Gate（Phase 9-03）
+====================================================================
+
+- Superstructure: 正規Module導線・実入力（主桁/断面/床版）・canonical commit・2D preview・
+  Save/restart・.spacerproj: PASS
+- Substructure: 正規Module導線・3ペイン的Support選択・Pier/Abutment/Footing/Pile編集・
+  canonical commit・HOLD表示・Save/restart・.spacerproj: PASS
+- Integrity: PDC唯一正本・dual-write無し・atomic commit・.idempotence:
+  PASS（既存基盤 + round-trip test）
+- Integration: Bridge Layout・Analysis・CIM: PASS（既存 + rescue後CIM確認）
+- HOLD: NOT_AUTHORIZED勝手実装なし・HOLD_NOT_AVAILABLE維持: PASS
+- Quality: targeted tests・full regression 1729・typecheck・build・実画面E2E・
+  screenshots・Luna確認: PASS
+
+====================================================================
+10. unresolved / deferred / risk
+====================================================================
+
+- 旧Apollo本格入力UI（BridgeStructureInputPanel）の全項目（横桁配置・荷重・2D/DXF）の
+  救出は Phase 9-04 以降の拡張（本PhaseはCore編集UI + canonical commitを確立）
+- 旧3ペインCADの完全統合（2Dビュー・寸法・杭レイアウト）は Phase 9-04 の拡張候補
+- N/Q/M/T・reactionの実画面overlayはAnalysis Result（IF3）連携UIに依存（Phase 9-04+）
+- 断面材料adoption status・BearingSeat placeholder寸法は FROZEN注記どおり要精査
+
+====================================================================
+11. final SHA
+====================================================================
+
+本PR merge後の最新SHA（merge後に4系統同期で確定）
+
+====================================================================
+12. verdict
+====================================================================
+
+Phase 9-03 COMPLETE
+STOP
