@@ -30,6 +30,7 @@ export interface SuperstructureDocumentInput {
   readonly superstructureType?: string;
   readonly structuralSystem?: { spanSystem: "simple" | "continuous"; bridgeSystem: "SIMPLE_SINGLE" | "CONTINUOUS" };
   readonly girderConfiguration: SuperstructureDocument["girderConfiguration"];
+  readonly materialConfiguration?: SuperstructureDocument["materialConfiguration"];
   readonly deckConfiguration: SuperstructureDocument["deckConfiguration"];
   readonly crossBeamConfiguration?: SuperstructureDocument["crossBeamConfiguration"];
   readonly crossFrameConfiguration?: SuperstructureDocument["crossFrameConfiguration"];
@@ -70,6 +71,7 @@ export function createEmptySuperstructureDocument(projectId: string): Superstruc
         unitWeightPerM: null,
       },
     },
+    materialConfiguration: null,
     deckConfiguration: {
       deckId: "DECK-1",
       deckKind: "rc_non_composite",
@@ -167,6 +169,7 @@ export function buildSuperstructureDocument(
     superstructureType: input.superstructureType ?? SUPERSTRUCTURE_TYPE_PLATE_GIRDER_RC_SLAB_NON_COMPOSITE,
     structuralSystem: input.structuralSystem ?? base.structuralSystem,
     girderConfiguration: { ...input.girderConfiguration, girderLines },
+    materialConfiguration: input.materialConfiguration ?? null,
     deckConfiguration: input.deckConfiguration,
     crossBeamConfiguration: input.crossBeamConfiguration ?? null,
     crossFrameConfiguration: input.crossFrameConfiguration ?? null,

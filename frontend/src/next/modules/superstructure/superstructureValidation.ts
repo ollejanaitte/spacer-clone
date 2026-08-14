@@ -149,6 +149,28 @@ export function validateSuperstructureDocument(document: SuperstructureDocument)
     checkOptionalFinite(section.bottomFlange as unknown as Record<string, unknown>, "thicknessM", "superstructureDocument.girderConfiguration.girderSectionModel.bottomFlange", issues);
   }
 
+  // materialConfiguration (Phase 7-01C §3.1): declared values must be finite
+  // and consistent (E/G/nu). Unset (null) uses the frozen default steel.
+  const mat = document.materialConfiguration;
+  if (mat !== null) {
+    checkOptionalFinite(mat as unknown as Record<string, unknown>, "elasticModulusKN_M2", "superstructureDocument.materialConfiguration", issues);
+    checkOptionalFinite(mat as unknown as Record<string, unknown>, "shearModulusKN_M2", "superstructureDocument.materialConfiguration", issues);
+    checkOptionalFinite(mat as unknown as Record<string, unknown>, "poissonRatio", "superstructureDocument.materialConfiguration", issues);
+    checkOptionalFinite(mat as unknown as Record<string, unknown>, "densityKN_M3", "superstructureDocument.materialConfiguration", issues);
+    if (mat.elasticModulusKN_M2 !== null && !(mat.elasticModulusKN_M2 > 0)) {
+      issues.push({ path: "superstructureDocument.materialConfiguration.elasticModulusKN_M2", message: "elasticModulusKN_M2 must be > 0 when present" });
+    }
+    if (mat.shearModulusKN_M2 !== null && !(mat.shearModulusKN_M2 > 0)) {
+      issues.push({ path: "superstructureDocument.materialConfiguration.shearModulusKN_M2", message: "shearModulusKN_M2 must be > 0 when present" });
+    }
+    if (mat.poissonRatio !== null && !(Math.abs(mat.poissonRatio) < 0.5)) {
+      issues.push({ path: "superstructureDocument.materialConfiguration.poissonRatio", message: "poissonRatio must satisfy |nu| < 0.5" });
+    }
+    if (mat.densityKN_M3 !== null && !(mat.densityKN_M3 > 0)) {
+      issues.push({ path: "superstructureDocument.materialConfiguration.densityKN_M3", message: "densityKN_M3 must be > 0 when present" });
+    }
+  }
+
   // deckConfiguration
   const dcfg = document.deckConfiguration;
   if (dcfg.deckKind !== "rc_non_composite") {

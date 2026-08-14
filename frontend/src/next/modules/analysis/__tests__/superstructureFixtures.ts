@@ -38,6 +38,7 @@ export const TEST_SUPERSTRUCTURE_DOCUMENT: SuperstructureDocument = {
   },
   superstructureType: "plate_girder_rc_slab_non_composite",
   structuralSystem: { spanSystem: "continuous", bridgeSystem: "CONTINUOUS" },
+  materialConfiguration: null,
   girderConfiguration: {
     girderCount: 2,
     girderSpacingM: 4,

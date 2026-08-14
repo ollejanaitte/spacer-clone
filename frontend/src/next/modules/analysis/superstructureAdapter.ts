@@ -37,6 +37,46 @@ export const DEFAULT_STEEL_MATERIAL: AnalysisMaterial = {
   source: "DERIVED",
 };
 
+/**
+ * Resolve the steel material for the analysis model (Phase 7-01C §3.1).
+ * When SuperstructureDocument.materialConfiguration is declared the values are
+ * CONFIRMED (AUTHORIZED upstream input overrides the frozen default).
+ * Otherwise the frozen engineering default steel applies (DERIVED). No value
+ * is invented in either case.
+ */
+export function resolveSteelMaterial(
+  materialConfiguration: SuperstructureDocument["materialConfiguration"],
+): AnalysisMaterial {
+  if (materialConfiguration === null) {
+    return DEFAULT_STEEL_MATERIAL;
+  }
+  const e = finitePositive(materialConfiguration.elasticModulusKN_M2);
+  const g = finitePositive(materialConfiguration.shearModulusKN_M2);
+  const nu = finitePositive(materialConfiguration.poissonRatio);
+  const rho = finitePositive(materialConfiguration.densityKN_M3);
+  if (e === null || g === null || nu === null || rho === null) {
+    // Partial declaration is NOT_AUTHORIZED: the frozen default must not be
+    // silently mixed with user values. Fall back to the DERIVED default and
+    // record NOT_AVAILABLE (the caller surfaces the issue).
+    return DEFAULT_STEEL_MATERIAL;
+  }
+  return {
+    entityId: deriveAnalysisEntityId("material", "MAT-STEEL"),
+    sourceEntityId: "MAT-STEEL",
+    sourceKind: "structuralSteel",
+    name: "steel (declared materialConfiguration)",
+    elasticModulus: e,
+    shearModulus: g,
+    poissonRatio: nu,
+    density: rho,
+    source: "CONFIRMED",
+  };
+}
+
+function finitePositive(value: number | null | undefined): number | null {
+  return typeof value === "number" && Number.isFinite(value) && value > 0 ? value : null;
+}
+
 export interface SuperstructureAnalysisFragment {
   readonly nodes: readonly AnalysisNode[];
   readonly members: readonly AnalysisMember[];
@@ -148,10 +188,21 @@ export function buildSuperstructureAnalysisFragment(
 
   if (snapshot.supportPoints.length === 0) {
     issues.push({ path: "snapshot.supportPoints", message: "no support points (generation rejected)." });
-    return { nodes, members, sections, materials: [DEFAULT_STEEL_MATERIAL], bearings, issues };
+    const earlyMaterials: AnalysisMaterial[] = [resolveSteelMaterial(document.materialConfiguration)];
+    return { nodes, members, sections, materials: earlyMaterials, bearings, issues };
   }
 
-  const materialId = DEFAULT_STEEL_MATERIAL.entityId;
+  const material = resolveSteelMaterial(document.materialConfiguration);
+  if (material.source === "CONFIRMED") {
+    // no issue: declared material is AUTHORIZED
+  } else if (document.materialConfiguration !== null) {
+    issues.push({
+      path: "materialConfiguration",
+      message: "materialConfiguration is partially declared; the frozen default steel (DERIVED) applies (NOT_AVAILABLE).",
+    });
+  }
+  const materials: AnalysisMaterial[] = [material];
+  const materialId = material.entityId;
   const nodeBySource = new Map<string, AnalysisNode>();
 
   // supportPoint nodes
@@ -401,7 +452,7 @@ export function buildSuperstructureAnalysisFragment(
     });
   }
 
-  return { nodes, members, sections, materials: [DEFAULT_STEEL_MATERIAL], bearings, issues };
+  return { nodes, members, sections, materials, bearings, issues };
 }
 
 function findSupportAt(snapshot: GeometrySnapshot, stationM: number, girderId: string): string | null {
