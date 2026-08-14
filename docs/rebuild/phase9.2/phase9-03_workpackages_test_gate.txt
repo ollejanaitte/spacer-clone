@@ -1,0 +1,89 @@
+Phase 9-02 Design Freeze: Phase 9-03 Work Packages・Test・Completion Gate
+====================================================================
+
+baseline: 041f18de（Phase 9-01 merge後）
+
+====================================================================
+1. Phase 9-03 Work Packages（FROZEN）
+====================================================================
+
+| WP | scope | dependencies | tests | evidence |
+|---|---|---|---|---|
+| WP-A | Superstructure Adapter/Canonical Mapping（Apollo→Document field mapping・controlled adapter・old ProjectModel切離し） | — | mapping unit tests | field mapping table |
+| WP-B | Apollo UI Host Controlled化（BridgeStructureInputPanel等をprops controlledへ・旧ProjectModel依存除去） | WP-A | UI unit・mapping | 実画面 |
+| WP-C | Superstructure Editors Rescue（主桁/断面/材料/床版/横桁/荷重入力UIを新moduleへ。**支承は旧ApolloにUIなし→新規UIとして明示**） | WP-B | canonical commit・validation | 実画面 |
+| WP-D | Superstructure 2D/DXF/Quantity/3D（GeneralArrangementPanel等を新Documentから派生） | WP-C | DXF/quantity tests | 実画面 |
+| WP-E | Substructure Adapter/Canonical Mapping（planning→Document field mapping・正規化配列導出adapter） | — | mapping unit tests | field mapping table |
+| WP-F | 3ペインCAD Host Controlled化（SubstructurePlanningHostをdocument controlledへ・旧JSON切離し） | WP-E | UI unit・mapping | 実画面 |
+| WP-G | Substructure Editors/Foundation/Pile Rescue（3ペインCAD・座標表・数量・2D/3Dを新moduleへ） | WP-F | canonical commit・validation | 実画面 |
+| WP-H | Persistence/legacy import/restart/.spacerproj（一方向migration・dual-write禁止・backup・rollback・**import idempotence**） | WP-A..G, WP-I | import/restart/.spacerproj/negative tests | 実操作 |
+| WP-I | Bridge/Bearing/Reaction/Snapshot/STALE（GeometrySnapshot・placementSnapshot DERIVED再生成・stale/invalid） | WP-A..H | stale/invalid/snapshot deterministic tests | 実画面 |
+| WP-J | Analysis/CIM downstream regression（既存handoff・CIMレイヤを壊さない） | WP-I | regression | 実画面 |
+| WP-K | Golden/Regression/Negative Paths（Golden維持・negative path全網羅） | WP-A..J | full regression | CI |
+| WP-L | Electron実操作/Screenshots/Completion Gate | 全WP | E2E | screenshots |
+
+（注）WP-H（restart試験）はWP-I（DERIVED再生成）に依存するため、
+WP-IをWP-Hと同時/先行に実施する（snapshot regenerationはWP-Iで凍結）。
+
+====================================================================
+2. Test / Golden / Negative Path設計（FROZEN）
+====================================================================
+
+- old Apollo → SuperstructureDocument mapping（全field・単位・nullability）
+- old Substructure → SubstructureDocument mapping
+- legacy import（上部工JSON/下部工JSON→PDC・conflict・backup・**import idempotence**）
+- PDC Save / restart / .spacerproj round-trip
+- dual-write不存在（PDC→legacy export禁止test）
+- GeometrySnapshot deterministic（同一入力→同一fingerprint）
+- placementSnapshot deterministic + DERIVED（**deep-trim・restore順序固定**・再計算）
+- stale / invalid（Road/Bridge/Super/Sub変更→downstream・line/support削除→INVALID）
+- UI validation・canonical commit（**原子性・revision競合・autosave失敗時UI rollback**）
+- feature flag（ON/OFF・rollback）
+- legacy conflict・invalid schema・missing/deleted support・import failure
+- NOT_AUTHORIZED action attempt（HOLD領域操作→拒否）
+- **正規化配列の一意性・参照整合・zOverride回帰（placement adapterがengineへ渡すか）**
+- Golden/reference: 原則変更禁止（変更時は理由記録）
+
+====================================================================
+3. Electron E2E / Acceptance Gate設計（FROZEN）
+====================================================================
+
+【Superstructure】Project作成→Bridge Layout→Superstructure→主桁編集→断面/材料編集→
+床版/横桁→支承/荷重→generate→result→2D/DXF→3D→Save→restart→restore→.spacerproj
+
+【Substructure】Support選択→Pier/Abutment編集→Cap/Column→Footing/Foundation→Pile→
+Bearing Reaction→generate→result/coordinate/quantity→2D→3D→Save→restart→restore→.spacerproj
+
+さらに Analysis→CIM→STALE/INVALIDまで確認。
+
+====================================================================
+4. Screenshots / Evidence設計（FROZEN）
+====================================================================
+
+【Superstructure】Module全体/bridge・girder input/section・material/deck・cross girder/
+bearing・load/result/2D・DXF/3D
+【Substructure】Module全体/3ペインCAD/support/pier・abutment/footing・foundation/pile/
+coordinate・quantity/2D/3D
+【Integration】restart/Analysis/CIM/STALE・INVALID
+
+Phase 9-02では旧/現UI evidenceを設計根拠として必要に応じて撮影（「復旧済み」と偽らない）。
+
+====================================================================
+5. Design Freeze Gate（Phase 9-02）
+====================================================================
+
+- Baseline・Phase 9-01監査結果再照合: PASS
+- Superstructure Canonical/mapping/切離し/UI/GeometrySnapshot/2D-DXF/Bearing/STALE: PASS
+- Substructure Canonical/mapping/切離し/placementSnapshot DERIVED/Foundation/Pile/
+  Bearing Reaction/STALE: PASS
+- Persistence（PDC唯一正本・legacy一方向・dual-write禁止・migration・restart・
+  .spacerproj・rollback）: PASS
+- STALE/INVALID matrix: PASS
+- KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER + NOT_AUTHORIZED/HOLD境界: PASS
+- Phase 9-03 WP・tests・Golden・negative paths・Electron E2E・screenshots・feature flags・
+  rollback・Completion Gate: PASS
+- Completion Gateの「result/Analysis」は数値成功ではなく「HOLD/NOT_AUTHORIZED維持・
+  計算済みと表示されないこと」を明記
+- 必須Gateを個別明記: typecheck・対象unit・full regression・Electron E2E
+- Luna/Solレビュー: PASS（Sol=controlled adapter・DERIVED化・PDC唯一正本・
+  deep trim・restore順序・WP依存修正を確認・指摘反映済み）

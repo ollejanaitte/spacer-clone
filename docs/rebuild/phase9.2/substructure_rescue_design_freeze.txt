@@ -1,0 +1,159 @@
+Phase 9-02 下部工 Rescue 完全設計・Design Freeze
+====================================================================
+
+baseline: 041f18de（Phase 9-01 merge後）
+Phase 9-01監査: COMPLETE（旧下部工=埋没・非接続・3ペインCAD実起動成功）
+
+====================================================================
+1. Target Architecture（正規縦断）
+====================================================================
+
+旧3ペインCAD / planning UI
+  ↓ controlled adapter（Host controlled化・旧JSON切離し）
+SubstructureDocument（正本）
+  ↓ Project Data Core（Auto Save・.spacerproj）
+Placement / Geometry / Quantity / Calculation
+  ↓ placementSnapshot（DERIVED）
+Foundation / Pile
+  ↓ Bearing Reaction / Support Handoff
+Analysis
+  ↓ CIM / Integrated 3D
+Persistence / restart / .spacerproj
+
+旧browser JSON（SubstructureProject v0.2.0）は正本にしない。
+
+====================================================================
+2. Canonical Ownership（FROZEN）
+====================================================================
+
+- 正本: modules.substructure.data.substructureDocument（SubstructureDocument v0.1.0）
+- supports[] は旧 model.ts（v0.2.0）を型レベルでADAPT（再利用）
+- Bridge Layout / Superstructure Handoff / Terrain は参照のみ（複製しない）
+- placementSnapshot: DERIVED（第2正本にしない）
+- footing/foundation/pileConfigurations: 正規化配列（supportsから導出）
+- NOT_AUTHORIZED / HOLD領域は実装しない
+
+====================================================================
+3. planning → SubstructureDocument field mapping（FROZEN）
+====================================================================
+
+【Support】model.ts Support ↔ supports[]（型レベル1:1 ADAPT）
+- supportId/supportType/placement{source,alignmentId,station,offset,position,azimuthRad}/
+  skewRad/zOverride/placementSnapshot/bearingSeats/pier/abutment → 1:1
+
+【Pier/Abutment】（1:1 ADAPT・nested維持）
+- pier.{id,formType,column,cap,columns[],beam} → supports[].pier.*
+- abutment.{backwall,wingWallL/R,footing,pileGroup} → supports[].abutment.*
+
+【Foundation正規化配列】（convert・adapter要）
+- pier/abutment.footing → footingConfigurations[]（FootingConfiguration）
+- pier/abutment.pileGroup → pileConfigurations[]（PileConfiguration）
+- — → foundationConfigurations[]（formType: spread/piled・footingRefId・pileGroupRefId）
+
+【BearingSeat】（convert・新規field付与）
+- BearingSeat.seatId → bearingSeatReferences[].seatId（normalizeSeatId）
+- BearingSeat.position → bearingSeatReferences[].{position,elevation,localOffset}
+- BearingSeat.bearing.type → bearingSeatReferences[].bearingType（変換）
+- — → bearingSeatReferences[].{girderId,fixedOrMovable,longitudinalDirection,
+  transverseDirection,orientation}（Phase5 handoff由来）
+
+【入力form】（m・deg/rad変換はformToSupport既実装を流用）
+- PierInputForm/AbutmentInputForm/FoundationInputForm/PlacementFields → supports[]更新
+
+====================================================================
+4. placementSnapshot DERIVED化（FROZEN）
+====================================================================
+
+- generator: buildSubstructurePlacement（substructurePlacement.ts・
+  SupportPlacementEngine.computeAllPlacements再利用）
+- input依存: supports[].placement{station,offset,source} + skewRad + zOverride
+  + coordinateInput = Road alignment（roadReference.alignmentId）
+- fingerprint: 入力checksum（supportId/alignmentId/station/offset/source/skewRad/
+  zOverride + direct_xyz時はposition/azimuthRad + Road coordinate-input
+  revision/digest）— alignmentIdのみでは線形編集を検知不可
+- invalidation: 入力変化時はsnapshot再計算（stale）
+- persistence: serialize時に placementSnapshot を **deep-trim**（各supportを
+  deep-copyして明示的に削除）。bearingSeats（Phase5由来）もDERIVED扱い・
+  旧JSONとの競合優先順位を定義
+- restart regeneration: restore順序を固定
+  （handoff再生成→正規化→Phase5 seat再生成→placement再計算→
+  quantity/geometry→IntegrityGate）
+- Road必須はliner supportのみに限定（direct_xyzはRoad不要でsnapshot生成可）
+- zOverride: 既存placement adapterがengine入力へ渡していない点は
+  Phase 9-03で回帰試験対象に明記
+- missing input: fail-closed（liner supportでRoad未設定時はsnapshotなし・表示なし）
+
+====================================================================
+5. old JSON / ProjectModel 切離し（FROZEN）
+====================================================================
+
+- SubstructurePlanningHost: ローカルReact state（useUndoRedo）+ browser JSON
+  → Phase 9-03で Host controlled化（props: document + onChange）
+- 旧persistence（planning/persistence.ts v0.2.0）: 一方向legacy importのみ
+- 旧adapterPersistence（envelope）: legacy import・staleSupportIds旧仕組みは
+  新PDC+IntegrityGateへ置換
+- 旧sampleGenerator: サンプル値は「参考値」位置付け維持（初期shape供給の参考）
+- 旧3D viewer（SubstructureViewer3D）: KEEP（新moduleで再利用）
+- dual-write禁止・PDC唯一正本
+
+====================================================================
+6. Persistence / Migration（FROZEN）
+====================================================================
+
+- PDC唯一正本・旧SubstructureProject JSONは一方向legacy import
+- legacy import: deserializeSubstructureProject → SubstructureDocumentへ変換
+  （field mapping・validation・fail-closed・conflict detection・backup）
+- serialize: supportsからplacementSnapshot/derived配列をtrim
+  （supportReferences/bearingReactionReferences null・bearingSeatReferences []）
+- restore: deserialize → regenerateSubstructureDerived（+ placementSnapshot再計算）→
+  runSubstructureIntegrityGateAfterRestore
+- .spacerproj: substructureDocument含む
+
+====================================================================
+7. Bearing Reaction / Support Handoff（FROZEN）
+====================================================================
+
+- Phase4 Support Handoff（Bridge Layout由来）→ supports生成（既存generator）
+- Phase5 Bearing/Reaction（Superstructure Handoff由来）→ bearingSeatReferences付与
+  （substructurePhase5Adapter・E2Eフローへ組み込み）
+- 新Moduleのgeneratorで bearingReactionReferences: null のままの課題を解消
+- stable ID / sourceEntityId保持
+
+====================================================================
+8. STALE / INVALID（FROZEN）
+====================================================================
+
+Substructure変更（support type/pier/abutment/cap/column/footing/foundation/pile）:
+- 入力変化 → placementSnapshot stale・Foundation/Pile stale・Analysis stale・CIM stale
+- support削除 → INVALID / fail-closed（参照消失検知）
+- integrity gate: documentValid/shapesValid/phase4+phase5Handoff/supports/
+  bearingSeats/quantity/authorizationPreserved → STALE表示
+- analysisStaleness 3-gate継続
+
+====================================================================
+9. Feature Flag / Rollback（FROZEN）
+====================================================================
+
+- VITE_SUBSTRUCTURE_RESCUE（新設・Roadパターン）
+- OFF時: 現view-only Shell維持
+- ON時: 救出3ペインCAD（controlled adapter経由）
+- migration前backup・legacy import fallback・rollback
+- no destructive conversion
+
+====================================================================
+10. NOT_AUTHORIZED / HOLD policy（FROZEN）
+====================================================================
+
+- 安定/断面力/応力/照査/配筋/耐震: HOLD_NOT_AVAILABLE維持（AUTO-DETERMINATION BANNED）
+- 設計計算結果表はHOLD表示（OK/NG/HOLD・「計算済み」と誤表示しない）
+- 数値ロジックは発明しない
+
+====================================================================
+11. Phase 9-03 関連（下部工分）
+====================================================================
+
+- WP-E（Adapter/Mapping）・WP-F（3ペインCAD Host Controlled化）・
+  WP-G（Editors/Foundation/Pile Rescue）の下部工scopeは上記FROZENに基づく
+- Completion Gate: 実画面で Support選択→Pier/Abutment編集→Cap/Column→
+  Footing/Foundation→Pile→Bearing Reaction→generate→coordinate/quantity→
+  2D→3D→Save/restart→.spacerproj を確認
