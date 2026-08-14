@@ -71,7 +71,7 @@ RD-01..RD-05 / BL-01..02 / SS-01..05 / SB-01..05 / AN-01..06 / CIM-01..02 / SYS-
 - バイナリPDF・IFC: DEFER（V1.0外）
 
 【10. Phase 11 backlog】
-Phase10_Phase11_Implementation_Backlog.txt（P0-01〜P0-07・P1・P2・DEFER）・P0-07（fixture import）はPhase 12開始必須条件
+Phase10_Phase11_Implementation_Backlog.txt（P0-01〜P0-08・P1・P2・DEFER）・P0-07（fixture import）とP0-08（byte/content検証）はPhase 12開始必須条件
 
 【11. Phase 12 reference business / gate】
 Phase10_Phase12_ReferenceBusiness_AcceptanceGate.txt（山岳道路＋曲線高架橋・空Project→成果品）

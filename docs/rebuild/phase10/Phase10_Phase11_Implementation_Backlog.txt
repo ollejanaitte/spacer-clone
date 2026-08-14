@@ -78,11 +78,15 @@ P0-06 Bridge Layout span/support表出力（BL-02）
 - policy: 軽量REWRITE小・canonicalから導出・manifest/download=deliverables・CSV schema Freeze:
   - 単一CSVファイル（span行/support行をtype列で区別）・1行=1エンティティ
   - 共通superset列（1本）: type,id,index,supportType,label,startSupportId,endSupportId,startStation,endStation,spanLength,startSkew,endSkew,station,skewRad,terrainElevation
-    - span行: type=span・startStation/endStation/spanLength/startSupportId/endSupportId を入力・非該当列は空文字
-    - support行: type=support・station/skewRad/terrainElevation を入力・非該当列は空文字
-  - 単位: station/length/skew=m/rad・index=整数・label/type=文字列
-  - ソート: station昇順（span行はstartStation）
-  - 文字コードUTF-8・改行LF・CSV quoting（RFC 4180）
+  - 行種別別 required/optional（必須=入力・optional=空文字可）:
+    - span行（type=span）: required=type,id,index,startSupportId,endSupportId,startStation,endStation,spanLength・
+      optional=label,startSkew,endSkew・空文字=supportType,station,skewRad,terrainElevation
+    - support行（type=support）: required=type,id,label,station・optional=skewRad,terrainElevation,supportType・
+      空文字=index,startSupportId,endSupportId,startStation,endStation,spanLength,startSkew,endSkew
+  - 単位（列単位）: station/length=m（精度3桁）・skew/角度=rad（精度6桁）・index=整数・label/type/id=文字列・
+    terrainElevation=m（精度3桁・未設定=空文字）
+  - ソート: station昇順（span行はstartStation昇順）
+  - 文字コードUTF-8・改行LF・quoting規則のみRFC 4180（適用範囲を明記）
   - checksum: canonical contentChecksumをmanifestと先頭コメント行（#spacer:checksum=...）へ格納
 - module: bridgeLayout/deliverables
 - tests: 表生成test・CSV byte/content検証（列/単位/null=空文字/ソート/checksum/quoting）
@@ -110,17 +114,37 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
 - source: createReferenceMountain（terrain/referenceMountain.ts）・既存E2E（referenceMountainE2E/referenceRoadE2E）パターン
 - target: 受入用fixture importer（UI/APIの正式投入地点を固定）・fixture bundle形式をFreeze
 - policy:
-  - 正式import経路: deliverablesまたはRoad moduleの「fixture import」UI（新/app）に一意に固定
-  - fixture version: REF-MOUNTAIN-1（fixture version識別子）・bundle = {road, terrain, existing, bridgeLayout, superstructure, substructure, analysis設定}
-  - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure）をprovenanceとして記録
+  - 正式import経路（一意）: deliverables moduleの「fixture import」UI
+    route = /app/projects/{id}/modules/deliverables・import API = POST /api/rebuild/fixture/import（backend）
+    または実装簡易化時はLoadBusinessPage（/app/business/load）の.spacerproj equivalentをfixture bundleとして使用（二択は残さない）
+  - fixture version: REF-MOUNTAIN-1・bundle = {road, terrain, existing, bridgeLayout, superstructure, substructure, analysisSettings}
+  - 全bundle要素: schema version・生成元・必須payload・適用順序（road→terrain→existing→bridgeLayout→superstructure→substructure→analysis）を定義
+  - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceとして記録
   - provenance schema: {fixtureId, version, importedAt, moduleChecksums:{moduleId:hexDigest}, operator}
+  - 存在しないchecksum: module未設定時はnullとし、比較時はnull一致扱い（明示）
 - module: 全module横断・import経路はdeliverables/Roadに一意
 - tests: fixture import round-trip test・checksum一致test
 - E2E: 空Project→fixture import→解析→成果品（Phase 12シナリオの前段）・P0-07 PASS必須
 - acceptance: 投入地点・操作・provenance（fixtureId/version/moduleChecksums）記録
 - risk: 中
 
-P2-01 成果品E2E byte/content検証（各P0 acceptanceへ分解・P0相当）
+P0-08 成果品byte/content検証Gate（V1必須全export・P0）
+- goal: 全V1必須exportの実バイト・parse・content検証（ファイル名・非空byteだけでPASSさせない）
+- policy: 各Deliverable IDについて生成元canonical checksum対応・parser・必須content・意味検証を実施:
+  - RD-02 DXF（plan-type-a）: canonical checksum対応・DXF entity（LINE/ARC/TEXT/LWPOLYLINE等）・必須content（道路外郭/中心線）
+  - RD-03 DXF（profile-band）: 同上・縦断線/station/地盤線
+  - RD-04 DXF（cross-section）: 同上・横断勾配線/路肩/車線
+  - SS-03 DXF: 同様（主桁/床版/横桁）
+  - AN-05 CSV: ヘッダ/列/値（非零・単位）
+  - CIM-02 GLB: 生成元checksum・必須ノード（layer:*）
+  - RD-05 HTML/CSV: 必須セクション・grid_points/ldist等
+  - BL-02 CSV: 列/checksum
+  - SYS-01 .spacerproj: package parser・schema/version・module集合・manifest・sha256/integrity・import後canonical一致
+- tests: 各exportのbyte/content unit test
+- E2E: 実ファイルdownload→parse/content検証
+- risk: 低
+
+P2-01 品質向上・補助（V1必須byte検証はP0-08に移管済み）
 - goal: 全V1必須exportの実バイト・parse・content検証（ファイル名・非空byteだけでPASSさせない）
 - 各Deliverable IDについて生成元checksum・parser・必須content・意味検証をP0 acceptanceで定義:
   - RD-02 DXF（plan-type-a）: canonical checksum対応・DXF entity（LINE/ARC/TEXT/LWPOLYLINE等）・必須content（道路外郭/中心線）

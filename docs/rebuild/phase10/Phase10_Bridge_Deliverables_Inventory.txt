@@ -15,9 +15,9 @@ baseline: e3e2d3b
 | alignment relation | bridgeLayoutReferences.ts・roadAlignmentContext | new | COMPLETE |
 | coordinate list | BridgeLayoutDocument派生 | new | 既存 |
 | 3D表示 | bridgeLayoutScene.ts・BridgeLayoutSceneViewer | new | COMPLETE |
-| layout drawing候補 | なし（専用図面生成なし） | - | Phase 11候補 |
-| bearing/support layout | なし（Superstructure bearing seatsへ派生） | - | Phase 11候補 |
-| export | なし | - | Phase 11候補 |
+| layout drawing（一般図） | なし（専用図面生成なし） | - | DEFER（V1.0外） |
+| bearing/support layout | なし（Superstructure bearing seatsへ派生） | - | BL-02 span/support表で充当 |
+| export（BL-02 CSV） | なし | - | 必須（Phase 11・P0-06） |
 
 【handoff】
 - Span Handoff（bridgeLayoutSpanHandoff.ts）→ Superstructure
@@ -26,7 +26,7 @@ baseline: e3e2d3b
 
 【判定】
 - 計算・配置・3D・handoff: KEEP（COMPLETE）
-- layout drawing（一般図候補）・span/support表の正式出力: Phase 11候補（新規・軽量）
+- layout drawing（一般図）: DEFER（V1.0外）・BL-02 span/support表CSV: 必須（P0-06）
   - 既存アセット: なし（RESTORE対象なし・ADAPT/REWRITE判断）
 - V1.0必須: Bridge Layout成果（BL-01支間割/支持点・BL-02 span/support表CSV）
   一般図/layout drawingはDEFER（V1.0外・Phase 10_Deferred_Frozen_List参照）
