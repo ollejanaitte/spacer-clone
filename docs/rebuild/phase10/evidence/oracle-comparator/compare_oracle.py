@@ -265,6 +265,8 @@ def main():
     bundle["sbDerivationScriptSha256"] = sha("frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts")
     bundle["sbVitestConfigPath"] = "frontend/vitest.sb.config.ts"
     bundle["sbVitestConfigSha256"] = sha("frontend/vitest.sb.config.ts")
+    bundle["standardVitestConfigPath"] = "frontend/vitest.config.ts"
+    bundle["standardVitestConfigSha256"] = sha("frontend/vitest.config.ts")
     verify_runner = os.path.join(bundle_dir, "verify_oracle_evidence.py")
     if os.path.exists(verify_runner):
         bundle["verifyRunnerPath"] = verify_runner

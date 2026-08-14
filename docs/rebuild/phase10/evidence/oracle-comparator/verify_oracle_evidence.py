@@ -106,6 +106,8 @@ def main():
     ap.add_argument("--comparator", default="docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py")
     ap.add_argument("--frontend-dir", default="frontend")
     ap.add_argument("--sb-config", default="vitest.sb.config.ts")
+    ap.add_argument("--standard-vitest-config", default="vitest.config.ts")
+    ap.add_argument("--sb-test-relative", default="src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts")
     args = ap.parse_args()
 
     runner_sha = sha(os.path.abspath(__file__))
@@ -137,6 +139,15 @@ def main():
     else:
         derive_detail = {"derivedMatchesFixed": False, "error": "vitest failed or output missing", "stderr": (proc.stderr or "")[-1500:]}
     print("SB derivation matches fixed input (strict):", derive_ok)
+
+    # 0b) standard vitest config exclusion: sb test must NOT appear in standard suite
+    list_proc = subprocess.run(
+        ["npx", "vitest", "list", "--config", args.standard_vitest_config],
+        cwd=args.frontend_dir, capture_output=True, text=True,
+    )
+    std_list = (list_proc.stdout or "") + (list_proc.stderr or "")
+    sb_excluded_ok = args.sb_test_relative not in std_list
+    print("SB test excluded from standard suite:", sb_excluded_ok)
 
     # 1) oracle validates
     ov = jsonschema.Draft202012Validator(oracle_schema)
@@ -212,6 +223,7 @@ def main():
             "sbQuantityFixed": {"path": args.sb_quantity, "sha256": sha(args.sb_quantity)},
             "sbDerivationTest": {"path": args.sb_derivation_test, "sha256": sha(os.path.join(args.frontend_dir, args.sb_derivation_test))},
             "sbVitestConfig": {"path": args.sb_config, "sha256": sha(os.path.join(args.frontend_dir, args.sb_config))},
+            "standardVitestConfig": {"path": args.standard_vitest_config, "sha256": sha(os.path.join(args.frontend_dir, args.standard_vitest_config))},
             "fixtureConstants": {"path": args.fixture_constants, "sha256": sha(args.fixture_constants)},
             "negativesSpec": {"path": args.negatives, "sha256": sha(args.negatives)},
             "reportSchema": {"path": args.report_schema, "sha256": sha(args.report_schema)},
@@ -220,13 +232,14 @@ def main():
         },
         "generatedReportSha256": sha(args.out),
         "sbDerivation": {"executed": True, **derive_detail},
+        "sbExcludedFromStandardSuite": sb_excluded_ok,
         "oracleSchemaValid": oracle_ok,
         "negativeFixtures": {"count": len(neg_results), "allRejected": neg_ok, "cases": neg_results},
         "comparison": {"pass": report_pass, "rows": len(report.get("rows", [])), "failures": len(report.get("failures", [])), "rawConsistency": report.get("rawConsistency")},
         "reportSchemaValid": report_ok,
         "rowKeysMatch": {"ok": row_keys_ok, "oracleUnique": oracle_unique, "reportUnique": report_unique, "oracleKeyCount": len(oracle_keys), "reportKeyCount": len(report_keys), "uniquenessNegativeDetected": uniqueness_negative_ok},
         "fixtureConsistency": {"ok": fixture_ok, "oracleReference": oracle_ref, "fixtureConstantsId": fx_id, "reportFixtureId": report_chain.get("fixtureId"), "reportFixtureVersion": report_chain.get("fixtureVersion"), "projectIdMatch": project_ok},
-        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok and row_keys_ok and fixture_ok and uniqueness_negative_ok,
+        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok and row_keys_ok and fixture_ok and uniqueness_negative_ok and sb_excluded_ok,
     }
     json.dump(result, open(args.result, "w"), indent=1)
     print("OVERALL PASS:", result["overallPass"])

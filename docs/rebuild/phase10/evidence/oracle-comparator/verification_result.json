@@ -1,6 +1,6 @@
 {
  "comparatorId": "spacer-oracle-comparator-v1",
- "runnerSha256": "46196deee31f32ef5be86f34f703f0e0df370d875db4bdc23cbc7d77733b0f8e",
+ "runnerSha256": "82ce74308ee3a6d166dcc1b6a7271a6c1d1326572f904184b0e47acac1c49689",
  "validator": "jsonschema 4.26.0 Draft202012Validator",
  "inputs": {
   "oracle": {
@@ -27,6 +27,10 @@
    "path": "vitest.sb.config.ts",
    "sha256": "fd08338da003c7edca0581f352cc2699fbb7c531f47ee774c55b545dedc771a8"
   },
+  "standardVitestConfig": {
+   "path": "vitest.config.ts",
+   "sha256": "fa03fdaa14330527b3ae25159d3088f6a2a053489557530d9abfdd024c77f1f7"
+  },
   "fixtureConstants": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
    "sha256": "ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb"
@@ -37,7 +41,7 @@
   },
   "reportSchema": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
-   "sha256": "8c0a3d331c1ae6b9e893e2862dcc5718e6b1f618022f98636ea5531098fa402c"
+   "sha256": "e7748fc00a48230f527a1b7a8d148b5fc7c502e4d24219999089f45afaf8b505"
   },
   "oracleSchema": {
    "path": "docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json",
@@ -45,16 +49,17 @@
   },
   "comparator": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
-   "sha256": "8da22bcf8f370536bae8a086f14d61b67166e47f33d3069b7934ac44cb0dc152"
+   "sha256": "ebc3041f32d96498abdbe09e88bc4bf5e2df7b89ea511fa35fdb7830837bfc1c"
   }
  },
- "generatedReportSha256": "2678dc937de3c2598259cf4523ccc085c4e46e08ce248c835c08b9e5145fe322",
+ "generatedReportSha256": "1ce48fcf81be5ec9c1f046196fb80b7a0a90126aac307ac478b47781217b7530",
  "sbDerivation": {
   "executed": true,
   "derivedMatchesFixed": true,
   "outputPath": "/tmp/opencode/p10-oracle/sb_quantity_output.json",
   "fixedPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json"
  },
+ "sbExcludedFromStandardSuite": true,
  "oracleSchemaValid": true,
  "negativeFixtures": {
   "count": 7,
