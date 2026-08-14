@@ -6,6 +6,7 @@ import { readSuperstructureDocument } from "../modules/superstructureModuleAdapt
 import { regenerateSuperstructureDerived } from "../modules/superstructure/superstructurePersistence";
 import { runSuperstructureIntegrityGate } from "../modules/superstructure/superstructureIntegrityGate";
 import { generateSuperstructureFromLayout } from "../modules/superstructure/superstructureGenerator";
+import { SuperstructureRescuePanel, isSuperstructureRescueEnabled } from "../components/SuperstructureRescuePanel";
 import type { ProjectModuleKey } from "../project/schema";
 
 export function SuperstructureModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
@@ -96,6 +97,10 @@ export function SuperstructureModuleShellPage({ projectId, moduleId }: { project
             <p>bearings: {document.bearingConfiguration.bearingSeats.length} 箇所</p>
           </div>
         </>
+      )}
+
+      {isSuperstructureRescueEnabled() && document && (
+        <SuperstructureRescuePanel projectId={projectId} />
       )}
     </section>
   );
