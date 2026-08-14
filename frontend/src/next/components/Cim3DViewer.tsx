@@ -27,6 +27,34 @@ export interface Cim3DViewerProps {
   readonly onTransparencyChange?: (transparency: number) => void;
 }
 
+/**
+ * Screen-space label sizing (WP-R2F): keeps CIM label sprites at a roughly
+ * constant on-screen height so they stay readable after Fit (whole / road /
+ * bridge) without becoming giant when zooming close to a single support.
+ * Scales are clamped to sane world units; only objects flagged isCimLabel are
+ * touched (bridge layout pier / abutment / span labels).
+ */
+function applyLabelScale(root: THREE.Object3D, camera: THREE.PerspectiveCamera, viewportHeightPx: number): void {
+  const minWorld = 10;
+  const maxWorld = 240;
+  const halfFovTan = Math.tan((camera.fov * Math.PI) / 360);
+  const pxPerWorld = viewportHeightPx / (2 * halfFovTan);
+  const v = new THREE.Vector3();
+  root.traverse((obj) => {
+    if (obj.userData?.isCimLabel !== true) return;
+    const sprite = obj as THREE.Sprite;
+    const targetPx = obj.userData?.labelPriority === "span" ? 22 : 30;
+    obj.getWorldPosition(v);
+    const dist = Math.max(camera.position.distanceTo(v), 1e-6);
+    const worldForTarget = (targetPx * dist) / pxPerWorld;
+    const scaleY = Math.min(maxWorld, Math.max(minWorld, worldForTarget));
+    const texture = sprite.material?.map;
+    const img = (texture?.image as { width?: number; height?: number } | undefined) ?? null;
+    const aspect = img && img.width ? img.width / Math.max(1, img.height ?? 1) : 2;
+    sprite.scale.set(scaleY * aspect, scaleY, 1);
+  });
+}
+
 function applyTransparency(root: THREE.Object3D, opacity: number): void {
   root.traverse((obj) => {
     const mesh = obj as THREE.Mesh;
@@ -233,6 +261,10 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       if (disposed) return;
       frameId = requestAnimationFrame(animate);
       controls?.update();
+      if (camera && renderer) {
+        const h = renderer.domElement.height || 600;
+        applyLabelScale(sceneGroup, camera, h);
+      }
       renderer?.render(threeScene, camera!);
     };
     animate();

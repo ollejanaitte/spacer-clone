@@ -81,6 +81,7 @@ function makeLabelSprite(text: string, color: number): THREE.Sprite | null {
   const material = new THREE.SpriteMaterial({ map: texture, depthTest: false });
   const sprite = new THREE.Sprite(material);
   sprite.scale.set(60, 30, 1);
+  sprite.userData.isCimLabel = true;
   return sprite;
 }
 
@@ -159,6 +160,7 @@ function makeSpanLabel(spanId: string, midpoint: THREE.Vector3): THREE.Sprite | 
   if (sprite) {
     sprite.position.set(midpoint.x, midpoint.y + 16, midpoint.z);
     sprite.scale.set(48, 24, 1);
+    sprite.userData.labelPriority = "span";
   }
   return sprite;
 }
