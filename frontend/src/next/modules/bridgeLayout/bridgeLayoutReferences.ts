@@ -52,7 +52,10 @@ export function resolveBridgeLayoutReferences(
   }
 
   const terrainDoc = readTerrainDocument(manager, projectId);
-  if (!terrainDoc) {
+  if (document.terrainReference.surfaceReference === null) {
+    // No surface reference declared -> resolved (no dangling reference).
+    resolved.terrainResolved = true;
+  } else if (!terrainDoc) {
     issues.push({ path: "bridgeLayoutDocument.terrainReference", message: "terrain module has no document; terrain reference is dangling" });
   } else if (document.terrainReference.surfaceReference !== null
     && document.terrainReference.surfaceReference !== terrainDoc.surfaceReference
@@ -63,7 +66,10 @@ export function resolveBridgeLayoutReferences(
   }
 
   const existingDoc = readExistingConditions(manager, projectId);
-  if (!existingDoc) {
+  if (document.existingConditionsReference.documentReferenceId === null) {
+    // No existing conditions reference declared -> resolved.
+    resolved.existingResolved = true;
+  } else if (!existingDoc) {
     issues.push({ path: "bridgeLayoutDocument.existingConditionsReference", message: "existing conditions document is missing; reference is dangling" });
   } else if (document.existingConditionsReference.documentReferenceId !== null
     && document.existingConditionsReference.documentReferenceId !== existingDoc.schemaVersion

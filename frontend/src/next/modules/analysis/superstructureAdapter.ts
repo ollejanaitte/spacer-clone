@@ -228,12 +228,18 @@ export function buildSuperstructureAnalysisFragment(
   const bridgeLength = snapshot.alignmentReferences[0]?.bridgeLengthM.value ?? 1;
   const computed = computeSuperstructureSectionProperties(girderSectionModel, bridgeLength);
   const girderSectionId = "SECTION-GIRDER";
-  if (computed === null && girderSectionModel.areaM2 === null) {
+  const sectionAvailable = computed !== null || girderSectionModel.areaM2 !== null;
+  if (!sectionAvailable) {
     issues.push({
       path: "girderConfiguration.girderSectionModel",
       message: "girder section properties are NOT_AVAILABLE (analysis cannot run).",
     });
-  } else {
+  }
+  // Always emit the girder section so member references resolve and the
+  // AnalysisDocument stays structurally consistent. When properties are
+  // NOT_AVAILABLE the section is degenerate (zero stiffness) and the solver
+  // reports MODEL_UNSTABLE (fail-closed); no section property is invented.
+  {
     const area = girderSectionModel.areaM2 ?? computed?.totalArea ?? 0;
     // iy = strong axis (vertical bending), iz = weak axis (lateral bending).
     const iy = computed?.secondMomentOfArea ?? 0;
