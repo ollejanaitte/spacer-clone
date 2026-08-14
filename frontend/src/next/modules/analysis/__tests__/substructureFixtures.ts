@@ -65,9 +65,9 @@ export const TEST_SUBSTRUCTURE_DOCUMENT: SubstructureDocument = {
     { id: "FD-3", formType: "piled", footingRefId: "FT-3", pileGroupRefId: "PG-3" },
   ],
   pileConfigurations: [
-    { id: "PG-1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 2.4, y: 2.4 } },
-    { id: "PG-2", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 2.4, y: 2.4 } },
-    { id: "PG-3", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 2.4, y: 2.4 } },
+    { id: "PG-1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 2.4, y: 2.4 }, rows: 2, cols: 2, edgeX: null, edgeY: null },
+    { id: "PG-2", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 2.4, y: 2.4 }, rows: 2, cols: 2, edgeX: null, edgeY: null },
+    { id: "PG-3", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 2.4, y: 2.4 }, rows: 2, cols: 2, edgeX: null, edgeY: null },
   ],
   terrainReferences: { moduleId: "terrain", surfaceReference: null, coordinateContextId: null },
   existingReferences: { moduleId: "existingConditions", documentReferenceId: null },

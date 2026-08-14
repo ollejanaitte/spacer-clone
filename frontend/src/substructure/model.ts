@@ -91,6 +91,12 @@ export interface PileGroup {
   length: number;
   pileCount: number;
   spacing: { x: number; y: number };
+  /** Pile grid (B-06): explicit rows/cols and edge distances. When present the
+   * grid geometry is canonical; otherwise derived from pileCount+spacing. */
+  rows?: number;
+  cols?: number;
+  edgeX?: number | null;
+  edgeY?: number | null;
 }
 
 export interface PierData {

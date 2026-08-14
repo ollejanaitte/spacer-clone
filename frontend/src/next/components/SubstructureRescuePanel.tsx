@@ -1,10 +1,11 @@
 /**
- * Substructure Rescue Editor (Phase 9-03 WP-E/F/G).
+ * Substructure Rescue Editor (Phase 9-03 WP-E/F/G / Phase 9-04R3 B-01/B-06).
  *
- * Controlled editor that edits the canonical SubstructureDocument from the
- * regular /app Substructure Module. Supports (A1/P1..Pn/A2), pier / abutment
- * shapes, footing and pile groups are edited per-support and committed
- * atomically to the document (atomic -> validate -> write -> Auto Save).
+ * 3-pane CAD integration (B-01): Support list (tree) / 2D-3D viewport /
+ * property editor share the same canonical SubstructureDocument and the same
+ * selected support id. Every field edit commits atomically to the document
+ * (atomic -> validate -> write -> Auto Save). The pile layout grid (B-06)
+ * edits rows/cols/spacing/edge canonically; pile coordinates are DERIVED.
  *
  * Design / verification checks remain HOLD_NOT_AVAILABLE (NOT_AUTHORIZED) and
  * are never shown as computed.
@@ -17,7 +18,8 @@ import { getProjectManager } from "../project/projectManagerInstance";
 import { readSubstructureDocument, writeSubstructureDocument } from "../modules/substructureModuleAdapter";
 import { computeSubstructureQuantity } from "../modules/substructure/substructureDesign";
 import { buildSubstructureSceneGroup } from "../modules/substructure/substructureSceneBuilder";
-import type { SubstructureDocument, SubstructureSupport } from "../modules/substructure/substructureTypes";
+import { buildPileArrangement } from "../modules/substructure/substructureFoundation";
+import type { PileConfiguration, SubstructureDocument, SubstructureSupport } from "../modules/substructure/substructureTypes";
 
 export const SUBSTRUCTURE_RESCUE_FLAG = "VITE_SUBSTRUCTURE_RESCUE";
 export function isSubstructureRescueEnabled(): boolean {
@@ -159,44 +161,66 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
 
   return (
     <div className="next-road-editor-block" data-testid="sub-rescue">
-      <h3 className="next-hint">下部工Rescue（救出Editor・Canonical=SubstructureDocument）</h3>
+      <h3 className="next-hint">下部工Rescue（救出Editor・Canonical=SubstructureDocument・3ペインCAD）</h3>
 
-      <h4 className="next-hint">Support選択</h4>
-      <div className="cim-layer-list">
-        {doc.supports.map((s) => (
-          <label key={s.supportId} className="cim-layer-toggle">
-            <input
-              type="radio"
-              name="support"
-              data-testid={`sub-support-${s.supportId}`}
-              checked={selectedId === s.supportId}
-              onChange={() => setSelectedId(s.supportId)}
-            />
-            <span>{s.supportId}（{s.supportType}）station {s.placement.station ?? "—"} m</span>
-          </label>
-        ))}
-      </div>
-
-      {selected && (
-        <>
-          <h4 className="next-hint">{selected.supportId} の設計寸法（{selected.supportType}）</h4>
-          <div className="next-form-grid">
-            {selectedFields.map((f) => (
-              <Num
-                key={f.key}
-                label={f.label}
-                unit={f.unit}
-                value={f.get(selected)}
-                onValue={(v) => updateSupport(f.set(selected, v))}
-              />
+      <div className="sub-3pane" data-testid="sub-3pane-layout">
+        {/* Pane 1: Support tree */}
+        <aside className="sub-pane-tree" data-testid="sub-pane-tree">
+          <h4 className="next-hint">Support（tree）</h4>
+          <div className="cim-layer-list">
+            {doc.supports.map((s) => (
+              <label key={s.supportId} className="cim-layer-toggle">
+                <input
+                  type="radio"
+                  name="support"
+                  data-testid={`sub-support-${s.supportId}`}
+                  checked={selectedId === s.supportId}
+                  onChange={() => setSelectedId(s.supportId)}
+                />
+                <span className={selectedId === s.supportId ? "sub-tree-selected" : undefined}>
+                  {s.supportId}（{s.supportType}）station {s.placement.station ?? "—"} m
+                </span>
+              </label>
             ))}
           </div>
-        </>
-      )}
+        </aside>
+
+        {/* Pane 2: 2D plan + 3D viewport */}
+        <section className="sub-pane-viewport" data-testid="sub-pane-viewport">
+          <h4 className="next-hint">2D plan（選択Supportハイライト）</h4>
+          <SubSupportPlanView doc={doc} selectedId={selectedId} />
+          <h4 className="next-hint">3D preview（選択Supportハイライト）</h4>
+          <Substructure3DPreview doc={doc} selectedId={selectedId} />
+        </section>
+
+        {/* Pane 3: Property editor */}
+        <aside className="sub-pane-properties" data-testid="sub-pane-properties">
+          <h4 className="next-hint">Property（選択Supportの設計寸法）</h4>
+          {selected ? (
+            <>
+              <h5 className="next-hint">{selected.supportId}（{selected.supportType}）</h5>
+              <div className="next-form-grid">
+                {selectedFields.map((f) => (
+                  <Num
+                    key={f.key}
+                    label={f.label}
+                    unit={f.unit}
+                    value={f.get(selected)}
+                    onValue={(v) => updateSupport(f.set(selected, v))}
+                  />
+                ))}
+              </div>
+              <PileGridEditor support={selected} onUpdate={(next) => updateSupport(next)} />
+            </>
+          ) : (
+            <p className="next-hint">Supportを選択してください。</p>
+          )}
+        </aside>
+      </div>
 
       {message !== null && <p className="next-hint" data-testid="sub-rescue-message">{message}</p>}
 
-      <SubSupportOutputs doc={doc} />
+      <SubSupportOutputs doc={doc} selectedId={selectedId} />
 
       <p className="next-hint" data-testid="sub-rescue-hold">
         安定・断面力・応力・照査・配筋・耐震は HOLD_NOT_AVAILABLE（NOT_AUTHORIZED）です。
@@ -206,13 +230,108 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
   );
 }
 
+/**
+ * Pile layout grid editor (B-06): rows / cols / spacing / edge edited
+ * canonically. pileCount === rows*cols is the consistency rule; the coordinate
+ * table is DERIVED from the grid definition (never a second source of truth).
+ */
+function PileGridEditor({ support, onUpdate }: { support: SubstructureSupport; onUpdate: (s: SubstructureSupport) => void }) {
+  const pile = support.pier?.pileGroup ?? support.abutment?.pileGroup ?? null;
+  const footing = support.pier?.footing ?? support.abutment?.footing ?? null;
+  if (!pile || !footing) {
+    return (
+      <div data-testid="pile-grid-editor">
+        <h5 className="next-hint">杭配置grid（B-06）</h5>
+        <p className="next-hint">杭（pileGroup）が未設定です。柱/背壁の編集で杭を設定してください。</p>
+      </div>
+    );
+  }
+  const currentPile = pile;
+  const currentFooting = footing;
+  const rows = currentPile.rows ?? Math.max(1, Math.round(Math.sqrt(currentPile.pileCount)));
+  const cols = currentPile.cols ?? Math.max(1, Math.round(currentPile.pileCount / rows));
+
+  function commit(next: PileGroupPatch) {
+    const pileGroup = {
+      id: currentPile.id,
+      pileType: currentPile.pileType,
+      diameter: currentPile.diameter,
+      length: currentPile.length,
+      pileCount: (next.rows ?? rows) * (next.cols ?? cols),
+      spacing: { x: next.spacingX ?? currentPile.spacing.x, y: next.spacingY ?? currentPile.spacing.y },
+      rows: next.rows ?? rows,
+      cols: next.cols ?? cols,
+      edgeX: next.edgeX,
+      edgeY: next.edgeY,
+    };
+    if (support.pier) {
+      onUpdate({ ...support, pier: { ...support.pier, pileGroup } });
+    } else if (support.abutment) {
+      onUpdate({ ...support, abutment: { ...support.abutment, pileGroup } });
+    }
+  }
+
+  const config: PileConfiguration = {
+    id: currentPile.id,
+    pileType: currentPile.pileType,
+    diameter: currentPile.diameter,
+    length: currentPile.length,
+    pileCount: rows * cols,
+    spacing: currentPile.spacing,
+    rows,
+    cols,
+    edgeX: currentPile.edgeX ?? null,
+    edgeY: currentPile.edgeY ?? null,
+  };
+  const { positions } = buildPileArrangement(config, { id: currentFooting.id, length: currentFooting.length, width: currentFooting.width, thickness: currentFooting.thickness, topElevation: currentFooting.topElevation }, support.supportId);
+
+  return (
+    <div data-testid="pile-grid-editor">
+      <h5 className="next-hint">杭配置grid（B-06）</h5>
+      <div className="next-form-grid">
+        <Num label="X方向本数（rows）" unit="本" value={rows} onValue={(v) => v !== null && commit({ rows: Math.max(1, Math.round(v)) })} />
+        <Num label="Y方向本数（cols）" unit="本" value={cols} onValue={(v) => v !== null && commit({ cols: Math.max(1, Math.round(v)) })} />
+        <Num label="X間隔" unit="m" value={currentPile.spacing.x} onValue={(v) => commit({ spacingX: v ?? 0 })} />
+        <Num label="Y間隔" unit="m" value={currentPile.spacing.y} onValue={(v) => commit({ spacingY: v ?? 0 })} />
+        <Num label="X縁端" unit="m" value={currentPile.edgeX ?? null} onValue={(v) => commit({ edgeX: v })} />
+        <Num label="Y縁端" unit="m" value={currentPile.edgeY ?? null} onValue={(v) => commit({ edgeY: v })} />
+      </div>
+      <p className="next-hint">杭本数 = rows × cols = {rows * cols} 本（整合規則・fail-closed）</p>
+      <table className="next-table" data-testid="pile-coordinate-table">
+        <thead>
+          <tr><th>No</th><th>ID</th><th>X(m)</th><th>Y(m)</th></tr>
+        </thead>
+        <tbody>
+          {positions.map((p, i) => (
+            <tr key={p.id} data-testid={`pile-coord-${i + 1}`}>
+              <td>{i + 1}</td>
+              <td>{p.id}</td>
+              <td>{p.x.toFixed(3)}</td>
+              <td>{p.y.toFixed(3)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+interface PileGroupPatch {
+  readonly rows?: number;
+  readonly cols?: number;
+  readonly spacingX?: number;
+  readonly spacingY?: number;
+  readonly edgeX?: number | null;
+  readonly edgeY?: number | null;
+}
+
 /** Outputs: support coordinate table, quantity, 2D plan view (B-02/07/08). */
-function SubSupportOutputs({ doc }: { doc: SubstructureDocument }) {
+function SubSupportOutputs({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
   const quantity = useMemo(() => computeSubstructureQuantity(doc), [doc]);
   return (
     <>
       <h4 className="next-hint">2D平面ビュー（Support配置・plan）</h4>
-      <SubSupportPlanView doc={doc} />
+      <SubSupportPlanView doc={doc} selectedId={selectedId} />
 
       <h4 className="next-hint">座標表（Support / station / XYZ）</h4>
       <table className="next-table" data-testid="sub-coordinate-table">
@@ -254,13 +373,14 @@ function SubSupportOutputs({ doc }: { doc: SubstructureDocument }) {
       </dl>
 
       <h4 className="next-hint">3Dビュー（Substructure solids）</h4>
-      <Substructure3DPreview doc={doc} />
+      <Substructure3DPreview doc={doc} selectedId={selectedId} />
     </>
   );
 }
 
-/** 2D plan SVG: supports placed along the alignment (plan view). */
-function SubSupportPlanView({ doc }: { doc: SubstructureDocument }) {
+/** 2D plan SVG: supports placed along the alignment (plan view) with the
+ * selected support highlighted (B-02/B-01 selection sync). */
+function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
   const W = 480;
   const H = 120;
   const supports = doc.supports;
@@ -277,10 +397,14 @@ function SubSupportPlanView({ doc }: { doc: SubstructureDocument }) {
       {supports.map((s) => {
         const x = toX(s.placement.station ?? 0);
         const w = s.supportType === "abutment" ? 14 : 8;
+        const selected = selectedId === s.supportId;
         return (
           <g key={s.supportId}>
             <rect x={x - w / 2} y={H / 2 - 16} width={w} height={32}
-              fill={s.supportType === "abutment" ? "#8a6d3b" : "#6b7d99"} stroke="#334155" />
+              fill={selected ? "#f59e0b" : s.supportType === "abutment" ? "#8a6d3b" : "#6b7d99"}
+              stroke={selected ? "#b45309" : "#334155"}
+              strokeWidth={selected ? 2 : 1}
+              data-testid={`sub-plan-support-${s.supportId}`} />
             <text x={x} y={H / 2 + 22} fontSize="9" textAnchor="middle" fill="#334155">{s.supportId}</text>
           </g>
         );
@@ -289,8 +413,8 @@ function SubSupportPlanView({ doc }: { doc: SubstructureDocument }) {
   );
 }
 
-/** 3D preview of the substructure solids (B-09). */
-function Substructure3DPreview({ doc }: { doc: SubstructureDocument }) {
+/** 3D preview of the substructure solids (B-09) with selected highlight. */
+function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
 
@@ -316,6 +440,16 @@ function Substructure3DPreview({ doc }: { doc: SubstructureDocument }) {
 
       const built = buildSubstructureSceneGroup(withFallbackSnapshots(doc), { localOrigin: null });
       scene.add(built.group);
+      // highlight the selected support (B-01 selection sync)
+      if (selectedId) {
+        built.group.traverse((obj) => {
+          const selectionId = (obj as THREE.Mesh & { userData?: { selectionId?: string } }).userData?.selectionId;
+          if (selectionId === `sub:${selectedId}` && obj instanceof THREE.Mesh) {
+            (obj.material as THREE.MeshStandardMaterial).emissive = new THREE.Color(0xf59e0b);
+            (obj.material as THREE.MeshStandardMaterial).emissiveIntensity = 0.35;
+          }
+        });
+      }
       const box = new THREE.Box3().setFromObject(built.group);
       if (box.isEmpty()) {
         box.set(new THREE.Vector3(-10, 0, -10), new THREE.Vector3(10, 10, 10));
@@ -361,7 +495,7 @@ function Substructure3DPreview({ doc }: { doc: SubstructureDocument }) {
       return undefined;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [doc]);
+  }, [doc, selectedId]);
 
   return (
     <div style={{ height: 260, position: "relative" }} data-testid="sub-3d-preview">

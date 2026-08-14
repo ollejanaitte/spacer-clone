@@ -52,16 +52,27 @@ export function computePileTip(
   return pileHeadElevation - pile.length;
 }
 
-/** Reuse KEEP derivePileLayout / buildPileGrid for the pile arrangement. */
+/** Reuse KEEP derivePileLayout / buildPileGrid for the pile arrangement.
+ * When rows/cols/edge are declared (B-06) they are canonical; otherwise the
+ * layout is derived from pileCount+spacing (legacy fallback). */
 export function buildPileArrangement(
   pile: PileConfiguration,
   footing: FootingConfiguration,
   supportId: string,
 ): { layout: PileLayout; positions: PilePosition[] } {
-  const layout = derivePileLayout(footing.length, footing.width, {
-    pileCount: pile.pileCount,
-    spacing: pile.spacing,
-  });
+  let layout: PileLayout;
+  if (pile.rows !== null && pile.cols !== null && pile.rows >= 1 && pile.cols >= 1) {
+    const spanX = (pile.rows - 1) * pile.spacing.x;
+    const spanY = (pile.cols - 1) * pile.spacing.y;
+    const edgeX = pile.edgeX ?? Math.max(0, (footing.length - spanX) / 2);
+    const edgeY = pile.edgeY ?? Math.max(0, (footing.width - spanY) / 2);
+    layout = { rows: pile.rows, cols: pile.cols, spacingX: pile.spacing.x, spacingY: pile.spacing.y, edgeX, edgeY };
+  } else {
+    layout = derivePileLayout(footing.length, footing.width, {
+      pileCount: pile.pileCount,
+      spacing: pile.spacing,
+    });
+  }
   const positions = buildPileGrid(layout, footing.length, footing.width, supportId);
   return { layout, positions };
 }
@@ -99,6 +110,22 @@ export function validateFoundationData(
       const v = pile.spacing[axis];
       if (!(typeof v === "number" && Number.isFinite(v) && v > 0)) {
         issues.push({ path: `pileConfigurations[${pile.id}].spacing.${axis}`, message: `spacing.${axis} must be > 0` });
+      }
+    }
+    // B-06 grid consistency: when rows/cols declared, pileCount === rows*cols
+    const rows = pile.rows;
+    const cols = pile.cols;
+    if (rows !== null && cols !== null) {
+      if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
+        issues.push({ path: `pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
+      } else if (pile.pileCount !== rows * cols) {
+        issues.push({ path: `pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+      }
+    }
+    for (const axis of ["edgeX", "edgeY"] as const) {
+      const v = pile[axis];
+      if (v !== null && !(typeof v === "number" && Number.isFinite(v) && v >= 0)) {
+        issues.push({ path: `pileConfigurations[${pile.id}].${axis}`, message: `${axis} must be >= 0 when present` });
       }
     }
   }
