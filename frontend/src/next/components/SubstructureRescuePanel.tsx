@@ -226,9 +226,9 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
         {/* Pane 2: 2D plan + 3D viewport */}
         <section className="sub-pane-viewport" data-testid="sub-pane-viewport">
           <h4 className="next-hint">2D plan（選択Supportハイライト）</h4>
-          <SubSupportPlanView doc={doc} selectedId={selectedId} />
+          <SubSupportPlanView doc={doc} selectedId={selectedId} onSelect={setSelectedId} />
           <h4 className="next-hint">3D preview（選択Supportハイライト）</h4>
-          <Substructure3DPreview doc={doc} selectedId={selectedId} />
+          <Substructure3DPreview doc={doc} selectedId={selectedId} onSelect={setSelectedId} />
         </section>
 
         {/* Pane 3: Property editor */}
@@ -258,7 +258,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
 
       {message !== null && <p className="next-hint" data-testid="sub-rescue-message">{message}</p>}
 
-      <SubSupportOutputs doc={doc} selectedId={selectedId} />
+      <SubSupportOutputs doc={doc} selectedId={selectedId} onSelect={setSelectedId} />
 
       <p className="next-hint" data-testid="sub-rescue-hold">
         安定・断面力・応力・照査・配筋・耐震は HOLD_NOT_AVAILABLE（NOT_AUTHORIZED）です。
@@ -390,12 +390,12 @@ interface PileGroupPatch {
 }
 
 /** Outputs: support coordinate table, quantity, 2D plan view (B-02/07/08). */
-function SubSupportOutputs({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
+function SubSupportOutputs({ doc, selectedId, onSelect }: { doc: SubstructureDocument; selectedId: string | null; onSelect: (id: string) => void }) {
   const quantity = useMemo(() => computeSubstructureQuantity(doc), [doc]);
   return (
     <>
       <h4 className="next-hint">2D平面ビュー（Support配置・plan）</h4>
-      <SubSupportPlanView doc={doc} selectedId={selectedId} />
+      <SubSupportPlanView doc={doc} selectedId={selectedId} onSelect={onSelect} />
 
       <h4 className="next-hint">座標表（Support / station / XYZ）</h4>
       <table className="next-table" data-testid="sub-coordinate-table">
@@ -437,14 +437,15 @@ function SubSupportOutputs({ doc, selectedId }: { doc: SubstructureDocument; sel
       </dl>
 
       <h4 className="next-hint">3Dビュー（Substructure solids）</h4>
-      <Substructure3DPreview doc={doc} selectedId={selectedId} />
+      <Substructure3DPreview doc={doc} selectedId={selectedId} onSelect={onSelect} />
     </>
   );
 }
 
 /** 2D plan SVG: supports placed along the alignment (plan view) with the
- * selected support highlighted (B-02/B-01 selection sync). */
-function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
+ * selected support highlighted. Clicking a support selects it (B-01
+ * bidirectional sync). */
+function SubSupportPlanView({ doc, selectedId, onSelect }: { doc: SubstructureDocument; selectedId: string | null; onSelect?: (supportId: string) => void }) {
   const W = 480;
   const H = 120;
   const supports = doc.supports;
@@ -468,7 +469,9 @@ function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; se
               fill={selected ? "#f59e0b" : s.supportType === "abutment" ? "#8a6d3b" : "#6b7d99"}
               stroke={selected ? "#b45309" : "#334155"}
               strokeWidth={selected ? 2 : 1}
-              data-testid={`sub-plan-support-${s.supportId}`} />
+              data-testid={`sub-plan-support-${s.supportId}`}
+              style={{ cursor: "pointer" }}
+              onClick={() => onSelect?.(s.supportId)} />
             <text x={x} y={H / 2 + 22} fontSize="9" textAnchor="middle" fill="#334155">{s.supportId}</text>
           </g>
         );
@@ -477,10 +480,13 @@ function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; se
   );
 }
 
-/** 3D preview of the substructure solids (B-09) with selected highlight. */
-function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
+/** 3D preview of the substructure solids (B-09) with selected highlight.
+ * Clicking a support mesh selects it (bidirectional sync, Sol review #5). */
+function Substructure3DPreview({ doc, selectedId, onSelect }: { doc: SubstructureDocument; selectedId: string | null; onSelect: (id: string) => void }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -539,6 +545,28 @@ function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument;
       resize();
       const ro = new ResizeObserver(resize);
       ro.observe(container);
+
+      // Click-to-select (B-01 bidirectional sync, Sol review #5): raycast
+      // against the substructure meshes; their userData.selectionId is
+      // `sub:{supportId}`.
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+      const onClick = (event: MouseEvent) => {
+        const rect = renderer!.domElement.getBoundingClientRect();
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+        raycaster.setFromCamera(pointer, camera!);
+        const hits = raycaster.intersectObjects(built.group.children, true);
+        for (const hit of hits) {
+          const selectionId = hit.object.userData?.selectionId as string | undefined;
+          if (selectionId && selectionId.startsWith("sub:")) {
+            onSelectRef.current(selectionId.slice("sub:".length));
+            return;
+          }
+        }
+      };
+      renderer.domElement.addEventListener("click", onClick);
+
       const animate = () => {
         if (disposed) return;
         frameId = requestAnimationFrame(animate);
@@ -550,6 +578,7 @@ function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument;
         disposed = true;
         cancelAnimationFrame(frameId);
         ro.disconnect();
+        renderer?.domElement.removeEventListener("click", onClick);
         renderer?.dispose();
         controls?.dispose();
         if (renderer?.domElement.parentNode === container) container.removeChild(renderer.domElement);

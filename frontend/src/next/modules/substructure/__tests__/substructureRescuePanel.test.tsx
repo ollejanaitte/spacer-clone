@@ -151,8 +151,23 @@ describe("SubstructureRescuePanel 3-pane CAD + pile grid (Phase 9-04R3 B-01/B-06
     cleanup(root);
   });
 
-  it("edits the pile grid rows/cols canonically and derives coordinates (B-06)", async () => {
+  it("selects a support by clicking the 2D plan (bidirectional sync, Sol #5)", async () => {
     const pid = setupProject();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    // P1 not selected yet
+    expect(document.querySelector('[data-testid="sub-plan-support-P1"]')?.getAttribute("fill")).toBe("#6b7d99");
+    // click the 2D plan support P1
+    const planSupport = document.querySelector('[data-testid="sub-plan-support-P1"]') as SVGRectElement;
+    await act(async () => {
+      planSupport.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    // now highlighted + property editor for P1 visible
+    expect(document.querySelector('[data-testid="sub-plan-support-P1"]')?.getAttribute("fill")).toBe("#f59e0b");
+    expect(document.querySelector('[data-testid="sub-pane-properties"]')?.textContent).toContain("P1");
+    cleanup(root);
+  });
+
+  it("edits the pile grid rows/cols canonically and derives coordinates (B-06)", async () => {    const pid = setupProject();
     const manager = getProjectManager();
     const root = await render(<SubstructureRescuePanel projectId={pid} />);
     const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;
