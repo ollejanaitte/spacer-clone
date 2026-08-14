@@ -7,6 +7,7 @@ import { regenerateSubstructureDerived } from "../modules/substructure/substruct
 import { generateSubstructureFromLayout } from "../modules/substructure/substructureGenerator";
 import { validateSubstructureShapes } from "../modules/substructure/substructureGeometry";
 import { computeSubstructureQuantity } from "../modules/substructure/substructureDesign";
+import { SubstructureRescuePanel, isSubstructureRescueEnabled } from "../components/SubstructureRescuePanel";
 import type { ProjectModuleKey } from "../project/schema";
 
 export function SubstructureModuleShellPage({ projectId, moduleId }: { projectId: string; moduleId: string }) {
@@ -85,6 +86,10 @@ export function SubstructureModuleShellPage({ projectId, moduleId }: { projectId
       <div className="next-road-summary" data-testid="sub-completion-gate">
         <p data-testid="sub-gate">{document && shapeIssues.length === 0 ? "READY（SubstructureDocument有効）" : "NOT_READY（下部工生成・形状設定が必要）"}</p>
       </div>
+
+      {isSubstructureRescueEnabled() && document && (
+        <SubstructureRescuePanel projectId={projectId} />
+      )}
     </section>
   );
 }
