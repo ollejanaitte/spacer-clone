@@ -27,6 +27,34 @@ export interface Cim3DViewerProps {
   readonly onTransparencyChange?: (transparency: number) => void;
 }
 
+/**
+ * Screen-space label sizing (WP-R2F): keeps CIM label sprites at a roughly
+ * constant on-screen height so they stay readable after Fit (whole / road /
+ * bridge) without becoming giant when zooming close to a single support.
+ * Scales are clamped to sane world units; only objects flagged isCimLabel are
+ * touched (bridge layout pier / abutment / span labels).
+ */
+function applyLabelScale(root: THREE.Object3D, camera: THREE.PerspectiveCamera, viewportHeightPx: number): void {
+  const minWorld = 10;
+  const maxWorld = 240;
+  const halfFovTan = Math.tan((camera.fov * Math.PI) / 360);
+  const pxPerWorld = viewportHeightPx / (2 * halfFovTan);
+  const v = new THREE.Vector3();
+  root.traverse((obj) => {
+    if (obj.userData?.isCimLabel !== true) return;
+    const sprite = obj as THREE.Sprite;
+    const targetPx = obj.userData?.labelPriority === "span" ? 22 : 30;
+    obj.getWorldPosition(v);
+    const dist = Math.max(camera.position.distanceTo(v), 1e-6);
+    const worldForTarget = (targetPx * dist) / pxPerWorld;
+    const scaleY = Math.min(maxWorld, Math.max(minWorld, worldForTarget));
+    const texture = sprite.material?.map;
+    const img = (texture?.image as { width?: number; height?: number } | undefined) ?? null;
+    const aspect = img && img.width ? img.width / Math.max(1, img.height ?? 1) : 2;
+    sprite.scale.set(scaleY * aspect, scaleY, 1);
+  });
+}
+
 function applyTransparency(root: THREE.Object3D, opacity: number): void {
   root.traverse((obj) => {
     const mesh = obj as THREE.Mesh;
@@ -119,6 +147,9 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       }
       if (!box || box.isEmpty()) return;
       const size = box.getSize(new THREE.Vector3());
+      // Pad the fit box so labels near the box edges (e.g. S3 at the last
+      // span) are not clipped by the viewport edge (WP-R2F visibility).
+      box.expandByScalar(Math.max(size.x, size.y, size.z) * 0.08);
       const center = box.getCenter(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
       camera.near = Math.max(0.01, radius / 10000);
@@ -128,7 +159,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const fovY = (camera.fov * Math.PI) / 180;
       const fovX = 2 * Math.atan(Math.tan(fovY / 2) * Math.max(aspect, 0.1));
       const fitAngle = Math.min(fovX, fovY);
-      const dist = (radius / Math.sin(fitAngle / 2)) * 0.85;
+      const dist = (radius / Math.sin(fitAngle / 2)) * 0.72;
       const dx = dist * 0.62;
       const dy = dist * 0.45;
       const dz = dist * 0.62;
@@ -144,6 +175,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const box = scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup);
       if (box.isEmpty()) return;
       const size = box.getSize(new THREE.Vector3());
+      box.expandByScalar(Math.max(size.x, size.y, size.z) * 0.08);
       const center = box.getCenter(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
       camera.near = Math.max(0.01, radius / 10000);
@@ -152,7 +184,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const fovY = (camera.fov * Math.PI) / 180;
       const fovX = 2 * Math.atan(Math.tan(fovY / 2) * Math.max(aspect, 0.1));
       const fitAngle = Math.min(fovX, fovY);
-      const dist = (radius / Math.sin(fitAngle / 2)) * 0.8;
+      const dist = (radius / Math.sin(fitAngle / 2)) * 0.72;
       let pos: [number, number, number];
       if (preset === "plan") {
         pos = [center.x, center.y + dist * 1.2, center.z];
@@ -233,6 +265,10 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       if (disposed) return;
       frameId = requestAnimationFrame(animate);
       controls?.update();
+      if (camera && renderer) {
+        const h = renderer.domElement.height || 600;
+        applyLabelScale(sceneGroup, camera, h);
+      }
       renderer?.render(threeScene, camera!);
     };
     animate();
