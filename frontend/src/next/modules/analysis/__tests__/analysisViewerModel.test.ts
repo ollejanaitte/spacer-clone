@@ -34,17 +34,41 @@ function makeDoc(): AnalysisDocument {
 }
 
 function makeIf3(status = "SUCCEEDED"): FrameAnalysisResultResource {
+  const LC1 = "aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa";
+  const COMBO = "bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb";
   return {
+    schemaId: "spacer.contracts.frame-analysis-result-resource",
+    schemaVersion: "0.1.0",
+    resultId: "11111111-1111-4111-8111-111111111111",
+    analysisRunId: "22222222-2222-4222-8222-222222222222",
+    sourceDocumentId: "33333333-3333-4333-8333-333333333333",
+    sourceDocumentVersion: 1,
+    sourceContentChecksum: { algorithm: "sha256", hexDigest: "a".repeat(64) },
     status,
+    generatedAt: "2026-08-13T00:00:00.000Z",
+    solverName: "scipy_sparse",
+    solverVersion: "0.3.0",
+    loadContext: {
+      entries: [
+        { kind: "loadCase", id: LC1, label: "DL-STRUCTURAL" },
+        { kind: "combination", id: COMBO, label: "COMBO-1" },
+      ],
+    },
     payload: {
-      nodeDisplacement: [
-        { loadCaseId: "DL-STRUCTURAL", entityId: "n1", values: { uz: -1 } },
-        { loadCaseId: "COMBO-1", entityId: "n1", values: { uz: -3 } },
-      ],
-      supportReaction: [
-        { loadCaseId: "DL-STRUCTURAL", nodeId: "n1", supportId: "s1", values: { fz: 10 } },
-      ],
-      memberForce: [],
+      nodeDisplacement: {
+        schemaVersion: "0.1.0",
+        rows: [
+          { rowId: "11111111-1111-4111-8111-111111111101", entityKind: "node", entityId: "n1", quantity: "displacement", unit: "m/rad", values: { uz: -1 }, loadContextId: LC1 },
+          { rowId: "11111111-1111-4111-8111-111111111102", entityKind: "node", entityId: "n1", quantity: "displacement", unit: "m/rad", values: { uz: -3 }, loadContextId: COMBO },
+        ],
+      },
+      supportReaction: {
+        schemaVersion: "0.1.0",
+        rows: [
+          { rowId: "11111111-1111-4111-8111-111111111103", entityKind: "support", entityId: "n1", quantity: "reaction", unit: "kN/kN_m", values: { fz: 10 }, loadContextId: LC1 },
+        ],
+      },
+      memberForce: { schemaVersion: "0.1.0", rows: [] },
     },
   } as unknown as FrameAnalysisResultResource;
 }

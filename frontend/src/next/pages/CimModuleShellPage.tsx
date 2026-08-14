@@ -26,6 +26,7 @@ import {
 import { Cim3DViewer, type CimViewPreset } from "../components/Cim3DViewer";
 import { AuthoritativeResultPanel } from "../components/AuthoritativeResultPanel";
 import { exportCimSceneAsGlb, downloadGlb } from "../modules/cim/cimExport";
+import { validateFrameAnalysisResultResource } from "../../contracts/frameAnalysisResultResource";
 import type { ProjectModuleKey } from "../project/schema";
 
 const CIM_UI_STATE_KEY = "spacer.cim.uiState.v1";
@@ -115,11 +116,15 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
         return;
       }
       const status = (data.if3Result as { status?: string })?.status ?? "";
+      // Runtime schema validation (Sol review #2): malformed SUCCEEDED results
+      // are NOT treated as authoritative.
+      const validation = validateFrameAnalysisResultResource(data.if3Result as never);
+      const schemaOk = validation.status === "valid" && validation.issues.length === 0;
       setIf3Result(data.if3Result);
-      if (status === "SUCCEEDED") {
+      if (status === "SUCCEEDED" && schemaOk) {
         setAnalysisMsg("解析実行完了・authoritative IF3 Resultをoverlayしました。");
       } else {
-        setAnalysisMsg(`解析は実行されましたがIF3 Resultはauthoritativeではありません（status=${status}）。上部工断面/荷重の入力を確認してください。`);
+        setAnalysisMsg(`解析は実行されましたがIF3 Resultはauthoritativeではありません（status=${status}${schemaOk ? "" : "・schema違反"}）。上部工断面/荷重の入力を確認してください。`);
       }
     } catch (error) {
       setAnalysisMsg(`解析実行エラー: ${String(error)}`);

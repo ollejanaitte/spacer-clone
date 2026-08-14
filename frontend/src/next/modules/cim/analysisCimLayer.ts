@@ -14,6 +14,7 @@ import { readModuleFromManager } from "../adapter";
 import { deserializeAnalysisModuleDataFromPersistence } from "../analysis/analysisModuleData";
 import type { AnalysisDocument } from "../analysis/analysisDocumentTypes";
 import type { FrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
+import { validateFrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
 import { extractLinearStaticResultFromIf3 } from "../analysis/resultAdapter";
 import { memberForceColor, computeForceColorRange } from "../../../viewer/memberForceColorMap";
 import { domainToThree } from "../renderCoordinate";
@@ -238,11 +239,13 @@ export function buildAnalysisCimLayer(
   // Result overlay (only when an IF3 result is supplied)
   let resultStatus: "none" | "authoritative" | "stale" | "invalid" = "none";
   if (input.if3Result) {
-    // Sol review #9 (Phase 9-04R3): authoritative only on an EXPLICIT success
-    // status. `undefined`/unknown/missing metadata are INVALID (fail-closed);
-    // the previous `undefined -> authoritative` promotion was a fail-open path.
+    // Sol review #2 (Phase 9-04R3): authoritative only on (a) an EXPLICIT
+    // SUCCEEDED status AND (b) a runtime-schema-valid resource. `undefined`/
+    // unknown/"authoritative"/PARTIAL/FAILED are INVALID (fail-closed).
     const status = (input.if3Result as { status?: string }).status;
-    const authoritative = status === "SUCCEEDED" || status === "authoritative";
+    const validation = validateFrameAnalysisResultResource(input.if3Result as never);
+    const schemaOk = validation.status === "valid" && validation.issues.length === 0;
+    const authoritative = status === "SUCCEEDED" && schemaOk;
     resultStatus = authoritative ? "authoritative" : status === "STALE" || status === "stale" ? "stale" : "invalid";
     if (authoritative) {
       const result = extractLinearStaticResultFromIf3(input.if3Result);
@@ -250,7 +253,7 @@ export function buildAnalysisCimLayer(
       // Reaction arrows
       for (const row of result.reactions) {
         const node = nodeById.get(row.nodeId);
-        if (!node || Math.abs(row.fz) < 1e-9) continue;
+        if (!node || row.fz === undefined || Math.abs(row.fz) < 1e-9) continue;
         const [tx, ty, tz] = toThree(node.x, node.y, node.z);
         const dir = new THREE.Vector3(0, row.fz >= 0 ? 1 : -1, 0);
         const arrow = new THREE.ArrowHelper(dir, new THREE.Vector3(tx, ty, tz), Math.max(1, Math.abs(row.fz) * 0.05), REACTION_COLOR, 0.8, 0.5);
@@ -288,14 +291,17 @@ export function buildAnalysisCimLayer(
       const valueByMember = new Map<string, number>();
       for (const row of result.memberForces) {
         const iVal = componentKey === "N" ? row.i.fx
-          : componentKey === "Q" ? Math.hypot(row.i.fy, row.i.fz)
-          : componentKey === "M" ? Math.hypot(row.i.my, row.i.mz)
+          : componentKey === "Q" ? (row.i.fy !== undefined && row.i.fz !== undefined ? Math.hypot(row.i.fy, row.i.fz) : undefined)
+          : componentKey === "M" ? (row.i.my !== undefined && row.i.mz !== undefined ? Math.hypot(row.i.my, row.i.mz) : undefined)
           : row.i.mx;
         const jVal = componentKey === "N" ? row.j.fx
-          : componentKey === "Q" ? Math.hypot(row.j.fy, row.j.fz)
-          : componentKey === "M" ? Math.hypot(row.j.my, row.j.mz)
+          : componentKey === "Q" ? (row.j.fy !== undefined && row.j.fz !== undefined ? Math.hypot(row.j.fy, row.j.fz) : undefined)
+          : componentKey === "M" ? (row.j.my !== undefined && row.j.mz !== undefined ? Math.hypot(row.j.my, row.j.mz) : undefined)
           : row.j.mx;
-        valueByMember.set(row.memberId, Math.max(Math.abs(iVal), Math.abs(jVal)));
+        const absI = iVal === undefined ? undefined : Math.abs(iVal);
+        const absJ = jVal === undefined ? undefined : Math.abs(jVal);
+        if (absI === undefined && absJ === undefined) continue;
+        valueByMember.set(row.memberId, Math.max(absI ?? 0, absJ ?? 0));
       }
       const range = computeForceColorRange(valueByMember);
       for (const member of document.members) {
