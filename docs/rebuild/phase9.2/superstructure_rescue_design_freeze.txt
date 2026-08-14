@@ -1,0 +1,171 @@
+Phase 9-02 上部工 Rescue 完全設計・Design Freeze
+====================================================================
+
+baseline: 041f18de（Phase 9-01 merge後）
+Phase 9-01監査: COMPLETE（旧上部工=埋没・非接続・git削除0件）
+
+====================================================================
+1. Target Architecture（正規縦断）
+====================================================================
+
+旧Apollo実務Editor UI
+  ↓ controlled adapter（props controlled・旧ProjectModel切離し）
+SuperstructureDocument（正本）
+  ↓ Project Data Core（Auto Save・.spacerproj）
+Superstructure Calculation / Geometry
+  ↓ superstructureBindingNew + DefaultGeometryEngine
+GeometrySnapshot（DERIVED・非永続）
+  ↓ Bearing / Reaction Handoff
+Analysis
+  ↓ CIM / Integrated 3D
+Persistence / restart / .spacerproj
+
+旧ProjectModelは正本にしない（二重正本禁止・dual-write禁止）。
+
+====================================================================
+2. Canonical Ownership（FROZEN）
+====================================================================
+
+- 正本: modules.superstructure.data.superstructureDocument（SuperstructureDocument v0.1.0）
+- Bridge Layoutはspan/supportのlayout authority（superstructureは参照のみ）
+- GeometrySnapshot: SuperstructureDocument + Bridge Layoutから決定論再生成・非永続
+  （geometryReference.snapshotFingerprint はDocumentに参照のみ保持）
+- 旧Apollo sidecar（apolloBridgeStructureInput / apolloBsdd /
+  apolloBridgeProjectSuperstructure）は救出後廃止対象（legacy importのみ）
+- NOT_AUTHORIZED / HOLD領域は実装しない（数値照査は認可方針待ち）
+
+====================================================================
+3. old Apollo → SuperstructureDocument field mapping（FROZEN）
+====================================================================
+
+【主桁・断面】（Apollo BridgeStructureInputDraft → SuperstructureDocument）
+| 旧field | 新field | 型 | 単位 | 種別 |
+|---|---|---|---|---|
+| girderCount | girderConfiguration.girderCount | number | 本 | direct |
+| girderSpacing | girderConfiguration.girderSpacingM | number | m | direct |
+| — | girderLines[].offsetFromCenterline | number | m | derive（deriveGirderOffsets） |
+| girderDepth | girderSectionModel.depthM | number | m | direct |
+| webThickness | girderSectionModel.webThicknessM | number | m | direct |
+| topFlangeWidth | girderSectionModel.topFlange.widthM | number | m | direct |
+| topFlangeThickness | girderSectionModel.topFlange.thicknessM | number | m | direct |
+| bottomFlangeWidth | girderSectionModel.bottomFlange.widthM | number | m | direct |
+| bottomFlangeThickness | girderSectionModel.bottomFlange.thicknessM | number | m | direct |
+| — | girderSectionModel.areaM2 | number | m² | convert（sectionProperties.totalArea） |
+| — | girderSectionModel.unitWeightPerM | number | kN/m | convert（area×steelUnitWeight） |
+
+【床版・横桁・横構】
+| 旧field | 新field | 種別 |
+|---|---|---|
+| deckThickness | deckConfiguration.thicknessM | direct |
+| rcUnitWeight | deckConfiguration.unitWeight | direct |
+| width | deckConfiguration.resolvedWidthM | convert（道路横断幅+overhang） |
+| — | deckConfiguration.overhangLeftM/RightM | new |
+| crossBeamSpacing | crossBeamConfiguration.crossBeamSpacingM | direct |
+| — | crossBeams[]（kind/stationM） | derive |
+| swayBracingInterval（本） | crossFrameConfiguration.swayBracing.intervalM | convert（本→間隔m） |
+| lateralBracingEnabled | crossFrameConfiguration.lateralBracing.intervalM | convert |
+
+【構造形式・支承】
+| 旧field | 新field | 種別 |
+|---|---|---|
+| bridgeSystem | structuralSystem.bridgeSystem/spanSystem | direct |
+| spanLength/bridgeLength | spanReferences（sum） | derive（Bridge Layout handoff） |
+| spans[]/supports[] | spanReferences/supportReferences | convert（transient） |
+| — | bearingConfiguration.bearingSeats[] | new/自動配置（BRG-{s}-{g}） |
+
+【非対応（cut）】
+- upperLateralBracingEnabled / stiffenerSpacing / crossFrameAttachment /
+  haunch / roadMarkings / lateralAngleSection → n/a（新docに非対応・DEFER）
+- steelUnitWeight/rcUnitWeight のADOPTED/PENDING status → 新docにadoption概念なし
+  （girderSectionModel.unitWeightPerMへ換算・loadModelは固定定数77.0）
+
+====================================================================
+4. old ProjectModel 依存切離し（FROZEN）
+====================================================================
+
+- BridgeStructureInputPanel: props project: ProjectModel / onProjectChange 依存
+  → Phase 9-03で props controlled（draft: SuperstructureDocument +
+    onChange: (doc) => void）へ置換
+- 旧読み取り（getBridgeStructureInputDraft/isGenerationCurrent/quantities）:
+  → document view-model + controlled adapter へ
+- 旧書き込み（withBridgeStructureField/generateBridgeStructureFromInput）:
+  → superstructureDocument update + commit（atomic）へ
+- 旧SDM生成（generateBsdd）: → 新GeometrySnapshot生成（superstructureBindingNew）
+- 分類: props controlled / adapter / document view-model で接続・
+  compatibility facade / one-way importer のみ許可・dual-write禁止
+
+====================================================================
+5. 上部工 UI Rescue（FROZEN）
+====================================================================
+
+Phase 9-03で新Superstructure Moduleへ救出するUI:
+- BridgeStructureInputPanel（主桁/断面/材料/床版/横桁入力）→ RESTORE/ADAPT
+- GeneralArrangementPanel（2D/DXF）→ RESTORE
+- sectionProperties（断面性能）→ KEEP（superstructureComponentsへ統合済み）
+- LoadConfirmationDevelopmentPanel（死荷重入力）→ ADAPT
+- QuantityModelDevelopmentPanel（数量）→ ADAPT
+- 結果表/計算書 → DEFER（NOT_AUTHORIZED）
+
+host: /app/projects/{id}/modules/superstructure（SuperstructureModuleShellPage拡張）
+canonical write: superstructureModuleAdapter.write + commit + Auto Save
+stale trigger: geometryReference.fingerprint更新・downstream STALE表示
+
+====================================================================
+6. Persistence / Migration（FROZEN）
+====================================================================
+
+- PDC唯一正本・旧Apollo JSONは一方向legacy import
+- legacy import: importApolloProjectFromText → SuperstructureDocumentへ変換
+  （field mapping実装・validation・fail-closed・conflict detection・backup）
+- PDC → legacy のdual-write禁止
+- restart restore: deserialize → regenerateSuperstructureDerived → IntegrityGate
+- .spacerproj: superstructureDocument含む（既存package exporter）
+- 旧schemaVersion 1.5.0 / 2.0.0 → 新0.1.0へ変換・legacy ID保持
+
+====================================================================
+7. Bearing / Reaction Handoff（FROZEN）
+====================================================================
+
+Bridge Layout → Superstructure（span/support handoff）→ Bearing/Reaction → Substructure
+- 既存superstructureHandoff v1.0.0維持（UI救出で壊さない）
+- bearingSeats: BRG-{supportId}-{girderId}（stable ID）・sourceEntityId保持
+- reactionResults: NOT_AUTHORIZED維持
+
+====================================================================
+8. STALE / INVALID（FROZEN）
+====================================================================
+
+Superstructure変更（geometry/section/material/girder/deck/cross girder/bearing/load）:
+- 同一fingerprint → no impact
+- fingerprint変化 → GeometrySnapshot stale・Bearing/Reaction stale・Analysis stale・CIM stale
+- line/support消失 → INVALID / fail-closed
+- integrity gateのderivedConsistent判定（STALE）をUI表示（Gate→STALEバッジ）
+- analysisStaleness 3-gate継続
+
+====================================================================
+9. Feature Flag / Rollback（FROZEN）
+====================================================================
+
+- VITE_SUPERSTRUCTURE_RESCUE（新設・Roadパターン: import.meta.env === "true"）
+- OFF時: 現view-only Shell維持
+- ON時: 救出UI（controlled adapter経由）
+- migration前backup・legacy import fallback・rollback（flag OFFで現Shellへ）
+- VITE_APOLLO_PHASE1_ENABLED とは責務分離（Apollo=/pro legacy・Rescue=/app新UI）
+- no destructive conversion
+
+====================================================================
+10. NOT_AUTHORIZED / HOLD policy（FROZEN）
+====================================================================
+
+- diaphragm: 実装0件 → DEFER（UI表示は「未対応」）
+- 応力度/照査6種: NOT_AUTHORIZED維持（disabled/HOLD表示・「計算済み」と誤表示しない）
+- 数値ロジックは発明しない（Gate + HOLD表示 + future extension pointのみFreeze）
+
+====================================================================
+11. Phase 9-03 関連（上部工分）
+====================================================================
+
+- WP-A（Adapter/Mapping）・WP-B（Apollo UI Host Controlled化）・WP-C（Editors Rescue）・
+  WP-D（2D/DXF/Quantity/3D）の上部工scopeは上記FROZENに基づく
+- Completion Gate: 実画面で 主桁/断面/材料/床版/横桁/支承/荷重 編集→generate→
+  result→2D/DXF→3D→Save/restart→.spacerproj を確認
