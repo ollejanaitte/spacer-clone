@@ -42,7 +42,9 @@
       "enum": [
        "reaction",
        "memberForce",
-       "displacement"
+       "displacement",
+       "quantity",
+       "coordinate"
       ]
      },
      "entityId": {
@@ -76,6 +78,9 @@
      }
     },
     "if": {
+     "required": [
+      "wildcard"
+     ],
      "properties": {
       "wildcard": {
        "const": "all-members"
@@ -86,6 +91,26 @@
      "properties": {
       "entityId": {
        "const": "*"
+      }
+     }
+    },
+    "if2": {
+     "required": [
+      "entityId"
+     ],
+     "properties": {
+      "entityId": {
+       "const": "*"
+      }
+     }
+    },
+    "then2": {
+     "required": [
+      "wildcard"
+     ],
+     "properties": {
+      "wildcard": {
+       "const": "all-members"
       }
      }
     }
@@ -156,6 +181,46 @@
    "type": "object",
    "additionalProperties": {
     "type": "string"
+   }
+  },
+  "coverage": {
+   "type": "object",
+   "additionalProperties": true,
+   "required": [
+    "kind",
+    "entityId",
+    "component",
+    "expected",
+    "count",
+    "nonZeroCount",
+    "absTol"
+   ],
+   "properties": {
+    "kind": {
+     "type": "string"
+    },
+    "entityId": {
+     "type": "string"
+    },
+    "component": {
+     "type": "string"
+    },
+    "expected": {
+     "type": "number"
+    },
+    "count": {
+     "type": "integer"
+    },
+    "nonZeroCount": {
+     "type": "integer"
+    },
+    "unit": {
+     "type": "string"
+    },
+    "absTol": {
+     "type": "number",
+     "minimum": 0
+    }
    }
   }
  }

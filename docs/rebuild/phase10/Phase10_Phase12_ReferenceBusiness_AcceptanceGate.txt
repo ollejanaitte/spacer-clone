@@ -38,15 +38,20 @@ status: FINAL（Sol指摘2回反映）
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
   未実施ならCompletion Gate PASSにしない。
 - 独立照合記録（2026-08-15・証拠あり・chain of custody）:
-  - oracle JSON sha256 = 845b2df794a9a87ff767dc7fcf4eacef4e893cc028a8eb0b51e7cb38d263ad7f
+  - oracle JSON sha256 = 992f071ac50cdeb04fa59562b6b83fa8aed2b344fd7089b89b4644991f2aec93（33 row: reaction 6/memberForce 10/displacement 2/quantity 7/coordinate 8・coverage契約あり）
     （docs/rebuild/phase10/Phase10_Reference_NumberOracle.json）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 be35b947f3bdf4e535384ad7136f9b8172b149ab9e4122f29ae404ee1fbf6646）
+    （sha256 82fc8704e1df76eb83ce40ef6e53b43a25c262df8c5a1d96ce3ee622c0406107）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
     inputChainOfCustody{oracleSha256, rawResultSha256}・各rowにdAbs/dRel/判定根拠（absTol/relTol/FAIL）
-  - 結果: 18 row・18 PASS・failures 0（荷重-反力釣合いrelTol 1e-6・N/Q/M全70部材非零）
+  - 結果: 33 row・33 PASS・failures 0・coverage PASS（N/Q/M各70部材非零・max|T|<=1e-6）
+  - 数量oracle: nodeCount 72・memberCount 70・supportCount 6・totalMemberLength 657.615156m・totalSteelVolume 78.913819m3・section area 0.12m2
+  - 座標oracle: A1-G1(200,496,103.08)・P1-G1(400,496,108.5592)・A2-G1(503.0568,582.7107,106.58)等 6支承
+  - solver入力固定: evidence/Phase10_Reference_SolverInput.json（sha256 450fa1ac...・modelChecksum 4685609a...・fixtureId c83b911b...）
+  - 比較式（row別優先・fail-closed）: 各rowの{absTol,relTol}で dAbs<=absTol または dRel<=relTol（abs(exp)==0の場合はabsTolのみ）・
+    欠損/NaN/Infinity/不一致rowは即FAIL（fail-closed）・全row PASSで適合
   - 承認: 本Sol最終レビューGO通過後に記録（完了時に追記）
 - raw/display分離: uz.displayは表示専用DERIVED（正本へ書き戻さない）
 
@@ -98,9 +103,15 @@ AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
 | SS-03 | DXF | ○ | DXF | ○(P0-08) | ○ | − | ○ |
 | SS-04 | Quantity | ○ | − | − | ○ | ○(数量oracle) | ○ |
 | SS-05 | 3D/CIM | ○ | − | − | ○ | − | ○ |
-| SB-01..05 | 下部工成果 | ○ | −(座標/Quantityは画面) | − | ○ | ○(数量/座標oracle) | ○ |
+| SB-01 | 3-pane CAD | ○ | − | − | ○ | − | ○ |
+| SB-02 | pile grid | ○ | − | − | ○ | − | ○ |
+| SB-03 | 座標表 | ○ | − | − | ○ | ○(座標oracle) | ○ |
+| SB-04 | Quantity | ○ | − | − | ○ | ○(数量oracle) | ○ |
+| SB-05 | 2D/3D/CIM | ○ | − | − | ○ | − | ○ |
 | AN-01 | Solver/IF3 | ○ | − | − | ○ | ○(loadBalance) | ○ |
-| AN-02..04 | Reaction/N-Q-M-T/Deformed | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-02 | Reaction | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-03 | N-Q-M/T | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-04 | Deformed | ○ | − | − | ○ | ○(oracle JSON) | ○ |
 | AN-05 | 結果CSV export | ○ | CSV | ○(P0-08) | ○ | ○(oracle) | ○ |
 | AN-06 | analysis専用ページ | ○ | − | − | ○ | − | ○ |
 | CIM-01 | Integrated 3D | ○ | − | − | ○ | − | ○ |
@@ -110,7 +121,9 @@ AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
 | SYS-03 | deliverables module | ○ | − | − | ○ | − | ○ |
 
 ※ 実ファイル条件はexportを持つID（RD-02..05/BL-02/SS-03/AN-05/CIM-02/SYS-01）のみ。
-  数値oracleは解析/数量/座標を持つID（SS-04/SB-04/AN-01..05）のみ。適用外は「−」。
+  数値oracleは解析/数量/座標を持つID（SS-04/SB-03/SB-04/AN-01..05）のみ。適用外は「−」。
+  ※ 数量oracle（kind=quantity）と座標oracle（kind=coordinate）は同一oracle JSONのrowsに格納（33 row中15 row）。
+     SS-04/SB-04は数量・SB-03は座標を機械照合する。
 
 【生成host所有権（凍結）】
 - canonical読取: 各source module（road/bridgeLayout/superstructure/substructure/analysis）が所有

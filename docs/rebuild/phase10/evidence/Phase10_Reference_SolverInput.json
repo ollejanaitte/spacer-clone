@@ -1,0 +1,4561 @@
+{
+ "schemaId": "spacer.contracts.analysis-document",
+ "schemaVersion": "1.0.0",
+ "documentKind": "analysis-document",
+ "documentId": "90574c29-dac3-52c9-996d-705405ebbb4a",
+ "projectId": "c83b911b-d2a3-4f25-a3b5-0c9c9792e1c2",
+ "revisionId": 1,
+ "status": "DRAFT",
+ "contentChecksum": "4685609a13015244d6826c6ca2c9651ed00a635d0599c921b99a760c628f0566",
+ "modelChecksum": "4685609a13015244d6826c6ca2c9651ed00a635d0599c921b99a760c628f0566",
+ "provenance": {
+  "createdAt": "2026-08-14T22:06:44.407Z",
+  "createdBy": "cim-integrated3d",
+  "producer": "spacer-analysis-module"
+ },
+ "timestamps": {
+  "updatedAt": "2026-08-14T22:06:44.407Z",
+  "derivedAt": "2026-08-14T22:06:44.407Z"
+ },
+ "sourceReferences": {
+  "bridgeLayout": null,
+  "superstructure": null,
+  "substructure": null,
+  "loadFingerprint": null,
+  "solverSettingsFingerprint": null
+ },
+ "coordinateContext": {
+  "entityId": "e50834d0-1326-57fd-9bb3-7c10ecdedbba",
+  "coordinatePolicyId": null,
+  "axisConvention": "x-along/y-transverse/z-up",
+  "handedness": "right",
+  "unitSystem": "metric",
+  "positionConvention": "project-global-XYZ",
+  "signConvention": {
+   "reactionZ": "up-positive",
+   "moment": "right-hand-rule",
+   "skew": "counterclockwise-positive"
+  },
+  "globalOrigin": {
+   "x": 0,
+   "y": 0,
+   "z": 0
+  }
+ },
+ "unitContext": {
+  "length": "m",
+  "force": "kN",
+  "moment": "kNm",
+  "modulus": "kN/m2",
+  "density": "kN/m3",
+  "angle": "rad"
+ },
+ "nodes": [
+  {
+   "entityId": "013868c7-d265-5a28-b6e5-aea2d88b0dd3",
+   "sourceEntityId": "supportPoint:A1:G1",
+   "sourceKind": "supportPoint",
+   "x": 200,
+   "y": 496,
+   "z": 103.08,
+   "stationM": 100,
+   "offsetM": -4
+  },
+  {
+   "entityId": "17323aa9-8164-533f-b311-263e3766a216",
+   "sourceEntityId": "supportPoint:A1:G2",
+   "sourceKind": "supportPoint",
+   "x": 200,
+   "y": 504,
+   "z": 102.92,
+   "stationM": 100,
+   "offsetM": 4
+  },
+  {
+   "entityId": "8a2298f6-4bb0-569b-b483-ebfceebf5e8d",
+   "sourceEntityId": "supportPoint:P1:G1",
+   "sourceKind": "supportPoint",
+   "x": 400,
+   "y": 496,
+   "z": 108.55916666666667,
+   "stationM": 300,
+   "offsetM": -4
+  },
+  {
+   "entityId": "a84e12c6-472c-5d34-8085-d35f4762ba90",
+   "sourceEntityId": "supportPoint:P1:G2",
+   "sourceKind": "supportPoint",
+   "x": 400,
+   "y": 504,
+   "z": 108.39916666666667,
+   "stationM": 300,
+   "offsetM": 4
+  },
+  {
+   "entityId": "682689b8-25dd-5ddc-984b-b976a0045dfb",
+   "sourceEntityId": "supportPoint:A2:G1",
+   "sourceKind": "supportPoint",
+   "x": 503.05676642196096,
+   "y": 582.7106705334637,
+   "z": 106.58,
+   "stationM": 450,
+   "offsetM": -4
+  },
+  {
+   "entityId": "32071005-893b-5424-8547-479df7b6765a",
+   "sourceEntityId": "supportPoint:A2:G2",
+   "sourceKind": "supportPoint",
+   "x": 495.13898203108243,
+   "y": 581.566690490124,
+   "z": 106.42,
+   "stationM": 450,
+   "offsetM": 4
+  },
+  {
+   "entityId": "8dbeba99-b811-5da8-8593-655b213a32ec",
+   "sourceEntityId": "girderPanel:G1:110",
+   "sourceKind": "girderPanel",
+   "x": 210,
+   "y": 496,
+   "z": 103.35395833333334,
+   "stationM": 110,
+   "offsetM": -4
+  },
+  {
+   "entityId": "e87a2769-adbe-5662-a93e-96c36bafb20a",
+   "sourceEntityId": "girderPanel:G1:120",
+   "sourceKind": "girderPanel",
+   "x": 220,
+   "y": 496,
+   "z": 103.62791666666666,
+   "stationM": 120,
+   "offsetM": -4
+  },
+  {
+   "entityId": "cf991bbf-10d0-5ebe-8322-7b9287c68eaf",
+   "sourceEntityId": "girderPanel:G1:130",
+   "sourceKind": "girderPanel",
+   "x": 230,
+   "y": 496,
+   "z": 103.901875,
+   "stationM": 130,
+   "offsetM": -4
+  },
+  {
+   "entityId": "8f762b65-1d6f-502c-8b41-6a378a4b1dee",
+   "sourceEntityId": "girderPanel:G1:140",
+   "sourceKind": "girderPanel",
+   "x": 240,
+   "y": 496,
+   "z": 104.17583333333333,
+   "stationM": 140,
+   "offsetM": -4
+  },
+  {
+   "entityId": "e7ed48e3-70a7-57f7-ad89-4eb808e0e0dd",
+   "sourceEntityId": "girderPanel:G1:150",
+   "sourceKind": "girderPanel",
+   "x": 250,
+   "y": 496,
+   "z": 104.44979166666667,
+   "stationM": 150,
+   "offsetM": -4
+  },
+  {
+   "entityId": "cad57473-a0d9-52b6-bf8f-aa68a63e58b6",
+   "sourceEntityId": "girderPanel:G1:160",
+   "sourceKind": "girderPanel",
+   "x": 260,
+   "y": 496,
+   "z": 104.72375,
+   "stationM": 160,
+   "offsetM": -4
+  },
+  {
+   "entityId": "8af66610-9fae-5046-b524-2772a2771437",
+   "sourceEntityId": "girderPanel:G1:170",
+   "sourceKind": "girderPanel",
+   "x": 270,
+   "y": 496,
+   "z": 104.99770833333334,
+   "stationM": 170,
+   "offsetM": -4
+  },
+  {
+   "entityId": "2db7fa26-e89c-5f49-b4e9-5924996c63af",
+   "sourceEntityId": "girderPanel:G1:180",
+   "sourceKind": "girderPanel",
+   "x": 280,
+   "y": 496,
+   "z": 105.27166666666666,
+   "stationM": 180,
+   "offsetM": -4
+  },
+  {
+   "entityId": "5b29c8b4-a7f3-5c3d-be53-c44068e744b9",
+   "sourceEntityId": "girderPanel:G1:190",
+   "sourceKind": "girderPanel",
+   "x": 290,
+   "y": 496,
+   "z": 105.545625,
+   "stationM": 190,
+   "offsetM": -4
+  },
+  {
+   "entityId": "8a656662-041a-5a72-a17c-e4f61cdf3553",
+   "sourceEntityId": "girderPanel:G1:200",
+   "sourceKind": "girderPanel",
+   "x": 300,
+   "y": 496,
+   "z": 105.81958333333333,
+   "stationM": 200,
+   "offsetM": -4
+  },
+  {
+   "entityId": "45d88e99-5a5a-55da-8b3a-570e0ec6ffd7",
+   "sourceEntityId": "girderPanel:G1:210",
+   "sourceKind": "girderPanel",
+   "x": 310,
+   "y": 496,
+   "z": 106.09354166666667,
+   "stationM": 210,
+   "offsetM": -4
+  },
+  {
+   "entityId": "6a214641-330a-5766-a6ed-6621cca4f30a",
+   "sourceEntityId": "girderPanel:G1:220",
+   "sourceKind": "girderPanel",
+   "x": 320,
+   "y": 496,
+   "z": 106.3675,
+   "stationM": 220,
+   "offsetM": -4
+  },
+  {
+   "entityId": "560d2d7b-1e2f-5d88-a89b-18fdec4c0a2d",
+   "sourceEntityId": "girderPanel:G1:230",
+   "sourceKind": "girderPanel",
+   "x": 330,
+   "y": 496,
+   "z": 106.64145833333333,
+   "stationM": 230,
+   "offsetM": -4
+  },
+  {
+   "entityId": "703ad71f-18b1-57a4-bff2-892715ebb7c6",
+   "sourceEntityId": "girderPanel:G1:240",
+   "sourceKind": "girderPanel",
+   "x": 340,
+   "y": 496,
+   "z": 106.91541666666667,
+   "stationM": 240,
+   "offsetM": -4
+  },
+  {
+   "entityId": "f5807284-4ba5-570c-89fb-0fc75d98a48d",
+   "sourceEntityId": "girderPanel:G1:250",
+   "sourceKind": "girderPanel",
+   "x": 350,
+   "y": 496,
+   "z": 107.189375,
+   "stationM": 250,
+   "offsetM": -4
+  },
+  {
+   "entityId": "7296b5d8-ac6f-527d-bcd1-f89444b67651",
+   "sourceEntityId": "girderPanel:G1:260",
+   "sourceKind": "girderPanel",
+   "x": 360,
+   "y": 496,
+   "z": 107.46333333333334,
+   "stationM": 260,
+   "offsetM": -4
+  },
+  {
+   "entityId": "1708f554-32f2-536f-8c12-71b85ce479ae",
+   "sourceEntityId": "girderPanel:G1:270",
+   "sourceKind": "girderPanel",
+   "x": 370,
+   "y": 496,
+   "z": 107.73729166666666,
+   "stationM": 270,
+   "offsetM": -4
+  },
+  {
+   "entityId": "d988724d-6dd2-5cb6-ac50-7a33f05ff592",
+   "sourceEntityId": "girderPanel:G1:280",
+   "sourceKind": "girderPanel",
+   "x": 380,
+   "y": 496,
+   "z": 108.01125,
+   "stationM": 280,
+   "offsetM": -4
+  },
+  {
+   "entityId": "fda21377-56e9-5581-abfc-ed5cc339aa16",
+   "sourceEntityId": "girderPanel:G1:290",
+   "sourceKind": "girderPanel",
+   "x": 390,
+   "y": 496,
+   "z": 108.28520833333333,
+   "stationM": 290,
+   "offsetM": -4
+  },
+  {
+   "entityId": "4029b659-6a04-570a-8cee-ec8fb2d199e0",
+   "sourceEntityId": "girderPanel:G1:310",
+   "sourceKind": "girderPanel",
+   "x": 406.8704510947974,
+   "y": 501.7807113688976,
+   "z": 108.42722222222223,
+   "stationM": 310,
+   "offsetM": -4
+  },
+  {
+   "entityId": "00e18dcb-ed9c-56a8-b6bb-eff77336f47e",
+   "sourceEntityId": "girderPanel:G1:320",
+   "sourceKind": "girderPanel",
+   "x": 413.7409021895948,
+   "y": 507.56142273779517,
+   "z": 108.29527777777778,
+   "stationM": 320,
+   "offsetM": -4
+  },
+  {
+   "entityId": "ae43ffe4-87cd-5fc7-b421-370166bc4e1a",
+   "sourceEntityId": "girderPanel:G1:330",
+   "sourceKind": "girderPanel",
+   "x": 420.6113532843922,
+   "y": 513.3421341066927,
+   "z": 108.16333333333334,
+   "stationM": 330,
+   "offsetM": -4
+  },
+  {
+   "entityId": "ef6f907c-90bd-54a8-b993-07799d74a756",
+   "sourceEntityId": "girderPanel:G1:340",
+   "sourceKind": "girderPanel",
+   "x": 427.4818043791896,
+   "y": 519.1228454755903,
+   "z": 108.03138888888888,
+   "stationM": 340,
+   "offsetM": -4
+  },
+  {
+   "entityId": "6fd7e2f5-28c7-5a64-85bf-3e87c4c95f91",
+   "sourceEntityId": "girderPanel:G1:350",
+   "sourceKind": "girderPanel",
+   "x": 434.352255473987,
+   "y": 524.9035568444879,
+   "z": 107.89944444444444,
+   "stationM": 350,
+   "offsetM": -4
+  },
+  {
+   "entityId": "75cd443d-2960-54f8-9ba3-5159b0bf7fb3",
+   "sourceEntityId": "girderPanel:G1:360",
+   "sourceKind": "girderPanel",
+   "x": 441.22270656878436,
+   "y": 530.6842682133855,
+   "z": 107.7675,
+   "stationM": 360,
+   "offsetM": -4
+  },
+  {
+   "entityId": "e9429f1b-d885-52d9-bbf4-4de712d50d4a",
+   "sourceEntityId": "girderPanel:G1:370",
+   "sourceKind": "girderPanel",
+   "x": 448.0931576635818,
+   "y": 536.464979582283,
+   "z": 107.63555555555556,
+   "stationM": 370,
+   "offsetM": -4
+  },
+  {
+   "entityId": "07597b9d-2959-56f4-a4c5-7d7d0c324946",
+   "sourceEntityId": "girderPanel:G1:380",
+   "sourceKind": "girderPanel",
+   "x": 454.96360875837917,
+   "y": 542.2456909511807,
+   "z": 107.50361111111111,
+   "stationM": 380,
+   "offsetM": -4
+  },
+  {
+   "entityId": "7d0cb490-57f0-5851-8e81-ad010caa75d3",
+   "sourceEntityId": "girderPanel:G1:390",
+   "sourceKind": "girderPanel",
+   "x": 461.83405985317654,
+   "y": 548.0264023200782,
+   "z": 107.37166666666667,
+   "stationM": 390,
+   "offsetM": -4
+  },
+  {
+   "entityId": "eeada9c8-5dd6-5f29-a4be-546a0c0a34c9",
+   "sourceEntityId": "girderPanel:G1:400",
+   "sourceKind": "girderPanel",
+   "x": 468.704510947974,
+   "y": 553.8071136889758,
+   "z": 107.23972222222223,
+   "stationM": 400,
+   "offsetM": -4
+  },
+  {
+   "entityId": "4f2a7845-f71f-55c1-80a7-7c238d224c21",
+   "sourceEntityId": "girderPanel:G1:410",
+   "sourceKind": "girderPanel",
+   "x": 475.57496204277135,
+   "y": 559.5878250578734,
+   "z": 107.10777777777778,
+   "stationM": 410,
+   "offsetM": -4
+  },
+  {
+   "entityId": "5e35edaf-d4c7-58ef-934e-8ba8dbe09996",
+   "sourceEntityId": "girderPanel:G1:420",
+   "sourceKind": "girderPanel",
+   "x": 482.4454131375688,
+   "y": 565.368536426771,
+   "z": 106.97583333333333,
+   "stationM": 420,
+   "offsetM": -4
+  },
+  {
+   "entityId": "5b9a2c14-3220-5697-8736-fabb3965340d",
+   "sourceEntityId": "girderPanel:G1:430",
+   "sourceKind": "girderPanel",
+   "x": 489.31586423236615,
+   "y": 571.1492477956685,
+   "z": 106.84388888888888,
+   "stationM": 430,
+   "offsetM": -4
+  },
+  {
+   "entityId": "b19c6f0f-0b60-5690-a027-057cccc4666c",
+   "sourceEntityId": "girderPanel:G1:440",
+   "sourceKind": "girderPanel",
+   "x": 496.1863153271636,
+   "y": 576.9299591645661,
+   "z": 106.71194444444444,
+   "stationM": 440,
+   "offsetM": -4
+  },
+  {
+   "entityId": "8986ea0d-5282-5814-be43-c489fbf45166",
+   "sourceEntityId": "girderPanel:G2:110",
+   "sourceKind": "girderPanel",
+   "x": 210,
+   "y": 504,
+   "z": 103.19395833333334,
+   "stationM": 110,
+   "offsetM": 4
+  },
+  {
+   "entityId": "add75e26-a1b8-5752-b5aa-098150f98358",
+   "sourceEntityId": "girderPanel:G2:120",
+   "sourceKind": "girderPanel",
+   "x": 220,
+   "y": 504,
+   "z": 103.46791666666667,
+   "stationM": 120,
+   "offsetM": 4
+  },
+  {
+   "entityId": "08374f89-f3e3-5e8a-a519-399ab1e50040",
+   "sourceEntityId": "girderPanel:G2:130",
+   "sourceKind": "girderPanel",
+   "x": 230,
+   "y": 504,
+   "z": 103.74187500000001,
+   "stationM": 130,
+   "offsetM": 4
+  },
+  {
+   "entityId": "f294597f-7e69-598c-bd2f-1d1bd2f43e8d",
+   "sourceEntityId": "girderPanel:G2:140",
+   "sourceKind": "girderPanel",
+   "x": 240,
+   "y": 504,
+   "z": 104.01583333333333,
+   "stationM": 140,
+   "offsetM": 4
+  },
+  {
+   "entityId": "08fbc71f-9685-5695-b4ea-cb8f7c9eea50",
+   "sourceEntityId": "girderPanel:G2:150",
+   "sourceKind": "girderPanel",
+   "x": 250,
+   "y": 504,
+   "z": 104.28979166666667,
+   "stationM": 150,
+   "offsetM": 4
+  },
+  {
+   "entityId": "e09650b2-41a4-51ff-8219-641f5a635d7d",
+   "sourceEntityId": "girderPanel:G2:160",
+   "sourceKind": "girderPanel",
+   "x": 260,
+   "y": 504,
+   "z": 104.56375,
+   "stationM": 160,
+   "offsetM": 4
+  },
+  {
+   "entityId": "076e870d-25fe-5511-bfa8-05ef9f8740b9",
+   "sourceEntityId": "girderPanel:G2:170",
+   "sourceKind": "girderPanel",
+   "x": 270,
+   "y": 504,
+   "z": 104.83770833333334,
+   "stationM": 170,
+   "offsetM": 4
+  },
+  {
+   "entityId": "16b3dde4-8360-56e9-a12e-4a886bdeed2f",
+   "sourceEntityId": "girderPanel:G2:180",
+   "sourceKind": "girderPanel",
+   "x": 280,
+   "y": 504,
+   "z": 105.11166666666666,
+   "stationM": 180,
+   "offsetM": 4
+  },
+  {
+   "entityId": "e498fb45-4641-594d-8b82-d0ae9a277850",
+   "sourceEntityId": "girderPanel:G2:190",
+   "sourceKind": "girderPanel",
+   "x": 290,
+   "y": 504,
+   "z": 105.385625,
+   "stationM": 190,
+   "offsetM": 4
+  },
+  {
+   "entityId": "d28c9564-bb40-5667-8668-a8d3974d75bd",
+   "sourceEntityId": "girderPanel:G2:200",
+   "sourceKind": "girderPanel",
+   "x": 300,
+   "y": 504,
+   "z": 105.65958333333333,
+   "stationM": 200,
+   "offsetM": 4
+  },
+  {
+   "entityId": "30151325-c94a-5b5a-a765-d990011a85c1",
+   "sourceEntityId": "girderPanel:G2:210",
+   "sourceKind": "girderPanel",
+   "x": 310,
+   "y": 504,
+   "z": 105.93354166666667,
+   "stationM": 210,
+   "offsetM": 4
+  },
+  {
+   "entityId": "f173bafe-b4d0-5576-b53b-1cbee0057e35",
+   "sourceEntityId": "girderPanel:G2:220",
+   "sourceKind": "girderPanel",
+   "x": 320,
+   "y": 504,
+   "z": 106.20750000000001,
+   "stationM": 220,
+   "offsetM": 4
+  },
+  {
+   "entityId": "7ab5f089-f464-5ae8-b0f4-2d8183d0b2f1",
+   "sourceEntityId": "girderPanel:G2:230",
+   "sourceKind": "girderPanel",
+   "x": 330,
+   "y": 504,
+   "z": 106.48145833333334,
+   "stationM": 230,
+   "offsetM": 4
+  },
+  {
+   "entityId": "f26121fb-9a96-57ac-aed6-964c0949b844",
+   "sourceEntityId": "girderPanel:G2:240",
+   "sourceKind": "girderPanel",
+   "x": 340,
+   "y": 504,
+   "z": 106.75541666666668,
+   "stationM": 240,
+   "offsetM": 4
+  },
+  {
+   "entityId": "8190319c-afd9-555b-a909-92b23d8adaa7",
+   "sourceEntityId": "girderPanel:G2:250",
+   "sourceKind": "girderPanel",
+   "x": 350,
+   "y": 504,
+   "z": 107.029375,
+   "stationM": 250,
+   "offsetM": 4
+  },
+  {
+   "entityId": "ca265b06-f2aa-562b-bbc4-992ce88b841b",
+   "sourceEntityId": "girderPanel:G2:260",
+   "sourceKind": "girderPanel",
+   "x": 360,
+   "y": 504,
+   "z": 107.30333333333334,
+   "stationM": 260,
+   "offsetM": 4
+  },
+  {
+   "entityId": "8e297256-ba2f-564d-a500-b8fee84ac742",
+   "sourceEntityId": "girderPanel:G2:270",
+   "sourceKind": "girderPanel",
+   "x": 370,
+   "y": 504,
+   "z": 107.57729166666667,
+   "stationM": 270,
+   "offsetM": 4
+  },
+  {
+   "entityId": "c90ff971-0c57-5e35-afc9-e94cdf8724ac",
+   "sourceEntityId": "girderPanel:G2:280",
+   "sourceKind": "girderPanel",
+   "x": 380,
+   "y": 504,
+   "z": 107.85125000000001,
+   "stationM": 280,
+   "offsetM": 4
+  },
+  {
+   "entityId": "bed0c764-f87a-5213-b493-e490971f0f66",
+   "sourceEntityId": "girderPanel:G2:290",
+   "sourceKind": "girderPanel",
+   "x": 390,
+   "y": 504,
+   "z": 108.12520833333333,
+   "stationM": 290,
+   "offsetM": 4
+  },
+  {
+   "entityId": "2573f7de-7ff4-51e5-9a95-465d949f863a",
+   "sourceEntityId": "girderPanel:G2:310",
+   "sourceKind": "girderPanel",
+   "x": 406.3425988020722,
+   "y": 509.1711126993416,
+   "z": 108.26722222222223,
+   "stationM": 310,
+   "offsetM": 4
+  },
+  {
+   "entityId": "45bd4f75-c841-5c40-81da-07acc35eda7f",
+   "sourceEntityId": "girderPanel:G2:320",
+   "sourceKind": "girderPanel",
+   "x": 412.6851976041443,
+   "y": 514.3422253986832,
+   "z": 108.13527777777779,
+   "stationM": 320,
+   "offsetM": 4
+  },
+  {
+   "entityId": "8bc1b870-44a4-5df9-9735-23de79f5e064",
+   "sourceEntityId": "girderPanel:G2:330",
+   "sourceKind": "girderPanel",
+   "x": 419.0277964062165,
+   "y": 519.5133380980247,
+   "z": 108.00333333333334,
+   "stationM": 330,
+   "offsetM": 4
+  },
+  {
+   "entityId": "644f138f-5d6b-50d6-8374-705a5d1bb226",
+   "sourceEntityId": "girderPanel:G2:340",
+   "sourceKind": "girderPanel",
+   "x": 425.37039520828864,
+   "y": 524.6844507973664,
+   "z": 107.87138888888889,
+   "stationM": 340,
+   "offsetM": 4
+  },
+  {
+   "entityId": "d595f322-77de-586b-8236-c86dfac68c73",
+   "sourceEntityId": "girderPanel:G2:350",
+   "sourceKind": "girderPanel",
+   "x": 431.71299401036083,
+   "y": 529.855563496708,
+   "z": 107.73944444444444,
+   "stationM": 350,
+   "offsetM": 4
+  },
+  {
+   "entityId": "8411e097-27eb-5817-95c2-715382511d4d",
+   "sourceEntityId": "girderPanel:G2:360",
+   "sourceKind": "girderPanel",
+   "x": 438.05559281243296,
+   "y": 535.0266761960496,
+   "z": 107.6075,
+   "stationM": 360,
+   "offsetM": 4
+  },
+  {
+   "entityId": "d329bfd1-accc-5666-9492-450c5f6201af",
+   "sourceEntityId": "girderPanel:G2:370",
+   "sourceKind": "girderPanel",
+   "x": 444.39819161450515,
+   "y": 540.1977888953912,
+   "z": 107.47555555555556,
+   "stationM": 370,
+   "offsetM": 4
+  },
+  {
+   "entityId": "9c64de82-4820-5ebd-b158-ba5f0930bb04",
+   "sourceEntityId": "girderPanel:G2:380",
+   "sourceKind": "girderPanel",
+   "x": 450.7407904165773,
+   "y": 545.3689015947327,
+   "z": 107.34361111111112,
+   "stationM": 380,
+   "offsetM": 4
+  },
+  {
+   "entityId": "95591a44-5a10-584f-8f0d-00976ea45ec1",
+   "sourceEntityId": "girderPanel:G2:390",
+   "sourceKind": "girderPanel",
+   "x": 457.0833892186495,
+   "y": 550.5400142940744,
+   "z": 107.21166666666667,
+   "stationM": 390,
+   "offsetM": 4
+  },
+  {
+   "entityId": "d5509d7c-d96c-53df-9755-1c4dae260309",
+   "sourceEntityId": "girderPanel:G2:400",
+   "sourceKind": "girderPanel",
+   "x": 463.4259880207216,
+   "y": 555.711126993416,
+   "z": 107.07972222222223,
+   "stationM": 400,
+   "offsetM": 4
+  },
+  {
+   "entityId": "2231a88c-7272-5eb9-9277-ef0e6c0acdf7",
+   "sourceEntityId": "girderPanel:G2:410",
+   "sourceKind": "girderPanel",
+   "x": 469.7685868227938,
+   "y": 560.8822396927576,
+   "z": 106.94777777777779,
+   "stationM": 410,
+   "offsetM": 4
+  },
+  {
+   "entityId": "a89e1fdc-5865-584b-a80c-99c99eaebdfe",
+   "sourceEntityId": "girderPanel:G2:420",
+   "sourceKind": "girderPanel",
+   "x": 476.1111856248659,
+   "y": 566.0533523920992,
+   "z": 106.81583333333333,
+   "stationM": 420,
+   "offsetM": 4
+  },
+  {
+   "entityId": "2d4d0bc4-400b-5848-b890-68a20b15dc57",
+   "sourceEntityId": "girderPanel:G2:430",
+   "sourceKind": "girderPanel",
+   "x": 482.4537844269381,
+   "y": 571.2244650914407,
+   "z": 106.68388888888889,
+   "stationM": 430,
+   "offsetM": 4
+  },
+  {
+   "entityId": "99d58793-780e-5eec-a651-89ac05f36a23",
+   "sourceEntityId": "girderPanel:G2:440",
+   "sourceKind": "girderPanel",
+   "x": 488.7963832290103,
+   "y": 576.3955777907823,
+   "z": 106.55194444444444,
+   "stationM": 440,
+   "offsetM": 4
+  }
+ ],
+ "members": [
+  {
+   "entityId": "534c9582-6d22-5de6-9725-f0f3b5da3e7e",
+   "sourceEntityId": "M-L-G1-S1",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "013868c7-d265-5a28-b6e5-aea2d88b0dd3",
+   "nodeJId": "8dbeba99-b811-5da8-8593-655b213a32ec",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "ad9fc2e9-904b-548e-925a-027b48893ab4",
+   "sourceEntityId": "M-L-G1-S2",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8dbeba99-b811-5da8-8593-655b213a32ec",
+   "nodeJId": "e87a2769-adbe-5662-a93e-96c36bafb20a",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "6db8b013-c97f-5558-8802-aba3ce6a346b",
+   "sourceEntityId": "M-L-G1-S3",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "e87a2769-adbe-5662-a93e-96c36bafb20a",
+   "nodeJId": "cf991bbf-10d0-5ebe-8322-7b9287c68eaf",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "e65acec5-3c6b-5a43-ac3c-900873090748",
+   "sourceEntityId": "M-L-G1-S4",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "cf991bbf-10d0-5ebe-8322-7b9287c68eaf",
+   "nodeJId": "8f762b65-1d6f-502c-8b41-6a378a4b1dee",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "b3ebca27-e5bb-51fa-a5a4-9065c26c5bc7",
+   "sourceEntityId": "M-L-G1-S5",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8f762b65-1d6f-502c-8b41-6a378a4b1dee",
+   "nodeJId": "e7ed48e3-70a7-57f7-ad89-4eb808e0e0dd",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "87fcd851-1794-5893-80c3-5c4f73da62ca",
+   "sourceEntityId": "M-L-G1-S6",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "e7ed48e3-70a7-57f7-ad89-4eb808e0e0dd",
+   "nodeJId": "cad57473-a0d9-52b6-bf8f-aa68a63e58b6",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "4a86b7d0-0a56-5772-be31-c0fcb4531b0e",
+   "sourceEntityId": "M-L-G1-S7",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "cad57473-a0d9-52b6-bf8f-aa68a63e58b6",
+   "nodeJId": "8af66610-9fae-5046-b524-2772a2771437",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "e684d262-1ba7-5037-a229-7dc9e2353893",
+   "sourceEntityId": "M-L-G1-S8",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8af66610-9fae-5046-b524-2772a2771437",
+   "nodeJId": "2db7fa26-e89c-5f49-b4e9-5924996c63af",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "b65412e4-1b47-5598-937f-caefdd5685e8",
+   "sourceEntityId": "M-L-G1-S9",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "2db7fa26-e89c-5f49-b4e9-5924996c63af",
+   "nodeJId": "5b29c8b4-a7f3-5c3d-be53-c44068e744b9",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "b7fbf21d-4e7b-5313-ba63-1491aabcf4aa",
+   "sourceEntityId": "M-L-G1-S10",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "5b29c8b4-a7f3-5c3d-be53-c44068e744b9",
+   "nodeJId": "8a656662-041a-5a72-a17c-e4f61cdf3553",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "5c832c20-5c8e-579d-be25-d1ad90587151",
+   "sourceEntityId": "M-L-G1-S11",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8a656662-041a-5a72-a17c-e4f61cdf3553",
+   "nodeJId": "45d88e99-5a5a-55da-8b3a-570e0ec6ffd7",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "035256f2-cca9-5a51-bb5b-c6c57cddb898",
+   "sourceEntityId": "M-L-G1-S12",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "45d88e99-5a5a-55da-8b3a-570e0ec6ffd7",
+   "nodeJId": "6a214641-330a-5766-a6ed-6621cca4f30a",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "bd9963c7-fc69-5559-8f49-9b7911964bb2",
+   "sourceEntityId": "M-L-G1-S13",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "6a214641-330a-5766-a6ed-6621cca4f30a",
+   "nodeJId": "560d2d7b-1e2f-5d88-a89b-18fdec4c0a2d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "8af58d55-d1d3-5110-b310-2eafb158b849",
+   "sourceEntityId": "M-L-G1-S14",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "560d2d7b-1e2f-5d88-a89b-18fdec4c0a2d",
+   "nodeJId": "703ad71f-18b1-57a4-bff2-892715ebb7c6",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "9a166640-b5d2-52fc-b2b0-4f174930983e",
+   "sourceEntityId": "M-L-G1-S15",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "703ad71f-18b1-57a4-bff2-892715ebb7c6",
+   "nodeJId": "f5807284-4ba5-570c-89fb-0fc75d98a48d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "1ebcae15-ba99-5712-bca2-295a6abbd2a6",
+   "sourceEntityId": "M-L-G1-S16",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "f5807284-4ba5-570c-89fb-0fc75d98a48d",
+   "nodeJId": "7296b5d8-ac6f-527d-bcd1-f89444b67651",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "d3976b2f-eefe-5e9b-bc04-08de07d4c34b",
+   "sourceEntityId": "M-L-G1-S17",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "7296b5d8-ac6f-527d-bcd1-f89444b67651",
+   "nodeJId": "1708f554-32f2-536f-8c12-71b85ce479ae",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "0f889f74-69ee-5034-9409-af731f4280f5",
+   "sourceEntityId": "M-L-G1-S18",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "1708f554-32f2-536f-8c12-71b85ce479ae",
+   "nodeJId": "d988724d-6dd2-5cb6-ac50-7a33f05ff592",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "7f501719-fa4f-555b-bf0c-609e9cf09f9e",
+   "sourceEntityId": "M-L-G1-S19",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "d988724d-6dd2-5cb6-ac50-7a33f05ff592",
+   "nodeJId": "fda21377-56e9-5581-abfc-ed5cc339aa16",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "4971f300-ef00-5d2b-a838-939c312efa82",
+   "sourceEntityId": "M-L-G1-S20",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "fda21377-56e9-5581-abfc-ed5cc339aa16",
+   "nodeJId": "8a2298f6-4bb0-569b-b483-ebfceebf5e8d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "d7ee8865-b3d5-525c-814d-3d550ccf458f",
+   "sourceEntityId": "M-L-G1-S21",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8a2298f6-4bb0-569b-b483-ebfceebf5e8d",
+   "nodeJId": "4029b659-6a04-570a-8cee-ec8fb2d199e0",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490884,
+    "y": 0.7651817511456539,
+    "z": 8.673617379884035e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619516,
+     "y": 0.6437448244202676,
+     "z": -0.014693443038709593
+    },
+    "y": {
+     "x": -0.6438143270490884,
+     "y": 0.7651817511456539,
+     "z": 8.673617379884035e-19
+    },
+    "z": {
+     "x": 0.011243154474718726,
+     "y": 0.00945984914200093,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "5a8bc057-27a7-5aa4-a6de-865f99339bf5",
+   "sourceEntityId": "M-L-G1-S22",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "4029b659-6a04-570a-8cee-ec8fb2d199e0",
+   "nodeJId": "00e18dcb-ed9c-56a8-b6bb-eff77336f47e",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490853,
+    "y": 0.7651817511456566,
+    "z": 8.673617379884037e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619542,
+     "y": 0.6437448244202644,
+     "z": -0.01469344303870952
+    },
+    "y": {
+     "x": -0.6438143270490853,
+     "y": 0.7651817511456566,
+     "z": 8.673617379884037e-19
+    },
+    "z": {
+     "x": 0.011243154474718709,
+     "y": 0.009459849142000836,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "7a8bc993-2d90-5c5e-ac81-901d0e5a432f",
+   "sourceEntityId": "M-L-G1-S23",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "00e18dcb-ed9c-56a8-b6bb-eff77336f47e",
+   "nodeJId": "ae43ffe4-87cd-5fc7-b421-370166bc4e1a",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490847,
+    "y": 0.765181751145657,
+    "z": -8.673617379884035e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619548,
+     "y": 0.6437448244202639,
+     "z": -0.014693443038709654
+    },
+    "y": {
+     "x": -0.6438143270490847,
+     "y": 0.765181751145657,
+     "z": -8.673617379884035e-19
+    },
+    "z": {
+     "x": 0.011243154474718818,
+     "y": 0.009459849142000916,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "a6dd96ec-cff9-58c6-9602-c1844bd0f7ce",
+   "sourceEntityId": "M-L-G1-S24",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "ae43ffe4-87cd-5fc7-b421-370166bc4e1a",
+   "nodeJId": "ef6f907c-90bd-54a8-b993-07799d74a756",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.643814327049089,
+    "y": 0.7651817511456535,
+    "z": 8.673617379884037e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619511,
+     "y": 0.6437448244202681,
+     "z": -0.014693443038711045
+    },
+    "y": {
+     "x": -0.643814327049089,
+     "y": 0.7651817511456535,
+     "z": 8.673617379884037e-19
+    },
+    "z": {
+     "x": 0.01124315447471983,
+     "y": 0.009459849142001873,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "5fc9d0e3-b899-5b07-9561-b8cc676367b8",
+   "sourceEntityId": "M-L-G1-S25",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "ef6f907c-90bd-54a8-b993-07799d74a756",
+   "nodeJId": "6fd7e2f5-28c7-5a64-85bf-3e87c4c95f91",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490847,
+    "y": 0.765181751145657,
+    "z": -8.673617379884035e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619548,
+     "y": 0.6437448244202639,
+     "z": -0.014693443038709654
+    },
+    "y": {
+     "x": -0.6438143270490847,
+     "y": 0.765181751145657,
+     "z": -8.673617379884035e-19
+    },
+    "z": {
+     "x": 0.011243154474718818,
+     "y": 0.009459849142000916,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "5c698f2c-1c76-54b2-a44b-865df8088667",
+   "sourceEntityId": "M-L-G1-S26",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "6fd7e2f5-28c7-5a64-85bf-3e87c4c95f91",
+   "nodeJId": "75cd443d-2960-54f8-9ba3-5159b0bf7fb3",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490921,
+    "y": 0.7651817511456508,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619484,
+     "y": 0.6437448244202713,
+     "z": -0.014693443038709533
+    },
+    "y": {
+     "x": -0.6438143270490921,
+     "y": 0.7651817511456508,
+     "z": 0
+    },
+    "z": {
+     "x": 0.011243154474718632,
+     "y": 0.009459849142000945,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "8579bae8-42f2-50da-9cf3-829fa34796ed",
+   "sourceEntityId": "M-L-G1-S27",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "75cd443d-2960-54f8-9ba3-5159b0bf7fb3",
+   "nodeJId": "e9429f1b-d885-52d9-bbf4-4de712d50d4a",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490816,
+    "y": 0.7651817511456597,
+    "z": 1.7347234759768075e-18
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619573,
+     "y": 0.6437448244202607,
+     "z": -0.014693443038709581
+    },
+    "y": {
+     "x": -0.6438143270490816,
+     "y": 0.7651817511456597,
+     "z": 1.7347234759768075e-18
+    },
+    "z": {
+     "x": 0.0112431544747188,
+     "y": 0.00945984914200082,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "6b03413e-3713-5710-817c-37ed36d4d8f7",
+   "sourceEntityId": "M-L-G1-S28",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "e9429f1b-d885-52d9-bbf4-4de712d50d4a",
+   "nodeJId": "07597b9d-2959-56f4-a4c5-7d7d0c324946",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490921,
+    "y": 0.7651817511456508,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619484,
+     "y": 0.6437448244202713,
+     "z": -0.014693443038709533
+    },
+    "y": {
+     "x": -0.6438143270490921,
+     "y": 0.7651817511456508,
+     "z": 0
+    },
+    "z": {
+     "x": 0.011243154474718632,
+     "y": 0.009459849142000945,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "644431ad-5a32-5349-93f3-ac9439bd0014",
+   "sourceEntityId": "M-L-G1-S29",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "07597b9d-2959-56f4-a4c5-7d7d0c324946",
+   "nodeJId": "7d0cb490-57f0-5851-8e81-ad010caa75d3",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490847,
+    "y": 0.765181751145657,
+    "z": -8.673617379884035e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619548,
+     "y": 0.6437448244202639,
+     "z": -0.014693443038709654
+    },
+    "y": {
+     "x": -0.6438143270490847,
+     "y": 0.765181751145657,
+     "z": -8.673617379884035e-19
+    },
+    "z": {
+     "x": 0.011243154474718818,
+     "y": 0.009459849142000916,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "b1dfb5c8-c237-5a5a-80b3-d0fcc4c18691",
+   "sourceEntityId": "M-L-G1-S30",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "7d0cb490-57f0-5851-8e81-ad010caa75d3",
+   "nodeJId": "eeada9c8-5dd6-5f29-a4be-546a0c0a34c9",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.643814327049089,
+    "y": 0.7651817511456535,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619511,
+     "y": 0.6437448244202681,
+     "z": -0.014693443038709463
+    },
+    "y": {
+     "x": -0.643814327049089,
+     "y": 0.7651817511456535,
+     "z": 0
+    },
+    "z": {
+     "x": 0.011243154474718619,
+     "y": 0.009459849142000855,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "2609f6ba-d3c9-5cd6-8fe0-ea1c6666fd22",
+   "sourceEntityId": "M-L-G1-S31",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "eeada9c8-5dd6-5f29-a4be-546a0c0a34c9",
+   "nodeJId": "4f2a7845-f71f-55c1-80a7-7c238d224c21",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490847,
+    "y": 0.765181751145657,
+    "z": -8.673617379884035e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619548,
+     "y": 0.6437448244202639,
+     "z": -0.014693443038709654
+    },
+    "y": {
+     "x": -0.6438143270490847,
+     "y": 0.765181751145657,
+     "z": -8.673617379884035e-19
+    },
+    "z": {
+     "x": 0.011243154474718818,
+     "y": 0.009459849142000916,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "8d06fe6c-3e0b-5c64-babf-8e9483a53303",
+   "sourceEntityId": "M-L-G1-S32",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "4f2a7845-f71f-55c1-80a7-7c238d224c21",
+   "nodeJId": "5e35edaf-d4c7-58ef-934e-8ba8dbe09996",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.643814327049089,
+    "y": 0.7651817511456535,
+    "z": 8.673617379884037e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619511,
+     "y": 0.6437448244202681,
+     "z": -0.014693443038711045
+    },
+    "y": {
+     "x": -0.643814327049089,
+     "y": 0.7651817511456535,
+     "z": 8.673617379884037e-19
+    },
+    "z": {
+     "x": 0.01124315447471983,
+     "y": 0.009459849142001873,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "79d42500-c7b5-5379-8b7c-dcfc84a8025f",
+   "sourceEntityId": "M-L-G1-S33",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "5e35edaf-d4c7-58ef-934e-8ba8dbe09996",
+   "nodeJId": "5b9a2c14-3220-5697-8736-fabb3965340d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490847,
+    "y": 0.765181751145657,
+    "z": -8.673617379884035e-19
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619548,
+     "y": 0.6437448244202639,
+     "z": -0.014693443038709654
+    },
+    "y": {
+     "x": -0.6438143270490847,
+     "y": 0.765181751145657,
+     "z": -8.673617379884035e-19
+    },
+    "z": {
+     "x": 0.011243154474718818,
+     "y": 0.009459849142000916,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "1d0a2dfd-2c83-5637-959c-7b65cd3a5339",
+   "sourceEntityId": "M-L-G1-S34",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "5b9a2c14-3220-5697-8736-fabb3965340d",
+   "nodeJId": "b19c6f0f-0b60-5690-a027-057cccc4666c",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490816,
+    "y": 0.7651817511456597,
+    "z": 1.7347234759768075e-18
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619573,
+     "y": 0.6437448244202607,
+     "z": -0.014693443038709581
+    },
+    "y": {
+     "x": -0.6438143270490816,
+     "y": 0.7651817511456597,
+     "z": 1.7347234759768075e-18
+    },
+    "z": {
+     "x": 0.0112431544747188,
+     "y": 0.00945984914200082,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "d7b6aa4a-d803-54ee-a862-fd7617562784",
+   "sourceEntityId": "M-L-G1-S35",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "b19c6f0f-0b60-5690-a027-057cccc4666c",
+   "nodeJId": "682689b8-25dd-5ddc-984b-b976a0045dfb",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6438143270490921,
+    "y": 0.7651817511456508,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7650991463619484,
+     "y": 0.6437448244202713,
+     "z": -0.014693443038709533
+    },
+    "y": {
+     "x": -0.6438143270490921,
+     "y": 0.7651817511456508,
+     "z": 0
+    },
+    "z": {
+     "x": 0.011243154474718632,
+     "y": 0.009459849142000945,
+     "z": 0.9998920455387512
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "6e2b3562-5b82-563b-84e1-590af1f9f9c0",
+   "sourceEntityId": "M-L-G2-S1",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "17323aa9-8164-533f-b311-263e3766a216",
+   "nodeJId": "8986ea0d-5282-5814-be43-c489fbf45166",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "9e34398f-c96d-580e-95ea-38a37ac47c58",
+   "sourceEntityId": "M-L-G2-S2",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8986ea0d-5282-5814-be43-c489fbf45166",
+   "nodeJId": "add75e26-a1b8-5752-b5aa-098150f98358",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "a3fe6cbf-73bf-5e5e-8df8-de2a9ac95f29",
+   "sourceEntityId": "M-L-G2-S3",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "add75e26-a1b8-5752-b5aa-098150f98358",
+   "nodeJId": "08374f89-f3e3-5e8a-a519-399ab1e50040",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "f9728c5f-8215-58c1-a267-45d260b4f55b",
+   "sourceEntityId": "M-L-G2-S4",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "08374f89-f3e3-5e8a-a519-399ab1e50040",
+   "nodeJId": "f294597f-7e69-598c-bd2f-1d1bd2f43e8d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "1af0f119-3ec8-5c4d-a40a-9819ff993c32",
+   "sourceEntityId": "M-L-G2-S5",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "f294597f-7e69-598c-bd2f-1d1bd2f43e8d",
+   "nodeJId": "08fbc71f-9685-5695-b4ea-cb8f7c9eea50",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "03f99119-0de4-538b-b035-2a52a1b986d6",
+   "sourceEntityId": "M-L-G2-S6",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "08fbc71f-9685-5695-b4ea-cb8f7c9eea50",
+   "nodeJId": "e09650b2-41a4-51ff-8219-641f5a635d7d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "8d01700a-7494-5649-81b6-0c8e57b29159",
+   "sourceEntityId": "M-L-G2-S7",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "e09650b2-41a4-51ff-8219-641f5a635d7d",
+   "nodeJId": "076e870d-25fe-5511-bfa8-05ef9f8740b9",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "1ed2bbbc-4a27-5c33-8244-bd52f4053857",
+   "sourceEntityId": "M-L-G2-S8",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "076e870d-25fe-5511-bfa8-05ef9f8740b9",
+   "nodeJId": "16b3dde4-8360-56e9-a12e-4a886bdeed2f",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "3b26479d-6feb-5291-aa80-3b99c933472d",
+   "sourceEntityId": "M-L-G2-S9",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "16b3dde4-8360-56e9-a12e-4a886bdeed2f",
+   "nodeJId": "e498fb45-4641-594d-8b82-d0ae9a277850",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "6f3ed5e6-b491-59c8-88a8-984a30c01e97",
+   "sourceEntityId": "M-L-G2-S10",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "e498fb45-4641-594d-8b82-d0ae9a277850",
+   "nodeJId": "d28c9564-bb40-5667-8668-a8d3974d75bd",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "a49c9b93-a039-54b7-ae31-f7ffd5e5ae9b",
+   "sourceEntityId": "M-L-G2-S11",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "d28c9564-bb40-5667-8668-a8d3974d75bd",
+   "nodeJId": "30151325-c94a-5b5a-a765-d990011a85c1",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "e51a5393-fa19-5420-ae98-2951500b1693",
+   "sourceEntityId": "M-L-G2-S12",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "30151325-c94a-5b5a-a765-d990011a85c1",
+   "nodeJId": "f173bafe-b4d0-5576-b53b-1cbee0057e35",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "b6a6b0b7-8f1d-5203-96fe-07cbf88592d2",
+   "sourceEntityId": "M-L-G2-S13",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "f173bafe-b4d0-5576-b53b-1cbee0057e35",
+   "nodeJId": "7ab5f089-f464-5ae8-b0f4-2d8183d0b2f1",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "e2df3266-b3ac-5399-ad54-767cbface4fb",
+   "sourceEntityId": "M-L-G2-S14",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "7ab5f089-f464-5ae8-b0f4-2d8183d0b2f1",
+   "nodeJId": "f26121fb-9a96-57ac-aed6-964c0949b844",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "0d4b9747-8329-54dc-8ef0-56386666c628",
+   "sourceEntityId": "M-L-G2-S15",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "f26121fb-9a96-57ac-aed6-964c0949b844",
+   "nodeJId": "8190319c-afd9-555b-a909-92b23d8adaa7",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "0af967f5-9711-5430-ab97-46fb4c78f585",
+   "sourceEntityId": "M-L-G2-S16",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8190319c-afd9-555b-a909-92b23d8adaa7",
+   "nodeJId": "ca265b06-f2aa-562b-bbc4-992ce88b841b",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "049bd1f5-15a9-5291-8a00-cd680d23c60d",
+   "sourceEntityId": "M-L-G2-S17",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "ca265b06-f2aa-562b-bbc4-992ce88b841b",
+   "nodeJId": "8e297256-ba2f-564d-a500-b8fee84ac742",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "fdfddeaf-46a4-5bbe-9d1b-29fb06b5a2ea",
+   "sourceEntityId": "M-L-G2-S18",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8e297256-ba2f-564d-a500-b8fee84ac742",
+   "nodeJId": "c90ff971-0c57-5e35-afc9-e94cdf8724ac",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "0f299399-0f86-52aa-a3c5-10c448cc3277",
+   "sourceEntityId": "M-L-G2-S19",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "c90ff971-0c57-5e35-afc9-e94cdf8724ac",
+   "nodeJId": "bed0c764-f87a-5213-b493-e490971f0f66",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396256834
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.02738555839625683,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "5a07f0f0-e2c9-5530-a848-609895866768",
+   "sourceEntityId": "M-L-G2-S20",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "bed0c764-f87a-5213-b493-e490971f0f66",
+   "nodeJId": "a84e12c6-472c-5d34-8085-d35f4762ba90",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": 0,
+    "y": 1,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.9996249452626345,
+     "y": 0,
+     "z": 0.027385558396258253
+    },
+    "y": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    },
+    "z": {
+     "x": -0.027385558396258246,
+     "y": 0,
+     "z": 0.9996249452626345
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "f80ba404-299a-573e-a15e-d6ba78a94b26",
+   "sourceEntityId": "M-L-G2-S21",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "a84e12c6-472c-5d34-8085-d35f4762ba90",
+   "nodeJId": "2573f7de-7ff4-51e5-9a95-465d949f863a",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647052,
+    "y": 0.775051291124457,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090633,
+     "y": 0.6318162088342479,
+     "z": -0.01612121868398707
+    },
+    "y": {
+     "x": -0.6318983273647052,
+     "y": 0.775051291124457,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523902,
+     "y": 0.010186971121492064,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "85d62e3a-0435-5e2a-a87e-b39db0a8e269",
+   "sourceEntityId": "M-L-G2-S22",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "2573f7de-7ff4-51e5-9a95-465d949f863a",
+   "nodeJId": "45bd4f75-c841-5c40-81da-07acc35eda7f",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647086,
+    "y": 0.7750512911244543,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090606,
+     "y": 0.6318162088342514,
+     "z": -0.016121218683987158
+    },
+    "y": {
+     "x": -0.6318983273647086,
+     "y": 0.7750512911244543,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523925,
+     "y": 0.010186971121492175,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "2a2806a0-060d-5fe7-bf28-dc4961c64ed1",
+   "sourceEntityId": "M-L-G2-S23",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "45bd4f75-c841-5c40-81da-07acc35eda7f",
+   "nodeJId": "8bc1b870-44a4-5df9-9735-23de79f5e064",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273646969,
+    "y": 0.7750512911244639,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.77495056910907,
+     "y": 0.6318162088342395,
+     "z": -0.01612121868398721
+    },
+    "y": {
+     "x": -0.6318983273646969,
+     "y": 0.7750512911244639,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355524117,
+     "y": 0.010186971121492016,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "3ffe5fe1-dc7f-5613-91dd-cf21679bccff",
+   "sourceEntityId": "M-L-G2-S24",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8bc1b870-44a4-5df9-9735-23de79f5e064",
+   "nodeJId": "644f138f-5d6b-50d6-8374-705a5d1bb226",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647086,
+    "y": 0.7750512911244543,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090603,
+     "y": 0.6318162088342513,
+     "z": -0.01612121868398889
+    },
+    "y": {
+     "x": -0.6318983273647086,
+     "y": 0.7750512911244543,
+     "z": 0
+    },
+    "z": {
+     "x": 0.01249477135552526,
+     "y": 0.010186971121493265,
+     "z": 0.9998700447098826
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "7a01e28d-e001-5be0-b913-e0a050dc17f6",
+   "sourceEntityId": "M-L-G2-S25",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "644f138f-5d6b-50d6-8374-705a5d1bb226",
+   "nodeJId": "d595f322-77de-586b-8236-c86dfac68c73",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647052,
+    "y": 0.775051291124457,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090633,
+     "y": 0.6318162088342479,
+     "z": -0.01612121868398707
+    },
+    "y": {
+     "x": -0.6318983273647052,
+     "y": 0.775051291124457,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523902,
+     "y": 0.010186971121492064,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "4b4b5ef4-1bda-59e7-97db-ac85eec01336",
+   "sourceEntityId": "M-L-G2-S26",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "d595f322-77de-586b-8236-c86dfac68c73",
+   "nodeJId": "8411e097-27eb-5817-95c2-715382511d4d",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647086,
+    "y": 0.7750512911244543,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090606,
+     "y": 0.6318162088342514,
+     "z": -0.016121218683987158
+    },
+    "y": {
+     "x": -0.6318983273647086,
+     "y": 0.7750512911244543,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523925,
+     "y": 0.010186971121492175,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "c70f59f8-38d6-5525-9a9e-71146df7d7d2",
+   "sourceEntityId": "M-L-G2-S27",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "8411e097-27eb-5817-95c2-715382511d4d",
+   "nodeJId": "d329bfd1-accc-5666-9492-450c5f6201af",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647052,
+    "y": 0.775051291124457,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090633,
+     "y": 0.6318162088342479,
+     "z": -0.01612121868398707
+    },
+    "y": {
+     "x": -0.6318983273647052,
+     "y": 0.775051291124457,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523902,
+     "y": 0.010186971121492064,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "36740e11-ce09-5dfb-ab11-0bf724b89a1c",
+   "sourceEntityId": "M-L-G2-S28",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "d329bfd1-accc-5666-9492-450c5f6201af",
+   "nodeJId": "9c64de82-4820-5ebd-b158-ba5f0930bb04",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647003,
+    "y": 0.775051291124461,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090672,
+     "y": 0.6318162088342429,
+     "z": -0.016121218683987297
+    },
+    "y": {
+     "x": -0.6318983273647003,
+     "y": 0.775051291124461,
+     "z": 0
+    },
+    "z": {
+     "x": 0.01249477135552414,
+     "y": 0.010186971121492127,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "c64d3bc5-fb00-5ced-a3cf-212f455a1643",
+   "sourceEntityId": "M-L-G2-S29",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "9c64de82-4820-5ebd-b158-ba5f0930bb04",
+   "nodeJId": "95591a44-5a10-584f-8f0d-00976ea45ec1",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647052,
+    "y": 0.775051291124457,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090633,
+     "y": 0.6318162088342479,
+     "z": -0.01612121868398707
+    },
+    "y": {
+     "x": -0.6318983273647052,
+     "y": 0.775051291124457,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523902,
+     "y": 0.010186971121492064,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "e6593d3a-043f-56ef-a938-75b4c0357d03",
+   "sourceEntityId": "M-L-G2-S30",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "95591a44-5a10-584f-8f0d-00976ea45ec1",
+   "nodeJId": "d5509d7c-d96c-53df-9755-1c4dae260309",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647086,
+    "y": 0.7750512911244543,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090606,
+     "y": 0.6318162088342514,
+     "z": -0.016121218683987158
+    },
+    "y": {
+     "x": -0.6318983273647086,
+     "y": 0.7750512911244543,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523925,
+     "y": 0.010186971121492175,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "9c7f990b-e82e-5ea3-b183-6ef6e5afd58d",
+   "sourceEntityId": "M-L-G2-S31",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "d5509d7c-d96c-53df-9755-1c4dae260309",
+   "nodeJId": "2231a88c-7272-5eb9-9277-ef0e6c0acdf7",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647052,
+    "y": 0.775051291124457,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090633,
+     "y": 0.6318162088342479,
+     "z": -0.01612121868398707
+    },
+    "y": {
+     "x": -0.6318983273647052,
+     "y": 0.775051291124457,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523902,
+     "y": 0.010186971121492064,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "78817cb6-16c3-5546-b718-2ed11351cde7",
+   "sourceEntityId": "M-L-G2-S32",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "2231a88c-7272-5eb9-9277-ef0e6c0acdf7",
+   "nodeJId": "a89e1fdc-5865-584b-a80c-99c99eaebdfe",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647086,
+    "y": 0.7750512911244543,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090603,
+     "y": 0.6318162088342513,
+     "z": -0.01612121868398889
+    },
+    "y": {
+     "x": -0.6318983273647086,
+     "y": 0.7750512911244543,
+     "z": 0
+    },
+    "z": {
+     "x": 0.01249477135552526,
+     "y": 0.010186971121493265,
+     "z": 0.9998700447098826
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "39e05c3c-6bc0-5e77-aee0-08beb1c83d0a",
+   "sourceEntityId": "M-L-G2-S33",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "a89e1fdc-5865-584b-a80c-99c99eaebdfe",
+   "nodeJId": "2d4d0bc4-400b-5848-b890-68a20b15dc57",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273646969,
+    "y": 0.7750512911244639,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.77495056910907,
+     "y": 0.6318162088342395,
+     "z": -0.01612121868398721
+    },
+    "y": {
+     "x": -0.6318983273646969,
+     "y": 0.7750512911244639,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355524117,
+     "y": 0.010186971121492016,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "cf1087a7-05d3-556a-b374-250c61155e6f",
+   "sourceEntityId": "M-L-G2-S34",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "2d4d0bc4-400b-5848-b890-68a20b15dc57",
+   "nodeJId": "99d58793-780e-5eec-a651-89ac05f36a23",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647052,
+    "y": 0.775051291124457,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090633,
+     "y": 0.6318162088342479,
+     "z": -0.01612121868398707
+    },
+    "y": {
+     "x": -0.6318983273647052,
+     "y": 0.775051291124457,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523902,
+     "y": 0.010186971121492064,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  },
+  {
+   "entityId": "cabad1d7-9a63-57bf-8f36-72166868234b",
+   "sourceEntityId": "M-L-G2-S35",
+   "sourceKind": "mainGirder",
+   "elementType": "frame",
+   "nodeIId": "99d58793-780e-5eec-a651-89ac05f36a23",
+   "nodeJId": "32071005-893b-5424-8547-479df7b6765a",
+   "materialId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sectionId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "memberKind": "mainGirder",
+   "orientationVector": {
+    "x": -0.6318983273647086,
+    "y": 0.7750512911244543,
+    "z": 0
+   },
+   "localAxis": {
+    "x": {
+     "x": 0.7749505691090606,
+     "y": 0.6318162088342514,
+     "z": -0.016121218683987158
+    },
+    "y": {
+     "x": -0.6318983273647086,
+     "y": 0.7750512911244543,
+     "z": 0
+    },
+    "z": {
+     "x": 0.012494771355523925,
+     "y": 0.010186971121492175,
+     "z": 0.9998700447098828
+    }
+   },
+   "release": null,
+   "eccentricity": null
+  }
+ ],
+ "materials": [
+  {
+   "entityId": "8a9f8c4c-6157-564f-960f-78686cb8074c",
+   "sourceEntityId": "MAT-STEEL",
+   "sourceKind": "structuralSteel",
+   "name": "steel (declared materialConfiguration)",
+   "elasticModulus": 205000000,
+   "shearModulus": 80000000,
+   "poissonRatio": 0.3,
+   "density": 78.5,
+   "source": "CONFIRMED"
+  }
+ ],
+ "sections": [
+  {
+   "entityId": "ad3724ff-fe3c-59a4-b836-a6de22760350",
+   "sourceEntityId": "SECTION-GIRDER",
+   "sourceKind": "girderSectionModel",
+   "name": "main girder (from girderSectionModel)",
+   "area": 0.12,
+   "iy": 0.021185640000000002,
+   "iz": 0.0026482050000000003,
+   "j": 0.010592820000000001,
+   "depthM": 1.5,
+   "webThicknessM": 0.02,
+   "topFlangeWidthM": 0.5,
+   "topFlangeThicknessM": 0.03,
+   "bottomFlangeWidthM": 0.5,
+   "bottomFlangeThicknessM": 0.03,
+   "derivation": "DECLARED_INTENT",
+   "unitWeightPerM": 9.24
+  }
+ ],
+ "supports": [
+  {
+   "entityId": "a38a78d2-aaf5-5e2c-9987-915c06cb25d9",
+   "sourceEntityId": "A1-G1",
+   "sourceKind": "bearingSeat",
+   "nodeId": "013868c7-d265-5a28-b6e5-aea2d88b0dd3",
+   "seatId": "BRG-A1-G1",
+   "constraint": {
+    "ux": true,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": [],
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "source": "FROM_BEARING"
+  },
+  {
+   "entityId": "04426a91-1881-5722-bc8b-7a6a17477e45",
+   "sourceEntityId": "A1-G2",
+   "sourceKind": "bearingSeat",
+   "nodeId": "17323aa9-8164-533f-b311-263e3766a216",
+   "seatId": "BRG-A1-G2",
+   "constraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": [],
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "source": "FROM_BEARING_DEFAULT"
+  },
+  {
+   "entityId": "18c0b291-c78d-53ef-9950-23986f32161e",
+   "sourceEntityId": "P1-G1",
+   "sourceKind": "bearingSeat",
+   "nodeId": "8a2298f6-4bb0-569b-b483-ebfceebf5e8d",
+   "seatId": "BRG-P1-G1",
+   "constraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": [],
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "source": "FROM_BEARING_DEFAULT"
+  },
+  {
+   "entityId": "7078f0b0-3dd3-50e4-85af-aab10214bef3",
+   "sourceEntityId": "P1-G2",
+   "sourceKind": "bearingSeat",
+   "nodeId": "a84e12c6-472c-5d34-8085-d35f4762ba90",
+   "seatId": "BRG-P1-G2",
+   "constraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": [],
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "source": "FROM_BEARING_DEFAULT"
+  },
+  {
+   "entityId": "249be9b2-9e42-5f55-9e52-2a3e6f819a34",
+   "sourceEntityId": "A2-G1",
+   "sourceKind": "bearingSeat",
+   "nodeId": "682689b8-25dd-5ddc-984b-b976a0045dfb",
+   "seatId": "BRG-A2-G1",
+   "constraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": [],
+   "localFrame": {
+    "tangent": {
+     "x": -0.14299750541747078,
+     "y": 0.9897230488598214,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": -0.9897230488598214,
+     "y": -0.14299750541747078,
+     "z": 0
+    }
+   },
+   "source": "FROM_BEARING_DEFAULT"
+  },
+  {
+   "entityId": "48946c97-692f-57e3-9d50-08a455ca4d42",
+   "sourceEntityId": "A2-G2",
+   "sourceKind": "bearingSeat",
+   "nodeId": "32071005-893b-5424-8547-479df7b6765a",
+   "seatId": "BRG-A2-G2",
+   "constraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": [],
+   "localFrame": {
+    "tangent": {
+     "x": -0.14299750541747078,
+     "y": 0.9897230488598214,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": -0.9897230488598214,
+     "y": -0.14299750541747078,
+     "z": 0
+    }
+   },
+   "source": "FROM_BEARING_DEFAULT"
+  }
+ ],
+ "releases": [],
+ "rigidLinks": [],
+ "mpc": [],
+ "bearings": [
+  {
+   "entityId": "68fd7eb0-bf79-518a-bdc5-d33be4fe0331",
+   "sourceEntityId": "BRG-A1-G1",
+   "sourceKind": "bearingSeat",
+   "seatId": "BRG-A1-G1",
+   "supportId": "A1",
+   "girderId": "G1",
+   "bearingType": "fixed",
+   "fixedOrMovable": "FIXED",
+   "position": {
+    "x": 200,
+    "y": 496,
+    "z": 103.08
+   },
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "dofConstraint": {
+    "ux": true,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": []
+  },
+  {
+   "entityId": "68db3f8a-0343-5c6f-8668-9bef353fbcd0",
+   "sourceEntityId": "BRG-A1-G2",
+   "sourceKind": "bearingSeat",
+   "seatId": "BRG-A1-G2",
+   "supportId": "A1",
+   "girderId": "G2",
+   "bearingType": null,
+   "fixedOrMovable": "UNDECIDED",
+   "position": {
+    "x": 200,
+    "y": 504,
+    "z": 102.92
+   },
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "dofConstraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": []
+  },
+  {
+   "entityId": "bc6b5586-5568-542f-b1a4-6428ab350bf6",
+   "sourceEntityId": "BRG-P1-G1",
+   "sourceKind": "bearingSeat",
+   "seatId": "BRG-P1-G1",
+   "supportId": "P1",
+   "girderId": "G1",
+   "bearingType": null,
+   "fixedOrMovable": "UNDECIDED",
+   "position": {
+    "x": 400,
+    "y": 496,
+    "z": 108.55916666666667
+   },
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "dofConstraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": []
+  },
+  {
+   "entityId": "ebd0864f-3d1f-50cc-ac04-834acf3aa9da",
+   "sourceEntityId": "BRG-P1-G2",
+   "sourceKind": "bearingSeat",
+   "seatId": "BRG-P1-G2",
+   "supportId": "P1",
+   "girderId": "G2",
+   "bearingType": null,
+   "fixedOrMovable": "UNDECIDED",
+   "position": {
+    "x": 400,
+    "y": 504,
+    "z": 108.39916666666667
+   },
+   "localFrame": {
+    "tangent": {
+     "x": 1,
+     "y": 0,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": 0,
+     "y": 1,
+     "z": 0
+    }
+   },
+   "dofConstraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": []
+  },
+  {
+   "entityId": "4cb3d0a7-1553-5064-b529-681ec84d65be",
+   "sourceEntityId": "BRG-A2-G1",
+   "sourceKind": "bearingSeat",
+   "seatId": "BRG-A2-G1",
+   "supportId": "A2",
+   "girderId": "G1",
+   "bearingType": null,
+   "fixedOrMovable": "UNDECIDED",
+   "position": {
+    "x": 503.05676642196096,
+    "y": 582.7106705334637,
+    "z": 106.58
+   },
+   "localFrame": {
+    "tangent": {
+     "x": -0.14299750541747078,
+     "y": 0.9897230488598214,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": -0.9897230488598214,
+     "y": -0.14299750541747078,
+     "z": 0
+    }
+   },
+   "dofConstraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": []
+  },
+  {
+   "entityId": "2c60bebe-341b-534b-9460-b331e647fea4",
+   "sourceEntityId": "BRG-A2-G2",
+   "sourceKind": "bearingSeat",
+   "seatId": "BRG-A2-G2",
+   "supportId": "A2",
+   "girderId": "G2",
+   "bearingType": null,
+   "fixedOrMovable": "UNDECIDED",
+   "position": {
+    "x": 495.13898203108243,
+    "y": 581.566690490124,
+    "z": 106.42
+   },
+   "localFrame": {
+    "tangent": {
+     "x": -0.14299750541747078,
+     "y": 0.9897230488598214,
+     "z": 0
+    },
+    "transverse": {
+     "x": 0,
+     "y": 0,
+     "z": 1
+    },
+    "vertical": {
+     "x": -0.9897230488598214,
+     "y": -0.14299750541747078,
+     "z": 0
+    }
+   },
+   "dofConstraint": {
+    "ux": false,
+    "uy": true,
+    "uz": true,
+    "rx": false,
+    "ry": false,
+    "rz": false
+   },
+   "constraintApproximation": null,
+   "springIds": []
+  }
+ ],
+ "springs": [],
+ "foundationSprings": [],
+ "loadCases": [
+  {
+   "caseId": "LC1",
+   "kind": "dead",
+   "state": "DERIVED",
+   "source": "superstructureLoadModel (DL) total=27905.5kN bridgeLength=350.0m",
+   "totalKN": 27905.5
+  }
+ ],
+ "nodalLoads": [
+  {
+   "id": "nodal-load:013868c7-d265-5a28-b6e5-aea2d88b0dd3",
+   "loadCaseId": "LC1",
+   "nodeId": "013868c7-d265-5a28-b6e5-aea2d88b0dd3",
+   "fx": 0,
+   "fy": 0,
+   "fz": -199.325,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8dbeba99-b811-5da8-8593-655b213a32ec",
+   "loadCaseId": "LC1",
+   "nodeId": "8dbeba99-b811-5da8-8593-655b213a32ec",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:e87a2769-adbe-5662-a93e-96c36bafb20a",
+   "loadCaseId": "LC1",
+   "nodeId": "e87a2769-adbe-5662-a93e-96c36bafb20a",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:cf991bbf-10d0-5ebe-8322-7b9287c68eaf",
+   "loadCaseId": "LC1",
+   "nodeId": "cf991bbf-10d0-5ebe-8322-7b9287c68eaf",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8f762b65-1d6f-502c-8b41-6a378a4b1dee",
+   "loadCaseId": "LC1",
+   "nodeId": "8f762b65-1d6f-502c-8b41-6a378a4b1dee",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:e7ed48e3-70a7-57f7-ad89-4eb808e0e0dd",
+   "loadCaseId": "LC1",
+   "nodeId": "e7ed48e3-70a7-57f7-ad89-4eb808e0e0dd",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:cad57473-a0d9-52b6-bf8f-aa68a63e58b6",
+   "loadCaseId": "LC1",
+   "nodeId": "cad57473-a0d9-52b6-bf8f-aa68a63e58b6",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8af66610-9fae-5046-b524-2772a2771437",
+   "loadCaseId": "LC1",
+   "nodeId": "8af66610-9fae-5046-b524-2772a2771437",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:2db7fa26-e89c-5f49-b4e9-5924996c63af",
+   "loadCaseId": "LC1",
+   "nodeId": "2db7fa26-e89c-5f49-b4e9-5924996c63af",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:5b29c8b4-a7f3-5c3d-be53-c44068e744b9",
+   "loadCaseId": "LC1",
+   "nodeId": "5b29c8b4-a7f3-5c3d-be53-c44068e744b9",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8a656662-041a-5a72-a17c-e4f61cdf3553",
+   "loadCaseId": "LC1",
+   "nodeId": "8a656662-041a-5a72-a17c-e4f61cdf3553",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:45d88e99-5a5a-55da-8b3a-570e0ec6ffd7",
+   "loadCaseId": "LC1",
+   "nodeId": "45d88e99-5a5a-55da-8b3a-570e0ec6ffd7",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:6a214641-330a-5766-a6ed-6621cca4f30a",
+   "loadCaseId": "LC1",
+   "nodeId": "6a214641-330a-5766-a6ed-6621cca4f30a",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:560d2d7b-1e2f-5d88-a89b-18fdec4c0a2d",
+   "loadCaseId": "LC1",
+   "nodeId": "560d2d7b-1e2f-5d88-a89b-18fdec4c0a2d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:703ad71f-18b1-57a4-bff2-892715ebb7c6",
+   "loadCaseId": "LC1",
+   "nodeId": "703ad71f-18b1-57a4-bff2-892715ebb7c6",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:f5807284-4ba5-570c-89fb-0fc75d98a48d",
+   "loadCaseId": "LC1",
+   "nodeId": "f5807284-4ba5-570c-89fb-0fc75d98a48d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:7296b5d8-ac6f-527d-bcd1-f89444b67651",
+   "loadCaseId": "LC1",
+   "nodeId": "7296b5d8-ac6f-527d-bcd1-f89444b67651",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:1708f554-32f2-536f-8c12-71b85ce479ae",
+   "loadCaseId": "LC1",
+   "nodeId": "1708f554-32f2-536f-8c12-71b85ce479ae",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:d988724d-6dd2-5cb6-ac50-7a33f05ff592",
+   "loadCaseId": "LC1",
+   "nodeId": "d988724d-6dd2-5cb6-ac50-7a33f05ff592",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:fda21377-56e9-5581-abfc-ed5cc339aa16",
+   "loadCaseId": "LC1",
+   "nodeId": "fda21377-56e9-5581-abfc-ed5cc339aa16",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8a2298f6-4bb0-569b-b483-ebfceebf5e8d",
+   "loadCaseId": "LC1",
+   "nodeId": "8a2298f6-4bb0-569b-b483-ebfceebf5e8d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:4029b659-6a04-570a-8cee-ec8fb2d199e0",
+   "loadCaseId": "LC1",
+   "nodeId": "4029b659-6a04-570a-8cee-ec8fb2d199e0",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:00e18dcb-ed9c-56a8-b6bb-eff77336f47e",
+   "loadCaseId": "LC1",
+   "nodeId": "00e18dcb-ed9c-56a8-b6bb-eff77336f47e",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:ae43ffe4-87cd-5fc7-b421-370166bc4e1a",
+   "loadCaseId": "LC1",
+   "nodeId": "ae43ffe4-87cd-5fc7-b421-370166bc4e1a",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:ef6f907c-90bd-54a8-b993-07799d74a756",
+   "loadCaseId": "LC1",
+   "nodeId": "ef6f907c-90bd-54a8-b993-07799d74a756",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:6fd7e2f5-28c7-5a64-85bf-3e87c4c95f91",
+   "loadCaseId": "LC1",
+   "nodeId": "6fd7e2f5-28c7-5a64-85bf-3e87c4c95f91",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:75cd443d-2960-54f8-9ba3-5159b0bf7fb3",
+   "loadCaseId": "LC1",
+   "nodeId": "75cd443d-2960-54f8-9ba3-5159b0bf7fb3",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:e9429f1b-d885-52d9-bbf4-4de712d50d4a",
+   "loadCaseId": "LC1",
+   "nodeId": "e9429f1b-d885-52d9-bbf4-4de712d50d4a",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:07597b9d-2959-56f4-a4c5-7d7d0c324946",
+   "loadCaseId": "LC1",
+   "nodeId": "07597b9d-2959-56f4-a4c5-7d7d0c324946",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:7d0cb490-57f0-5851-8e81-ad010caa75d3",
+   "loadCaseId": "LC1",
+   "nodeId": "7d0cb490-57f0-5851-8e81-ad010caa75d3",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:eeada9c8-5dd6-5f29-a4be-546a0c0a34c9",
+   "loadCaseId": "LC1",
+   "nodeId": "eeada9c8-5dd6-5f29-a4be-546a0c0a34c9",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:4f2a7845-f71f-55c1-80a7-7c238d224c21",
+   "loadCaseId": "LC1",
+   "nodeId": "4f2a7845-f71f-55c1-80a7-7c238d224c21",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:5e35edaf-d4c7-58ef-934e-8ba8dbe09996",
+   "loadCaseId": "LC1",
+   "nodeId": "5e35edaf-d4c7-58ef-934e-8ba8dbe09996",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:5b9a2c14-3220-5697-8736-fabb3965340d",
+   "loadCaseId": "LC1",
+   "nodeId": "5b9a2c14-3220-5697-8736-fabb3965340d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:b19c6f0f-0b60-5690-a027-057cccc4666c",
+   "loadCaseId": "LC1",
+   "nodeId": "b19c6f0f-0b60-5690-a027-057cccc4666c",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:682689b8-25dd-5ddc-984b-b976a0045dfb",
+   "loadCaseId": "LC1",
+   "nodeId": "682689b8-25dd-5ddc-984b-b976a0045dfb",
+   "fx": 0,
+   "fy": 0,
+   "fz": -199.325,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:17323aa9-8164-533f-b311-263e3766a216",
+   "loadCaseId": "LC1",
+   "nodeId": "17323aa9-8164-533f-b311-263e3766a216",
+   "fx": 0,
+   "fy": 0,
+   "fz": -199.325,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8986ea0d-5282-5814-be43-c489fbf45166",
+   "loadCaseId": "LC1",
+   "nodeId": "8986ea0d-5282-5814-be43-c489fbf45166",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:add75e26-a1b8-5752-b5aa-098150f98358",
+   "loadCaseId": "LC1",
+   "nodeId": "add75e26-a1b8-5752-b5aa-098150f98358",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:08374f89-f3e3-5e8a-a519-399ab1e50040",
+   "loadCaseId": "LC1",
+   "nodeId": "08374f89-f3e3-5e8a-a519-399ab1e50040",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:f294597f-7e69-598c-bd2f-1d1bd2f43e8d",
+   "loadCaseId": "LC1",
+   "nodeId": "f294597f-7e69-598c-bd2f-1d1bd2f43e8d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:08fbc71f-9685-5695-b4ea-cb8f7c9eea50",
+   "loadCaseId": "LC1",
+   "nodeId": "08fbc71f-9685-5695-b4ea-cb8f7c9eea50",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:e09650b2-41a4-51ff-8219-641f5a635d7d",
+   "loadCaseId": "LC1",
+   "nodeId": "e09650b2-41a4-51ff-8219-641f5a635d7d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:076e870d-25fe-5511-bfa8-05ef9f8740b9",
+   "loadCaseId": "LC1",
+   "nodeId": "076e870d-25fe-5511-bfa8-05ef9f8740b9",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:16b3dde4-8360-56e9-a12e-4a886bdeed2f",
+   "loadCaseId": "LC1",
+   "nodeId": "16b3dde4-8360-56e9-a12e-4a886bdeed2f",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:e498fb45-4641-594d-8b82-d0ae9a277850",
+   "loadCaseId": "LC1",
+   "nodeId": "e498fb45-4641-594d-8b82-d0ae9a277850",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:d28c9564-bb40-5667-8668-a8d3974d75bd",
+   "loadCaseId": "LC1",
+   "nodeId": "d28c9564-bb40-5667-8668-a8d3974d75bd",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:30151325-c94a-5b5a-a765-d990011a85c1",
+   "loadCaseId": "LC1",
+   "nodeId": "30151325-c94a-5b5a-a765-d990011a85c1",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:f173bafe-b4d0-5576-b53b-1cbee0057e35",
+   "loadCaseId": "LC1",
+   "nodeId": "f173bafe-b4d0-5576-b53b-1cbee0057e35",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:7ab5f089-f464-5ae8-b0f4-2d8183d0b2f1",
+   "loadCaseId": "LC1",
+   "nodeId": "7ab5f089-f464-5ae8-b0f4-2d8183d0b2f1",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:f26121fb-9a96-57ac-aed6-964c0949b844",
+   "loadCaseId": "LC1",
+   "nodeId": "f26121fb-9a96-57ac-aed6-964c0949b844",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8190319c-afd9-555b-a909-92b23d8adaa7",
+   "loadCaseId": "LC1",
+   "nodeId": "8190319c-afd9-555b-a909-92b23d8adaa7",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:ca265b06-f2aa-562b-bbc4-992ce88b841b",
+   "loadCaseId": "LC1",
+   "nodeId": "ca265b06-f2aa-562b-bbc4-992ce88b841b",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8e297256-ba2f-564d-a500-b8fee84ac742",
+   "loadCaseId": "LC1",
+   "nodeId": "8e297256-ba2f-564d-a500-b8fee84ac742",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:c90ff971-0c57-5e35-afc9-e94cdf8724ac",
+   "loadCaseId": "LC1",
+   "nodeId": "c90ff971-0c57-5e35-afc9-e94cdf8724ac",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:bed0c764-f87a-5213-b493-e490971f0f66",
+   "loadCaseId": "LC1",
+   "nodeId": "bed0c764-f87a-5213-b493-e490971f0f66",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:a84e12c6-472c-5d34-8085-d35f4762ba90",
+   "loadCaseId": "LC1",
+   "nodeId": "a84e12c6-472c-5d34-8085-d35f4762ba90",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:2573f7de-7ff4-51e5-9a95-465d949f863a",
+   "loadCaseId": "LC1",
+   "nodeId": "2573f7de-7ff4-51e5-9a95-465d949f863a",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:45bd4f75-c841-5c40-81da-07acc35eda7f",
+   "loadCaseId": "LC1",
+   "nodeId": "45bd4f75-c841-5c40-81da-07acc35eda7f",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8bc1b870-44a4-5df9-9735-23de79f5e064",
+   "loadCaseId": "LC1",
+   "nodeId": "8bc1b870-44a4-5df9-9735-23de79f5e064",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:644f138f-5d6b-50d6-8374-705a5d1bb226",
+   "loadCaseId": "LC1",
+   "nodeId": "644f138f-5d6b-50d6-8374-705a5d1bb226",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:d595f322-77de-586b-8236-c86dfac68c73",
+   "loadCaseId": "LC1",
+   "nodeId": "d595f322-77de-586b-8236-c86dfac68c73",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:8411e097-27eb-5817-95c2-715382511d4d",
+   "loadCaseId": "LC1",
+   "nodeId": "8411e097-27eb-5817-95c2-715382511d4d",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:d329bfd1-accc-5666-9492-450c5f6201af",
+   "loadCaseId": "LC1",
+   "nodeId": "d329bfd1-accc-5666-9492-450c5f6201af",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:9c64de82-4820-5ebd-b158-ba5f0930bb04",
+   "loadCaseId": "LC1",
+   "nodeId": "9c64de82-4820-5ebd-b158-ba5f0930bb04",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:95591a44-5a10-584f-8f0d-00976ea45ec1",
+   "loadCaseId": "LC1",
+   "nodeId": "95591a44-5a10-584f-8f0d-00976ea45ec1",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:d5509d7c-d96c-53df-9755-1c4dae260309",
+   "loadCaseId": "LC1",
+   "nodeId": "d5509d7c-d96c-53df-9755-1c4dae260309",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:2231a88c-7272-5eb9-9277-ef0e6c0acdf7",
+   "loadCaseId": "LC1",
+   "nodeId": "2231a88c-7272-5eb9-9277-ef0e6c0acdf7",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:a89e1fdc-5865-584b-a80c-99c99eaebdfe",
+   "loadCaseId": "LC1",
+   "nodeId": "a89e1fdc-5865-584b-a80c-99c99eaebdfe",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:2d4d0bc4-400b-5848-b890-68a20b15dc57",
+   "loadCaseId": "LC1",
+   "nodeId": "2d4d0bc4-400b-5848-b890-68a20b15dc57",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:99d58793-780e-5eec-a651-89ac05f36a23",
+   "loadCaseId": "LC1",
+   "nodeId": "99d58793-780e-5eec-a651-89ac05f36a23",
+   "fx": 0,
+   "fy": 0,
+   "fz": -398.65,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  },
+  {
+   "id": "nodal-load:32071005-893b-5424-8547-479df7b6765a",
+   "loadCaseId": "LC1",
+   "nodeId": "32071005-893b-5424-8547-479df7b6765a",
+   "fx": 0,
+   "fy": 0,
+   "fz": -199.325,
+   "mx": 0,
+   "my": 0,
+   "mz": 0
+  }
+ ],
+ "memberLoads": [],
+ "loadCombinations": [],
+ "analysisSettings": {
+  "analysisType": "linear_static",
+  "solver": "scipy_sparse",
+  "solverVersion": "0.3.0",
+  "includeShearDeformation": false,
+  "largeDisplacement": false,
+  "options": {}
+ },
+ "analysisStatus": "NOT_RUN",
+ "resultReferences": [],
+ "resultDigest": null,
+ "validation": {
+  "schemaVersion": "1.0.0",
+  "validatedAt": "2026-08-14T22:06:44.424Z",
+  "ok": true,
+  "issues": []
+ },
+ "revision": {
+  "revisionId": 1,
+  "updatedAt": "2026-08-14T22:06:44.407Z",
+  "changes": [
+   "created"
+  ]
+ },
+ "extensions": {}
+}

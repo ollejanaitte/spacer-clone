@@ -167,6 +167,141 @@
    "absTol": 1e-06,
    "relTol": 0,
    "wildcard": "all-members"
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "nodeCount",
+   "expected": 72,
+   "unit": "nodes",
+   "absTol": 0,
+   "relTol": 0
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "memberCount",
+   "expected": 70,
+   "unit": "members",
+   "absTol": 0,
+   "relTol": 0
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "supportCount",
+   "expected": 6,
+   "unit": "supports",
+   "absTol": 0,
+   "relTol": 0
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalMemberLength",
+   "expected": 657.615156,
+   "unit": "m",
+   "absTol": 0.001,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelVolume",
+   "expected": 78.913819,
+   "unit": "m3",
+   "absTol": 0.001,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "quantity",
+   "entityId": "section",
+   "component": "SECTION-GIRDER.area",
+   "expected": 0.12,
+   "unit": "m2",
+   "absTol": 1e-06,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "section",
+   "component": "SECTION-GIRDER.unitWeightPerM",
+   "expected": 9.24,
+   "unit": "kN/m",
+   "absTol": 0.001,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G1",
+   "component": "x",
+   "expected": 200.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G1",
+   "component": "y",
+   "expected": 496.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G1",
+   "component": "z",
+   "expected": 103.08,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G1",
+   "component": "x",
+   "expected": 400.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G1",
+   "component": "z",
+   "expected": 108.5592,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G1",
+   "component": "x",
+   "expected": 503.0568,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G1",
+   "component": "y",
+   "expected": 582.7107,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G1",
+   "component": "z",
+   "expected": 106.58,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
   }
  ],
  "modelCounts": {
@@ -183,5 +318,25 @@
   "applied": 27905.5,
   "reaction": 27905.5,
   "relTol": 1e-06
+ },
+ "coverage": {
+  "kind": "memberForce",
+  "entityId": "*",
+  "components": {
+   "i.fx": {
+    "nonZeroCount": 70
+   },
+   "i.fz": {
+    "nonZeroCount": 70
+   },
+   "j.my": {
+    "nonZeroCount": 70
+   },
+   "i.mx": {
+    "maxAbsBound": 1e-06
+   }
+  },
+  "count": 70,
+  "unit": "-"
  }
 }
