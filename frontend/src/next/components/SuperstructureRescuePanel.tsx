@@ -15,6 +15,7 @@ import { readSuperstructureDocument, writeSuperstructureDocument } from "../modu
 import { regenerateSuperstructureDerived } from "../modules/superstructure/superstructurePersistence";
 import { deriveGirderOffsets } from "../modules/superstructure/superstructureDocumentDomain";
 import { computeSuperstructureSectionProperties } from "../modules/superstructure/superstructureComponents";
+import { buildSuperstructureDxf, downloadSuperstructureDxf } from "../modules/superstructure/superstructureDxf";
 import type { SuperstructureDocument } from "../modules/superstructure/superstructureTypes";
 
 export const SUPERSTRUCTURE_RESCUE_FLAG = "VITE_SUPERSTRUCTURE_RESCUE";
@@ -224,6 +225,8 @@ export function SuperstructureRescuePanel({ projectId }: { projectId: string }) 
         data-testid="super-cross-preview"
       />
 
+      <SuperstructureOutputs doc={doc} />
+
       <p className="next-hint">照査・応力度・たわみ等は NOT_AUTHORIZED（HOLD）です。「計算済み」とは表示しません。</p>
     </div>
   );
@@ -270,6 +273,79 @@ function SuperstructureCrossSectionPreview({ doc, deckWidth }: { doc: Superstruc
         </text>
       ))}
       <text x={center} y={24} fontSize="10" textAnchor="middle" fill="#475569">床版厚 {doc.deckConfiguration.thicknessM ?? "—"}m / 幅 {deckWidth}m</text>
+    </svg>
+  );
+}
+
+/** Outputs: 2D plan, quantity, DXF export (S-04/05/06). */
+function SuperstructureOutputs({ doc }: { doc: SuperstructureDocument }) {
+  const [dxfMsg, setDxfMsg] = useState<string | null>(null);
+  const totalSpan = (doc.spanReferences?.spans ?? []).reduce((s, sp) => s + sp.spanLength, 0) || 30;
+  const girderOffsets = deriveGirderOffsets(doc.girderConfiguration.girderCount, doc.girderConfiguration.girderSpacingM) ?? [0];
+  const section = doc.girderConfiguration.girderSectionModel;
+
+  // Quantity (S-06): steel weight + deck volume from canonical inputs.
+  const totalArea = computeSuperstructureSectionProperties(section, totalSpan)?.totalArea ?? 0;
+  const steelWeight = totalArea * (section.unitWeightPerM ?? 77.0) * totalSpan * doc.girderConfiguration.girderCount;
+  const deckVolume = (doc.deckConfiguration.resolvedWidthM ?? 12) * (doc.deckConfiguration.thicknessM ?? 0.24) * totalSpan;
+
+  function handleDxf() {
+    try {
+      const dxf = buildSuperstructureDxf(doc, { view: "plan" });
+      downloadSuperstructureDxf(dxf);
+      setDxfMsg("DXF（plan）を書き出しました。");
+    } catch (error) {
+      setDxfMsg(`DXF書き出し失敗: ${String(error)}`);
+    }
+  }
+
+  return (
+    <>
+      <h4 className="next-hint">2D General Arrangement（plan・主桁/床版/横桁）</h4>
+      <SuperstructurePlanView doc={doc} totalSpan={totalSpan} deckWidth={doc.deckConfiguration.resolvedWidthM ?? 12} girderOffsets={girderOffsets} />
+
+      <h4 className="next-hint">Quantity（DERIVED・canonicalから導出）</h4>
+      <dl className="next-integrity-meta" data-testid="super-quantity">
+        <div><dt>主桁本数</dt><dd>{doc.girderConfiguration.girderCount} 本</dd></div>
+        <div><dt>鋼材重量（概算）</dt><dd>{steelWeight.toFixed(1)} kN</dd></div>
+        <div><dt>床版体積</dt><dd>{deckVolume.toFixed(1)} m³</dd></div>
+        <div><dt>桁長（span合計）</dt><dd>{totalSpan.toFixed(1)} m</dd></div>
+      </dl>
+
+      <div className="next-form-actions">
+        <button type="button" className="next-secondary" data-testid="super-dxf-export" onClick={handleDxf}>
+          DXF（plan）書き出し
+        </button>
+        {dxfMsg && <span className="next-hint" data-testid="super-dxf-message">{dxfMsg}</span>}
+      </div>
+    </>
+  );
+}
+
+function SuperstructurePlanView({ doc, totalSpan, deckWidth, girderOffsets }: {
+  doc: SuperstructureDocument; totalSpan: number; deckWidth: number; girderOffsets: number[];
+}) {
+  const W = 480;
+  const H = 140;
+  const sx = (v: number) => 30 + (v / Math.max(totalSpan, 1)) * (W - 60);
+  const sy = (v: number) => H / 2 - (v / Math.max(deckWidth, 6)) * 40;
+  return (
+    <svg width={W} height={H} className="next-preview-svg" data-testid="super-plan-view">
+      <rect width={W} height={H} fill="#f8fafc" stroke="#e2e8f0" />
+      {/* deck edges */}
+      <line x1={sx(0)} y1={sy(-deckWidth / 2)} x2={sx(totalSpan)} y2={sy(-deckWidth / 2)} stroke="#9aa5b1" strokeWidth="2" />
+      <line x1={sx(0)} y1={sy(deckWidth / 2)} x2={sx(totalSpan)} y2={sy(deckWidth / 2)} stroke="#9aa5b1" strokeWidth="2" />
+      {/* girders */}
+      {girderOffsets.map((offset, i) => (
+        <line key={i} x1={sx(0)} y1={sy(offset)} x2={sx(totalSpan)} y2={sy(offset)} stroke="#4a6fa5" strokeWidth="2" />
+      ))}
+      {/* cross beams */}
+      {Array.from({ length: 5 }, (_, i) => i * totalSpan / 4).map((s) => (
+        <line key={s} x1={sx(s)} y1={sy(-deckWidth / 2)} x2={sx(s)} y2={sy(deckWidth / 2)} stroke="#6b7d99" strokeWidth="1" />
+      ))}
+      <text x={W / 2} y={H - 8} fontSize="10" textAnchor="middle" fill="#475569">
+        span {totalSpan.toFixed(1)}m / girder {doc.girderConfiguration.girderCount}本 / spacing {doc.girderConfiguration.girderSpacingM ?? "—"}m
+      </text>
     </svg>
   );
 }
