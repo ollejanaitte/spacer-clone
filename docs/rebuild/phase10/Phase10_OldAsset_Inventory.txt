@@ -1,0 +1,65 @@
+====================================================================
+Phase10_OldAsset_Inventory（STEP 2 Git全履歴から埋没資産を発掘）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+【A. legacyディレクトリ（working treeに存在・/pro経由で稼働）】
+| 資産 | 内容 | 現アプリ接続 |
+|---|---|---|
+| frontend/src/liner/ | Road/LINER全体（core/drawing/dxf/exports/pages/components） | App.tsx 23・NextApp 26 |
+| frontend/src/apollo/ | 鋼桁システム（drawing/export/report/quantity/output/guided） | App.tsx 7（/pro/apollo・flag） |
+| frontend/src/substructure/ | 下部工（planning/design/viewer3d/solid generators） | App.tsx 3（/pro/liner/substructure）・NextApp 10 |
+| frontend/src/bridge/ | BridgeWizard | App.tsx 3 |
+| frontend/src/viewer/ | Viewer3D・SceneBuilder | App.tsx 3・NextApp 1 |
+| frontend/src/exports/ | resultCsv/resultPdf/memberForce/if3ExportGate | App.tsx 2 |
+| frontend/src/if3/ | IF3 metadata/binding guard | App.tsx 1 |
+| frontend/src/compare/ | ModelComparisonWorkspace | App.tsx 1（/pro/compare） |
+| frontend/src/timeHistory/ | TH wizard（地震動） | App.tsx 6（/pro/th/*） |
+| frontend/src/platform/ | Design Platform（業務管理） | App.tsx 8（/pro/platform） |
+| frontend/src/contracts/legacy/ | legacy frame/road adapter | apollo/bridgeProject/next |
+| frontend/src/level0/ | 学習レッスン | lobby経由 |
+
+【B. 埋没・dead code】
+| 資産 | 内容 | 状態 |
+|---|---|---|
+| frontend/src/draft/if3DraftEligibility.ts | authoritative DRAFT出力eligibility guard | DEAD（production importerなし・自テストのみ） |
+| frontend/src/liner/exports/makerDxfSpike.ts | DXF spike | DEAD（自テストのみ） |
+
+【C. 独立リポジトリ外（git管理だがbuild外）】
+| 資産 | 内容 | 状態 |
+|---|---|---|
+| substructure-planning/ | 下部工計画・3D研究ラボ＋prototype（quantity・GLB export） | build外・test golden fixtureとして1件参照 |
+
+【D. deleted from main（他branch/localから復元可能）】
+| 資産 | 削除commit | 復元可能 |
+|---|---|---|
+| 001_サンプル_LINER計算書_高架橋_入力結果_出力結果.PDF | e774b81 | local-reference/research/liner/に存在・全remote branchにtracked |
+| JIP-LINER_マニュアル.pdf | e774b81 | remote branchにtracked |
+| SPACER操作マニュアル.pdf | e774b81 | remote branchにtracked |
+
+【E. 過去に削除されたが価値ある機能・ページ】
+| 資産 | 削除commit | 備考 |
+|---|---|---|
+| ProjectHomePage.tsx | 092bb45 | ProjectTopPageへ置換（新実装が上位） |
+| SectionOutput.tsx（TH） | b28fc2d | TH UI刷新 |
+
+【F. ブランチ/タグ】
+- ~600 branch（research/liner-*・feat/apollo-step10-*・rebuild/integrated-system等）
+- 他branchのunique code: なし（vendor PDF 3点を除く）
+- 図面/SVG/DXF/STL codeは既にmainへmerge済み
+- tag: v0.1.0/v0.2.0/v0.3.0/v-th10（全てmainの祖先）
+
+【G. local非gitアーカイブ】
+- local-archive/legacy-archive/archive/spacer-clone-20260726-224112/retired-worktrees/
+  （spacer-clone-latest 619MB・spacer-clone-pr40 473MB等・untracked成果品候補）
+- local-reference/（untracked）・local-evidence/・local_projects/
+
+【結論】
+- 成果品生成コード（図面/DXF/STL/報告/quantity）は主要なものがmainに存在し、
+  legacy /pro routeで稼働。新アプリへ再接続（ADAPT）が主たる救出パターン
+- 完全なdead codeは2件（if3DraftEligibility・makerDxfSpike）
+- vendor reference PDF（LINER計算書等）は復元候補として記録
+- 新規開発不要な資産が大部分（捨てて作り直さない原則に合致）
+====================================================================

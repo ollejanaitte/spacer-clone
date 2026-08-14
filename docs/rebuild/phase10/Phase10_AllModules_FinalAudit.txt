@@ -1,0 +1,96 @@
+====================================================================
+Phase10_AllModules_FinalAudit（STEP 1 全Module最終横断監査）
+====================================================================
+baseline: e3e2d3b（main・Phase 9-04R3 COMPLETE後）
+確認日: 2026-08-15 JST
+====================================================================
+
+【1. Project / PDC】
+- route: /app/business（一覧）/app/business/new（新規）/app/projects/{id}（ProjectTop）
+- PDC: projectDataCore.ts・projectSchema.ts（PROJECT_SCHEMA_VERSION 1.0.0・8 module slot）
+- module registry: registry.ts（road/terrain/bridgeLayout/superstructure/substructure/analysis/cim/deliverables）
+- persistence: PersistentProjectManager（Auto Save・restart restore・save-state indicator）
+- .spacerproj: projectPackageBuilder/exporter/importer/inspector（新アプリBusinessList/LoadBusinessで動作）
+- 状態: COMPLETE（Phase 9-04R3で確立）
+
+【2. Terrain / Existing】
+- route: /app/projects/{id}/modules/terrain
+- TerrainModuleShellPage・terrainImport（CSV/XYZ）・terrainSurface・terrainTiles（LOD）
+- ExistingConditions: プロジェクトmetadata配下（独立module slotでない）
+- 3D: TerrainViewer・IntegratedSceneViewer
+- tests: 5
+- 状態: COMPLETE
+
+【3. Road / LINER】
+- route: /app/projects/{id}/modules/road（新）＋/pro/liner/*（legacy）
+- 新: RoadModuleShellPage・roadDataSchema（CanonicalRoadData 0.3.0）・horizontal/vertical/crossSection/width/stationing
+- 新: RoadPreviews（2D SVG plan/profile/cross-section）・Road3DMesh・roadCimSurface
+- legacy: liner/（core・drawing・dxf・exports・pages）23 App.tsx参照・26 NextApp参照
+- 成果品（formal drawing・DXF・CSV/HTML報告）: legacyのみ到達（/pro/liner/drawings/*・/preview）
+- 状態: 計算・CIMは新moduleでCOMPLETE。成果品はlegacy未接続（Phase 11救出対象）
+
+【4. Bridge Layout】
+- route: /app/projects/{id}/modules/bridgeLayout
+- BridgeLayoutModuleShellPage・bridgeLayoutTypes（0.1.0/1.0.0）
+- core: domain/placement/piers/spans/supportHandoff/spanHandoff/integrityGate
+- 3D: bridgeLayoutScene・BridgeLayoutSceneViewer
+- tests: 11＋UI 3
+- 状態: COMPLETE（成果品としてlayout drawing候補はPhase 11評価）
+
+【5. Superstructure】
+- route: /app/projects/{id}/modules/superstructure
+- SuperstructureModuleShellPage・SuperstructureDocument（0.1.0/1.0.0）
+- core: documentDomain/geometry/bindingNew/components/loadModel/analysisAdapter/basicChecks/handoff
+- 成果品: 2D（SuperstructureRescuePanel・plan view）・DXF（superstructureDxf.ts・新アプリで動作）・Quantity（実数値）・3D/CIM
+- tests: 15
+- FROZEN: 応力度/照査6種 NOT_AUTHORIZED・diaphragm DEFER
+- 状態: COMPLETE（Phase 9-04R3 Rescue）
+
+【6. Substructure / Foundation】
+- route: /app/projects/{id}/modules/substructure
+- SubstructureModuleShellPage・SubstructureDocument（0.1.0/1.0.0）
+- core: documentDomain/phase4/phase5/placement/geometry/foundation/terrain/design/integrityGate
+- 成果品: 2D plan・座標表・Quantity（実数値）・pile grid（B-06）・3D/CIM（いずれも新アプリ）
+- KEEP engines: substructure/（SolidGenerator・design・SupportPlacementEngine）
+- tests: 13
+- FROZEN: 照査/配筋/耐震 HOLD_NOT_AVAILABLE・AUTO-DETERMINATION BANNED
+- 状態: COMPLETE
+
+【7. FEM / Analysis / Solver / IF3】
+- route: /app/projects/{id}/modules/analysis（専用shellページなし・CIM shellから実行）
+- AnalysisDocument（1.0.0）・analysisChecksum・analysisModel・analysisId・adapter・bearingSpring・loadModel・authorizedDeadLoad
+- backend: solver_input.py・solver.py・if3_normalizer.py・if3_checksum/staleness/persistence/diagnostics/availability
+- API: /api/design/analyze 等
+- IF3 result: frameAnalysisResultResource（authoritative gate・source binding・entityId bind・非零実値）
+- 成果品: AuthoritativeResultPanel（Reaction/N-Q-M/T/Deformed表示）・CIM overlay
+- 結果export: legacyのみ（Toolbar CSV/PDF・IF3 gate）
+- tests: 16
+- 状態: 解析・IF3 authoritativeはCOMPLETE。結果exportは新アプリ未接続（Phase 11）
+
+【8. CIM / Integrated 3D】
+- route: /app/projects/{id}/modules/cim
+- CimModuleShellPage・integrated3dScene（18 layer）・cimSceneBuilder
+- layers: roadCimSurface/superstructureCimLayer/substructureCimLayer/analysisCimLayer
+- export: cimExport.ts（GLB・glTF JSON・新アプリ動作）
+- tests: 8
+- 状態: COMPLETE
+
+【9. Drawing / Calculation Report / Quantity / Export 横断】
+- 成果品資産は大半がlegacy（/pro）に存在:
+  - Road formal drawing（plan/profile/cross-section）+ DXF + print: legacy
+  - Road CSV/HTML報告: legacy
+  - Apollo drawing set（GA・member schedule・standard section）: legacy（/pro/apollo）
+  - Analysis結果 CSV/PDF（print-based）: legacy（IF3 gate）
+  - STL（Apollo binary・liner frame）: legacy
+  - Superstructure DXF: 新アプリ
+  - CIM GLB: 新アプリ
+  - .spacerproj: 新アプリ
+- IFC export: なし（DEFER候補）
+- バイナリPDF: なし（全てprint-based HTML）→ DEFER/方針決定
+- deliverables module: 登録のみ（専用ページなし・プレースホルダー）
+
+【総括】
+- 計算・CIM・解析・Rescue・PDC/persistence: COMPLETE
+- 成果品出力（図面/報告/export）: 新アプリへの正式統合がPhase 11の主作業
+- 特にRoad図面（平面/縦断/横断）・Analysis結果export・STLを新アプリへ接続する設計が必要
+====================================================================

@@ -1,0 +1,33 @@
+====================================================================
+Phase10_Bridge_Deliverables_Inventory（STEP 4 Bridge Layout成果品監査）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+【成果品】
+| 成果 | 実装 | 新/legacy | 状態 |
+|---|---|---|---|
+| 橋梁区間/支間割 | bridgeLayoutSpans.ts・bridgeLayoutDomain.ts | new | COMPLETE |
+| A1/A2/P1...支持点 | bridgeLayoutPlacement.ts・bridgeLayoutPiers.ts | new | COMPLETE |
+| span table | bridgeLayoutSpans.ts（generateSpans） | new | COMPLETE |
+| support station/skew | bridgeLayoutPlacement.ts | new | COMPLETE |
+| alignment relation | bridgeLayoutReferences.ts・roadAlignmentContext | new | COMPLETE |
+| coordinate list | BridgeLayoutDocument派生 | new | 既存 |
+| 3D表示 | bridgeLayoutScene.ts・BridgeLayoutSceneViewer | new | COMPLETE |
+| layout drawing候補 | なし（専用図面生成なし） | - | Phase 11候補 |
+| bearing/support layout | なし（Superstructure bearing seatsへ派生） | - | Phase 11候補 |
+| export | なし | - | Phase 11候補 |
+
+【handoff】
+- Span Handoff（bridgeLayoutSpanHandoff.ts）→ Superstructure
+- Support Handoff（bridgeLayoutSupportHandoff.ts）→ Substructure
+- 状態: COMPLETE（Phase 9-04R3で確立）
+
+【判定】
+- 計算・配置・3D・handoff: KEEP（COMPLETE）
+- layout drawing（一般図候補）・span/support表の正式出力: Phase 11候補（新規・軽量）
+  - 既存アセット: なし（RESTORE対象なし・ADAPT/REWRITE判断）
+- V1.0必須: Bridge Layout成果（span/support表・配置）は必須と判断
+  ただし専用図面（一般図）はPhase 11 Backlogで軽量実装（REWRITE小）を計画
+====================================================================

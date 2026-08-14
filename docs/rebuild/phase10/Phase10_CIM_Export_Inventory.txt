@@ -1,0 +1,38 @@
+====================================================================
+Phase10_CIM_Export_Inventory（STEP 8 CIM/3D/Export成果品監査）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+【CIM / Integrated 3D（新アプリ・COMPLETE）】
+| 成果 | 実装 | 状態 |
+|---|---|---|
+| Integrated 3D scene | cimSceneBuilder.ts（18 layer） | COMPLETE |
+| layer structure | integrated3dScene.ts（CimLayerId・metadata） | COMPLETE |
+| stableId/sourceEntityId | attachCimMetadata | COMPLETE |
+| GLB export | cimExport.ts（real .glb・新アプリ） | COMPLETE |
+| glTF JSON | cimExport.ts | COMPLETE |
+| Road CIM surface | roadCimSurface.ts | COMPLETE |
+| Super/Sub CIM layer | superstructureCimLayer・substructureCimLayer | COMPLETE |
+| Analysis overlay | analysisCimLayer（FEM/IF3・stale guard） | COMPLETE |
+
+【既存の3D export（legacy）】
+| 成果 | 実装 | 状態 |
+|---|---|---|
+| STL（Apollo鋼桁・binary） | apollo/export/apolloStlExport.ts | legacy稼働（/pro/apollo） |
+| STL（liner frame・ASCII） | liner/exports/linerFrameStl.ts | legacy稼働（/pro Toolbar） |
+
+【IFC】
+- コードベースにIFC exportなし → DEFER候補（既存根拠不足・V1.0必須にしない）
+
+【screenshot/report integration】
+- 実画面証跡: docs/rebuild/evidence（Phase 9-04R3で多数取得）
+- 報告統合: 新アプリに明示統合なし → Phase 11候補
+
+【判定】
+- Integrated 3D・GLB・glTF: KEEP（V1.0必須）
+- STL: ADAPT候補（V1.0任意・新アプリへ接続任意）
+- IFC: DEFER
+- screenshot/report統合: Phase 11候補（任意）
+====================================================================
