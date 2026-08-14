@@ -133,18 +133,13 @@
       "expectedCount": { "type": "integer" },
       "checks": {
        "type": "object",
-       "additionalProperties": {
-        "type": "object",
-        "additionalProperties": false,
-        "minProperties": 3,
-        "required": ["pass"],
-        "properties": {
-         "actualNonZero": { "type": "integer" },
-         "expectedNonZero": { "type": "integer" },
-         "maxAbs": { "type": "number" },
-         "maxAbsBound": { "type": "number" },
-         "pass": { "type": "boolean" }
-        }
+       "additionalProperties": false,
+       "required": ["i.fx", "i.fz", "j.my", "i.mx"],
+       "properties": {
+        "i.fx": { "$ref": "#/definitions/coverageEntry" },
+        "i.fz": { "$ref": "#/definitions/coverageEntry" },
+        "j.my": { "$ref": "#/definitions/coverageEntry" },
+        "i.mx": { "$ref": "#/definitions/coverageEntry" }
        }
       },
       "pass": { "type": "boolean" }
@@ -153,21 +148,49 @@
     "rawConsistency": {
      "type": "object",
      "additionalProperties": false,
-     "required": ["pass", "checksCount", "failedChecks"],
+     "required": ["pass", "absTol", "checksCount", "failedChecks", "counts"],
      "properties": {
       "pass": { "type": "boolean" },
-      "checksCount": { "type": "integer" },
-      "failedChecks": { "type": "array" }
+      "absTol": { "type": "number", "minimum": 0 },
+      "checksCount": { "type": "integer", "const": 1092 },
+      "failedChecks": { "type": "array", "maxItems": 0 },
+      "counts": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["reactions", "memberEndForces", "displacements"],
+       "properties": {
+        "reactions": { "type": "integer", "const": 6 },
+        "memberEndForces": { "type": "integer", "const": 70 },
+        "displacements": { "type": "integer", "const": 72 }
+       }
+      }
      }
     },
     "comparatorBundle": {
      "type": "object",
-     "additionalProperties": true,
+     "additionalProperties": false,
      "required": [
       "comparatorScript", "comparatorScriptSha256",
       "reportSchemaPath", "reportSchemaSha256",
-      "negativeFixturesPath", "negativeFixturesSha256"
-     ]
+      "negativeFixturesPath", "negativeFixturesSha256",
+      "fixtureConstantsPath", "fixtureConstantsSha256",
+      "sbDerivationScriptPath", "sbDerivationScriptSha256",
+      "sbQuantityInputPath", "sbQuantityInputSha256"
+     ],
+     "properties": {
+      "comparatorScript": { "type": "string" },
+      "comparatorScriptSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "reportSchemaPath": { "type": "string" },
+      "reportSchemaSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "negativeFixturesPath": { "type": "string" },
+      "negativeFixturesSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "fixtureConstantsPath": { "type": "string" },
+      "fixtureConstantsSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "sbDerivationScriptPath": { "type": "string" },
+      "sbDerivationScriptSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+      "sbQuantityInputPath": { "type": "string" },
+      "sbQuantityInputSha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+     }
     },
     "pass": { "type": "boolean" },
     "failures": { "type": "array" }
@@ -182,6 +205,18 @@
         "actual": { "type": "integer" },
         "delta": { "type": "integer" },
         "tolerance": { "type": "integer" },
+        "pass": { "type": "boolean" }
+      }
+    },
+    "coverageEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pass"],
+      "properties": {
+        "actualNonZero": { "type": "integer" },
+        "expectedNonZero": { "type": "integer" },
+        "maxAbs": { "type": "number" },
+        "maxAbsBound": { "type": "number" },
         "pass": { "type": "boolean" }
       }
     }

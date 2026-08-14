@@ -1,14 +1,15 @@
 {
  "schemaVersion": "1.0.0",
  "comparatorId": "spacer-oracle-comparator-v1",
- "generatedAt": "2026-08-14T23:00:41.175012+00:00",
+ "generatedAt": "2026-08-14T23:07:59.438654+00:00",
  "runConditions": {
   "solver": "scipy_sparse",
   "document": "Phase10_Reference_SolverInput.json(fixed)",
   "loadCaseId": "LC1",
   "section": "declared(Phase9-04R3)",
   "solverBuild": "spacer-clone @ e3e2d3b (main)",
-  "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(REF-MOUNTAIN A1/P1-portal/A2)",
+  "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(generateSample declared geometry) via sb_quantity_derivation.test.ts",
+  "deckVolumeDerivation": "fixture_constants.json deck.widthM * thicknessM * bridgeLengthM",
   "command": "python3 compare_oracle.py --oracle <oracle.json> --input <solver-input.json> --raw <solver-raw-result.json> --sb-quantity sb_quantity_input.json --out <report.json> (PYTHONPATH=backend)"
  },
  "inputChainOfCustody": {
@@ -26,13 +27,17 @@
  },
  "comparatorBundle": {
   "comparatorScript": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
-  "comparatorScriptSha256": "1ebac395f77f2f71b5ba5d96562991884cba4a73acdf9a3739d932fa8e9a4ada",
+  "comparatorScriptSha256": "01c6ae34d239fa40146109b5453ab1b614ae31f9f2960463511a84cfffba1b28",
   "reportSchemaPath": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
-  "reportSchemaSha256": "2e40bbbba50f77b71b34880754642490f987a91198bd82e748409620d09a5f1f",
+  "reportSchemaSha256": "015ca6a49bc048b08cc865bb983acf954d4e91b1e5cfe026a3b8c91e1e492d2f",
   "negativeFixturesPath": "docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json",
-  "negativeFixturesSha256": "65242c3b979a528e850e21d2ba9d27a5c3334abb68e9de71cd0e23070f27c0d8",
+  "negativeFixturesSha256": "60bbb7a76eccd081844c9f162828b3ed7d073a0fd6d07c8f63d069d00ab6e6a6",
   "sbQuantityInputPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json",
-  "sbQuantityInputSha256": "c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306"
+  "sbQuantityInputSha256": "c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306",
+  "fixtureConstantsPath": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
+  "fixtureConstantsSha256": "59fa8fff6275e973c8e1c87803ace081a50afebfad8549f00a2ab215dde711c5",
+  "sbDerivationScriptPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_derivation.test.ts",
+  "sbDerivationScriptSha256": "9fea5754b59934dd40ab1efe0bb396fe75599bfbc87265159be0a24be0e6657b"
  },
  "rows": [
   {
@@ -729,8 +734,14 @@
  "failures": [],
  "rawConsistency": {
   "pass": true,
+  "absTol": 1e-09,
   "checksCount": 1092,
-  "failedChecks": []
+  "failedChecks": [],
+  "counts": {
+   "reactions": 6,
+   "memberEndForces": 70,
+   "displacements": 72
+  }
  },
  "modelCounts": {
   "rows": {

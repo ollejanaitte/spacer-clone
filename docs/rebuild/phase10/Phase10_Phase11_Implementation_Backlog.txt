@@ -126,6 +126,9 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
     | substructure | SubstructureDocument 0.1.0 | generateSubstructureFromLayout | supports/placement/pile |
     | analysisSettings | AnalysisSettings 1.0.0 | declared section/material | section/material/settings |
   - 適用順序: road→terrain→existing→bridgeLayout→superstructure→substructure→analysis（固定）
+  - 原子性（Freeze）: 全bundle要素を先にschema/checksum検証→単一transactionで全module commit→provenance記録。
+    途中失敗時はProjectを無変更（rollback）とする（部分適用禁止）
+  - REF-MOUNTAIN-1は全要素必須: 6 moduleChecksumsとexistingChecksumは全て非null必須（欠落moduleはimport拒否）
   - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceに記録。
     existingはmetadata配下のためexistingChecksumとして別途記録（moduleChecksums対象外であることを明示）
   - provenance schema: {fixtureId, fixtureVersion, importedAt, moduleChecksums:{moduleId: hexDigest|null}, existingChecksum: hexDigest|null, operator}
@@ -133,7 +136,7 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
   - moduleChecksums固定キー: road, terrain, bridgeLayout, superstructure, substructure, analysis（analysisSettings→analysisに正規化）
   - digest形式: sha256 hex・null条件: module未設定時
   - analysisSettingsは分析設定としてanalysis moduleChecksumの生成元（analysisSettings→analysis対応を確定）
-  - 存在しないchecksum: module未設定時はnull・比較時はnull一致扱い（明示）
+  - checksum比較: REF-MOUNTAIN-1は全module非null必須（nullはimport拒否）・将来のoptional moduleのみnull許容（現時点は非null一択）
 - module: 全module横断・import所有=deliverables module一意（代替なし）
 - tests: fixture import round-trip test・checksum一致test
 - E2E: 空Project→fixture import→解析→成果品（Phase 12シナリオの前段）・P0-07 PASS必須
@@ -166,7 +169,7 @@ P2-02 evidence/screenshot統合
 
 --------------------------------------------------------------------
 DEFER（V1.0外）
-- バイナリPDF生成（方針決定後）
+- バイナリPDF生成（DEFER・V1.0外・Phase 11実装禁止）
 - IFC export
 - GA sheet（Apollo drawingSet）新アプリ統合
 - pier/abutment/footing正式図（DEFER・V1.0外）

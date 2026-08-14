@@ -34,7 +34,7 @@ status: FINAL（Sol指摘2回反映）
   全row PASSでoracle適合。loadBalanceはrelTol 1e-6。
 - oracle schema: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json（JSON Schema 2020-12・
   rowsの7フィールド必須・wildcard↔entityId="*"双方向制約（allOf/if-then）・coverage=components構造・displayScale=unit分離）
-  - schema検証証跡: jsonschema 4.26.0 Draft202012で実oracle PASS・negative fixture 3件（entityId=* no wildcard / wildcard no *= / 旧coverage形状）全てrejectを機械確認
+  - schema検証証跡: jsonschema 4.26.0 Draft202012で実oracle PASS・negative fixtures 7件（NEG-1..7: coverage欠落/誤key/過剰key/empty・wildcard双方向違反）全てrejectを機械確認（verify_oracle_evidence.pyが決定論的に適用・一括検証）
 - 独立照合（Freeze条件）: 本oracleはPhase 9-04R3実測値。
   Phase 10完了前に独立照合（荷重-反力釣合い・非零実値・代表値のレビュー承認）を実施し、
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
@@ -46,10 +46,13 @@ status: FINAL（Sol指摘2回反映）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 23a3dfc36235ac093b109844b10d9262d131c90e0b79f2afe7dbc8a084bb6b9e）
+    （sha256 062ac97f03afe28890b46d96e62ad1e2a51d7b68ebf66f8e8ed29de22deab0ff）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
-  - 再現bundle（evidence/oracle-comparator/）: compare_oracle.py（sha256 1ebac395...）・comparison_report.schema.json（2e40bbbb...）・schema_negative_fixtures.json（65242c3b...）・sb_quantity_input.json（c3c6eafe...）
-  - reportのcomparatorBundleに完全SHA格納・negative fixtures 7件全reject+oracle PASSを機械確認（jsonschema 4.26.0）
+  - 再現bundle（evidence/oracle-comparator/）: compare_oracle.py（1ebac395...）・comparison_report.schema.json（2e40bbbb...）・
+    schema_negative_fixtures.json（65242c3b...）・sb_quantity_input.json（c3c6eafe...）・fixture_constants.json（59fa8fff...）・
+    sb_quantity_derivation.test.ts（9fea5754...）・verify_oracle_evidence.py（f1f26399...）
+  - report.comparatorBundleに全bundle完全SHA格納・verify_oracle_evidence.pyが「oracle PASS→7件reject→比較→report schema PASS」を一括実行し
+    verification_result.json（df78a87b...）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
   - negative fixtures 7件全reject + oracle本体PASS（jsonschema 4.26.0）を機械確認
     inputChainOfCustody{oracleSha256, rawResultSha256, solverInputSha256, fixtureId=REF-MOUNTAIN-1, projectId}・各rowにdAbs/dRel/判定根拠
   - 結果: 46 row・46 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS

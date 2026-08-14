@@ -1,0 +1,13 @@
+{
+  "fixtureId": "REF-MOUNTAIN-1",
+  "bridgeRange": { "startStation": 100, "endStation": 450 },
+  "bridgeLengthM": 350.0,
+  "deck": { "thicknessM": 0.24, "widthM": 8.0, "unitWeight": 24.5 },
+  "substructure": {
+    "supports": ["A1", "P1", "A2"],
+    "geometrySource": "frontend/src/substructure/planning/samples/sampleGenerator.ts generateSample() declared geometry",
+    "A1": { "kind": "abutment_inverted_t", "station": 50 },
+    "P1": { "kind": "pier_portal", "station": 300 },
+    "A2": { "kind": "abutment_inverted_t", "station": 450 }
+  }
+}

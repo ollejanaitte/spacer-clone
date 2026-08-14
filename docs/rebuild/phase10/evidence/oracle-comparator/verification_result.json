@@ -1,0 +1,71 @@
+{
+ "comparatorId": "spacer-oracle-comparator-v1",
+ "validator": "jsonschema 4.26.0 Draft202012Validator",
+ "oracleSchemaValid": true,
+ "negativeFixtures": {
+  "count": 7,
+  "allRejected": true,
+  "cases": [
+   {
+    "id": "NEG-1",
+    "name": "coverage.components missing i.mx",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-2",
+    "name": "coverage.i.fx missing nonZeroCount",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-3",
+    "name": "coverage.i.mx has nonZeroCount instead of maxAbsBound",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-4",
+    "name": "coverage extra component j.fy",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-5",
+    "name": "row entityId='*' without wildcard",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-6",
+    "name": "row wildcard=all-members but entityId!='*'",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-7",
+    "name": "coverage empty components object",
+    "expected": "reject",
+    "result": "reject"
+   }
+  ]
+ },
+ "comparison": {
+  "pass": true,
+  "rows": 46,
+  "failures": 0,
+  "rawConsistency": {
+   "pass": true,
+   "absTol": 1e-09,
+   "checksCount": 1092,
+   "failedChecks": [],
+   "counts": {
+    "reactions": 6,
+    "memberEndForces": 70,
+    "displacements": 72
+   }
+  }
+ },
+ "reportSchemaValid": true,
+ "overallPass": true
+}

@@ -59,6 +59,7 @@ def main():
     ap.add_argument("--out", required=True)
     ap.add_argument("--solver-build", default="spacer-clone @ e3e2d3b (main)")
     ap.add_argument("--bundle-dir", default="docs/rebuild/phase10/evidence/oracle-comparator")
+    ap.add_argument("--fixture-constants", default="docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json")
     args = ap.parse_args()
 
     sys.path.insert(0, "backend")
@@ -70,55 +71,115 @@ def main():
     result = run_analysis_document(doc)
 
     def raw_consistency():
-        """fail-closed: raw artifact と再計算 result の全対象値一致（独立実行の証明）"""
+        """fail-closed: raw artifact と再計算 result の全対象値完全一致（独立実行の証明）
+
+        - 固定absTol=1e-9（rawは同一solver出力の直列化なので完全一致すべき）
+        - 件数・ID一意性・必須component・有限数を先に厳密検証（欠落/重複は即FAIL）
+        """
+        ABS_TOL = 1e-9
         checks = []
         ok = True
-        # reactions: key by nodeId, compare fx/fy/fz/mx/my/mz
+
+        def expect_unique(items, id_key, label):
+            nonlocal ok
+            ids = [it[id_key] for it in items]
+            if len(ids) != len(set(ids)):
+                ok = False
+                checks.append({"label": label, "error": "duplicate id detected"})
+                return None
+            return {it[id_key]: it for it in items}
+
+        # reactions
+        for name, items in (("raw", raw.get("reactions", [])), ("recomputed", result["reactions"])):
+            if not expect_unique(items, "nodeId", f"reaction.{name}.duplicate"):
+                ok = False
         raw_react = {r["nodeId"]: r for r in raw.get("reactions", [])}
         cur_react = {r["nodeId"]: r for r in result["reactions"]}
         if set(raw_react) != set(cur_react):
-            return {"pass": False, "error": "reaction nodeId set mismatch"}
-        for nid, r in raw_react.items():
-            c = cur_react[nid]
+            ok = False
+            checks.append({"label": "reaction.id-set-mismatch", "error": "nodeId set differ"})
+        for nid in sorted(set(raw_react) & set(cur_react)):
+            r, c = raw_react[nid], cur_react[nid]
             for comp in ("fx", "fy", "fz", "mx", "my", "mz"):
+                if comp not in r or comp not in c:
+                    ok = False
+                    checks.append({"nodeId": nid, "component": comp, "error": "missing component"})
+                    continue
+                if not (math.isfinite(r[comp]) and math.isfinite(c[comp])):
+                    ok = False
+                    checks.append({"nodeId": nid, "component": comp, "error": "non-finite value"})
+                    continue
                 d = abs(r[comp] - c[comp])
-                okk = d <= 1e-6 * max(1.0, abs(r[comp]))
+                okk = d <= ABS_TOL
                 checks.append({"nodeId": nid, "component": comp, "raw": r[comp], "recomputed": c[comp], "delta": d, "pass": okk})
                 if not okk:
                     ok = False
-        # memberEndForces: key by memberId, compare i/j 6 components
+
+        # memberEndForces
+        for name, items in (("raw", raw.get("memberEndForces", [])), ("recomputed", result["memberEndForces"])):
+            if not expect_unique(items, "memberId", f"memberForce.{name}.duplicate"):
+                ok = False
         raw_mem = {m["memberId"]: m for m in raw.get("memberEndForces", [])}
         cur_mem = {m["memberId"]: m for m in result["memberEndForces"]}
         if set(raw_mem) != set(cur_mem):
-            return {"pass": False, "error": "memberEndForces memberId set mismatch"}
-        for mid, m in raw_mem.items():
-            c = cur_mem[mid]
+            ok = False
+            checks.append({"label": "memberForce.id-set-mismatch", "error": "memberId set differ"})
+        for mid in sorted(set(raw_mem) & set(cur_mem)):
+            m, c = raw_mem[mid], cur_mem[mid]
             for side in ("i", "j"):
                 for comp in ("fx", "fy", "fz", "mx", "my", "mz"):
+                    if comp not in m[side] or comp not in c[side]:
+                        ok = False
+                        checks.append({"memberId": mid, "side": side, "component": comp, "error": "missing component"})
+                        continue
+                    if not (math.isfinite(m[side][comp]) and math.isfinite(c[side][comp])):
+                        ok = False
+                        checks.append({"memberId": mid, "side": side, "component": comp, "error": "non-finite value"})
+                        continue
                     d = abs(m[side][comp] - c[side][comp])
-                    okk = d <= 1e-6 * max(1.0, abs(m[side][comp]))
+                    okk = d <= ABS_TOL
                     checks.append({"memberId": mid, "side": side, "component": comp, "raw": m[side][comp], "recomputed": c[side][comp], "delta": d, "pass": okk})
                     if not okk:
                         ok = False
-        # displacements: key by nodeId, compare ux/uy/uz
+
+        # displacements
+        for name, items in (("raw", raw.get("displacements", [])), ("recomputed", result["displacements"])):
+            if not expect_unique(items, "nodeId", f"displacement.{name}.duplicate"):
+                ok = False
         raw_disp = {d["nodeId"]: d for d in raw.get("displacements", [])}
         cur_disp = {d["nodeId"]: d for d in result["displacements"]}
         if set(raw_disp) != set(cur_disp):
-            return {"pass": False, "error": "displacements nodeId set mismatch"}
-        for nid, d in raw_disp.items():
-            c = cur_disp[nid]
+            ok = False
+            checks.append({"label": "displacement.id-set-mismatch", "error": "nodeId set differ"})
+        for nid in sorted(set(raw_disp) & set(cur_disp)):
+            d, c = raw_disp[nid], cur_disp[nid]
             for comp in ("ux", "uy", "uz"):
                 if comp not in d or comp not in c:
+                    ok = False
+                    checks.append({"nodeId": nid, "component": comp, "error": "missing component"})
+                    continue
+                if not (math.isfinite(d[comp]) and math.isfinite(c[comp])):
+                    ok = False
+                    checks.append({"nodeId": nid, "component": comp, "error": "non-finite value"})
                     continue
                 dd = abs(d[comp] - c[comp])
-                okk = dd <= 1e-6 * max(1.0, abs(d[comp]))
+                okk = dd <= ABS_TOL
                 checks.append({"nodeId": nid, "component": comp, "raw": d[comp], "recomputed": c[comp], "delta": dd, "pass": okk})
                 if not okk:
                     ok = False
+
+        # counts must match oracle expectations exactly
+        raw_counts = {
+            "reactions": len(raw.get("reactions", [])),
+            "memberEndForces": len(raw.get("memberEndForces", [])),
+            "displacements": len(raw.get("displacements", [])),
+        }
         return {
             "pass": ok,
+            "absTol": ABS_TOL,
             "checksCount": len(checks),
-            "failedChecks": [c for c in checks if not c["pass"]][:10],
+            "failedChecks": [c for c in checks if not c.get("pass", True)][:10],
+            "counts": raw_counts,
         }
 
     raw_check = raw_consistency()
@@ -126,6 +187,9 @@ def main():
     sb = None
     if args.sb_quantity:
         sb = json.load(open(args.sb_quantity))
+
+    fx = json.load(open(args.fixture_constants))
+    fx_sha = sha(args.fixture_constants)
 
     node_src = {n["entityId"]: n["sourceEntityId"] for n in doc["nodes"]}
     member_src = {m["entityId"]: m["sourceEntityId"] for m in doc["members"]}
@@ -161,8 +225,10 @@ def main():
     actuals[("quantity", "model", "totalMemberLength")] = totL
     actuals[("quantity", "model", "totalSteelVolume")] = totL * sec["area"]
     actuals[("quantity", "model", "totalSteelWeight")] = totL * sec["unitWeightPerM"]
-    deck_len = 350.0  # bridge range 100-450 (REF-MOUNTAIN declared)
-    actuals[("quantity", "model", "deckVolume")] = 8.0 * 0.24 * deck_len
+    deck_len = fx["bridgeLengthM"]
+    deck_thickness = fx["deck"]["thicknessM"]
+    deck_width = fx["deck"]["widthM"]
+    actuals[("quantity", "model", "deckVolume")] = deck_width * deck_thickness * deck_len
     actuals[("quantity", "section", "SECTION-GIRDER.area")] = sec["area"]
     actuals[("quantity", "section", "SECTION-GIRDER.unitWeightPerM")] = sec["unitWeightPerM"]
     if sb is not None:
@@ -193,6 +259,10 @@ def main():
     if sb is not None:
         bundle["sbQuantityInputPath"] = os.path.join(bundle_dir, "sb_quantity_input.json")
         bundle["sbQuantityInputSha256"] = sha(os.path.join(bundle_dir, "sb_quantity_input.json"))
+    bundle["fixtureConstantsPath"] = os.path.join(bundle_dir, "fixture_constants.json")
+    bundle["fixtureConstantsSha256"] = fx_sha
+    bundle["sbDerivationScriptPath"] = os.path.join(bundle_dir, "sb_quantity_derivation.test.ts")
+    bundle["sbDerivationScriptSha256"] = sha(os.path.join(bundle_dir, "sb_quantity_derivation.test.ts"))
 
     report = {
         "schemaVersion": "1.0.0",
@@ -204,7 +274,8 @@ def main():
             "loadCaseId": "LC1",
             "section": "declared(Phase9-04R3)",
             "solverBuild": args.solver_build,
-            "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(REF-MOUNTAIN A1/P1-portal/A2)",
+            "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(generateSample declared geometry) via sb_quantity_derivation.test.ts",
+            "deckVolumeDerivation": "fixture_constants.json deck.widthM * thicknessM * bridgeLengthM",
             "command": "python3 compare_oracle.py --oracle <oracle.json> --input <solver-input.json> --raw <solver-raw-result.json> --sb-quantity sb_quantity_input.json --out <report.json> (PYTHONPATH=backend)",
         },
         "inputChainOfCustody": {
