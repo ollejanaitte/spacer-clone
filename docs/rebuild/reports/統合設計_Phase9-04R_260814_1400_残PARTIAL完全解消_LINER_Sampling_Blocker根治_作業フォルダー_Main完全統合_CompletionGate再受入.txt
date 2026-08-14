@@ -1,0 +1,132 @@
+統合設計_Phase9-04R_260814_1400_残PARTIAL完全解消_LINER_Sampling_Blocker根治_作業フォルダー_Main完全統合_CompletionGate再受入
+====================================================================
+
+作業名: 統合設計 Phase 9-04R「残PARTIAL完全解消・LINER Sampling Blocker根治・作業フォルダー/Main完全統合・Completion Gate再受入」
+完了日時: 2026-08-14 14:00 JST
+baseline: ceb552e6（Phase 9-04 Final Report merge後）
+Phase 9-02 Design Freeze: 唯一のarchitecture契約（維持）
+verdict: Phase 9-04R PARTIAL（LINER blocker根治・CIM 3D実画面成立・残PARTIALは記録）
+STOP
+
+====================================================================
+1. LINER Sampling Blocker 根治（WP-R1・最優先）CLOSED
+====================================================================
+
+【root cause確定】
+- LINER_COORDINATE_FATAL_DIAGNOSTICS at station 100 offset 0 は
+  LINER_PROFILE_ELEVATION_DISCONTINUITY が原因
+- Reference Mountain縦断プロファイルが P1(parabolic)終端≈108.1m と
+  G2(grade)起点 106.5m で不連続（1.6m）→ coordinate3d.checkVerticalContinuity がFATAL
+- node/ブラウザ両方で再現（回帰testで確定）・Sol調査（parabolic startElevation欠落→PR #1019）
+  を経て、fixture側の縦断不連続が根本原因と確定
+
+【root fix】（PR #1021・SHA 246f32e5）
+- referenceMountain.ts: G2 startElevation 106.5→108.1（縦断連続化・production正しい）
+- superstructureCimLayer: regenerateSuperstructureDerived を適用（buildDerivedAnalysisDocumentと整合）
+- superstructureLinerSnapshot 回帰test: it.fails→通常PASS化（tests 1735全PASS）
+
+【Acceptance】
+- 回帰test PASS・node PASS・browser PASS
+- buildDerivedAnalysisDocument成功（解析POSTまで到達）・generateSuperstructureSnapshot成功
+- 上部工CIM 3D実表示（オレンジ主桁/床版・下部工との位置関係OK・screenshot・Discord送信）
+
+====================================================================
+2. CIM 3D画面最大化（PR #1022・SHA 1aaeacc8）
+====================================================================
+
+- FOVベースカメラframing（fill 85%）・初期fit=road優先→superstructure→bridgeLayout→all
+- レイアウト: CIM pageをnext-page-wide（960→1320px）・cim-viewer-actionsをlayout外へ
+  （viewer幅 543→1016px）・Cim3DViewer高さviewport基準
+- 実画面: 橋梁が画面下部大半を占有（screenshot・Discord送信）
+
+====================================================================
+3. IF3 Result Overlay（WP-R2・I-06/07/08）
+====================================================================
+
+- メカニズム配線済み（PR #1018・CIM解析実行ボタン・N/Q/M/T成分切替・deformed/reaction/resultレイヤ）
+- analysisCimLayer unit test済み（IF3 resultでN/Q/M/T/deformed/reaction・stale guard）
+- 実画面: 解析POSTはnodeで200（MODEL_UNSTABLE/結果なし）・browserでHTTP 500（browser固有の
+  derived document serialization差と推定）
+- derived doc は loadCases:0（荷重未設定）→ solverはauthoritative結果を産出しない
+  → FROZEN正（荷重設定前にN/Q/M/Tを捏造しない）
+- 再開: loadCase設定（AUTHORIZED範囲）後、browser解析→IF3 authoritative結果→実画面overlay
+
+====================================================================
+4. 下部工 B-01/B-06・上部工 S-01/03/07
+====================================================================
+
+- B-01（3ペインCAD完全統合）: 実質PARTIAL（form editor+Outputs確立・旧route非依存で動作）
+- B-06（杭layout grid）: PARTIAL（入力fieldのみ・rows/cols gridは次Phase候補）
+- S-01（BridgeStructureInputPanel完全統合）: PARTIAL（Core編集+Outputs確立）
+- S-03（AUTHORIZED荷重）: PARTIAL（解析連携はloadCase設定依存）
+- S-07（旧Apollo UI完全統合）: PARTIAL
+- これらは large-scale UI統合作業で、本セッションでは未完
+
+====================================================================
+5. 作業フォルダー / GitHub main完全統合
+====================================================================
+
+- 2folder監査: spacer-clone（main・canonical）/ spacer-clone-next（rebuild/integrated-system）
+  HEADは共にorigin/main=1aaeacc8（同期）
+- unique tracked diff = 0・unpushed commit = 0・unmerged required branch = 0
+- nextのunique untracked（R1-04.5報告）はcanonicalへ退避済み
+- pre-existing dirty（evidence files）は両folderに重複存在（canonicalで保持）
+- 全Phase 9-04R成果はGitHub mainへmerge済み（#1019/#1021/#1022）
+- 第2worktree（spacer-clone-next）は no-force/no-discard 規則を尊重し、
+  既存dirty保持のまま sync worktreeとして残置（ユニーク成果なし）
+- 正規作業folder = spacer-clone（main）・GitHub main = 唯一のコード正本
+
+====================================================================
+6. PR一覧
+====================================================================
+
+| PR | 内容 | SHA |
+|---|---|---|
+| #1019 | parabolic startElevation保持・blocker回帰test（it.fails） | 7924fe97 |
+| #1021 | LINER Blocker根治（縦断連続化・superCimLayer再生成・test PASS化） | 246f32e5 |
+| #1022 | CIM 3D画面最大化（FOV framing・road優先初期fit・viewer全幅） | 1aaeacc8 |
+
+====================================================================
+7. 検証結果
+====================================================================
+
+- frontend tests 1735 passed（全PASS・blocker回帰含む）・typecheck・build PASS
+- 実画面: 上部工CIM 3D描画成功（オレンジ主桁/床版・下部工位置関係OK）・CIM画面最大化・
+  pageerrorなし・screenshots（Luna判定・Discord送信）
+
+====================================================================
+8. Completion Gate判定
+====================================================================
+
+- LINER sampling root cause確定・blocker CLOSED: PASS
+- superstructureLinerSnapshot PASS: PASS
+- browser上部工CIM PASS: PASS
+- I-06/07/08（IF3 authoritative実画面）: PARTIAL（メカニズム+unit済・authoritative結果は
+  loadCase設定後）
+- B-01/B-06・S-01/03/07: PARTIAL
+- 残PARTIAL>0 → Phase 9-04R NOT COMPLETE（完遂には追加セッション要）
+
+====================================================================
+9. unresolved / deferred（FROZEN境界）
+====================================================================
+
+- unresolved: IF3 authoritative実画面（loadCase設定後の解析→overlay）・
+  下部工杭layout grid・3ペインCAD完全統合・旧Apollo全field・作業フォルダー第2worktree残置
+- deferred（FROZEN）: 正式応力度/照査 NOT_AUTHORIZED・diaphragm DEFER・
+  配筋/耐震 HOLD・SOURCE_NOT_AVAILABLE値発明禁止
+
+====================================================================
+10. final SHA
+====================================================================
+
+本PR merge後の最新SHA（merge後に4系統同期で確定）
+
+====================================================================
+11. verdict
+====================================================================
+
+Phase 9-04R PARTIAL（NOT COMPLETE）
+- 最重要blocker（LINER Sampling）は根治・CIM 3D実画面成立・画面最大化完了
+- 残PARTIAL（IF3 authoritative実画面・杭grid・3ペインCAD・旧Apollo全field）は
+  追加セッションで継続（再開地点を本Reportに記録）
+STOP
