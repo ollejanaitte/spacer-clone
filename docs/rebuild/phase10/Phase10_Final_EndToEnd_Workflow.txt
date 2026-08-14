@@ -43,8 +43,12 @@ Project作成
 | Project | .spacerproj | 全canonical | package | sha256 | - | - | ✓ | ✓ | import/restore |
 | Project | Electron | 全canonical | filesystem | - | - | - | ✓ | ✓ | restoreFromPersistence |
 
-【原則】
+【principle】
 - PDC唯一正本・dual-writeなし・derivedは決定論的再生成
 - 全handoffはfail-closed（欠損→INVALID/STALE・値を発明しない）
+- 編集→stale化→export禁止→再生成で解除
+- Electron restart後・.spacerproj import後のcanonical checksum一致・成果品再生成一致
+- 可変メタデータ（時刻等）は決定論判定から除外
+- deliverables module: 成果品はcanonicalからderived再生成（複製保存禁止）
 - Phase 12で新仕様追加なし・Phase 11成果の受入のみ
 ====================================================================

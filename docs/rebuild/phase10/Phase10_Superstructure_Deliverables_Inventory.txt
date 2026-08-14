@@ -18,6 +18,9 @@ baseline: e3e2d3b
 | reaction（支承反力） | bearing seats・authorizedDeadLoad | COMPLETE（解析由来） |
 | N/Q/M/Tとの関係 | IF3 authoritative（解析由来） | COMPLETE |
 
+※ IF3解析結果（member forces/reactions）はAnalysis成果としてV1.0必須。
+  上部工「正式応力度・照査結果」は NOT_AUTHORIZED（FROZEN）であり、解析結果と混同しない。
+
 【未救出（Phase 11候補）】
 | 成果 | 現状 | 候補 |
 |---|---|---|

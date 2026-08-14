@@ -12,9 +12,9 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | Deliverable | Old Impl | Current | Prod Route | Export | Test/E2E | Decision | V1.0 |
 |---|---|---|---|---|---|---|---|
 | 平面線形/座標/要素表 | liner/core | road/horizontal・stationing | [N] | - | ✓ | KEEP | 必須 |
-| 平面図 | liner/drawing（plan builder） | 同上（legacy） | [L] /pro/liner/drawings/plan | DXF✓ | ✓/✓ | RESTORE→ADAPT | 必須 |
-| 縦断図 | liner/drawing（profile） | 同上 | [L] .../profile | DXF✓ | ✓/✓ | RESTORE→ADAPT | 必須 |
-| 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | DXF✓ | ✓/✓ | RESTORE→ADAPT | 必須 |
+| 平面図 | liner/drawing（plan builder） | 同上（legacy） | [L] /pro/liner/drawings/plan | DXF✓ | ✓/✓ | KEEP+ADAPT（host/adapter） | 必須 |
+| 縦断図 | liner/drawing（profile） | 同上 | [L] .../profile | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | HTML/CSV✓ | ✓/✓ | ADAPT | 必須 |
 | DXF（formal） | liner/dxf | 同上 | [L] | DXF✓ | ✓/✓ | ADAPT | 必須 |
 | 2D Preview | - | next/components/RoadPreviews | [N] | - | ✓ | KEEP | 補助 |
@@ -28,7 +28,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | 支持点/station/skew | - | bridgeLayoutPlacement | [N] | - | ✓ | KEEP | 必須 |
 | 3D | - | bridgeLayoutScene | [N] | - | ✓ | KEEP | 必須 |
 | 一般図/layout drawing | なし | - | - | - | - | REWRITE小（Phase11） | 候補 |
-| span/support表出力 | なし | - | - | - | - | REWRITE小 | 候補 |
+| span/support表出力 | なし | - | - | - | - | REWRITE小 | 必須 |
 
 【Superstructure】
 | Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
@@ -62,10 +62,10 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | N/Q/M/T | - | 同上/color map | [N] | - | ✓ | KEEP | 必須 |
 | Deformed | - | 同上/analysisCimLayer | [N] | - | ✓ | KEEP | 必須 |
 | result table | - | AuthoritativeResultPanel | [N] | - | ✓ | KEEP | 必須 |
-| CSV export | exports/resultCsvExport | [L] | - | CSV✓ | ✓ | ADAPT | 候補 |
-| member force CSV | exports/memberForceReport | [L] | - | CSV✓ | ✓ | ADAPT | 候補 |
+| CSV export | exports/resultCsvExport | [L] | - | CSV✓ | ✓ | ADAPT | 必須 |
+| member force CSV | exports/memberForceReport | [L] | - | CSV✓ | ✓ | ADAPT | 必須 |
 | PDF報告 | exports/resultPdfReport | [L] | - | print-HTML | ✓ | ADAPT/方針 | 候補 |
-| analysis専用ページ | - | プレースホルダー | - | - | - | REWRITE小 | 候補 |
+| analysis専用ページ | - | プレースホルダー | - | - | - | REWRITE小 | 必須 |
 
 【CIM / Export】
 | Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |

@@ -6,9 +6,20 @@ baseline: e3e2d3b
 ====================================================================
 
 【Reference Business（最終受入案件）】
-- 種別: 山岳道路＋曲線高架橋の統合案件（Reference Mountain系・既存fixture再利用）
-- シナリオ: 空Projectから成果品出力まで実操作で完走（Electron headed・実画面）
+- 種別: 山岳道路＋曲線高架橋の統合案件
+- 投入方法（明確化）: 「空Project作成＋明示的なReference Mountain fixture import」に固定。
+  自動seed（空データ時のReference Mountain自動投入）を受入証拠として暗黙利用しない。
+  fixture投入地点・操作・provenanceを証跡として記録。
 - Phase 12では新仕様追加なし・Phase 11成果の受入のみ
+
+【数値oracle（High・橋梁解析の正当性）】
+「非零実値・ダミーでない」に加え、以下を固定:
+- 節点/部材数・支持条件（FIXED/MOVABLE数）の期待値
+- 荷重合計Σ|Fz| と反力合計の釣合い（許容誤差）
+- 代表N/Q/M/Tの期待値or許容範囲・単位・符号規約
+- 変位（最大|uz|）の許容範囲
+- 座標・数量（concrete volume/pile length）の期待値
+- ゼロが正しい成分（対称鉛直荷重でのT等）は「0が正」と明記
 
 【受入シナリオ（空Project→成果品出力）】
 1. 空Project作成（/app/business/new）
@@ -37,18 +48,24 @@ baseline: e3e2d3b
 【Completion Gate（Phase 12判定条件）】
 各成果品:
 - 実画面で生成可能
-- production route経由
-- 実ファイル出力（DXF/CSV/GLB/HTML/.spacerproj）
+- production route経由（新/app正式）
+- 実ファイル出力（DXF/CSV/GLB/HTML/.spacerproj）・byte/content検証
 - canonicalから決定論的生成・dual-writeなし
 - FROZEN境界維持（NOT_AUTHORIZED/HOLD表示・値を発明しない）
-- 非零実値（IF3・Quantity・座標）・ダミーでない
+- 数値oracle適合（非零実値＋釣合い＋期待値）
+
+【stale / persistence / 再生成 Gate（High）】
+- 編集によるstale化 → export禁止 → 再生成で解除
+- Electron restart後・.spacerproj import後のcanonical checksum一致
+- 成果品の再生成一致（restart/import後も同一）
+- 時刻等の可変メタデータは決定論判定から除外
 
 【判定】
-- 全V1.0必須成果が受入可能 → Version 1.0 COMPLETE
+- 全V1.0必須成果（Deliverable ID: RD-01〜SYS-03）が受入可能 → Version 1.0 COMPLETE
 - 1件でも必須成果が未達 → NOT COMPLETE（Phase 11 backlogへ戻す）
 
 【前提】
-- Phase 11実装（P0-01〜P0-06・P1任意）完了後
+- Phase 11実装（P0-01〜P0-06・P1-01（導線整理）含む）完了後
 - Sol最終レビューGO
 - FROZEN境界・V1.0 scope確定済み
 ====================================================================

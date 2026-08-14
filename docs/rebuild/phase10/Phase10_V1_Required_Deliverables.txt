@@ -31,7 +31,9 @@ V1.0 COMPLETEをPhase 12で判定するための必須成果。
 | DXF | 必須（KEEP） | 新アプリ実出力 |
 | Quantity | 必須（KEEP） | 実数値 |
 | 3D/CIM | 必須（KEEP） | 同上 |
-| 設計結果（N/Q/M/T・Reaction） | 必須（KEEP） | IF3 authoritative由来 |
+| 解析結果（IF3 N/Q/M/T・Reaction） | 必須（KEEP） | IF3 authoritative由来・Analysis成果に分類（上部工照査結果ではない） |
+
+※ 上部工の「正式応力度・照査結果」は NOT_AUTHORIZED（FROZEN）。IF3解析結果（member forces/reactions）はAnalysis成果であり、照査結果と混同しない。
 
 【Substructure】
 | 成果 | 状態 | 備考 |
@@ -59,34 +61,15 @@ V1.0 COMPLETEをPhase 12で判定するための必須成果。
 | deliverables module（成果品ページ） | 必須（REWRITE新設） | Phase 11で図面/報告/export統合UI |
 
 ====================================================================
-Phase10_Deferred_Frozen_List（STEP 12 V1.0外項目を明示）
-====================================================================
-
-【DEFER（V1.0外・未完扱いしない）】
-| 項目 | 理由 |
-|---|---|
-| バイナリPDF生成 | 現状はprint-based HTML・実PDF生成基盤なし・Phase 11で方針決定 |
-| IFC export | コードベースに根拠なし・将来候補 |
-| GA sheet（Apollo drawingSet） | legacy資産・ADAPT候補・V1.0任意 |
-| STL（Apollo/liner frame） | legacy稼働・新アプリ接続は任意 |
-| pier/abutment/footing正式図 | Phase 11候補（REWRITE小）・V1.0必須判断は要調整 |
-| レポートPDF統合 | 任意 |
-
-【NOT_AUTHORIZED（FROZEN・上部工）】
-- 応力度/照査6種
-- diaphragm（DEFER）
-
-【HOLD_NOT_AVAILABLE（FROZEN・下部工）】
-- 照査/配筋/耐震
-- AUTO-DETERMINATION: BANNED
-
-【SOURCE_NOT_AVAILABLE（共通）】
-- 値の発明禁止（欠損はSOURCE_NOT_AVAILABLEとして閉じる）
-
-【optional/future】
-- IFC・PDFバイナリ・STL新アプリ接続・screenshot/report統合
-
-【V1.0に入らない＝未完成でない】
-- 上記DEFER/FROZENは明示的境界としてV1.0外に位置づけ
-- Phase 12では「V1.0必須成果」の受入のみ判定
-====================================================================
+補足
+- V1.0外項目（DEFER/NOT_AUTHORIZED/HOLD/SOURCE_NOT_AVAILABLE）は
+  独立文書「Phase10_Deferred_Frozen_List.txt」を唯一のscope外表として参照。
+- 必須成果には一意なDeliverable ID（下記）を付与し、matrix/inventories/backlogと対応させる。
+  RD-01 平面線形/座標/要素表 / RD-02 平面図 / RD-03 縦断図 / RD-04 横断図 / RD-05 道路計算書
+  BL-01 Bridge Layout / BL-02 span/support表
+  SS-01 入力UI / SS-02 2D / SS-03 DXF / SS-04 Quantity / SS-05 3D/CIM
+  SB-01 3-pane / SB-02 pile grid / SB-03 座標表 / SB-04 Quantity / SB-05 2D/3D/CIM
+  AN-01 Solver/IF3 / AN-02 Reaction / AN-03 N-Q-M-T / AN-04 Deformed / AN-05 結果CSV export
+  CIM-01 Integrated 3D / CIM-02 GLB
+  SYS-01 .spacerproj / SYS-02 Auto Save/restart / SYS-03 deliverables module
+=====================================================================

@@ -12,23 +12,30 @@ P0-01 deliverables module 新設（成果品ページ）
 - goal: /app/projects/{id}/modules/deliverables を正式ページ化し、図面/報告/exportを統合
 - source: 既存成果品各（Road図面/Super DXF/Sub 2D/解析export）
 - target: next/pages/DeliverablesModuleShellPage.tsx
-- policy: registry既存・ModuleShellPageへ実装・canonical各moduleから読み出し
+- policy: deliverablesのSoT境界を固定
+  - canonical保存: 生成条件・manifestのみ（図面/CSV/DXF等の成果値は複製保存しない）
+  - derived: 成果品は各canonicalから決定論的に再生成
+  - 依存module: road・bridgeLayout・superstructure・substructure・analysis・cim（registry依存を拡張）
+  - fingerprint/stale/invalid gate: 各sourceのfingerprint変化でSTALE・export禁止・再生成で解除
 - module: deliverables
-- tests: shell UI test・integration
-- E2E: /app 成果品ページ表示・export実行
-- acceptance: 成果品一覧→各exportボタン→実ファイル
+- tests: shell UI test・integration・stale/再生成test
+- E2E: /app 成果品ページ表示・各export実行
+- acceptance: 成果品一覧→各exportボタン→実ファイル（byte/content検証）
 - risk: 低
 
 P0-02 Road図面（平面/縦断/横断）を新アプリへ接続
 - goal: 新Road canonical（CanonicalRoadData）から平面図/縦断図/横断図を生成・DXF実出力
 - source: liner/drawing/・liner/dxf/（legacy資産）
 - target: 新road module or deliverables内でhost
-- policy: CanonicalRoadData→loadRoadEditorDraft→buildIntermediateInputFromDomainDraft→
-  formal drawing pipeline（ADAPT・bridge実装）
+- policy: 正式経路を固定
+  readRoadData（checksum検証）→ loadRoadEditorDraft(canonical)（内部で
+  buildIntermediateInputFromDomainDraft(canonical.domainDraft)を実行しBuildIntermediateInputを返す）→
+  formal drawing pipeline（ADAPT）。
+  変換関数の二重呼出しはしない。invalid/checksum mismatch時はexport禁止（fail-closed）。
 - module: road/deliverables
-- tests: drawing bridge unit・DXF byte test
-- E2E: 新アプリで平面図DXFダウンロード
-- acceptance: 実画面で図面SVG+DXF実ファイル・Luna確認
+- tests: drawing bridge unit・DXF byte test・checksum mismatch拒否test
+- E2E: 新アプリで平面/縦断/横断のDXFダウンロード（5 kindのうちV1必須分を個別Gate化）
+- acceptance: 実画面で図面SVG+DXF実ファイル（byte/content検証）・Luna確認
 - risk: 中（data interface bridge）
 
 P0-03 Road計算書（HTML/CSV）を新アプリへ接続
@@ -75,11 +82,11 @@ P0-06 Bridge Layout span/support表出力
 - risk: 低
 
 --------------------------------------------------------------------
-P1-01 旧/新画面切り替え時の導線整理（/pro legacy と /app の関係）
+P1-01 旧/新画面切り替え時の導線整理（/pro legacy と /app の関係）【Phase 12 Completion Gate必須】
 - goal: legacy /pro を「資産確認・参照」とし、新 /app をproduction正とする明示
 - source: App.tsx routes
-- target: ガイド（lobby/home）・不要導線は非推奨化
-- policy: 非破壊（legacy残す・新appを正式化）
+- target: ガイド（lobby/home）・production navigationからlegacyを外す（参照用途表示）
+- policy: 非破壊（legacy残す・新appを正式化・canonical書込みは新/app経由のみ）
 - risk: 低
 
 P1-02 STL exportの新アプリ接続（任意）
@@ -89,9 +96,10 @@ P1-02 STL exportの新アプリ接続（任意）
 - policy: ADAPT・P2扱い可
 
 --------------------------------------------------------------------
-P2-01 成果品E2E byte検証強化
-- goal: Super DXF/CIM GLB/CSVの実バイト検証E2E
+P2-01 成果品E2E byte検証強化（V1必須形式は各P0 acceptance内でbyte/content検証・P0相当）
+- goal: Super DXF/CIM GLB/CSVの実バイト・parse・content検証
 - source: 現E2Eパターン
+- policy: 各P0 acceptanceに組み込み（ファイル名・非空byteだけでPASSさせない）
 - risk: 低
 
 P2-02 evidence/screenshot統合

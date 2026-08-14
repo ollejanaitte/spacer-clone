@@ -46,9 +46,10 @@ status: DRAFT（Sol最終レビュー反映後にPASS確定）
 
 【6. production routes】
 - 正式: /app/*（NextApp）・新appをproduction正とする
-- legacy: /pro/*（App.tsx）は資産参照・非推奨化（破壊しない）
+- legacy: /pro/*（App.tsx）は資産参照・production navigationから外す（P1-01でCompletion Gate必須化・破壊しない）
 - 解析実行: CIM shell（Phase 11でanalysis専用shellへ分離予定）
-- deliverables: /app/.../modules/deliverables（Phase 11で実装）
+- deliverables: /app/.../modules/deliverables（Phase 11で実装・SoTは「生成条件・manifestのみcanonical・
+  成果値はderived再生成・依存moduleはroad/bridgeLayout/superstructure/substructure/analysis/cim」）
 
 【7. persistence】
 - PersistentProjectManager（Auto Save・restart restore）
@@ -75,8 +76,9 @@ Phase10_Phase11_Implementation_Backlog.txt（P0-01〜P0-06・P1・P2・DEFER）
 Phase10_Phase12_ReferenceBusiness_AcceptanceGate.txt（山岳道路＋曲線高架橋・空Project→成果品）
 
 【12. DEFER / NOT_AUTHORIZED / SOURCE_NOT_AVAILABLE / HOLD】
-- DEFER: バイナリPDF・IFC・GA sheet・STL新接続（任意）・pier/abutment/footing正式図（要調整）
-- NOT_AUTHORIZED: 上部工応力度/照査6種・diaphragm
+- DEFER: バイナリPDF・IFC・GA sheet（Apollo drawingSet）・STL新アプリ接続（任意）・pier/abutment/footing正式図
+- NOT_AUTHORIZED: 上部工応力度/照査6種（正式応力度・照査結果はNOT_AUTHORIZED・IF3解析結果とは別物）
+- diaphragm: DEFER（別項目・NOT_AUTHORIZEDに含めない）
 - SOURCE_NOT_AVAILABLE: 値発明禁止（欠損は閉じる）
 - HOLD_NOT_AVAILABLE: 下部工照査/配筋/耐震・AUTO-DETERMINATION BANNED
 
