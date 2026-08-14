@@ -1,7 +1,7 @@
 {
  "schemaVersion": "1.0.0",
  "comparatorId": "spacer-oracle-comparator-v1",
- "generatedAt": "2026-08-14T23:36:25.941720+00:00",
+ "generatedAt": "2026-08-14T23:54:48.238250+00:00",
  "runConditions": {
   "solver": "scipy_sparse",
   "document": "Phase10_Reference_SolverInput.json(fixed)",
@@ -41,9 +41,9 @@
   "sbVitestConfigPath": "frontend/vitest.sb.config.ts",
   "sbVitestConfigSha256": "fd08338da003c7edca0581f352cc2699fbb7c531f47ee774c55b545dedc771a8",
   "standardVitestConfigPath": "frontend/vitest.config.ts",
-  "standardVitestConfigSha256": "fa03fdaa14330527b3ae25159d3088f6a2a053489557530d9abfdd024c77f1f7",
+  "standardVitestConfigSha256": "f0cc5d7a928280ec21ca1b6bd060cf07e986b28f415986783cacb72c54c33fbc",
   "verifyRunnerPath": "docs/rebuild/phase10/evidence/oracle-comparator/verify_oracle_evidence.py",
-  "verifyRunnerSha256": "82ce74308ee3a6d166dcc1b6a7271a6c1d1326572f904184b0e47acac1c49689",
+  "verifyRunnerSha256": "be04f016e437a4c654fca146b5f9545eddcc33a23e0e3826b88344a2220f9415",
   "oracleSchemaPath": "docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json",
   "oracleSchemaSha256": "4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f"
  },

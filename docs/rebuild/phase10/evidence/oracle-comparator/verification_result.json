@@ -1,6 +1,6 @@
 {
  "comparatorId": "spacer-oracle-comparator-v1",
- "runnerSha256": "82ce74308ee3a6d166dcc1b6a7271a6c1d1326572f904184b0e47acac1c49689",
+ "runnerSha256": "be04f016e437a4c654fca146b5f9545eddcc33a23e0e3826b88344a2220f9415",
  "validator": "jsonschema 4.26.0 Draft202012Validator",
  "inputs": {
   "oracle": {
@@ -29,7 +29,7 @@
   },
   "standardVitestConfig": {
    "path": "vitest.config.ts",
-   "sha256": "fa03fdaa14330527b3ae25159d3088f6a2a053489557530d9abfdd024c77f1f7"
+   "sha256": "f0cc5d7a928280ec21ca1b6bd060cf07e986b28f415986783cacb72c54c33fbc"
   },
   "fixtureConstants": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
@@ -52,14 +52,20 @@
    "sha256": "ebc3041f32d96498abdbe09e88bc4bf5e2df7b89ea511fa35fdb7830837bfc1c"
   }
  },
- "generatedReportSha256": "1ce48fcf81be5ec9c1f046196fb80b7a0a90126aac307ac478b47781217b7530",
+ "generatedReportSha256": "7ccbcdf3ffb03613626c045a34f0977ce600488196f51219d4afb48f440298b7",
  "sbDerivation": {
   "executed": true,
   "derivedMatchesFixed": true,
   "outputPath": "/tmp/opencode/p10-oracle/sb_quantity_output.json",
   "fixedPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json"
  },
- "sbExcludedFromStandardSuite": true,
+ "sbExcludedFromStandardSuite": {
+  "ok": true,
+  "returnCode": 0,
+  "matchedCount": 0,
+  "testPath": "src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
+  "configPath": "vitest.config.ts"
+ },
  "oracleSchemaValid": true,
  "negativeFixtures": {
   "count": 7,

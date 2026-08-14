@@ -140,14 +140,16 @@ def main():
         derive_detail = {"derivedMatchesFixed": False, "error": "vitest failed or output missing", "stderr": (proc.stderr or "")[-1500:]}
     print("SB derivation matches fixed input (strict):", derive_ok)
 
-    # 0b) standard vitest config exclusion: sb test must NOT appear in standard suite
+    # 0b) standard vitest config exclusion: sb test must NOT appear in standard suite (fail-closed)
     list_proc = subprocess.run(
         ["npx", "vitest", "list", "--config", args.standard_vitest_config],
         cwd=args.frontend_dir, capture_output=True, text=True,
     )
     std_list = (list_proc.stdout or "") + (list_proc.stderr or "")
-    sb_excluded_ok = args.sb_test_relative not in std_list
-    print("SB test excluded from standard suite:", sb_excluded_ok)
+    sb_matched_count = std_list.count(args.sb_test_relative)
+    sb_excluded_ok = list_proc.returncode == 0 and sb_matched_count == 0
+    print("SB test excluded from standard suite:", sb_excluded_ok,
+          "| rc:", list_proc.returncode, "| matchedCount:", sb_matched_count)
 
     # 1) oracle validates
     ov = jsonschema.Draft202012Validator(oracle_schema)
@@ -232,7 +234,13 @@ def main():
         },
         "generatedReportSha256": sha(args.out),
         "sbDerivation": {"executed": True, **derive_detail},
-        "sbExcludedFromStandardSuite": sb_excluded_ok,
+        "sbExcludedFromStandardSuite": {
+            "ok": sb_excluded_ok,
+            "returnCode": list_proc.returncode,
+            "matchedCount": sb_matched_count,
+            "testPath": args.sb_test_relative,
+            "configPath": args.standard_vitest_config,
+        },
         "oracleSchemaValid": oracle_ok,
         "negativeFixtures": {"count": len(neg_results), "allRejected": neg_ok, "cases": neg_results},
         "comparison": {"pass": report_pass, "rows": len(report.get("rows", [])), "failures": len(report.get("failures", [])), "rawConsistency": report.get("rawConsistency")},

@@ -46,11 +46,11 @@ status: FINAL（Sol指摘2回反映）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 1ce48fcf81be5ec9c1f046196fb80b7a0a90126aac307ac478b47781217b7530）
+    （sha256 7ccbcdf3ffb03613626c045a34f0977ce600488196f51219d4afb48f440298b7）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
   - 再現bundle（evidence/oracle-comparator/）:
     compare_oracle.py = ebc3041f32d96498abdbe09e88bc4bf5e2df7b89ea511fa35fdb7830837bfc1c
-    verify_oracle_evidence.py = 82ce74308ee3a6d166dcc1b6a7271a6c1d1326572f904184b0e47acac1c49689
+    verify_oracle_evidence.py = be04f016e437a4c654fca146b5f9545eddcc33a23e0e3826b88344a2220f9415
     comparison_report.schema.json = e7748fc00a48230f527a1b7a8d148b5fc7c502e4d24219999089f45afaf8b505
     Phase10_Reference_NumberOracle.schema.json = 4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f
     schema_negative_fixtures.json = 0ec294025a6d0f16704ba4afbd3c4589e9543c63faaa9d8f70ae31a4ed372495
@@ -58,10 +58,10 @@ status: FINAL（Sol指摘2回反映）
     fixture_constants.json = ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb（A1 station=100統一）
     SB導出test（単一正本）= frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts
     　sha256 33a74bff4871ce8b9b19e431a8263d690f9d4b87744328546559c4170060e40e（P10_SB_OUTPUT必須・fallbackなし）
-    　専用実行: vitest.sb.config.ts（fd08338d...）・通常npm testからexclude（vitest.config.ts fa03fdaa...）
-    - verify runnerがvitest listで対象test 0件を検証・記録（sbExcludedFromStandardSuite=True）・両config SHAをinputs/comparatorBundleへ固定
+    　専用実行: vitest.sb.config.ts（fd08338d...）・通常npm testからexclude（vitest.config.ts f0cc5d7a...（tests/e2e-p904r3/** exclude追加・SB test除外をvitest listで検証））
+    - verify runnerがvitest list（rc=0・matchedCount=0）で対象test除外をfail-closed検証・記録（sbExcludedFromStandardSuite={returnCode:0,matchedCount:0}）・両config SHAをinputs/comparatorBundleへ固定
   - report.comparatorBundleに全bundle完全SHA格納・verify_oracle_evidence.pyが「SB導出→固定入力厳密一致→oracle PASS→7件reject→比較→report schema PASS」を一括実行し
-    verification_result.json（c53646f753151a9b015512094f12d335435a3145d47b465dda82f8006279f30f）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
+    verification_result.json（95f08d898c015a1de28fe9aed0ad9e7513c8f294881252500aa0412f77815e9f）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
   - row-key multiset: oracle/reportの（kind,entityId,component）キー集合完全一致+両者一意性（oracleUnique/reportUnique）をfail-closed検証・
     重複row negative（report row複製）検出を確認
   - fixture consistency: oracle reference=REF-MOUNTAIN-1=fixture_constants.fixtureId=report fixtureId/version一致・solver input projectId一致を検証
