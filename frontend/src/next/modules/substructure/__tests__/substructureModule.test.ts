@@ -148,6 +148,50 @@ describe("SubstructureDocument validation (WP-A)", () => {
     const bad = parseSubstructureDocument({ ...doc, schemaVersion: "9.9.9" });
     expect(bad.ok).toBe(false);
   });
+
+  it("rejects duplicate pileConfigurations id (Sol review #4)", () => {
+    const doc = makeDocument("PROJ-1");
+    const pc = { id: "pg1", pileType: "bored_pile" as const, diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 };
+    const bad = { ...doc, pileConfigurations: [pc, pc] };
+    const issues = validateSubstructureDocument(bad);
+    expect(issues.some((i) => i.message.includes("duplicate pileConfigurations id"))).toBe(true);
+  });
+
+  it("rejects one-sided-null rows/cols mismatch between nested and normalized (Sol review #4)", () => {
+    const doc = makeDocument("PROJ-1");
+    const base = doc.supports[1]!; // P1 (pier)
+    const withPg = {
+      ...doc,
+      supports: doc.supports.map((s) => s.supportId === "P1"
+        ? { ...s, pier: { ...s.pier!, pileGroup: { id: "pg1", pileType: "bored_pile" as const, diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 } } }
+        : s),
+      pileConfigurations: [
+        { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: null, cols: null, edgeX: null, edgeY: null },
+      ],
+    };
+    const issues = validateSubstructureDocument(withPg as SubstructureDocument);
+    expect(issues.some((i) => i.message.includes("rows"))).toBe(true);
+  });
+
+  it("rejects diameter mismatch between nested and normalized at write boundary (Sol review #4)", () => {
+    resetProjectManagerForTest();
+    const manager = getProjectManager();
+    manager.importProject(applyBusinessMetadata(createEmptyProject("WB"), { businessNumber: "WB-1", designStage: "bridge-detailed" }));
+    const projectId = manager.listProjects()[0].projectId;
+    const doc = makeDocument(projectId);
+    const mismatched = {
+      ...doc,
+      supports: doc.supports.map((s) => s.supportId === "P1"
+        ? { ...s, pier: { ...s.pier!, pileGroup: { id: "pg1", pileType: "bored_pile" as const, diameter: 1.5, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: 0.5, edgeY: 0.5 } } }
+        : s),
+      pileConfigurations: [
+        { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 15, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: 2, cols: 2, edgeX: null, edgeY: null },
+      ],
+    };
+    const write = writeSubstructureDocument(manager, projectId, mismatched as SubstructureDocument);
+    expect(write.ok).toBe(false);
+    expect(write.ok === false && write.reason === "invalid-substructure-data").toBe(true);
+  });
 });
 
 describe("Substructure module + adapter + persistence (WP-A)", () => {

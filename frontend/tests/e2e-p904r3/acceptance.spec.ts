@@ -328,7 +328,14 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     await expect(page.locator("[data-testid=sub-pane-properties]")).toContainText(planSupportId);
   });
 
-  test("06 persistence restart + pile grid reload (Sol review #7)", async ({ page }) => {
+  // NOTE (Sol review #2/#3): browser E2E runs in web mode where persistence is
+  // in-memory (IpcFileSystemGateway unavailable), so a full page reload cannot
+  // restore the project. This test verifies the PDC commit + module re-entry
+  // restore path. Real app restart restore / .spacerproj round-trip / STALE /
+  // INVALID are covered by unit tests (substructurePersistence.test.ts,
+  // rescuePersistence.test.ts, analysisStaleness.test.ts) and by the Electron
+  // build's FilesystemProjectPersistence (IPC).
+  test("06 PDC commit + module re-entry restore (pile grid)", async ({ page }) => {
     await openProject(page);
     await ensureRoadSaved(page);
     await ensureBridgeLayout(page);

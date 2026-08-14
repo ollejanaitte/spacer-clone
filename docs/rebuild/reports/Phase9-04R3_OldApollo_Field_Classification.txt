@@ -26,6 +26,8 @@ Phase 9-04R3 S-07 旧Apollo 上部工 field 最終分類表
 | spanLength | spanReferences.spans[].spanLength | DERIVED（Bridge Layout handoff） | 生成時に派生・reload復元 |
 | bridgeLength | spanReferences（sum） | DERIVED | 同上 |
 | steelUnitWeight | girderSectionModel.unitWeightPerM（鋼材換算） | convert | 荷重モデルは固定77.0（FROZEN定数）で計算・材料E/G/nu/rhoはmaterialConfiguration編集 |
+| swayBracingInterval（本） | crossFrameConfiguration.swayBracing.intervalM | convert（本→間隔m） | UI編集（横構間隔）・canonical commit |
+| lateralBracingEnabled | crossFrameConfiguration.lateralBracing.intervalM | convert | UI編集（lateral間隔）・canonical commit |
 | bearingSeats（BRG-{s}-{g}） | bearingConfiguration.bearingSeats[] | new/自動配置 | 支承種別/固定可動編集 |
 
 【FROZEN-DEFER（Freezeにて非対応と明示）】
@@ -37,8 +39,6 @@ Phase 9-04R3 S-07 旧Apollo 上部工 field 最終分類表
 | haunch | 新docに非対応・DEFER |
 | roadMarkings | 新docに非対応・DEFER |
 | lateralAngleSection | 新docに非対応・DEFER |
-| swayBracingInterval（本） | crossFrameConfiguration.swayBracing.intervalM | convert（本→間隔m） | UI編集（横構間隔）・canonical commit |
-| lateralBracingEnabled | crossFrameConfiguration.lateralBracing.intervalM | convert | UI編集（lateral間隔）・canonical commit |
 
 【NOT_AUTHORIZED（HOLD維持・計算済み表示禁止）】
 | 項目 | 状態 |

@@ -15,6 +15,7 @@ import { writeBridgeLayoutDocument } from "../../bridgeLayoutModuleAdapter";
 import { generateSuperstructureFromLayout } from "../../superstructure/superstructureGenerator";
 import { readSuperstructureDocument, writeSuperstructureDocument } from "../../superstructureModuleAdapter";
 import { buildDerivedAnalysisDocument } from "../../cim/analysisCimLayer";
+import { buildAuthorizedDeadLoad } from "../authorizedDeadLoad";
 
 function setupFullBridge(): string {
   resetProjectManagerForTest();
@@ -81,5 +82,33 @@ describe("Phase 9-04R3 Sol #4: distributed dead load on main girders", () => {
     expect(Math.abs(applied - totalKN)).toBeLessThan(totalKN * 1e-6);
     // all loads are downward (fz < 0)
     expect(doc.nodalLoads.every((l) => l.fz < 0)).toBe(true);
+  });
+
+  it("fails closed when the resolved girder set does not match girderCount (Sol review #7)", () => {
+    // Simulate a document whose declared girderCount is 3 but only 2 girder
+    // lines resolve to FEM nodes: buildAuthorizedDeadLoad must return null
+    // (no load case) rather than silently under-distribute.
+    const pid = setupFullBridge();
+    const doc = buildDerivedAnalysisDocument(getProjectManager(), pid)!;
+    const superDoc = readSuperstructureDocument(getProjectManager(), pid)!;
+    // count actual girder groups resolved from girderPanel/supportPoint nodes
+    const girderIds = new Set<string>();
+    for (const n of doc.nodes) {
+      if (n.sourceKind === "girderPanel" || n.sourceKind === "supportPoint") {
+        const parts = n.sourceEntityId.split(":");
+        if (parts[0] === "girderPanel") girderIds.add(parts[1]!);
+        if (parts[0] === "supportPoint") girderIds.add(parts[2]!);
+      }
+    }
+    // declared girderCount is 2 (setup); if the model resolved MORE groups than
+    // declared, buildAuthorizedDeadLoad must fail-closed (conservation).
+    const mismatched = {
+      ...superDoc,
+      girderConfiguration: { ...superDoc.girderConfiguration, girderCount: 1 },
+    };
+    const result = buildAuthorizedDeadLoad(mismatched, doc);
+    // girderCount=1 != resolved groups -> null (fail-closed)
+    expect(result).toBeNull();
+    void girderIds;
   });
 });
