@@ -129,6 +129,27 @@ export function validateSubstructureDocument(document: SubstructureDocument): re
     }
   }
 
+  // nested support pileGroup ↔ normalized pileConfigurations consistency
+  // (Sol review #3): both must agree when both are present.
+  const pileConfigById = new Map(document.pileConfigurations.map((pc) => [pc.id, pc]));
+  for (const support of document.supports) {
+    const pg = support.pier?.pileGroup ?? support.abutment?.pileGroup ?? null;
+    if (!pg) continue;
+    const normalized = pileConfigById.get(pg.id);
+    if (normalized) {
+      if (normalized.pileCount !== pg.pileCount) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.pileCount`, message: `nested pileGroup pileCount ${pg.pileCount} differs from pileConfigurations[${pg.id}].pileCount ${normalized.pileCount}` });
+      }
+      const nRows = normalized.rows;
+      const nCols = normalized.cols;
+      const gRows = pg.rows ?? null;
+      const gCols = pg.cols ?? null;
+      if (nRows !== null && nCols !== null && gRows !== null && gCols !== null && (nRows !== gRows || nCols !== gCols)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup grid ${gRows}x${gCols} differs from pileConfigurations[${pg.id}] ${nRows}x${nCols}` });
+      }
+    }
+  }
+
   // derived transient: optional at validation layer (regenerated on restore)
   return issues;
 }

@@ -115,6 +115,24 @@ function ensurePileGroup(
   return base ? { ...base, ...patch } : undefined;
 }
 
+/**
+ * Update the pile count while keeping pileCount === rows*cols consistent
+ * (Sol review #3). rows is recomputed to satisfy the target count; cols and
+ * existing edge distances are preserved.
+ */
+function syncPileGroupCount(
+  pileGroup: { id: string; pileType: string; diameter: number; length: number; pileCount: number; spacing: { x: number; y: number } } | null | undefined,
+  defaultId: string,
+  value: number | null,
+): NonNullable<SubstructureSupport["pier"]>["pileGroup"] {
+  const base = ensurePileGroup(pileGroup, defaultId, {});
+  if (!base) return undefined;
+  const target = Math.max(1, Math.round(value ?? base.pileCount));
+  const cols = base.cols ?? Math.max(1, Math.round(Math.sqrt(base.pileCount)));
+  const rows = Math.max(1, Math.ceil(target / cols));
+  return { ...base, pileCount: rows * cols, rows, cols };
+}
+
 export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
   const manager = getProjectManager();
   const [message, setMessage] = useState<string | null>(null);
@@ -154,7 +172,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
     pierField("footing-thickness", "フーチング厚", (p) => p.footing?.thickness ?? null, (p, v) => ({ ...p, footing: { id: p.footing?.id ?? "ft", length: p.footing?.length ?? 5, width: p.footing?.width ?? 5, thickness: v ?? 0, topElevation: p.footing?.topElevation ?? 0 } })),
     pierField("pile-diameter", "杭径", (p) => p.pileGroup?.diameter ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { diameter: v ?? 0 }) })),
     pierField("pile-length", "杭長", (p) => p.pileGroup?.length ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { length: v ?? 0 }) })),
-    pierField("pile-count", "杭本数", (p) => p.pileGroup?.pileCount ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { pileCount: Math.max(1, Math.round(v ?? 1)) }) })),
+    pierField("pile-count", "杭本数", (p) => p.pileGroup?.pileCount ?? null, (p, v) => ({ ...p, pileGroup: syncPileGroupCount(p.pileGroup, p.footing?.id ?? "pg", v) })),
   ];
 
   const abutmentFields: DimField[] = [
@@ -163,7 +181,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
     abutmentField("abutment-footing-length", "フーチング長", (a) => a.footing?.length ?? null, (a, v) => ({ ...a, footing: { id: a.footing?.id ?? "aft", length: v ?? 0, width: a.footing?.width ?? 5, thickness: a.footing?.thickness ?? 1.5, topElevation: a.footing?.topElevation ?? 0 } })),
     abutmentField("abutment-pile-diameter", "杭径", (a) => a.pileGroup?.diameter ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { diameter: v ?? 0 }) })),
     abutmentField("abutment-pile-length", "杭長", (a) => a.pileGroup?.length ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { length: v ?? 0 }) })),
-    abutmentField("abutment-pile-count", "杭本数", (a) => a.pileGroup?.pileCount ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { pileCount: Math.max(1, Math.round(v ?? 1)) }) })),
+    abutmentField("abutment-pile-count", "杭本数", (a) => a.pileGroup?.pileCount ?? null, (a, v) => ({ ...a, pileGroup: syncPileGroupCount(a.pileGroup, a.footing?.id ?? "pg", v) })),
   ];
 
   if (!doc) {
@@ -230,7 +248,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
                   />
                 ))}
               </div>
-              <PileGridEditor support={selected} onUpdate={(next) => updateSupport(next)} />
+              <PileGridEditor doc={doc} support={selected} onDocUpdate={commit} />
             </>
           ) : (
             <p className="next-hint">Supportを選択してください。</p>
@@ -255,7 +273,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
  * canonically. pileCount === rows*cols is the consistency rule; the coordinate
  * table is DERIVED from the grid definition (never a second source of truth).
  */
-function PileGridEditor({ support, onUpdate }: { support: SubstructureSupport; onUpdate: (s: SubstructureSupport) => void }) {
+function PileGridEditor({ doc, support, onDocUpdate }: { doc: SubstructureDocument; support: SubstructureSupport; onDocUpdate: (next: SubstructureDocument) => void }) {
   const pile = support.pier?.pileGroup ?? support.abutment?.pileGroup ?? null;
   const footing = support.pier?.footing ?? support.abutment?.footing ?? null;
   if (!pile || !footing) {
@@ -271,24 +289,50 @@ function PileGridEditor({ support, onUpdate }: { support: SubstructureSupport; o
   const rows = currentPile.rows ?? Math.max(1, Math.round(Math.sqrt(currentPile.pileCount)));
   const cols = currentPile.cols ?? Math.max(1, Math.round(currentPile.pileCount / rows));
 
-  function commit(next: PileGroupPatch) {
+  /**
+   * Commit a pile grid patch canonically. Both the support's nested
+   * pileGroup AND the document-level pileConfigurations[] (the freeze
+   * normalized source) are updated to the SAME values (single writer, both
+   * reflect the canonical document). Existing edge distances are preserved
+   * unless the patch explicitly changes them (Sol review #3).
+   */
+  function commit(next: PileGroupPatch): void {
+    const nextRows = next.rows ?? rows;
+    const nextCols = next.cols ?? cols;
+    const nextSpacingX = next.spacingX ?? currentPile.spacing.x;
+    const nextSpacingY = next.spacingY ?? currentPile.spacing.y;
+    const nextEdgeX = next.edgeX !== undefined ? next.edgeX : currentPile.edgeX ?? null;
+    const nextEdgeY = next.edgeY !== undefined ? next.edgeY : currentPile.edgeY ?? null;
+
     const pileGroup = {
       id: currentPile.id,
       pileType: currentPile.pileType,
       diameter: currentPile.diameter,
       length: currentPile.length,
-      pileCount: (next.rows ?? rows) * (next.cols ?? cols),
-      spacing: { x: next.spacingX ?? currentPile.spacing.x, y: next.spacingY ?? currentPile.spacing.y },
-      rows: next.rows ?? rows,
-      cols: next.cols ?? cols,
-      edgeX: next.edgeX,
-      edgeY: next.edgeY,
+      pileCount: nextRows * nextCols,
+      spacing: { x: nextSpacingX, y: nextSpacingY },
+      rows: nextRows,
+      cols: nextCols,
+      edgeX: nextEdgeX,
+      edgeY: nextEdgeY,
     };
-    if (support.pier) {
-      onUpdate({ ...support, pier: { ...support.pier, pileGroup } });
-    } else if (support.abutment) {
-      onUpdate({ ...support, abutment: { ...support.abutment, pileGroup } });
+
+    // Sync the document-level pileConfigurations entry (canonical normalized form).
+    const pileConfigurations = doc.pileConfigurations.map((pc) =>
+      pc.id === pileGroup.id ? { ...pc, pileType: pileGroup.pileType, diameter: pileGroup.diameter, length: pileGroup.length, pileCount: pileGroup.pileCount, spacing: pileGroup.spacing, rows: pileGroup.rows ?? null, cols: pileGroup.cols ?? null, edgeX: pileGroup.edgeX ?? null, edgeY: pileGroup.edgeY ?? null } : pc,
+    );
+    if (!pileConfigurations.some((pc) => pc.id === pileGroup.id)) {
+      pileConfigurations.push({ id: pileGroup.id, pileType: pileGroup.pileType, diameter: pileGroup.diameter, length: pileGroup.length, pileCount: pileGroup.pileCount, spacing: pileGroup.spacing, rows: pileGroup.rows ?? null, cols: pileGroup.cols ?? null, edgeX: pileGroup.edgeX ?? null, edgeY: pileGroup.edgeY ?? null });
     }
+
+    const supports = doc.supports.map((s) => {
+      if (s.supportId !== support.supportId) return s;
+      if (s.pier) return { ...s, pier: { ...s.pier, pileGroup } };
+      if (s.abutment) return { ...s, abutment: { ...s.abutment, pileGroup } };
+      return s;
+    });
+
+    onDocUpdate({ ...doc, supports, pileConfigurations });
   }
 
   const config: PileConfiguration = {
