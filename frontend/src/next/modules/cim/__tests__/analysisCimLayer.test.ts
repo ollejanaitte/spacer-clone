@@ -102,4 +102,75 @@ describe("Analysis CIM layer (Phase 8-02 WP-H)", () => {
     expect(result.resultStatus).toBe("none");
     expect(result.femNodesGroup.children.length).toBe(0);
   });
+
+  it("renders an authoritative IF3 result (SUCCEEDED fixture) as overlay", () => {
+    const project = makeProject();
+    const doc = makeAnalysisDocument();
+    const serialized = serializeAnalysisModuleDataForPersistence({ analysisDocument: doc });
+    const record = createInitialModuleData();
+    getProjectManager().updateProjectModule(project.projectId, "analysis", {
+      ...record,
+      data: serialized,
+    } as never);
+
+    const node1Id = deriveAnalysisEntityId("node", "super:N1");
+    const node2Id = deriveAnalysisEntityId("node", "super:N2");
+    const memberId = deriveAnalysisEntityId("member", "super:M1");
+    const if3 = {
+      schemaId: "frame-analysis-result/1",
+      schemaVersion: "1.0.0",
+      resultId: "RES-1",
+      analysisRunId: "RUN-1",
+      sourceDocumentId: "DOC-1",
+      sourceDocumentVersion: "REV-1",
+      status: "SUCCEEDED",
+      generatedAt: new Date().toISOString(),
+      solverName: "scipy_sparse",
+      solverVersion: "0.3.0",
+      resultKinds: ["nodeDisplacement", "supportReaction", "memberForce"],
+      payload: {
+        nodeDisplacement: [
+          { loadCaseId: "LC1", entityId: node1Id, values: { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 } },
+          { loadCaseId: "LC1", entityId: node2Id, values: { ux: 0, uy: 0, uz: -0.5, rx: 0, ry: 0, rz: 0 } },
+        ],
+        supportReaction: [
+          { loadCaseId: "LC1", nodeId: node1Id, supportId: "A1", values: { fx: 0, fy: 0, fz: 125, mx: 0, my: 0, mz: 0 } },
+        ],
+        memberForce: [
+          { loadCaseId: "LC1", entityId: memberId, values: { i: { fx: -125, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 }, j: { fx: 125, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 } } },
+        ],
+      },
+      resultChecksum: "abc123",
+    } as never;
+
+    const result = buildAnalysisCimLayer(getProjectManager(), project.projectId, {
+      if3Result: if3,
+      resultComponent: "N",
+    });
+    expect(result.ok).toBe(true);
+    expect(result.resultStatus).toBe("authoritative");
+    expect(result.reactionGroup.children.length).toBe(1);
+    expect(result.deformedGroup.children.length).toBe(1);
+    expect(result.resultGroup.children.length).toBe(1);
+    expect(result.metadata.some((m) => m.sourceModule === "reaction")).toBe(true);
+    expect(result.metadata.some((m) => m.sourceModule === "deformed")).toBe(true);
+    expect(result.metadata.some((m) => m.sourceModule === "result")).toBe(true);
+  });
+
+  it("does NOT render result overlay when the IF3 status is FAILED (fail-closed)", () => {
+    const project = makeProject();
+    const doc = makeAnalysisDocument();
+    const serialized = serializeAnalysisModuleDataForPersistence({ analysisDocument: doc });
+    const record = createInitialModuleData();
+    getProjectManager().updateProjectModule(project.projectId, "analysis", {
+      ...record,
+      data: serialized,
+    } as never);
+    const failed = { status: "FAILED", payload: {} } as never;
+    const result = buildAnalysisCimLayer(getProjectManager(), project.projectId, { if3Result: failed });
+    expect(result.resultStatus).toBe("invalid");
+    expect(result.reactionGroup.children.length).toBe(0);
+    expect(result.deformedGroup.children.length).toBe(0);
+    expect(result.resultGroup.children.length).toBe(0);
+  });
 });

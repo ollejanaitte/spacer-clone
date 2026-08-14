@@ -19,6 +19,8 @@ import { memberForceColor, computeForceColorRange } from "../../../viewer/member
 import { domainToThree } from "../renderCoordinate";
 import { attachCimMetadata, type CimEntityMetadata, type CimLayerId } from "./integrated3dScene";
 import { buildAnalysisModel } from "../analysis/analysisModel";
+import { finalizeAnalysisDocument } from "../analysis/analysisDocument";
+import { buildAuthorizedDeadLoad } from "../analysis/authorizedDeadLoad";
 import { readSuperstructureDocument } from "../superstructureModuleAdapter";
 import { regenerateSuperstructureDerived } from "../superstructure/superstructurePersistence";
 import { readSubstructureDocument } from "../substructureModuleAdapter";
@@ -80,7 +82,8 @@ export function buildDerivedAnalysisDocument(
   if (!intermediate) {
     return undefined;
   }
-  const generated = generateSuperstructureSnapshot(intermediate, regenerateSuperstructureDerived(manager, projectId, superDoc));
+  const regen = regenerateSuperstructureDerived(manager, projectId, superDoc);
+  const generated = generateSuperstructureSnapshot(intermediate, regen);
   if (!generated.ok) {
     return undefined;
   }
@@ -93,7 +96,21 @@ export function buildDerivedAnalysisDocument(
     snapshot: generated.snapshot,
     sourceReferences: { bridgeLayout: null, superstructure: null, substructure: null, loadFingerprint: null, solverSettingsFingerprint: null },
   });
-  return model.document;
+  const base = model.document;
+  // Authorized dead-load case (WP-R2D): derived from the FROZEN load model,
+  // never invented. Uses the regenerated document so span references (from
+  // Bridge Layout) feed the load model. Fail-closed when no finite total.
+  const load = buildAuthorizedDeadLoad(regen, base);
+  if (load !== null) {
+    const withLoads = finalizeAnalysisDocument({
+      ...base,
+      loadCases: [load.loadCase],
+      nodalLoads: load.nodalLoads,
+      analysisStatus: "NOT_RUN",
+    });
+    return withLoads;
+  }
+  return base;
 }
 
 const NODE_COLOR = 0x64748b;
@@ -222,8 +239,8 @@ export function buildAnalysisCimLayer(
   let resultStatus: "none" | "authoritative" | "stale" | "invalid" = "none";
   if (input.if3Result) {
     const status = (input.if3Result as { status?: string }).status;
-    const authoritative = status === "authoritative" || status === undefined;
-    resultStatus = authoritative ? "authoritative" : status === "stale" ? "stale" : "invalid";
+    const authoritative = status === "SUCCEEDED" || status === "authoritative" || status === undefined;
+    resultStatus = authoritative ? "authoritative" : status === "STALE" || status === "stale" ? "stale" : "invalid";
     if (authoritative) {
       const result = extractLinearStaticResultFromIf3(input.if3Result);
 

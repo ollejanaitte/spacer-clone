@@ -113,8 +113,13 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
         setAnalysisMsg("IF3 Resultが返りませんでした。");
         return;
       }
+      const status = (data.if3Result as { status?: string })?.status ?? "";
       setIf3Result(data.if3Result);
-      setAnalysisMsg("解析実行完了・IF3 Resultをoverlayしました。");
+      if (status === "SUCCEEDED") {
+        setAnalysisMsg("解析実行完了・authoritative IF3 Resultをoverlayしました。");
+      } else {
+        setAnalysisMsg(`解析は実行されましたがIF3 Resultはauthoritativeではありません（status=${status}）。上部工断面/荷重の入力を確認してください。`);
+      }
     } catch (error) {
       setAnalysisMsg(`解析実行エラー: ${String(error)}`);
     } finally {
