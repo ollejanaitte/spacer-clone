@@ -3,44 +3,20 @@ import { act, type ReactNode } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { AuthoritativeResultPanel } from "../../../components/AuthoritativeResultPanel";
+import { REAL_IF3_RESULT_RAW } from "../../analysis/__tests__/realIf3Fixture";
 
 function makeIf3(status: string) {
-  return {
-    schemaId: "frame-analysis-result/1",
-    schemaVersion: "1.0.0",
-    resultId: "RES-1",
-    analysisRunId: "RUN-1",
-    sourceDocumentId: "DOC-1",
-    sourceDocumentVersion: "REV-1",
-    status,
-    generatedAt: new Date().toISOString(),
-    solverName: "scipy_sparse",
-    solverVersion: "0.3.0",
-    resultKinds: ["nodeDisplacement", "supportReaction", "memberForce"],
-    sourceContentChecksum: { algorithm: "sha256", hexDigest: "abc123" },
-    payload: {
-      nodeDisplacement: {
-        schemaVersion: "0.1.0",
-        rows: [
-          { loadCaseId: "LC1", entityId: "n1", values: { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 } },
-          { loadCaseId: "LC1", entityId: "n2", values: { ux: 0, uy: 0, uz: -0.5, rx: 0, ry: 0, rz: 0 } },
-        ],
-      },
-      supportReaction: {
-        schemaVersion: "0.1.0",
-        rows: [
-          { loadCaseId: "LC1", nodeId: "n1", supportId: "A1", values: { fx: 0, fy: 0, fz: 125, mx: 0, my: 0, mz: 0 } },
-        ],
-      },
-      memberForce: {
-        schemaVersion: "0.1.0",
-        rows: [
-          { loadCaseId: "LC1", entityId: "m1", values: { i: { fx: -125, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 }, j: { fx: 125, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 } } },
-        ],
-      },
-    },
-  };
+  return { ...REAL_IF3_RESULT_RAW, status } as never;
 }
+
+/** Source document matching REAL_IF3_RESULT_RAW's binding fields. */
+const MATCHING_SOURCE = {
+  documentId: "11111111-1111-4111-8111-111111111111",
+  revisionId: 1,
+  modelChecksum: "a".repeat(64),
+  nodeIds: ["0011bfd9-b117-503b-8c62-6e3a3a69086f", "22222222-2222-4222-8222-222222222222", "6a27c03d-ec97-5476-a605-f5b61b64809b"],
+  memberIds: ["d059b760-59aa-5442-98f2-dc81d5bd486a"],
+};
 
 async function render(node: ReactNode): Promise<Root> {
   const container = document.createElement("div");
@@ -68,14 +44,14 @@ describe("AuthoritativeResultPanel (Phase 9-04R3 I-06/07/08)", () => {
   });
 
   it("does NOT render authoritative tables for non-authoritative status", async () => {
-    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("FAILED") as never} />);
+    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("FAILED")} />);
     expect(document.querySelector('[data-testid="if3-result-status"]')?.textContent).toContain("invalid");
     expect(document.querySelector('[data-testid="if3-reaction-table"]')).toBeNull();
     act(() => root.unmount());
   });
 
   it("renders authoritative Reaction / NQM / Deformed tables from the IF3 result", async () => {
-    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED") as never} />);
+    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED")} sourceDocument={MATCHING_SOURCE} />);
     expect(document.querySelector('[data-testid="if3-result-status"]')?.textContent).toContain("authoritative");
     const reactionRows = document.querySelectorAll('[data-testid="if3-reaction-row"]');
     expect(reactionRows.length).toBe(1);
@@ -84,6 +60,25 @@ describe("AuthoritativeResultPanel (Phase 9-04R3 I-06/07/08)", () => {
     expect(memberRows.length).toBe(1);
     expect(memberRows[0]?.textContent).toContain("-125");
     expect(document.querySelector('[data-testid="if3-deformed-summary"]')?.textContent).toContain("0.5000");
+    act(() => root.unmount());
+  });
+
+  it("shows entityId + resolved load case label in the tables (traceability)", async () => {
+    const root = await render(<AuthoritativeResultPanel if3Result={makeIf3("SUCCEEDED")} sourceDocument={MATCHING_SOURCE} />);
+    expect(document.querySelector('[data-testid="if3-reaction-table"]')?.textContent).toContain("LC1");
+    expect(document.querySelector('[data-testid="if3-reaction-table"]')?.textContent).toContain("6a27c03d");
+    act(() => root.unmount());
+  });
+
+  it("does NOT treat a SUCCEEDED result as authoritative when source binding mismatches (Sol #2)", async () => {
+    const root = await render(
+      <AuthoritativeResultPanel
+        if3Result={makeIf3("SUCCEEDED")}
+        sourceDocument={{ documentId: "other-doc", revisionId: 99, modelChecksum: "x".repeat(64), nodeIds: [], memberIds: [] }}
+      />,
+    );
+    expect(document.querySelector('[data-testid="if3-result-status"]')?.textContent).toContain("invalid");
+    expect(document.querySelector('[data-testid="if3-reaction-table"]')).toBeNull();
     act(() => root.unmount());
   });
 });

@@ -14,7 +14,8 @@ import { readModuleFromManager } from "../adapter";
 import { deserializeAnalysisModuleDataFromPersistence } from "../analysis/analysisModuleData";
 import type { AnalysisDocument } from "../analysis/analysisDocumentTypes";
 import type { FrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
-import { extractLinearStaticResultFromIf3 } from "../analysis/resultAdapter";
+import { extractLinearStaticResultFromIf3, isAuthoritativeIf3For } from "../analysis/resultAdapter";
+import { deriveAnalysisEntityId } from "../analysis/analysisId";
 import { memberForceColor, computeForceColorRange } from "../../../viewer/memberForceColorMap";
 import { domainToThree } from "../renderCoordinate";
 import { attachCimMetadata, type CimEntityMetadata, type CimLayerId } from "./integrated3dScene";
@@ -96,7 +97,11 @@ export function buildDerivedAnalysisDocument(
     snapshot: generated.snapshot,
     sourceReferences: { bridgeLayout: null, superstructure: null, substructure: null, loadFingerprint: null, solverSettingsFingerprint: null },
   });
-  const base = model.document;
+  // The derived AnalysisDocument must have a STABLE documentId across builds
+  // (Phase 9-04R3 Sol #2): otherwise the IF3 source binding (sourceDocumentId)
+  // can never match a fresh rebuild and authoritative results would be INVALID.
+  const stableDocumentId = deriveAnalysisEntityId("analysis-document", projectId);
+  const base = { ...model.document, documentId: stableDocumentId };
   // Authorized dead-load case (WP-R2D): derived from the FROZEN load model,
   // never invented. Uses the regenerated document so span references (from
   // Bridge Layout) feed the load model. Fail-closed when no finite total.
@@ -238,11 +243,19 @@ export function buildAnalysisCimLayer(
   // Result overlay (only when an IF3 result is supplied)
   let resultStatus: "none" | "authoritative" | "stale" | "invalid" = "none";
   if (input.if3Result) {
-    // Sol review #9 (Phase 9-04R3): authoritative only on an EXPLICIT success
-    // status. `undefined`/unknown/missing metadata are INVALID (fail-closed);
-    // the previous `undefined -> authoritative` promotion was a fail-open path.
+    // Sol review #2 (Phase 9-04R3): authoritative only on (a) explicit
+    // SUCCEEDED, (b) runtime schema validation, AND (c) source binding to the
+    // current AnalysisDocument (documentId/revision/modelChecksum) + required
+    // result kinds present. undefined/unknown/PARTIAL/FAILED/mismatched are
+    // INVALID (fail-closed).
     const status = (input.if3Result as { status?: string }).status;
-    const authoritative = status === "SUCCEEDED" || status === "authoritative";
+    const authoritative = status === "SUCCEEDED" && isAuthoritativeIf3For(input.if3Result, {
+      documentId: document.documentId,
+      revisionId: document.revisionId,
+      modelChecksum: document.modelChecksum,
+      nodeIds: document.nodes.map((n) => n.entityId),
+      memberIds: document.members.map((m) => m.entityId),
+    });
     resultStatus = authoritative ? "authoritative" : status === "STALE" || status === "stale" ? "stale" : "invalid";
     if (authoritative) {
       const result = extractLinearStaticResultFromIf3(input.if3Result);
@@ -250,7 +263,7 @@ export function buildAnalysisCimLayer(
       // Reaction arrows
       for (const row of result.reactions) {
         const node = nodeById.get(row.nodeId);
-        if (!node || Math.abs(row.fz) < 1e-9) continue;
+        if (!node || row.fz === undefined || Math.abs(row.fz) < 1e-9) continue;
         const [tx, ty, tz] = toThree(node.x, node.y, node.z);
         const dir = new THREE.Vector3(0, row.fz >= 0 ? 1 : -1, 0);
         const arrow = new THREE.ArrowHelper(dir, new THREE.Vector3(tx, ty, tz), Math.max(1, Math.abs(row.fz) * 0.05), REACTION_COLOR, 0.8, 0.5);
@@ -258,7 +271,9 @@ export function buildAnalysisCimLayer(
         reactionGroup.add(arrow);
       }
 
-      // Deformed shape (scaled displacement)
+      // Deformed shape (scaled displacement). Only members with displacement
+      // for BOTH end nodes are drawn; missing displacement is never coerced to
+      // 0 (Sol review #3 / #1).
       const displacementByNode = new Map<string, (typeof result.displacements)[number]>(
         result.displacements.map((d) => [d.nodeId, d] as const),
       );
@@ -268,12 +283,15 @@ export function buildAnalysisCimLayer(
         if (!nodeI || !nodeJ) continue;
         const di = displacementByNode.get(member.nodeIId);
         const dj = displacementByNode.get(member.nodeJId);
-        const ax = nodeI.x + (di?.ux ?? 0) * DEFORMATION_SCALE;
-        const ay = nodeI.y + (di?.uy ?? 0) * DEFORMATION_SCALE;
-        const az = nodeI.z + (di?.uz ?? 0) * DEFORMATION_SCALE;
-        const bx = nodeJ.x + (dj?.ux ?? 0) * DEFORMATION_SCALE;
-        const by = nodeJ.y + (dj?.uy ?? 0) * DEFORMATION_SCALE;
-        const bz = nodeJ.z + (dj?.uz ?? 0) * DEFORMATION_SCALE;
+        if (!di || !dj) continue;
+        if (di.ux === undefined || di.uy === undefined || di.uz === undefined
+          || dj.ux === undefined || dj.uy === undefined || dj.uz === undefined) continue;
+        const ax = nodeI.x + di.ux * DEFORMATION_SCALE;
+        const ay = nodeI.y + di.uy * DEFORMATION_SCALE;
+        const az = nodeI.z + di.uz * DEFORMATION_SCALE;
+        const bx = nodeJ.x + dj.ux * DEFORMATION_SCALE;
+        const by = nodeJ.y + dj.uy * DEFORMATION_SCALE;
+        const bz = nodeJ.z + dj.uz * DEFORMATION_SCALE;
         const lineGeo = new THREE.BufferGeometry().setFromPoints([
           new THREE.Vector3(...toThree(ax, ay, az)),
           new THREE.Vector3(...toThree(bx, by, bz)),
@@ -288,14 +306,17 @@ export function buildAnalysisCimLayer(
       const valueByMember = new Map<string, number>();
       for (const row of result.memberForces) {
         const iVal = componentKey === "N" ? row.i.fx
-          : componentKey === "Q" ? Math.hypot(row.i.fy, row.i.fz)
-          : componentKey === "M" ? Math.hypot(row.i.my, row.i.mz)
+          : componentKey === "Q" ? (row.i.fy !== undefined && row.i.fz !== undefined ? Math.hypot(row.i.fy, row.i.fz) : undefined)
+          : componentKey === "M" ? (row.i.my !== undefined && row.i.mz !== undefined ? Math.hypot(row.i.my, row.i.mz) : undefined)
           : row.i.mx;
         const jVal = componentKey === "N" ? row.j.fx
-          : componentKey === "Q" ? Math.hypot(row.j.fy, row.j.fz)
-          : componentKey === "M" ? Math.hypot(row.j.my, row.j.mz)
+          : componentKey === "Q" ? (row.j.fy !== undefined && row.j.fz !== undefined ? Math.hypot(row.j.fy, row.j.fz) : undefined)
+          : componentKey === "M" ? (row.j.my !== undefined && row.j.mz !== undefined ? Math.hypot(row.j.my, row.j.mz) : undefined)
           : row.j.mx;
-        valueByMember.set(row.memberId, Math.max(Math.abs(iVal), Math.abs(jVal)));
+        const absI = iVal === undefined ? undefined : Math.abs(iVal);
+        const absJ = jVal === undefined ? undefined : Math.abs(jVal);
+        if (absI === undefined && absJ === undefined) continue;
+        valueByMember.set(row.memberId, Math.max(absI ?? 0, absJ ?? 0));
       }
       const range = computeForceColorRange(valueByMember);
       for (const member of document.members) {
@@ -303,7 +324,10 @@ export function buildAnalysisCimLayer(
         const nodeJ = nodeById.get(member.nodeJId);
         if (!nodeI || !nodeJ) continue;
         const value = valueByMember.get(member.entityId);
-        const color = value === undefined ? 0x9ca3af : parseInt(memberForceColor(value, range).slice(1), 16);
+        // Only members with a real result value are rendered in the overlay;
+        // members without a value are NOT drawn (Sol review #3).
+        if (value === undefined) continue;
+        const color = parseInt(memberForceColor(value, range).slice(1), 16);
         const points: [number, number, number][] = [
           toThree(nodeI.x, nodeI.y, nodeI.z),
           toThree(nodeJ.x, nodeJ.y, nodeJ.z),

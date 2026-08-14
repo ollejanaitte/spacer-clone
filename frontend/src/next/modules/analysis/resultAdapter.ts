@@ -1,43 +1,51 @@
 /**
- * Result / IF3 adapter (Phase 7-01 D FROZEN / Phase 7-02 WP-H).
+ * Result / IF3 adapter (Phase 7-01 D FROZEN / Phase 7-02 WP-H /
+ * Phase 9-04R3 Sol review #1).
  *
  * Consumes the IF3 FrameAnalysisResultResource produced by the backend:
- *  - reaction vertical component is read directly from `fz` (R10: the old
- *    `rz -> fz` alias is NOT part of the formal path)
- *  - COMBO-1 rows are exposed with their combined case id
- *  - source entity mapping keeps the AnalysisDocument entity id + sourceEntityId
+ *  - row shape: {rowId, entityKind, entityId(UUID), quantity, unit, values,
+ *    loadContextId?} (frameAnalysisResultResource contract)
+ *  - load case: resolved from `loadContextId` via `resource.loadContext.entries`
+ *    (fallback: the raw loadContextId itself)
+ *  - reaction vertical is read directly from `fz` (R10; never `rz`)
+ *  - member force values are FLAT keys `i.fx`..`j.mz` (canonical; the old
+ *    nested `values.i.fx` shape is NOT part of the formal path)
+ *
+ * Missing / non-finite values are NOT promoted to 0: they stay undefined and
+ * the consuming view renders them as missing (fail-closed, Sol review #2).
  */
 
 import type { FrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
+import { validateFrameAnalysisResultResource } from "../../../contracts/frameAnalysisResultResource";
 
 export interface ReactionRow {
   readonly loadCaseId: string;
   readonly nodeId: string;
   readonly supportId: string | null;
-  readonly fx: number;
-  readonly fy: number;
-  readonly fz: number;
-  readonly mx: number;
-  readonly my: number;
-  readonly mz: number;
+  readonly fx: number | undefined;
+  readonly fy: number | undefined;
+  readonly fz: number | undefined;
+  readonly mx: number | undefined;
+  readonly my: number | undefined;
+  readonly mz: number | undefined;
 }
 
 export interface DisplacementRow {
   readonly loadCaseId: string;
   readonly nodeId: string;
-  readonly ux: number;
-  readonly uy: number;
-  readonly uz: number;
-  readonly rx: number;
-  readonly ry: number;
-  readonly rz: number;
+  readonly ux: number | undefined;
+  readonly uy: number | undefined;
+  readonly uz: number | undefined;
+  readonly rx: number | undefined;
+  readonly ry: number | undefined;
+  readonly rz: number | undefined;
 }
 
 export interface MemberForceRow {
   readonly loadCaseId: string;
   readonly memberId: string;
-  readonly i: { fx: number; fy: number; fz: number; mx: number; my: number; mz: number };
-  readonly j: { fx: number; fy: number; fz: number; mx: number; my: number; mz: number };
+  readonly i: { fx: number | undefined; fy: number | undefined; fz: number | undefined; mx: number | undefined; my: number | undefined; mz: number | undefined };
+  readonly j: { fx: number | undefined; fy: number | undefined; fz: number | undefined; mx: number | undefined; my: number | undefined; mz: number | undefined };
 }
 
 export interface LinearStaticResultView {
@@ -47,29 +55,54 @@ export interface LinearStaticResultView {
   readonly combinations: readonly { caseId: string; displacements: number; reactions: number; memberForces: number }[];
 }
 
-function valueAt(entry: Record<string, unknown>, key: string, fallback = 0): number {
-  const value = entry[key];
-  return typeof value === "number" && Number.isFinite(value) ? value : fallback;
+interface RowShape {
+  readonly rowId?: unknown;
+  readonly entityKind?: unknown;
+  readonly entityId?: unknown;
+  readonly quantity?: unknown;
+  readonly unit?: unknown;
+  readonly values?: unknown;
+  readonly loadContextId?: unknown;
+  readonly rows?: unknown;
+}
+
+/** Finite number or undefined (never coerced to 0). */
+function finiteOrUndefined(value: unknown): number | undefined {
+  return typeof value === "number" && Number.isFinite(value) ? value : undefined;
+}
+
+function isRow(value: unknown): value is RowShape {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+
+/**
+ * Resolve a display label for a loadContextId using the resource loadContext.
+ * Falls back to the raw id (traceability is preserved either way).
+ */
+function loadCaseLabelOf(resource: FrameAnalysisResultResource, loadContextId: unknown): string {
+  if (typeof loadContextId === "string") {
+    const entry = resource.loadContext?.entries.find((e) => e.id === loadContextId);
+    return entry?.label ?? loadContextId;
+  }
+  return "";
 }
 
 /**
  * Extract a linear-static result view from an IF3 FrameAnalysisResultResource.
- * Reaction vertical is `fz` (never `rz`). sourceEntityId is carried for
- * traceability (R12).
+ * Each payload entry is {schemaVersion, rows[]}; rows carry canonical keys.
  */
-export function extractLinearStaticResultFromIf3(
-  resource: FrameAnalysisResultResource,
+export function extractLinearStaticResultFromIf3(  resource: FrameAnalysisResultResource,
 ): LinearStaticResultView {
   const payload = (resource.payload ?? {}) as unknown as Record<string, unknown>;
-  const rowsOf = (kind: string): readonly Record<string, unknown>[] => {
+
+  const rowsOf = (kind: string): readonly RowShape[] => {
     const entry = payload[kind];
-    if (Array.isArray(entry)) {
-      // legacy array shape (test fixtures)
-      return entry as readonly Record<string, unknown>[];
-    }
-    if (entry && typeof entry === "object" && Array.isArray((entry as { rows?: unknown }).rows)) {
-      // canonical FrameAnalysisResultResource payload entry: {schemaVersion, rows}
-      return (entry as { rows: readonly Record<string, unknown>[] }).rows;
+    if (isRow(entry)) {
+      const rows = entry.rows;
+      if (Array.isArray(rows)) {
+        return rows.filter(isRow);
+      }
+      return [];
     }
     return [];
   };
@@ -81,60 +114,59 @@ export function extractLinearStaticResultFromIf3(
   const displacements: DisplacementRow[] = nodeRows.map((row) => {
     const values = (row.values ?? {}) as Record<string, unknown>;
     return {
-      loadCaseId: String(row.loadCaseId ?? ""),
-      nodeId: String(row.entityId ?? row.nodeId ?? ""),
-      ux: valueAt(values, "ux"),
-      uy: valueAt(values, "uy"),
-      uz: valueAt(values, "uz"),
-      rx: valueAt(values, "rx"),
-      ry: valueAt(values, "ry"),
-      rz: valueAt(values, "rz"),
+      loadCaseId: loadCaseLabelOf(resource, row.loadContextId),
+      nodeId: String(row.entityId ?? row.entityKind ?? ""),
+      ux: finiteOrUndefined(values.ux),
+      uy: finiteOrUndefined(values.uy),
+      uz: finiteOrUndefined(values.uz),
+      rx: finiteOrUndefined(values.rx),
+      ry: finiteOrUndefined(values.ry),
+      rz: finiteOrUndefined(values.rz),
     };
   });
 
   const reactions: ReactionRow[] = reactionRows.map((row) => {
     const values = (row.values ?? {}) as Record<string, unknown>;
     return {
-      loadCaseId: String(row.loadCaseId ?? ""),
-      nodeId: String(row.nodeId ?? ""),
-      supportId: typeof row.supportId === "string" ? row.supportId : null,
-      fx: valueAt(values, "fx"),
-      fy: valueAt(values, "fy"),
-      fz: valueAt(values, "fz"),
-      mx: valueAt(values, "mx"),
-      my: valueAt(values, "my"),
-      mz: valueAt(values, "mz"),
+      loadCaseId: loadCaseLabelOf(resource, row.loadContextId),
+      nodeId: String(row.entityId ?? row.entityKind ?? ""),
+      supportId: null,
+      fx: finiteOrUndefined(values.fx),
+      fy: finiteOrUndefined(values.fy),
+      fz: finiteOrUndefined(values.fz),
+      mx: finiteOrUndefined(values.mx),
+      my: finiteOrUndefined(values.my),
+      mz: finiteOrUndefined(values.mz),
     };
   });
 
   const memberForces: MemberForceRow[] = memberRows.map((row) => {
     const values = (row.values ?? {}) as Record<string, unknown>;
-    const i = (values.i ?? values["i.*"] ?? {}) as Record<string, unknown>;
-    const j = (values.j ?? values["j.*"] ?? {}) as Record<string, unknown>;
+    const at = (key: string): number | undefined => finiteOrUndefined(values[key]);
     return {
-      loadCaseId: String(row.loadCaseId ?? ""),
-      memberId: String(row.entityId ?? row.memberId ?? ""),
+      loadCaseId: loadCaseLabelOf(resource, row.loadContextId),
+      memberId: String(row.entityId ?? row.entityKind ?? ""),
       i: {
-        fx: valueAt(i, "fx"),
-        fy: valueAt(i, "fy"),
-        fz: valueAt(i, "fz"),
-        mx: valueAt(i, "mx"),
-        my: valueAt(i, "my"),
-        mz: valueAt(i, "mz"),
+        fx: at("i.fx"),
+        fy: at("i.fy"),
+        fz: at("i.fz"),
+        mx: at("i.mx"),
+        my: at("i.my"),
+        mz: at("i.mz"),
       },
       j: {
-        fx: valueAt(j, "fx"),
-        fy: valueAt(j, "fy"),
-        fz: valueAt(j, "fz"),
-        mx: valueAt(j, "mx"),
-        my: valueAt(j, "my"),
-        mz: valueAt(j, "mz"),
+        fx: at("j.fx"),
+        fy: at("j.fy"),
+        fz: at("j.fz"),
+        mx: at("j.mx"),
+        my: at("j.my"),
+        mz: at("j.mz"),
       },
     };
   });
 
   const comboCount = (kind: string): number =>
-    rowsOf(kind).filter((row) => row.loadCaseId === "COMBO-1").length;
+    rowsOf(kind).filter((row) => loadCaseLabelOf(resource, row.loadContextId) === "COMBO-1").length;
 
   return {
     displacements,
@@ -142,4 +174,85 @@ export function extractLinearStaticResultFromIf3(
     memberForces,
     combinations: [{ caseId: "COMBO-1", displacements: comboCount("nodeDisplacement"), reactions: comboCount("supportReaction"), memberForces: comboCount("memberForce") }],
   };
+}
+
+/** Minimal AnalysisDocument shape needed for authoritative binding checks. */
+export interface If3SourceDocumentRef {
+  readonly documentId: string;
+  readonly revisionId: number;
+  readonly modelChecksum: string;
+  /** node entityIds (required: displacement/reaction rows must bind). */
+  readonly nodeIds: readonly string[];
+  /** member entityIds (required: memberForce rows must bind). */
+  readonly memberIds: readonly string[];
+}
+
+function hasFiniteValues(values: unknown, keys: readonly string[]): boolean {
+  if (!values || typeof values !== "object" || Array.isArray(values)) return false;
+  const record = values as Record<string, unknown>;
+  return keys.some((k) => typeof record[k] === "number" && Number.isFinite(record[k]) && Math.abs(record[k] as number) > 1e-12);
+}
+
+/**
+ * Determine whether an IF3 resource is authoritative for the given
+ * AnalysisDocument (Phase 9-04R3 Sol #2/#3). Authoritative = explicit SUCCEEDED
+ * AND runtime schema valid AND source binding (documentId / revision /
+ * modelChecksum) matches the current AnalysisDocument AND required result kinds
+ * are present AND every row entityId binds to the AnalysisDocument AND rows
+ * carry real (non-zero) values. Any failure -> not authoritative (fail-closed).
+ */
+export function isAuthoritativeIf3For(
+  if3Result: FrameAnalysisResultResource | null | undefined,
+  analysisDocument: If3SourceDocumentRef | null | undefined,
+): boolean {
+  if (!if3Result || !analysisDocument) return false;
+  const status = (if3Result as { status?: string }).status;
+  if (status !== "SUCCEEDED") return false;
+
+  const validation = validateFrameAnalysisResultResource(if3Result as never);
+  if (validation.status !== "valid" || validation.issues.length > 0) return false;
+
+  if (if3Result.sourceDocumentId !== analysisDocument.documentId) return false;
+  if (Number(if3Result.sourceDocumentVersion) !== analysisDocument.revisionId) return false;
+  const sourceChecksum = if3Result.sourceContentChecksum?.hexDigest;
+  if (sourceChecksum !== undefined && sourceChecksum !== analysisDocument.modelChecksum) return false;
+
+  const nodeIdSet = new Set(analysisDocument.nodeIds);
+  const memberIdSet = new Set(analysisDocument.memberIds);
+  const payload = (if3Result.payload ?? {}) as Record<string, { rows?: Array<{ entityId?: unknown; values?: unknown }> }>;
+
+  // nodeDisplacement: every row must bind to a node and at least one row
+  // carries a real (non-zero) value
+  const displacementRows = payload.nodeDisplacement?.rows ?? [];
+  if (displacementRows.length === 0) return false;
+  let hasAnyValue = false;
+  for (const row of displacementRows) {
+    if (typeof row.entityId !== "string" || !nodeIdSet.has(row.entityId)) return false;
+    if (hasFiniteValues(row.values, ["ux", "uy", "uz"])) hasAnyValue = true;
+  }
+  if (!hasAnyValue) return false;
+
+  // supportReaction: every row must bind to a node and at least one row
+  // carries a real (non-zero) value
+  const reactionRows = payload.supportReaction?.rows ?? [];
+  if (reactionRows.length === 0) return false;
+  hasAnyValue = false;
+  for (const row of reactionRows) {
+    if (typeof row.entityId !== "string" || !nodeIdSet.has(row.entityId)) return false;
+    if (hasFiniteValues(row.values, ["fx", "fy", "fz"])) hasAnyValue = true;
+  }
+  if (!hasAnyValue) return false;
+
+  // memberForce: every row must bind to a member and at least one row
+  // carries a real (non-zero) value
+  const memberRows = payload.memberForce?.rows ?? [];
+  if (memberRows.length === 0) return false;
+  hasAnyValue = false;
+  for (const row of memberRows) {
+    if (typeof row.entityId !== "string" || !memberIdSet.has(row.entityId)) return false;
+    if (hasFiniteValues(row.values, ["i.fx", "i.fy", "i.fz", "i.my", "i.mz"])) hasAnyValue = true;
+  }
+  if (!hasAnyValue) return false;
+
+  return true;
 }

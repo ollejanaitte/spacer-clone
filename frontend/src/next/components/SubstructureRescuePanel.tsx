@@ -115,6 +115,24 @@ function ensurePileGroup(
   return base ? { ...base, ...patch } : undefined;
 }
 
+/**
+ * Update the pile count while keeping pileCount === rows*cols consistent
+ * (Sol review #3). rows is recomputed to satisfy the target count; cols and
+ * existing edge distances are preserved.
+ */
+function syncPileGroupCount(
+  pileGroup: { id: string; pileType: string; diameter: number; length: number; pileCount: number; spacing: { x: number; y: number } } | null | undefined,
+  defaultId: string,
+  value: number | null,
+): NonNullable<SubstructureSupport["pier"]>["pileGroup"] {
+  const base = ensurePileGroup(pileGroup, defaultId, {});
+  if (!base) return undefined;
+  const target = Math.max(1, Math.round(value ?? base.pileCount));
+  const cols = base.cols ?? Math.max(1, Math.round(Math.sqrt(base.pileCount)));
+  const rows = Math.max(1, Math.ceil(target / cols));
+  return { ...base, pileCount: rows * cols, rows, cols };
+}
+
 export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
   const manager = getProjectManager();
   const [message, setMessage] = useState<string | null>(null);
@@ -139,9 +157,32 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
 
   function updateSupport(next: SubstructureSupport): void {
     if (!doc) return;
+    // Keep document.pileConfigurations[] in sync with the support's nested
+    // pileGroup (Sol review #3/#4): both must reflect the same canonical values.
+    const pg = next.pier?.pileGroup ?? next.abutment?.pileGroup ?? null;
+    let pileConfigurations = doc.pileConfigurations;
+    if (pg) {
+      const entry: PileConfiguration = {
+        id: pg.id,
+        pileType: pg.pileType,
+        diameter: pg.diameter,
+        length: pg.length,
+        pileCount: pg.pileCount,
+        spacing: { x: pg.spacing.x, y: pg.spacing.y },
+        rows: pg.rows ?? null,
+        cols: pg.cols ?? null,
+        edgeX: pg.edgeX ?? null,
+        edgeY: pg.edgeY ?? null,
+      };
+      const exists = pileConfigurations.some((pc) => pc.id === pg.id);
+      pileConfigurations = exists
+        ? pileConfigurations.map((pc) => (pc.id === pg.id ? entry : pc))
+        : [...pileConfigurations, entry];
+    }
     commit({
       ...doc,
       supports: doc.supports.map((s) => (s.supportId === next.supportId ? next : s)),
+      pileConfigurations,
     });
   }
 
@@ -154,7 +195,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
     pierField("footing-thickness", "フーチング厚", (p) => p.footing?.thickness ?? null, (p, v) => ({ ...p, footing: { id: p.footing?.id ?? "ft", length: p.footing?.length ?? 5, width: p.footing?.width ?? 5, thickness: v ?? 0, topElevation: p.footing?.topElevation ?? 0 } })),
     pierField("pile-diameter", "杭径", (p) => p.pileGroup?.diameter ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { diameter: v ?? 0 }) })),
     pierField("pile-length", "杭長", (p) => p.pileGroup?.length ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { length: v ?? 0 }) })),
-    pierField("pile-count", "杭本数", (p) => p.pileGroup?.pileCount ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { pileCount: Math.max(1, Math.round(v ?? 1)) }) })),
+    pierField("pile-count", "杭本数", (p) => p.pileGroup?.pileCount ?? null, (p, v) => ({ ...p, pileGroup: syncPileGroupCount(p.pileGroup, p.footing?.id ?? "pg", v) })),
   ];
 
   const abutmentFields: DimField[] = [
@@ -163,7 +204,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
     abutmentField("abutment-footing-length", "フーチング長", (a) => a.footing?.length ?? null, (a, v) => ({ ...a, footing: { id: a.footing?.id ?? "aft", length: v ?? 0, width: a.footing?.width ?? 5, thickness: a.footing?.thickness ?? 1.5, topElevation: a.footing?.topElevation ?? 0 } })),
     abutmentField("abutment-pile-diameter", "杭径", (a) => a.pileGroup?.diameter ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { diameter: v ?? 0 }) })),
     abutmentField("abutment-pile-length", "杭長", (a) => a.pileGroup?.length ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { length: v ?? 0 }) })),
-    abutmentField("abutment-pile-count", "杭本数", (a) => a.pileGroup?.pileCount ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { pileCount: Math.max(1, Math.round(v ?? 1)) }) })),
+    abutmentField("abutment-pile-count", "杭本数", (a) => a.pileGroup?.pileCount ?? null, (a, v) => ({ ...a, pileGroup: syncPileGroupCount(a.pileGroup, a.footing?.id ?? "pg", v) })),
   ];
 
   if (!doc) {
@@ -208,9 +249,9 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
         {/* Pane 2: 2D plan + 3D viewport */}
         <section className="sub-pane-viewport" data-testid="sub-pane-viewport">
           <h4 className="next-hint">2D plan（選択Supportハイライト）</h4>
-          <SubSupportPlanView doc={doc} selectedId={selectedId} />
+          <SubSupportPlanView doc={doc} selectedId={selectedId} onSelect={setSelectedId} />
           <h4 className="next-hint">3D preview（選択Supportハイライト）</h4>
-          <Substructure3DPreview doc={doc} selectedId={selectedId} />
+          <Substructure3DPreview doc={doc} selectedId={selectedId} onSelect={setSelectedId} />
         </section>
 
         {/* Pane 3: Property editor */}
@@ -230,7 +271,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
                   />
                 ))}
               </div>
-              <PileGridEditor support={selected} onUpdate={(next) => updateSupport(next)} />
+              <PileGridEditor doc={doc} support={selected} onDocUpdate={commit} />
             </>
           ) : (
             <p className="next-hint">Supportを選択してください。</p>
@@ -240,7 +281,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
 
       {message !== null && <p className="next-hint" data-testid="sub-rescue-message">{message}</p>}
 
-      <SubSupportOutputs doc={doc} selectedId={selectedId} />
+      <SubSupportOutputs doc={doc} selectedId={selectedId} onSelect={setSelectedId} />
 
       <p className="next-hint" data-testid="sub-rescue-hold">
         安定・断面力・応力・照査・配筋・耐震は HOLD_NOT_AVAILABLE（NOT_AUTHORIZED）です。
@@ -255,7 +296,7 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
  * canonically. pileCount === rows*cols is the consistency rule; the coordinate
  * table is DERIVED from the grid definition (never a second source of truth).
  */
-function PileGridEditor({ support, onUpdate }: { support: SubstructureSupport; onUpdate: (s: SubstructureSupport) => void }) {
+function PileGridEditor({ doc, support, onDocUpdate }: { doc: SubstructureDocument; support: SubstructureSupport; onDocUpdate: (next: SubstructureDocument) => void }) {
   const pile = support.pier?.pileGroup ?? support.abutment?.pileGroup ?? null;
   const footing = support.pier?.footing ?? support.abutment?.footing ?? null;
   if (!pile || !footing) {
@@ -271,24 +312,50 @@ function PileGridEditor({ support, onUpdate }: { support: SubstructureSupport; o
   const rows = currentPile.rows ?? Math.max(1, Math.round(Math.sqrt(currentPile.pileCount)));
   const cols = currentPile.cols ?? Math.max(1, Math.round(currentPile.pileCount / rows));
 
-  function commit(next: PileGroupPatch) {
+  /**
+   * Commit a pile grid patch canonically. Both the support's nested
+   * pileGroup AND the document-level pileConfigurations[] (the freeze
+   * normalized source) are updated to the SAME values (single writer, both
+   * reflect the canonical document). Existing edge distances are preserved
+   * unless the patch explicitly changes them (Sol review #3).
+   */
+  function commit(next: PileGroupPatch): void {
+    const nextRows = next.rows ?? rows;
+    const nextCols = next.cols ?? cols;
+    const nextSpacingX = next.spacingX ?? currentPile.spacing.x;
+    const nextSpacingY = next.spacingY ?? currentPile.spacing.y;
+    const nextEdgeX = next.edgeX !== undefined ? next.edgeX : currentPile.edgeX ?? null;
+    const nextEdgeY = next.edgeY !== undefined ? next.edgeY : currentPile.edgeY ?? null;
+
     const pileGroup = {
       id: currentPile.id,
       pileType: currentPile.pileType,
       diameter: currentPile.diameter,
       length: currentPile.length,
-      pileCount: (next.rows ?? rows) * (next.cols ?? cols),
-      spacing: { x: next.spacingX ?? currentPile.spacing.x, y: next.spacingY ?? currentPile.spacing.y },
-      rows: next.rows ?? rows,
-      cols: next.cols ?? cols,
-      edgeX: next.edgeX,
-      edgeY: next.edgeY,
+      pileCount: nextRows * nextCols,
+      spacing: { x: nextSpacingX, y: nextSpacingY },
+      rows: nextRows,
+      cols: nextCols,
+      edgeX: nextEdgeX,
+      edgeY: nextEdgeY,
     };
-    if (support.pier) {
-      onUpdate({ ...support, pier: { ...support.pier, pileGroup } });
-    } else if (support.abutment) {
-      onUpdate({ ...support, abutment: { ...support.abutment, pileGroup } });
+
+    // Sync the document-level pileConfigurations entry (canonical normalized form).
+    const pileConfigurations = doc.pileConfigurations.map((pc) =>
+      pc.id === pileGroup.id ? { ...pc, pileType: pileGroup.pileType, diameter: pileGroup.diameter, length: pileGroup.length, pileCount: pileGroup.pileCount, spacing: pileGroup.spacing, rows: pileGroup.rows ?? null, cols: pileGroup.cols ?? null, edgeX: pileGroup.edgeX ?? null, edgeY: pileGroup.edgeY ?? null } : pc,
+    );
+    if (!pileConfigurations.some((pc) => pc.id === pileGroup.id)) {
+      pileConfigurations.push({ id: pileGroup.id, pileType: pileGroup.pileType, diameter: pileGroup.diameter, length: pileGroup.length, pileCount: pileGroup.pileCount, spacing: pileGroup.spacing, rows: pileGroup.rows ?? null, cols: pileGroup.cols ?? null, edgeX: pileGroup.edgeX ?? null, edgeY: pileGroup.edgeY ?? null });
     }
+
+    const supports = doc.supports.map((s) => {
+      if (s.supportId !== support.supportId) return s;
+      if (s.pier) return { ...s, pier: { ...s.pier, pileGroup } };
+      if (s.abutment) return { ...s, abutment: { ...s.abutment, pileGroup } };
+      return s;
+    });
+
+    onDocUpdate({ ...doc, supports, pileConfigurations });
   }
 
   const config: PileConfiguration = {
@@ -346,12 +413,12 @@ interface PileGroupPatch {
 }
 
 /** Outputs: support coordinate table, quantity, 2D plan view (B-02/07/08). */
-function SubSupportOutputs({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
+function SubSupportOutputs({ doc, selectedId, onSelect }: { doc: SubstructureDocument; selectedId: string | null; onSelect: (id: string) => void }) {
   const quantity = useMemo(() => computeSubstructureQuantity(doc), [doc]);
   return (
     <>
       <h4 className="next-hint">2D平面ビュー（Support配置・plan）</h4>
-      <SubSupportPlanView doc={doc} selectedId={selectedId} />
+      <SubSupportPlanView doc={doc} selectedId={selectedId} onSelect={onSelect} />
 
       <h4 className="next-hint">座標表（Support / station / XYZ）</h4>
       <table className="next-table" data-testid="sub-coordinate-table">
@@ -393,14 +460,15 @@ function SubSupportOutputs({ doc, selectedId }: { doc: SubstructureDocument; sel
       </dl>
 
       <h4 className="next-hint">3Dビュー（Substructure solids）</h4>
-      <Substructure3DPreview doc={doc} selectedId={selectedId} />
+      <Substructure3DPreview doc={doc} selectedId={selectedId} onSelect={onSelect} />
     </>
   );
 }
 
 /** 2D plan SVG: supports placed along the alignment (plan view) with the
- * selected support highlighted (B-02/B-01 selection sync). */
-function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
+ * selected support highlighted. Clicking a support selects it (B-01
+ * bidirectional sync). */
+function SubSupportPlanView({ doc, selectedId, onSelect }: { doc: SubstructureDocument; selectedId: string | null; onSelect?: (supportId: string) => void }) {
   const W = 480;
   const H = 120;
   const supports = doc.supports;
@@ -424,7 +492,9 @@ function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; se
               fill={selected ? "#f59e0b" : s.supportType === "abutment" ? "#8a6d3b" : "#6b7d99"}
               stroke={selected ? "#b45309" : "#334155"}
               strokeWidth={selected ? 2 : 1}
-              data-testid={`sub-plan-support-${s.supportId}`} />
+              data-testid={`sub-plan-support-${s.supportId}`}
+              style={{ cursor: "pointer" }}
+              onClick={() => onSelect?.(s.supportId)} />
             <text x={x} y={H / 2 + 22} fontSize="9" textAnchor="middle" fill="#334155">{s.supportId}</text>
           </g>
         );
@@ -433,10 +503,13 @@ function SubSupportPlanView({ doc, selectedId }: { doc: SubstructureDocument; se
   );
 }
 
-/** 3D preview of the substructure solids (B-09) with selected highlight. */
-function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument; selectedId: string | null }) {
+/** 3D preview of the substructure solids (B-09) with selected highlight.
+ * Clicking a support mesh selects it (bidirectional sync, Sol review #5). */
+function Substructure3DPreview({ doc, selectedId, onSelect }: { doc: SubstructureDocument; selectedId: string | null; onSelect: (id: string) => void }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [renderError, setRenderError] = useState<string | null>(null);
+  const onSelectRef = useRef(onSelect);
+  onSelectRef.current = onSelect;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -495,6 +568,28 @@ function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument;
       resize();
       const ro = new ResizeObserver(resize);
       ro.observe(container);
+
+      // Click-to-select (B-01 bidirectional sync, Sol review #5): raycast
+      // against the substructure meshes; their userData.selectionId is
+      // `sub:{supportId}`.
+      const raycaster = new THREE.Raycaster();
+      const pointer = new THREE.Vector2();
+      const onClick = (event: MouseEvent) => {
+        const rect = renderer!.domElement.getBoundingClientRect();
+        pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+        pointer.y = -(((event.clientY - rect.top) / rect.height) * 2 - 1);
+        raycaster.setFromCamera(pointer, camera!);
+        const hits = raycaster.intersectObjects(built.group.children, true);
+        for (const hit of hits) {
+          const selectionId = hit.object.userData?.selectionId as string | undefined;
+          if (selectionId && selectionId.startsWith("sub:")) {
+            onSelectRef.current(selectionId.slice("sub:".length));
+            return;
+          }
+        }
+      };
+      renderer.domElement.addEventListener("click", onClick);
+
       const animate = () => {
         if (disposed) return;
         frameId = requestAnimationFrame(animate);
@@ -506,6 +601,7 @@ function Substructure3DPreview({ doc, selectedId }: { doc: SubstructureDocument;
         disposed = true;
         cancelAnimationFrame(frameId);
         ro.disconnect();
+        renderer?.domElement.removeEventListener("click", onClick);
         renderer?.dispose();
         controls?.dispose();
         if (renderer?.domElement.parentNode === container) container.removeChild(renderer.domElement);

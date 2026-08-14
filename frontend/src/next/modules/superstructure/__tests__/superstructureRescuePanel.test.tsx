@@ -161,6 +161,33 @@ describe("SuperstructureRescuePanel (Phase 9-03 WP-A/C)", () => {
     cleanup(root);
   });
 
+  it("edits cross frame (sway/lateral) intervals canonically (Phase 9-02 convert)", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const existing = readSuperstructureDocument(manager, pid)!;
+    writeSuperstructureDocument(manager, pid, {
+      ...existing,
+      crossFrameConfiguration: {
+        crossFrameSpacingM: 8,
+        swayBracing: { intervalM: 4 },
+        lateralBracing: { intervalM: 4 },
+      },
+    });
+
+    const root = await render(<SuperstructureRescuePanel projectId={pid} />);
+    const swayInput = document.querySelector('[data-testid="super-field-横構（sway）間隔"]') as HTMLInputElement;
+    expect(swayInput).toBeTruthy();
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(swayInput, "6");
+      swayInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const doc = readSuperstructureDocument(manager, pid);
+    expect(doc?.crossFrameConfiguration?.swayBracing.intervalM).toBe(6);
+    expect(doc?.crossFrameConfiguration?.lateralBracing.intervalM).toBe(4);
+    cleanup(root);
+  });
+
   it("edits bearing type and fixed/movable canonically", async () => {
     const pid = setupProject();
     const manager = getProjectManager();

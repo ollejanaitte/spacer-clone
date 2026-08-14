@@ -1,0 +1,37 @@
+====================================================================
+Phase 9-04R3 Folder Consolidation 証跡（Sol review #8）
+====================================================================
+canonical: /home/masaharu/Projects/spacer-clone（main）
+removed:   /home/masaharu/Projects/spacer-clone-next（worktree解除・prune済み）
+====================================================================
+
+【移行元 inventory（spacer-clone-next）】
+- worktree: /home/masaharu/Projects/spacer-clone-next
+- branch: rebuild/integrated-system（SHA 038e11f = origin/main と同一・unique commit 0）
+- tracked file list: canonical と完全一致（git ls-files diff = 0）
+- unique tracked diff: 0（evidence JSON は canonical と同内容の再生・backup済み）
+- required unique untracked: 0（Luna report は canonical にも存在・同一）
+- unpushed required commit: 0
+- unmerged required branch: 0
+
+【backup対応表】
+| 対象 | 退避先 | 状態 |
+|---|---|---|
+| docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json | /tmp/opencode/p9-04r3/folder-gate/next-evidence/ | 保全 |
+| 同（canonical版） | /tmp/opencode/p9-04r3/folder-gate/clone-evidence/ | 保全 |
+| docs/rebuild/reports/R1-04.5_GPT-5.6-Luna_Vision_Delegation_検証結果.txt | /tmp/opencode/p9-04r3/folder-gate/next-luna-report.txt | canonicalにも同一存在 |
+
+【worktree解除手順】
+1. unique content 0 確認（tracked list diff・untracked比較・commit数）
+2. git worktree remove --force /home/masaharu/Projects/spacer-clone-next
+3. git worktree prune
+4. folder不存在確認（ls: 存在しない）
+
+【移行先 inventory（canonical）】
+- local main = origin/main = GitHub main = 200836b → その後 Sol修正ブランチ（fix/phase9-04r3-sol-review）をPR merge予定
+- pre-existing dirty差分: evidence JSON（backup済み）・final_report.txt削除・Luna report untracked → 全て保全・変更なし
+
+【判定】
+- unique content 0・backup対応表あり・worktree解除・prune・folder不存在確認済み
+- 成果消失なし
+====================================================================

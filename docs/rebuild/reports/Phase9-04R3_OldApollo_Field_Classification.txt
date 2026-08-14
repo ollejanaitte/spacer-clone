@@ -1,0 +1,53 @@
+====================================================================
+Phase 9-04R3 S-07 旧Apollo 上部工 field 最終分類表
+====================================================================
+根拠: docs/rebuild/phase9.2/superstructure_rescue_design_freeze.txt
+      （Phase 9-02 Design Freeze の field mapping）
+判定: CLOSED / FROZEN-DEFER / NOT_AUTHORIZED のみ（PARTIAL・次Phase候補なし）
+====================================================================
+
+【CLOSED（UI→canonical実装済み・Acceptanceあり）】
+| 旧field | 新field | 種別 | Acceptance |
+|---|---|---|---|
+| girderCount | girderConfiguration.girderCount | direct | SuperstructureRescuePanel編集・canonical commit |
+| girderSpacing | girderConfiguration.girderSpacingM | direct | 同上 |
+| girderDepth | girderSectionModel.depthM | direct | 同上 |
+| webThickness | girderSectionModel.webThicknessM | direct | 同上 |
+| topFlangeWidth | girderSectionModel.topFlange.widthM | direct | 同上 |
+| topFlangeThickness | girderSectionModel.topFlange.thicknessM | direct | 同上 |
+| bottomFlangeWidth | girderSectionModel.bottomFlange.widthM | direct | 同上 |
+| bottomFlangeThickness | girderSectionModel.bottomFlange.thicknessM | direct | 同上 |
+| deckThickness | deckConfiguration.thicknessM | direct | 同上 |
+| rcUnitWeight | deckConfiguration.unitWeight | direct | 同上 |
+| width | deckConfiguration.resolvedWidthM | convert（道路横断幅+overhang） | derived |
+| overhangLeft/Right（新規） | deckConfiguration.overhangLeftM/RightM | new | 編集・canonical commit |
+| crossBeamSpacing | crossBeamConfiguration.crossBeamSpacingM | direct | 編集・canonical commit |
+| crossBeams[]（配置） | crossBeamConfiguration.crossBeams[]（kind/stationM/depthM/widthM） | derive/direct | 生成+せい/幅編集 |
+| spanLength | spanReferences.spans[].spanLength | DERIVED（Bridge Layout handoff） | 生成時に派生・reload復元 |
+| bridgeLength | spanReferences（sum） | DERIVED | 同上 |
+| steelUnitWeight | girderSectionModel.unitWeightPerM（鋼材換算） | convert | 荷重モデルは固定77.0（FROZEN定数）で計算・材料E/G/nu/rhoはmaterialConfiguration編集 |
+| swayBracingInterval（本） | crossFrameConfiguration.swayBracing.intervalM | convert（本→間隔m） | UI編集（横構間隔）・canonical commit |
+| lateralBracingEnabled | crossFrameConfiguration.lateralBracing.intervalM | convert | UI編集（lateral間隔）・canonical commit |
+| bearingSeats（BRG-{s}-{g}） | bearingConfiguration.bearingSeats[] | new/自動配置 | 支承種別/固定可動編集 |
+
+【FROZEN-DEFER（Freezeにて非対応と明示）】
+| 旧field | 理由 |
+|---|---|
+| stiffenerSpacing | 新docに非対応（freeze非対応リスト）・DEFER |
+| upperLateralBracingEnabled | 新docに非対応・DEFER |
+| crossFrameAttachment | 新docに非対応・DEFER |
+| haunch | 新docに非対応・DEFER |
+| roadMarkings | 新docに非対応・DEFER |
+| lateralAngleSection | 新docに非対応・DEFER |
+
+【NOT_AUTHORIZED（HOLD維持・計算済み表示禁止）】
+| 項目 | 状態 |
+|---|---|
+| 応力度/照査6種 | NOT_AUTHORIZED（HOLD・Rescue Editorにて非表示） |
+| diaphragm | DEFER（実装0件・未対応表示） |
+| steelUnitWeight ADOPTED/PENDING status | 新docにadoption概念なし（unitWeightPerMへ換算） |
+
+====================================================================
+判定: 全旧field が CLOSED / FROZEN-DEFER / NOT_AUTHORIZED に分類され、
+PARTIAL・次Phase候補は残さない（S-07 CLOSED）
+====================================================================

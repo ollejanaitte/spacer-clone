@@ -58,6 +58,9 @@ function setupProject(): string {
         },
       },
     ],
+    pileConfigurations: [
+      { id: "pg1", pileType: "bored_pile", diameter: 1.2, length: 18, pileCount: 4, spacing: { x: 3.6, y: 3.6 }, rows: null, cols: null, edgeX: null, edgeY: null },
+    ],
   });
   expect(built.ok).toBe(true);
   if (built.ok) {
@@ -151,8 +154,23 @@ describe("SubstructureRescuePanel 3-pane CAD + pile grid (Phase 9-04R3 B-01/B-06
     cleanup(root);
   });
 
-  it("edits the pile grid rows/cols canonically and derives coordinates (B-06)", async () => {
+  it("selects a support by clicking the 2D plan (bidirectional sync, Sol #5)", async () => {
     const pid = setupProject();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    // P1 not selected yet
+    expect(document.querySelector('[data-testid="sub-plan-support-P1"]')?.getAttribute("fill")).toBe("#6b7d99");
+    // click the 2D plan support P1
+    const planSupport = document.querySelector('[data-testid="sub-plan-support-P1"]') as SVGRectElement;
+    await act(async () => {
+      planSupport.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    // now highlighted + property editor for P1 visible
+    expect(document.querySelector('[data-testid="sub-plan-support-P1"]')?.getAttribute("fill")).toBe("#f59e0b");
+    expect(document.querySelector('[data-testid="sub-pane-properties"]')?.textContent).toContain("P1");
+    cleanup(root);
+  });
+
+  it("edits the pile grid rows/cols canonically and derives coordinates (B-06)", async () => {    const pid = setupProject();
     const manager = getProjectManager();
     const root = await render(<SubstructureRescuePanel projectId={pid} />);
     const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;
@@ -176,6 +194,63 @@ describe("SubstructureRescuePanel 3-pane CAD + pile grid (Phase 9-04R3 B-01/B-06
     const pileGroup = doc?.supports[0]?.pier?.pileGroup;
     expect(pileGroup?.rows).toBe(3);
     expect(pileGroup?.pileCount).toBe(6);
+    // the document-level pileConfigurations entry is synced (Sol review #3)
+    const pc = doc?.pileConfigurations.find((p) => p.id === pileGroup?.id);
+    expect(pc).toBeDefined();
+    expect(pc?.rows).toBe(3);
+    expect(pc?.cols).toBe(2);
+    expect(pc?.pileCount).toBe(6);
+    cleanup(root);
+  });
+
+  it("preserves edge distances when editing rows/spacing (Sol review #3)", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const existing = readSubstructureDocument(manager, pid)!;
+    // give the support pileGroup explicit edge values (both nested and
+    // normalized pileConfigurations must agree)
+    writeSubstructureDocument(manager, pid, {
+      ...existing,
+      supports: existing.supports.map((s) => s.supportId === "P1"
+        ? { ...s, pier: { ...s.pier!, pileGroup: { ...s.pier!.pileGroup!, edgeX: 0.5, edgeY: 0.4 } } }
+        : s),
+      pileConfigurations: existing.pileConfigurations.map((pc) => pc.id === "pg1" ? { ...pc, edgeX: 0.5, edgeY: 0.4 } : pc),
+    });
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;
+    await act(async () => {
+      radio.click();
+    });
+    // edit spacing X -> edgeX must be preserved
+    const spacingX = document.querySelector('[data-testid="sub-field-X間隔"]') as HTMLInputElement;
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(spacingX, "4.0");
+      spacingX.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const doc = readSubstructureDocument(manager, pid);
+    expect(doc?.supports[0]?.pier?.pileGroup?.edgeX).toBe(0.5);
+    expect(doc?.supports[0]?.pier?.pileGroup?.edgeY).toBe(0.4);
+    cleanup(root);
+  });
+
+  it("keeps pileCount === rows*cols when editing 杭本数 (Sol review #3)", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;
+    await act(async () => {
+      radio.click();
+    });
+    const countInput = document.querySelector('[data-testid="sub-field-杭本数"]') as HTMLInputElement;
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(countInput, "6");
+      countInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+    const doc = readSubstructureDocument(manager, pid);
+    const pg = doc?.supports[0]?.pier?.pileGroup;
+    expect(pg?.pileCount).toBe(pg!.rows! * pg!.cols!);
     cleanup(root);
   });
 });

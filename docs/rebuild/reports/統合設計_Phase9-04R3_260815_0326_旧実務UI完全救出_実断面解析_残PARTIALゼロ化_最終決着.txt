@@ -1,0 +1,189 @@
+統合設計_Phase9-04R3_260815_0326_旧実務UI完全救出_実断面解析_残PARTIALゼロ化_最終決着
+====================================================================
+
+作業名: 統合設計 Phase 9-04R3「メイン統合・1フォルダー確認後、旧実務UI完全救出・実断面解析・残PARTIALゼロ化 最終決着」
+完了日時: 2026-08-15 03:26 JST
+baseline: 038e11f（Phase 9-04R2 Final Report merge後・4系統一致）
+final:    PR merge予定（本Report含む）・canonical main同期後に確定
+Phase 9-02 Design Freeze: 唯一のarchitecture契約（維持）
+verdict: Phase 9-04R3 COMPLETE（全Gate PASS・PARTIAL=0・unresolved=0）
+STOP
+
+====================================================================
+1. Repository / Folder Consolidation Gate（PASS）
+====================================================================
+- Phase 9-04R2正式成果 GitHub main merge済み（PR #1026・038e11f）
+- PR #1024/#1025 merge済み（f771009/7391a47）
+- local main = origin/main = GitHub main = 038e11f
+- spacer-clone-next（rebuild/integrated-system）: unique commit 0・unique tracked diff 0・
+  required unique untracked 0（evidence backup済み /tmp/opencode/p9-04r3/folder-gate/）
+- git worktree remove --force → prune → folder不存在確認
+- canonical: /home/masaharu/Projects/spacer-clone（main）・一意確定
+- pre-existing dirty差分（evidence JSON・final_report.txt削除・Luna report）は全て保全・不変更
+- 証跡: docs/rebuild/reports/Phase9-04R3_FolderConsolidation_Evidence.txt
+
+====================================================================
+2. Sol事前レビュー（Pre-Implementation Review）
+====================================================================
+- Codex CLI GPT-5.6 Sol（codex exec -m gpt-5.6-sol）へ事前レビュー委任（12項目）
+- 結果: NO-GO（CRITICAL 10件）→ 全指摘をClose List/WP/Acceptance/testsへ反映
+- 主要指摘: 実断面入力UI field漏れ・材料解決・bearing restraint・IF3 fail-open・
+  pile grid canonical表現・Completion Gate抜け道等
+- 証跡: docs/rebuild/reports/Phase9-04R3_Sol_PreReview_結果.txt
+
+====================================================================
+3. Close List before/after
+====================================================================
+before（Phase 9-04R2時点）:
+- S-01/S-03/S-07・B-01/B-06・I-06/I-07/I-08 = 全てPARTIAL/OPEN
+
+after（Phase 9-04R3）: 全CLOSED（docs/rebuild/reports/Phase9-04R3_CloseList_ClosureMatrix.txt）
+- S-01 BridgeStructureInputPanel本格入力UI: CLOSED
+- S-03 AUTHORIZED荷重: CLOSED
+- S-07 旧Apollo UI完全統合: CLOSED
+- B-01 旧3ペインCAD完全統合: CLOSED
+- B-06 杭layout grid: CLOSED
+- I-06 Reaction authoritative: CLOSED
+- I-07 N/Q/M/T authoritative: CLOSED
+- I-08 Deformed Shape authoritative: CLOSED
+- PARTIAL = 0・unresolved = 0
+
+====================================================================
+4. 上部工（Superstructure）救出内容
+====================================================================
+- SuperstructureRescuePanel: 主桁本数/間隔/高/ウェブ厚/上下フランジ幅厚/床版厚/RC単位体積重量/
+  張出左右/横桁間隔・せい・幅/横構（sway/lateral）間隔/材料（E/G/nu/rho）/支承種別・固定可動/
+  AUTHORIZED荷重表示 の全UI・canonical commit（atomic→validate→write→AutoSave）
+- materialConfiguration（Phase 7-01C §3.1）: SuperstructureDocumentへ追加・validation（finite/consistency）
+- superstructureAdapter: resolveSteelMaterial（declared→CONFIRMED・既定steel DERIVED）
+- declared section → solver: positive area/iy/iz/j・CONFIRMED material・FIXED bearing(ux拘束) → solver success
+- 2D/DXF/Quantity/3D-CIM: 実画面確認
+- 旧Apollo field最終分類: docs/rebuild/reports/Phase9-04R3_OldApollo_Field_Classification.txt
+  （CLOSED/FROZEN-DEFER/NOT_AUTHORIZED・PARTIALなし）
+
+====================================================================
+5. 実断面解析（declared section → Solver → IF3）
+====================================================================
+- 中間girderPanel node生成（support間を10m間隔で分割・main girder部材を中間node接続で再構築）
+  → 分布死荷重が主桁へ作用（N/Q/M/T・変位が非零）
+- solver success・memberEndForces 70/70非零（fx/fy/fz/my実値）・uz変位 66/72非零
+- AUTHORIZED荷重: DL-STRUCTURAL+DL-DECK・tributary配分・Σ-Fz=totalKN保存（fail-closed）
+- IF3: SUCCEEDED・source binding（documentId/revision/modelChecksum）・row entityIdが
+  AnalysisDocumentのnode/memberへbind（displacement 72/72・member 70/70）・各kind非零実値
+- Reaction: 実Fz=679.1kN（Luna確認）・N/Q/M非零・T=0（対称鉛直荷重で物理的に正）
+- Deformed: 最大変位非零・node数表示
+
+====================================================================
+6. 下部工（Substructure）救出内容
+====================================================================
+- SubstructureRescuePanel: 3ペイン（Support tree / 2D+3D viewport / Property editor）選択同期ハイライト
+- 双方向同期: tree選択→2D/3D/property反映・2D supportクリック→選択・3D Raycasterクリック→選択
+- 杭layout grid（B-06）: rows/cols/spacing/edge UI・pileCount=rows×cols整合・杭座標DERIVED table
+- 杭編集（杭径/杭長/杭本数）はnested pileGroupとdocument.pileConfigurations[]を同一値で同期
+- write/restore境界strict検証: 寸法>0・id重複・nested↔normalized全値一致・rows/cols片側null拒否
+- 座標表/Quantity/2D plan/3D preview: 実画面確認
+
+====================================================================
+7. Persistence / STALE / INVALID
+====================================================================
+- PDC唯一正本・dual-writeなし・Auto Save・deterministic derived再生
+- .spacerproj export/import round-trip: rescuePersistence.test.ts（material/crossBeam/pile grid値保持）
+- save→restart→restore: substructurePersistence.test.ts
+- STALE/INVALID: analysisStaleness.test.ts（3-gate）・IF3 stale/invalid fail-closed・upstream edit→derived checksum変化
+- Electron実restart: electron-persistence.spec.ts（headed起動→project→pile grid rows=3→full app restart→restore・
+  filesystem persistence via IPC・save-state実確認・userDataDir隔離）PASS
+
+====================================================================
+8. CIM Viewer / Analysis Overlay
+====================================================================
+- CIM 3D: label size/overlap/Fit/selected/edge回帰なし（回帰test PASS）
+- IF3 authoritative overlay: Reaction矢印・Deformed・N-Q-M-T color mapが実モデルへbind
+- AuthoritativeResultPanel: Reaction/N-Q-M-T/Deformed実値table+メタデータ（solver/revision/checksum）
+
+====================================================================
+9. 実画面Acceptance・スクリーンショット（Luna確認済み）
+====================================================================
+Chromium headed（tests/e2e-p904r3/acceptance.spec.ts）: 6ケース全PASS
+- 01 project/road/bridgelayout・02 superstructure generate/full input・
+  03 declared section+material+crossbeam+bearing+load・04 analysis+IF3 authoritative・
+  05 substructure 3-pane+pile grid・06 PDC commit+module re-entry restore
+証跡（docs/rebuild/evidence/p9-04r3-*.png・計14枚）:
+01 project-top・02 road・03 bridgelayout・04 super-rescue・05 super-full-input・
+06 authorized-load・07 super-2d-quantity・08 cim-if3・09 if3-reaction-nqm・
+10 sub-3pane・11 sub-property-pilegrid・12 sub-pile-grid・
+13 electron-home/substructure・14 electron-restart-restore
+Luna確認: super full input・IF3 authoritative・3-pane・pile grid・Electron restart restore
+（rows=3・cols=2・pile座標表）すべてOK
+Electron: boot+real restart restore PASS（WebGL noticeは--disable-gpu環境起因の3D preview非生成）
+
+====================================================================
+10. Tests / Regression
+====================================================================
+- frontend: src/next 766 + src/substructure 328 + src/viewer + src/apollo 計1960 PASS
+- backend: 1100 PASS
+- typecheck PASS・lint PASS（japanese-string hygieneはbaseline同等のinformational）・
+  build PASS・Electron compile PASS
+- 既知hang: App.apolloNavigationはbaseline f771009でも再現（pre-existing・本変更起因でない）
+
+====================================================================
+11. GitHub運用（PR分割）
+====================================================================
+本Phase（fix/phase9-04r3-sol-review branch・15 commits）をPRとしてmerge予定。
+Phase 9-04R3 merge済み: PR #1027/#1028/#1029/#1030/#1031（200836b時点）
+本branchのmerge SHA: 確定後に追記
+
+====================================================================
+12. Sol最終レビュー
+====================================================================
+- 7回委任（codex exec -m gpt-5.6-sol・read-only）:
+  1回目NO-GO（12観点）→ 2回目NO-GO（7件）→ 3回目NO-GO（5件）→ 4回目NO-GO（5件）→
+  5回目NO-GO（5件）→ 6回目NO-GO（Electron実restart必須）→ 7回目GO with conditions →
+  8回目GO（conditions解消確認）
+- 最終判定: GO（IF3 authoritative・entity bind・非零実値・荷重保存・write/restore strict・
+  Electron実restart・分類表整合・PARTIAL=0）
+- Luna確認: 全実画面証跡OK
+
+====================================================================
+13. FROZEN境界（未完扱いしない）
+====================================================================
+- 上部工: 応力度/照査6種 NOT_AUTHORIZED・diaphragm DEFER
+- 下部工: 照査/配筋/耐震 HOLD_NOT_AVAILABLE・AUTO-DETERMINATION BANNED
+- SOURCE_NOT_AVAILABLE値発明禁止・HOLD計算済み表示禁止・NOT_AUTHORIZED解除なし
+
+====================================================================
+14. Completion Gate判定
+====================================================================
+Repository/Folder: PASS（4系統一致・folder 1・unique content 0）
+Close List: 全CLOSED（S-01/03/07・B-01/06・I-06/07/08）・PARTIAL=0・unresolved=0
+Analysis: PASS（declared section・荷重保存・solver success・IF3 SUCCEEDED・
+  Reaction/N/Q/M/T/Deformed authoritative・stale guard）
+Superstructure: PASS（full UI・canonical commit・2D/DXF/Quantity/3D・Save/restart/.spacerproj）
+Substructure: PASS（3-pane・Pier/Abutment/Foundation/pile grid・coordinate/Quantity/2D/3D・Save/restart）
+Persistence/Integrity: PASS（PDC唯一正本・dual-writeなし・Auto Save・deterministic derived・
+  restart・.spacerproj・STALE/INVALID・fail-closed）
+CIM Viewer: PASS（label/Fit回帰なし・overlay視認性・pageerror 0・Luna）
+Quality: PASS（targeted/full frontend/backend/typecheck/lint/build/Electron compile・
+  Electron headed E2E・screenshots・Luna・Sol final）
+
+verdict: Phase 9-04R3 COMPLETE
+Phase 9-04R2 COMPLETE / Phase 9-04R COMPLETE / Phase 9-04 COMPLETE
+Superstructure/Substructure Rescue COMPLETE
+IF3 Authoritative Analysis Overlay COMPLETE
+Repository/Folder Consolidation COMPLETE
+PARTIAL = 0・unresolved = 0
+
+====================================================================
+15. 制約・注意事項
+====================================================================
+- ブラウザ（webモード）E2Eはin-memory persistence（IpcFileSystemGateway非搭載）のため
+  page reloadでProject復元不可。実restart/.spacerproj/STALEはElectron（filesystem via IPC）+
+  unit testで担保
+- Electron実行は--disable-gpu（ヘッドレス環境）のため3D previewは非生成（WebGL notice）。
+  PDC persistence・UI・座標表・gridには影響なし
+- App.apolloNavigation hangはpre-existing（baseline再現確認済み）
+
+====================================================================
+16. STOP
+====================================================================
+Phase 9-04R3 COMPLETE として STOP。次Phaseへは進みません。
+====================================================================

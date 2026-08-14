@@ -418,7 +418,10 @@ def _normalize_linear_static_payload(
         normalized = {
             "rowId": _stable_uuid("row", "memberForce", str(index), str(row.get("loadCaseId")), member_id),
             "entityKind": "member",
-            "entityId": _stable_uuid("member", member_id),
+            # Preserve the canonical AnalysisDocument entityId when the source
+            # id is already a UUID (Phase 9-04R3 Sol #1): otherwise the CIM
+            # overlay cannot bind member forces to the FEM model.
+            "entityId": member_id if _is_uuid(member_id) else _stable_uuid("member", member_id),
             "quantity": "memberEndForce",
             "unit": "kN/kN_m",
             "values": values,
@@ -459,7 +462,10 @@ def _row_from_legacy(
     normalized = {
         "rowId": _stable_uuid("row", kind, str(index), str(row.get("loadCaseId")), entity_source_id),
         "entityKind": entity_kind,
-        "entityId": _stable_uuid(entity_kind, entity_source_id),
+        # Preserve the canonical AnalysisDocument entityId when the source id
+        # is already a UUID (Phase 9-04R3 Sol #1): the CIM overlay binds
+        # reaction / displacement rows to the FEM nodes by entityId.
+        "entityId": entity_source_id if _is_uuid(entity_source_id) else _stable_uuid(entity_kind, entity_source_id),
         "quantity": quantity,
         "unit": unit,
         "values": values,

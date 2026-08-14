@@ -8,6 +8,7 @@ import { createInitialModuleData } from "../../contract";
 import { buildAnalysisCimLayer } from "../analysisCimLayer";
 import type { AnalysisDocument } from "../../analysis/analysisDocumentTypes";
 import { deriveAnalysisEntityId } from "../../analysis/analysisId";
+import { REAL_IF3_RESULT_RAW } from "../../analysis/__tests__/realIf3Fixture";
 
 function makeProject() {
   resetProjectManagerForTest();
@@ -103,7 +104,7 @@ describe("Analysis CIM layer (Phase 8-02 WP-H)", () => {
     expect(result.femNodesGroup.children.length).toBe(0);
   });
 
-  it("renders an authoritative IF3 result (SUCCEEDED fixture) as overlay", () => {
+  it("renders an authoritative IF3 result (SUCCEEDED canonical fixture) as overlay", () => {
     const project = makeProject();
     const doc = makeAnalysisDocument();
     const serialized = serializeAnalysisModuleDataForPersistence({ analysisDocument: doc });
@@ -116,31 +117,34 @@ describe("Analysis CIM layer (Phase 8-02 WP-H)", () => {
     const node1Id = deriveAnalysisEntityId("node", "super:N1");
     const node2Id = deriveAnalysisEntityId("node", "super:N2");
     const memberId = deriveAnalysisEntityId("member", "super:M1");
+    const loadContextId = "79a0e842-7de4-5bfd-999f-1fe8038084e3";
     const if3 = {
-      schemaId: "frame-analysis-result/1",
-      schemaVersion: "1.0.0",
-      resultId: "RES-1",
-      analysisRunId: "RUN-1",
-      sourceDocumentId: "DOC-1",
-      sourceDocumentVersion: "REV-1",
+      ...REAL_IF3_RESULT_RAW,
       status: "SUCCEEDED",
-      generatedAt: new Date().toISOString(),
-      solverName: "scipy_sparse",
-      solverVersion: "0.3.0",
-      resultKinds: ["nodeDisplacement", "supportReaction", "memberForce"],
+      sourceDocumentId: doc.documentId,
+      sourceDocumentVersion: doc.revisionId,
+      sourceContentChecksum: { algorithm: "sha256", hexDigest: doc.modelChecksum },
       payload: {
-        nodeDisplacement: [
-          { loadCaseId: "LC1", entityId: node1Id, values: { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 } },
-          { loadCaseId: "LC1", entityId: node2Id, values: { ux: 0, uy: 0, uz: -0.5, rx: 0, ry: 0, rz: 0 } },
-        ],
-        supportReaction: [
-          { loadCaseId: "LC1", nodeId: node1Id, supportId: "A1", values: { fx: 0, fy: 0, fz: 125, mx: 0, my: 0, mz: 0 } },
-        ],
-        memberForce: [
-          { loadCaseId: "LC1", entityId: memberId, values: { i: { fx: -125, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 }, j: { fx: 125, fy: 0, fz: 0, mx: 0, my: 0, mz: 0 } } },
-        ],
+        nodeDisplacement: {
+          schemaVersion: "0.1.0",
+          rows: [
+            { rowId: "11111111-1111-4111-8111-111111111111", entityKind: "node", entityId: node1Id, quantity: "displacement", unit: "m/rad", values: { ux: 0, uy: 0, uz: 0, rx: 0, ry: 0, rz: 0 }, loadContextId },
+            { rowId: "22222222-2222-4222-8222-222222222222", entityKind: "node", entityId: node2Id, quantity: "displacement", unit: "m/rad", values: { ux: 0, uy: 0, uz: -0.5, rx: 0, ry: 0, rz: 0 }, loadContextId },
+          ],
+        },
+        supportReaction: {
+          schemaVersion: "0.1.0",
+          rows: [
+            { rowId: "33333333-3333-4333-8333-333333333333", entityKind: "support", entityId: node1Id, quantity: "reaction", unit: "kN/kN_m", values: { fx: 0, fy: 0, fz: 125, mx: 0, my: 0, mz: 0 }, loadContextId },
+          ],
+        },
+        memberForce: {
+          schemaVersion: "0.1.0",
+          rows: [
+            { rowId: "44444444-4444-4444-8444-444444444444", entityKind: "member", entityId: memberId, quantity: "memberEndForce", unit: "kN/kN_m", values: { "i.fx": -125, "i.fy": 0, "i.fz": 0, "i.mx": 0, "i.my": 0, "i.mz": 0, "j.fx": 125, "j.fy": 0, "j.fz": 0, "j.mx": 0, "j.my": 0, "j.mz": 0 }, loadContextId },
+          ],
+        },
       },
-      resultChecksum: "abc123",
     } as never;
 
     const result = buildAnalysisCimLayer(getProjectManager(), project.projectId, {

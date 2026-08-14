@@ -29,6 +29,14 @@ function checkFinite(record: Record<string, unknown>, key: string, path: string,
   }
 }
 
+/** Finite AND strictly positive (diameter/length/spacing/footing dims). */
+function checkPositive(record: Record<string, unknown>, key: string, path: string, issues: SubstructureIssue[]): void {
+  const value = record[key];
+  if (!(typeof value === "number" && Number.isFinite(value) && value > 0)) {
+    issues.push({ path: `${path}.${key}`, message: `${key} must be a finite positive number` });
+  }
+}
+
 function checkOptionalFinite(record: Record<string, unknown>, key: string, path: string, issues: SubstructureIssue[]): void {
   const value = record[key];
   if (value === null || value === undefined) return;
@@ -101,31 +109,99 @@ export function validateSubstructureDocument(document: SubstructureDocument): re
     }
   }
 
-  // footing / foundation / pile dimensions
+  // footing / foundation / pile dimensions (must be positive finite)
   for (const footing of document.footingConfigurations) {
-    checkFinite(footing as unknown as Record<string, unknown>, "length", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
-    checkFinite(footing as unknown as Record<string, unknown>, "width", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
-    checkFinite(footing as unknown as Record<string, unknown>, "thickness", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "length", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "width", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "thickness", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
     checkFinite(footing as unknown as Record<string, unknown>, "topElevation", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
   }
   for (const pile of document.pileConfigurations) {
-    checkFinite(pile as unknown as Record<string, unknown>, "diameter", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
-    checkFinite(pile as unknown as Record<string, unknown>, "length", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    checkPositive(pile as unknown as Record<string, unknown>, "diameter", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    checkPositive(pile as unknown as Record<string, unknown>, "length", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
     if (!Number.isInteger(pile.pileCount) || pile.pileCount < 1) {
       issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: "pileCount must be >= 1" });
     }
-    checkFinite(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
-    checkFinite(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
     const rows = pile.rows;
     const cols = pile.cols;
-    if (rows !== null && cols !== null) {
-      if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
-        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
-      } else if (pile.pileCount !== rows * cols) {
-        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+    // rows/cols must both be set or both be null (Sol review #4)
+    if (rows !== null || cols !== null) {
+      if (rows === null || cols === null) {
+        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows and cols must both be set or both be null" });
+      } else {
+        if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
+          issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
+        } else if (pile.pileCount !== rows * cols) {
+          issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+        }
       }
       if (pile.edgeX !== null) checkOptionalFinite(pile as unknown as Record<string, unknown>, "edgeX", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
       if (pile.edgeY !== null) checkOptionalFinite(pile as unknown as Record<string, unknown>, "edgeY", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    }
+  }
+
+  // pileConfigurations[] duplicate id detection
+  const seenPcIds = new Set<string>();
+  for (const pc of document.pileConfigurations) {
+    if (seenPcIds.has(pc.id)) {
+      issues.push({ path: `substructureDocument.pileConfigurations[${pc.id}]`, message: "duplicate pileConfigurations id" });
+    }
+    seenPcIds.add(pc.id);
+  }
+
+  // nested support pileGroup ↔ normalized pileConfigurations consistency
+  // (Sol review #3/#4): both must agree on all values when both are present.
+  const pileConfigById = new Map(document.pileConfigurations.map((pc) => [pc.id, pc]));
+  for (const support of document.supports) {
+    const pg = support.pier?.pileGroup ?? support.abutment?.pileGroup ?? null;
+    if (!pg) continue;
+    const normalized = pileConfigById.get(pg.id);
+    if (normalized) {
+      const near = (a: number | null | undefined, b: number | null | undefined) =>
+        (a ?? null) === null && (b ?? null) === null ? true
+        : (a ?? null) === null || (b ?? null) === null ? false
+        : Math.abs((a as number) - (b as number)) < 1e-9;
+      if (!near(normalized.diameter, pg.diameter)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.diameter`, message: `nested pileGroup diameter ${pg.diameter} differs from pileConfigurations[${pg.id}].diameter ${normalized.diameter}` });
+      }
+      if (!near(normalized.length, pg.length)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.length`, message: `nested pileGroup length ${pg.length} differs from pileConfigurations[${pg.id}].length ${normalized.length}` });
+      }
+      if (normalized.pileType !== pg.pileType) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.pileType`, message: `nested pileGroup pileType ${pg.pileType} differs from pileConfigurations[${pg.id}].pileType ${normalized.pileType}` });
+      }
+      if (!near(normalized.spacing.x, pg.spacing.x) || !near(normalized.spacing.y, pg.spacing.y)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.spacing`, message: `nested pileGroup spacing differs from pileConfigurations[${pg.id}].spacing` });
+      }
+      if (normalized.pileCount !== pg.pileCount) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.pileCount`, message: `nested pileGroup pileCount ${pg.pileCount} differs from pileConfigurations[${pg.id}].pileCount ${normalized.pileCount}` });
+      }
+      const nRows = normalized.rows ?? null;
+      const nCols = normalized.cols ?? null;
+      const gRows = pg.rows ?? null;
+      const gCols = pg.cols ?? null;
+      // rows/cols: one-sided null is a MISMATCH (Sol review #4)
+      if ((nRows === null) !== (gRows === null)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup rows ${gRows} differs from pileConfigurations[${pg.id}] ${nRows}` });
+      } else if (nRows !== null && nRows !== gRows) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup rows ${gRows} differs from pileConfigurations[${pg.id}] ${nRows}` });
+      }
+      if ((nCols === null) !== (gCols === null)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup cols ${gCols} differs from pileConfigurations[${pg.id}] ${nCols}` });
+      } else if (nCols !== null && nCols !== gCols) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup cols ${gCols} differs from pileConfigurations[${pg.id}] ${nCols}` });
+      }
+      if (!near(normalized.edgeX, pg.edgeX)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.edgeX`, message: `nested pileGroup edgeX ${pg.edgeX} differs from pileConfigurations[${pg.id}].edgeX ${normalized.edgeX}` });
+      }
+      if (!near(normalized.edgeY, pg.edgeY)) {
+        issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.edgeY`, message: `nested pileGroup edgeY ${pg.edgeY} differs from pileConfigurations[${pg.id}].edgeY ${normalized.edgeY}` });
+      }
+    } else {
+      // nested pileGroup exists but no matching pileConfigurations entry
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup`, message: `nested pileGroup ${pg.id} has no matching pileConfigurations entry` });
     }
   }
 
@@ -180,6 +256,98 @@ export function validateSubstructureData(data: Record<string, unknown>): readonl
       issues.push({ path: `substructureDocument.supports[${support.supportId}].placement.source`, message: "unsupported placement source" });
     }
   }
+
+  // pileConfigurations[] grid consistency + nested ↔ normalized agreement
+  // (Sol review #3/#4): enforced at the DRAFT write boundary so inconsistent
+  // pile data is never persisted.
+  const seenPcWrite = new Set<string>();
+  for (const pile of doc.pileConfigurations) {
+    if (seenPcWrite.has(pile.id)) {
+      issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}]`, message: "duplicate pileConfigurations id" });
+    }
+    seenPcWrite.add(pile.id);
+    checkPositive(pile as unknown as Record<string, unknown>, "diameter", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    checkPositive(pile as unknown as Record<string, unknown>, "length", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    if (!Number.isInteger(pile.pileCount) || pile.pileCount < 1) {
+      issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: "pileCount must be >= 1" });
+    }
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    checkPositive(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    const rows = pile.rows;
+    const cols = pile.cols;
+    if (rows !== null || cols !== null) {
+      if (rows === null || cols === null) {
+        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows and cols must both be set or both be null" });
+      } else {
+        if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
+          issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
+        } else if (pile.pileCount !== rows * cols) {
+          issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+        }
+      }
+    }
+  }
+  // footing dimensions positive at write boundary
+  for (const footing of doc.footingConfigurations) {
+    checkPositive(footing as unknown as Record<string, unknown>, "length", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "width", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkPositive(footing as unknown as Record<string, unknown>, "thickness", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+    checkFinite(footing as unknown as Record<string, unknown>, "topElevation", `substructureDocument.footingConfigurations[${footing.id}]`, issues);
+  }
+  const pileConfigById = new Map(doc.pileConfigurations.map((pc) => [pc.id, pc]));
+  // full value-consistency between nested pileGroup and normalized
+  // pileConfigurations[] (Sol review #3/#4): diameter / length / pileType /
+  // spacing / pileCount / rows / cols / edgeX / edgeY must all agree.
+  for (const support of doc.supports) {
+    const pg = support.pier?.pileGroup ?? support.abutment?.pileGroup ?? null;
+    if (!pg) continue;
+    const normalized = pileConfigById.get(pg.id);
+    if (!normalized) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup`, message: `nested pileGroup ${pg.id} has no matching pileConfigurations entry` });
+      continue;
+    }
+    const near = (a: number | null | undefined, b: number | null | undefined) =>
+      (a ?? null) === null && (b ?? null) === null ? true
+      : (a ?? null) === null || (b ?? null) === null ? false
+      : Math.abs((a as number) - (b as number)) < 1e-9;
+    if (!near(normalized.diameter, pg.diameter)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.diameter`, message: `nested pileGroup diameter ${pg.diameter} differs from pileConfigurations[${pg.id}].diameter ${normalized.diameter}` });
+    }
+    if (!near(normalized.length, pg.length)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.length`, message: `nested pileGroup length ${pg.length} differs from pileConfigurations[${pg.id}].length ${normalized.length}` });
+    }
+    if (normalized.pileType !== pg.pileType) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.pileType`, message: `nested pileGroup pileType ${pg.pileType} differs from pileConfigurations[${pg.id}].pileType ${normalized.pileType}` });
+    }
+    if (!near(normalized.spacing.x, pg.spacing.x) || !near(normalized.spacing.y, pg.spacing.y)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.spacing`, message: `nested pileGroup spacing differs from pileConfigurations[${pg.id}].spacing` });
+    }
+    if (normalized.pileCount !== pg.pileCount) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.pileCount`, message: `nested pileGroup pileCount ${pg.pileCount} differs from pileConfigurations[${pg.id}].pileCount ${normalized.pileCount}` });
+    }
+    const nRows = normalized.rows ?? null;
+    const nCols = normalized.cols ?? null;
+    const gRows = pg.rows ?? null;
+    const gCols = pg.cols ?? null;
+    // rows/cols: one-sided null is a MISMATCH (Sol review #4)
+    if ((nRows === null) !== (gRows === null)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup rows ${gRows} differs from pileConfigurations[${pg.id}] ${nRows}` });
+    } else if (nRows !== null && nRows !== gRows) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup rows ${gRows} differs from pileConfigurations[${pg.id}] ${nRows}` });
+    }
+    if ((nCols === null) !== (gCols === null)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup cols ${gCols} differs from pileConfigurations[${pg.id}] ${nCols}` });
+    } else if (nCols !== null && nCols !== gCols) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.grid`, message: `nested pileGroup cols ${gCols} differs from pileConfigurations[${pg.id}] ${nCols}` });
+    }
+    if (!near(normalized.edgeX, pg.edgeX)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.edgeX`, message: `nested pileGroup edgeX ${pg.edgeX} differs from pileConfigurations[${pg.id}].edgeX ${normalized.edgeX}` });
+    }
+    if (!near(normalized.edgeY, pg.edgeY)) {
+      issues.push({ path: `substructureDocument.supports[${support.supportId}].pier.pileGroup.edgeY`, message: `nested pileGroup edgeY ${pg.edgeY} differs from pileConfigurations[${pg.id}].edgeY ${normalized.edgeY}` });
+    }
+  }
+
   return issues;
 }
 
