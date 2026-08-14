@@ -1,0 +1,192 @@
+## Phase 9-04R3 事前レビュー結果
+
+### 指摘 01
+
+- 重要度: **CRITICAL**
+- 対象: S-01 / `SuperstructureRescuePanel`
+- 理由: 現行UIには、Documentですでに表現可能な横桁配置・支承条件・死荷重入力が存在しません。特に `CrossBeamConfiguration`、`BearingConfiguration`、`LoadModel` へのcanonical commit経路がないため、「本格入力UI完全統合」は未達です。支承入力がない状態では解析境界条件も確定できません。
+- 推奨対処: 少なくとも以下をUI→Documentへ正式配線してください。
+  - `crossBeamSpacingM`
+  - `crossBeams[].depthM/widthM`
+  - `bearingSeats[]`
+  - `bearingType`
+  - `fixedOrMovable`
+  - AUTHORIZEDな `deadLoads`
+  - 鋼材重量または、それを解決する正式な材料参照
+
+### 指摘 02
+
+- 重要度: **CRITICAL**
+- 対象: S-01 / S-03 / 断面剛性
+- 理由: `area/iy/iz/j` が計算されても、正の有限値であることに加え、材料弾性係数の解決、支承拘束、節点・部材接続が揃わなければsolver安定解析には不十分です。現在の情報では `materialRefId` から解析に必要な材料特性が確実に解決される経路と、`bearingSeats` からsolver restraintへの変換が確認できません。
+- 推奨対処:
+  - `area > 0`, `Iy > 0`, `Iz > 0`, `J > 0`、全値finiteをadapter境界で検証
+  - `materialRefId` から必要な材料特性をcanonicalに解決
+  - 支承座標・固定/可動方向をsolver restraintへ明示変換
+  - 自由剛体モード、重複拘束、未拘束回転を検出し、`MODEL_UNSTABLE` でfail-closed
+  - 暗黙の既定材料・既定拘束による成功扱いは禁止
+
+### 指摘 03
+
+- 重要度: **CRITICAL**
+- 対象: section/material reference
+- 理由: Documentは `materialRefId` のみを持ち、材料・鋼種フィールドまたは材料masterの所在が示されていません。未解決参照、削除済み参照、別Document参照を許すと、danglingがなくても誤った剛性を生成できます。
+- 推奨対処: PDCが所有する材料エンティティまたはDesign Freezeで承認済みの材料masterを唯一の解決先とし、存在・型・版・適用範囲を検証してください。未解決時は解析Documentを生成せず、`INVALID` としてください。adapter内の仮定値補完は禁止です。
+
+### 指摘 04
+
+- 重要度: **CRITICAL**
+- 対象: S-03 AUTHORIZED Load UI→Document→Analysis
+- 理由: 下流の `buildDeadLoads(document)` とsolver経路は存在しますが、UIは床版重量の一部に相当するRC単位体積重量しか入力できず、鋼材重量・荷重ケース・Documentの `deadLoads` へ至る正式入力が不足しています。したがって縦断は下流だけが成立しており、UI起点では閉じていません。
+- 推奨対処:
+  - AUTHORIZED対象を `DL-STRUCTURAL` と `DL-DECK` に固定
+  - 入力値、算出根拠、荷重ID、単位、符号をDocumentに保持
+  - 生成荷重合計と原荷重合計の保存則を検証
+  - tributary分配の端部・内部節点ルールを明文化
+  - 非AUTHORIZED荷重は生成せず、状態を `NOT_AUTHORIZED` として表示
+  - 入力不足時はLoadCaseなしを維持し、ゼロ荷重ケースで成功扱いにしない
+
+### 指摘 05
+
+- 重要度: **MAJOR**
+- 対象: S-07 旧Apollo救出mapping
+- 理由: 次の旧Apollo項目の処遇が未確定です。
+  - `spanLength`
+  - `bridgeLength`
+  - `width`
+  - `crossBeamSpacing`
+  - `stiffenerSpacing`
+  - `swayBracingInterval`
+  - `steelUnitWeight`
+  - `lateralBracing`
+  - `upperLateralBracing`
+
+  現行UIで欠落しているだけでなく、Documentに受け皿がない項目もあります。黙って破棄すると「完全統合」を満たしません。
+- 推奨対処: 全フィールドについて、`canonical fieldへ移行`、`DERIVED`、`FROZEN-DEFER`、`NOT_AUTHORIZED` のいずれかをFreeze対応表に一件ずつ記録してください。`FROZEN-DEFER` はUIから消すだけでなく、非対応理由と再開条件をAcceptanceに残す必要があります。
+
+### 指摘 06
+
+- 重要度: **CRITICAL**
+- 対象: B-01 旧3ペインCAD
+- 理由: 現行 `SubstructureRescuePanel` は簡易plan SVG・座標表・数量・3D previewであり、旧3ペインのtree/viewport/propertiesと同等の選択・編集・同期モデルが確認できません。表示が3領域あるだけでは完全統合とは判定できません。
+- 推奨対処: 以下をAcceptanceとして固定してください。
+  - tree、viewport、properties間で同一canonical IDを選択
+  - properties編集はDocumentへの単一commit経路を使用
+  - viewport操作後も再読込で同じDocument状態を再現
+  - undo/cancelまたは未commit編集がcanonical値を汚染しない
+  - 旧routeからの直接書込みを禁止
+  - preview/snapshotからDocumentへ逆流させない
+
+### 指摘 07
+
+- 重要度: **CRITICAL**
+- 対象: B-06 杭layout grid
+- 理由: 現在の `PileConfiguration` は `pileCount` と `spacing{x,y}` しかなく、`rows/cols/edge` を可逆に保持できません。例えば `pileCount=6` だけでは2×3と3×2を区別できず、縁端距離や配置原点も再現できません。
+- 推奨対処: `PileConfiguration` の加算的拡張は妥当ですが、少なくとも次をcanonicalに定義してください。
+  - `rows`
+  - `cols`
+  - `spacing.x/y`
+  - 各方向のedgeまたは配置原点・基準軸
+  - 配置回転
+  - `pileCount === rows * cols` の整合規則
+
+  杭座標配列はこのgrid定義から決定論的にDERIVEDとし、`placementSnapshot` や旧UI stateを第2正本にしてはいけません。非矩形・欠損杭を今回扱わないなら `FROZEN-DEFER` と明記してください。
+
+### 指摘 08
+
+- 重要度: **CRITICAL**
+- 対象: PDC唯一正本
+- 理由: 旧route `/pro/liner/substructure` が引き続き動作し、未配線の `PileLayoutPanel` が独自状態を持つため、再利用方法を誤ると旧browser JSONまたはcomponent stateが第2正本になります。
+- 推奨対処: 旧コンポーネントは表示・入力部品として救出し、読み書きはcontrolled adapter経由に限定してください。正規経路を次に固定します。
+
+  `UI → SubstructureDocument → PDC → Calculation/Geometry → snapshot(DERIVED)`
+
+  旧route、local storage、sidecar、snapshotからの直接canonical更新は禁止です。
+
+### 指摘 09
+
+- 重要度: **CRITICAL**
+- 対象: IF3 status / fail-closed
+- 理由: `analysisCimLayer.ts` の「statusが `undefined` でもauthoritative」は、明確なfail-open経路です。backendが通常metadataを自動付与することは、欠損・旧キャッシュ・不完全レスポンスをauthoritativeに昇格させる根拠にはなりません。
+- 推奨対処:
+  - authoritative条件を、少なくとも明示的な成功状態、schema妥当、入力revision一致、solver結果完全性確認の論理積に限定
+  - `undefined`、未知status、欠損metadataは `INVALID`
+  - `STALE` は表示してもauthoritative表示・設計利用を禁止
+  - `PARTIAL/FAILED/INVALID/UNSUPPORTED` を成功へ正規化しない
+  - 過去の成功結果を最新失敗後もauthoritativeとして残さない
+
+### 指摘 10
+
+- 重要度: **CRITICAL**
+- 対象: I-06 Reaction authoritative画面
+- 理由: IF3 normalizerで示されているsupport reactionは `fz` のみです。「Reaction authoritative」が全反力を意味する場合、現在のpayloadでは不足します。また、解析状態・節点・支承との対応、単位、符号がない画面はauthoritativeとは呼べません。
+- 推奨対処: 要求範囲を明示してください。鉛直反力限定なら「Vertical Reaction」としてFreezeし、全反力なら `Fx/Fy/Fz/Mx/My/Mz` をIF3まで拡張します。画面にはsupport/node ID、load case、単位、符号規約、解析revision、statusを表示し、合力・モーメント釣合いの検証をAcceptanceに含めてください。
+
+### 指摘 11
+
+- 重要度: **MAJOR**
+- 対象: I-07 N/Q/M/T authoritative画面
+- 理由: `memberForce(i.fx..j.mz)` から表示値を取得できても、local/global軸、i/j端、正負、単位の対応が未定義ならN/Q/M/Tを誤表示できます。特に一般には `N=Fx`、`T=Mx` ですが、QとMの軸対応は部材local axis定義に依存します。
+- 推奨対処:
+  - IF3のlocal axis規約を固定
+  - i端/j端を区別
+  - N/Qy/Qz/T/My/Mzのmapping、符号、単位を固定
+  - interpolationや包絡値を生成する場合はDERIVED表示として識別
+  - `STALE/INVALID` 時はauthoritativeバッジと設計利用操作を無効化
+
+### 指摘 12
+
+- 重要度: **MAJOR**
+- 対象: I-08 Deformed Shape authoritative画面
+- 理由: `nodeDisplacement` が存在するだけではAcceptanceとして不十分です。変形倍率を掛けた描画座標を解析結果そのものとして扱うと、snapshot正本化または値の誤認につながります。
+- 推奨対処:
+  - IF3生変位と表示倍率を分離
+  - 倍率を画面に明示
+  - undeformed形状を併記
+  - node ID・load case・単位・最大変位・解析revisionを表示
+  - 欠損節点、非finite値、モデルrevision不一致では描画しない
+  - 変形後座標は表示専用DERIVEDとし、Geometry/Documentへ書き戻さない
+
+### 指摘 13
+
+- 重要度: **MAJOR**
+- 対象: Folder consolidation
+- 理由: worktree解除済み・dirty backup済みであることはリスク低減要素ですが、データ消失がないことのAcceptanceにはなりません。特に未追跡ファイル、旧routeだけが参照する資産、backup外のローカル状態が残存し得ます。
+- 推奨対処: 今回の保護対象dirty差分には触れず、consolidation完了判定には、移行元/先inventory、参照元検索、tracked/untracked区別、backup対応表を証跡として要求してください。フォルダ削除やworktree整理をPhase 9-04R3の機能完了と混同しないでください。
+
+### 指摘 14
+
+- 重要度: **CRITICAL**
+- 対象: Completion Gate
+- 理由: 「画面が表示された」「APIが200を返した」「一度解析が成功した」だけでCLOSEDにできる余地があります。また、8件のClose Listが個別に閉じていなくてもPhase全体を完了扱いできる抜け道があります。
+- 推奨対処: 各項目を独立してCLOSEDにし、最低限次をGateにしてください。
+  - UI入力→Document→PDC→解析入力→backend→IF3→実画面の同一revision縦断
+  - reload後のcanonical再現性
+  - dangling reference拒否
+  - zero/negative/nonfinite section拒否
+  - 未拘束モデルの `MODEL_UNSTABLE`
+  - 荷重合計保存、符号、単位
+  - `STALE/INVALID/PARTIAL/FAILED/UNSUPPORTED/undefined` の非authoritative確認
+  - 旧route・snapshot・sidecarからの書込みがないこと
+  - Golden無変更
+  - typecheck、対象unit/integration/E2E、backend test、既存回帰test成功
+  - 既存dirty差分を変更・stageしていないこと
+
+## 技術判定
+
+- S-01: **未達**
+- S-03: **下流基盤は存在するが、UI起点の正式縦断は未達**
+- S-07: **未達。旧Apollo全フィールドの分類表が必要**
+- B-01: **未達**
+- B-06: **未達。canonical schema拡張が必要**
+- I-06: **未達。現状は最大でも鉛直反力限定**
+- I-07: **payload基盤はあるが、authoritative画面の規約・Acceptanceが不足**
+- I-08: **payload基盤はあるが、authoritative画面のAcceptanceが不足**
+
+`PileConfiguration` の加算的拡張と、既存のAnalysis/IF3縦断を活用する設計方向自体はPhase 9-02契約と両立可能です。ただし、PDC唯一正本、明示的材料解決、支承拘束、status fail-closedを守ることが条件です。
+
+## 全体判定
+
+**NO-GO**
+
+現時点ではClose Listの主要項目が実装またはAcceptanceの双方で閉じておらず、特に `undefined → authoritative`、材料・拘束の未解決、杭gridのcanonical表現不足はCLOSED宣言を妨げる重大事項です。これらをClose List/WP/Acceptance/testsへ反映し、全CRITICALを解消した後に再レビューが必要です。
