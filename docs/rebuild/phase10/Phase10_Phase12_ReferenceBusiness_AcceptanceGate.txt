@@ -46,21 +46,22 @@ status: FINAL（Sol指摘2回反映）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 f1a9864e414752321c66f47cbf190d9c6e2e0bbae19743240bd64126ec4cd645）
+    （sha256 bb71637a1bc69ae12f3aec997f0b7a7feb4090fcbbd3299c9682b79ff958c1d6）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
   - 再現bundle（evidence/oracle-comparator/）:
-    compare_oracle.py = b12f7f36f0d77188b796154c5195167595c30a599e325c924a66ac8219a958a0
-    verify_oracle_evidence.py = f2349d8c44d3cd074c5b024137d1ed1d6c882beaee5acb07e668f0ddd00ed0f7
+    compare_oracle.py = e5a17f93ab424a446f0b8abca1b641bf19b024a8ad3d8b22575a067bb14d7c64
+    verify_oracle_evidence.py = f2e827cb445536d58260664e01bb2b87bea6ce74c4d6b4d51cf3292aee9cd9be
     comparison_report.schema.json = cb984f96116302fa9169d7fb0138071eb36728304f965d91df9820f01a406e3f
     Phase10_Reference_NumberOracle.schema.json = 4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f
     schema_negative_fixtures.json = 0ec294025a6d0f16704ba4afbd3c4589e9543c63faaa9d8f70ae31a4ed372495
     sb_quantity_input.json = c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306
     fixture_constants.json = ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb（A1 station=100統一）
-    sb_quantity_derivation.test.ts = 1233505e3b86eb8432c7bc64180b9f6f00ef50c4dd61edf4f995fb726f2d2f34
-    frontend SB導出test = e524505033281a0cccb72a084d6bc96bb92309231ae19df7a1e483cea8ed577c
+    SB導出test（単一正本）= frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts
+    　sha256 3d4d8ca4874900069fe85c38be319a53c6741fde68951749ed90695644b14ff1（P10_SB_OUTPUT必須・fallbackなし）
   - report.comparatorBundleに全bundle完全SHA格納・verify_oracle_evidence.pyが「SB導出→固定入力厳密一致→oracle PASS→7件reject→比較→report schema PASS」を一括実行し
-    verification_result.json（3b4a93b43de18fa5ad4e4fcb019a6bc278b92f2a4be60f5b105834773f1977fb）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
-  - row-key multiset: oracleとreportの（kind,entityId,component）キー集合完全一致・重複なしを機械検証
+    verification_result.json（b36c79599141d9835f55b4bb9c464fa87e83ae94570f6591d1577e40a677ca05）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
+  - row-key multiset: oracle/reportの（kind,entityId,component）キー集合完全一致+両者一意性（oracleUnique/reportUnique）をfail-closed検証・
+    重複row negative（report row複製）検出を確認
   - fixture consistency: oracle reference=REF-MOUNTAIN-1=fixture_constants.fixtureId=report fixtureId/version一致・solver input projectId一致を検証
   - negative fixtures 7件全reject + oracle本体PASS（jsonschema 4.26.0）を機械確認
     inputChainOfCustody{oracleSha256, rawResultSha256, solverInputSha256, fixtureId=REF-MOUNTAIN-1, projectId}・各rowにdAbs/dRel/判定根拠

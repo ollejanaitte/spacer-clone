@@ -261,8 +261,8 @@ def main():
         bundle["sbQuantityInputSha256"] = sha(os.path.join(bundle_dir, "sb_quantity_input.json"))
     bundle["fixtureConstantsPath"] = os.path.join(bundle_dir, "fixture_constants.json")
     bundle["fixtureConstantsSha256"] = fx_sha
-    bundle["sbDerivationScriptPath"] = os.path.join(bundle_dir, "sb_quantity_derivation.test.ts")
-    bundle["sbDerivationScriptSha256"] = sha(os.path.join(bundle_dir, "sb_quantity_derivation.test.ts"))
+    bundle["sbDerivationScriptPath"] = "frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts"
+    bundle["sbDerivationScriptSha256"] = sha("frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts")
     verify_runner = os.path.join(bundle_dir, "verify_oracle_evidence.py")
     if os.path.exists(verify_runner):
         bundle["verifyRunnerPath"] = verify_runner

@@ -1,7 +1,7 @@
 {
  "schemaVersion": "1.0.0",
  "comparatorId": "spacer-oracle-comparator-v1",
- "generatedAt": "2026-08-14T23:19:54.222500+00:00",
+ "generatedAt": "2026-08-14T23:25:17.213205+00:00",
  "runConditions": {
   "solver": "scipy_sparse",
   "document": "Phase10_Reference_SolverInput.json(fixed)",
@@ -27,7 +27,7 @@
  },
  "comparatorBundle": {
   "comparatorScript": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
-  "comparatorScriptSha256": "b12f7f36f0d77188b796154c5195167595c30a599e325c924a66ac8219a958a0",
+  "comparatorScriptSha256": "e5a17f93ab424a446f0b8abca1b641bf19b024a8ad3d8b22575a067bb14d7c64",
   "reportSchemaPath": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
   "reportSchemaSha256": "cb984f96116302fa9169d7fb0138071eb36728304f965d91df9820f01a406e3f",
   "negativeFixturesPath": "docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json",
@@ -36,10 +36,10 @@
   "sbQuantityInputSha256": "c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306",
   "fixtureConstantsPath": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
   "fixtureConstantsSha256": "ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb",
-  "sbDerivationScriptPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_derivation.test.ts",
-  "sbDerivationScriptSha256": "1233505e3b86eb8432c7bc64180b9f6f00ef50c4dd61edf4f995fb726f2d2f34",
+  "sbDerivationScriptPath": "frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
+  "sbDerivationScriptSha256": "3d4d8ca4874900069fe85c38be319a53c6741fde68951749ed90695644b14ff1",
   "verifyRunnerPath": "docs/rebuild/phase10/evidence/oracle-comparator/verify_oracle_evidence.py",
-  "verifyRunnerSha256": "f2349d8c44d3cd074c5b024137d1ed1d6c882beaee5acb07e668f0ddd00ed0f7",
+  "verifyRunnerSha256": "f2e827cb445536d58260664e01bb2b87bea6ce74c4d6b4d51cf3292aee9cd9be",
   "oracleSchemaPath": "docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json",
   "oracleSchemaSha256": "4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f"
  },

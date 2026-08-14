@@ -169,13 +169,23 @@ def main():
     report_ok = rv.is_valid(report)
     print("report validates:", report_ok)
 
-    # 4b) row-key multiset exact match between oracle and report
+    # 4b) row-key multiset exact match + uniqueness (fail-closed)
     def rowkey(r):
         return (r["kind"], r["entityId"], r["component"])
     oracle_keys = sorted(rowkey(r) for r in oracle["rows"])
     report_keys = sorted(rowkey(r) for r in report.get("rows", []))
-    row_keys_ok = oracle_keys == report_keys
+    oracle_unique = len(set(oracle_keys)) == len(oracle_keys)
+    report_unique = len(set(report_keys)) == len(report_keys)
+    row_keys_ok = oracle_keys == report_keys and oracle_unique and report_unique
     print("row-key multiset match:", row_keys_ok)
+    print("oracle unique:", oracle_unique, "report unique:", report_unique)
+
+    # 4b2) uniqueness negative: duplicate a report row -> rowKeysMatch must FAIL
+    dup_report = dict(report)
+    dup_report["rows"] = list(report["rows"]) + [dict(report["rows"][0])]
+    dup_keys = sorted(rowkey(r) for r in dup_report["rows"])
+    uniqueness_negative_ok = not (dup_keys == oracle_keys and len(set(dup_keys)) == len(dup_keys))
+    print("uniqueness negative (dup report row) detected:", uniqueness_negative_ok)
 
     # 4c) fixture consistency: oracle reference vs fixture constants fixtureId, and report fixtureId/version
     fx = json.load(open(args.fixture_constants))
@@ -212,9 +222,9 @@ def main():
         "negativeFixtures": {"count": len(neg_results), "allRejected": neg_ok, "cases": neg_results},
         "comparison": {"pass": report_pass, "rows": len(report.get("rows", [])), "failures": len(report.get("failures", [])), "rawConsistency": report.get("rawConsistency")},
         "reportSchemaValid": report_ok,
-        "rowKeysMatch": row_keys_ok,
+        "rowKeysMatch": {"ok": row_keys_ok, "oracleUnique": oracle_unique, "reportUnique": report_unique, "oracleKeyCount": len(oracle_keys), "reportKeyCount": len(report_keys), "uniquenessNegativeDetected": uniqueness_negative_ok},
         "fixtureConsistency": {"ok": fixture_ok, "oracleReference": oracle_ref, "fixtureConstantsId": fx_id, "reportFixtureId": report_chain.get("fixtureId"), "reportFixtureVersion": report_chain.get("fixtureVersion"), "projectIdMatch": project_ok},
-        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok and row_keys_ok and fixture_ok,
+        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok and row_keys_ok and fixture_ok and uniqueness_negative_ok,
     }
     json.dump(result, open(args.result, "w"), indent=1)
     print("OVERALL PASS:", result["overallPass"])

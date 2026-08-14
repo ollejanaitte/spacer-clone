@@ -15,7 +15,10 @@ import { buildSubstructureDocument } from "../substructureDocumentDomain";
 import { computeSubstructureQuantity } from "../substructureDesign";
 
 const FIXTURE = "../docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json";
-const OUT = process.env.P10_SB_OUTPUT ?? "/tmp/opencode/p10-oracle/sb_quantity_output.json";
+const OUT = process.env.P10_SB_OUTPUT;
+if (!OUT) {
+  throw new Error("P10_SB_OUTPUT is required (verify_oracle_evidence.py sets it)");
+}
 
 describe("Phase10 SB-04 quantity derivation (REF-MOUNTAIN-1)", () => {
   function build(supportId: string, kind: Parameters<typeof generateSample>[0], station: number) {

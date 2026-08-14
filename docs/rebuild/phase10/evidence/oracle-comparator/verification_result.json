@@ -1,6 +1,6 @@
 {
  "comparatorId": "spacer-oracle-comparator-v1",
- "runnerSha256": "f2349d8c44d3cd074c5b024137d1ed1d6c882beaee5acb07e668f0ddd00ed0f7",
+ "runnerSha256": "f2e827cb445536d58260664e01bb2b87bea6ce74c4d6b4d51cf3292aee9cd9be",
  "validator": "jsonschema 4.26.0 Draft202012Validator",
  "inputs": {
   "oracle": {
@@ -21,7 +21,7 @@
   },
   "sbDerivationTest": {
    "path": "src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
-   "sha256": "e524505033281a0cccb72a084d6bc96bb92309231ae19df7a1e483cea8ed577c"
+   "sha256": "3d4d8ca4874900069fe85c38be319a53c6741fde68951749ed90695644b14ff1"
   },
   "fixtureConstants": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
@@ -41,10 +41,10 @@
   },
   "comparator": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
-   "sha256": "b12f7f36f0d77188b796154c5195167595c30a599e325c924a66ac8219a958a0"
+   "sha256": "e5a17f93ab424a446f0b8abca1b641bf19b024a8ad3d8b22575a067bb14d7c64"
   }
  },
- "generatedReportSha256": "f1a9864e414752321c66f47cbf190d9c6e2e0bbae19743240bd64126ec4cd645",
+ "generatedReportSha256": "bb71637a1bc69ae12f3aec997f0b7a7feb4090fcbbd3299c9682b79ff958c1d6",
  "sbDerivation": {
   "executed": true,
   "derivedMatchesFixed": true,
@@ -124,7 +124,14 @@
   }
  },
  "reportSchemaValid": true,
- "rowKeysMatch": true,
+ "rowKeysMatch": {
+  "ok": true,
+  "oracleUnique": true,
+  "reportUnique": true,
+  "oracleKeyCount": 46,
+  "reportKeyCount": 46,
+  "uniquenessNegativeDetected": true
+ },
  "fixtureConsistency": {
   "ok": true,
   "oracleReference": "REF-MOUNTAIN-1",
