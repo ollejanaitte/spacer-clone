@@ -1,0 +1,144 @@
+統合設計_Phase9-04_260814_1235_上部工_下部工Rescue完全仕上げ_旧実務UI完全統合_最終受入
+====================================================================
+
+作業名: 統合設計 Phase 9-04「Superstructure / Substructure Rescue 完全仕上げ・旧実務UI完全統合・最終受入」
+完了日時: 2026-08-14 12:35 JST
+baseline: 2b504668（Phase 9-03 Final Report merge後）
+Phase 9-02 Design Freeze: 唯一のarchitecture契約（維持）
+verdict: Phase 9-04 NOT COMPLETE（未完了項目あり・詳細はunresolved）
+STOP
+
+====================================================================
+1. Close List 進捗
+====================================================================
+
+【下部工】
+| ID | 項目 | status |
+|---|---|---|
+| B-02 | 2Dビュー（plan） | CLOSED（PR #1016・plan SVG） |
+| B-03 | 寸法表示 | CLOSED（2D planにsupport・station表示） |
+| B-07 | 座標表 | CLOSED（PR #1016・coordinate table） |
+| B-08 | Quantity | CLOSED（PR #1016・concrete/pile DERIVED） |
+| B-09 | 3Dビュー | CLOSED（PR #1016・substructureSceneBuilder・placementSnapshot fallback） |
+| B-04/05 | Pier/Abutment/Footing/Pile編集 | CLOSED（Phase 9-03 + 初期化setter） |
+| B-06 | 杭layout | PARTIAL（入力fieldのみ・layout gridは次Phase候補） |
+| B-01 | 3ペインCAD完全統合 | PARTIAL（form editor + outputs・旧route直開きに依存せず動作） |
+| B-10/11/12 | old JSON除去・Save/restart/.spacerproj・CIM反映 | CLOSED（PDC唯一正本・round-trip test） |
+
+【上部工】
+| ID | 項目 | status |
+|---|---|---|
+| S-04 | 2D General Arrangement | CLOSED（PR #1017・plan SVG） |
+| S-05 | DXF | CLOSED（PR #1017・R12 DXF export・実ファイル） |
+| S-06 | Quantity | CLOSED（PR #1017・steel/deck） |
+| S-02 | 横桁配置 | CLOSED（planにcross beam表示・spacing field） |
+| S-03 | AUTHORIZED荷重 | PARTIAL（load field入力・解析実行はAnalysis連携依存） |
+| S-01/07 | BridgeStructureInputPanel本格UI・完全統合 | PARTIAL（Core編集UI+Outputs確立・旧Apollo全fieldは次Phase候補） |
+| S-08/09/10 | old ProjectModel除去・Save/restart/.spacerproj・CIM反映 | CLOSED（props controlled・round-trip） |
+
+【統合】
+| ID | 項目 | status |
+|---|---|---|
+| I-01..05 | Bridge→Super→Bearing/Reaction→Sub→Analysis→CIM | CLOSED（既存handoff・CIMレイヤ） |
+| I-06/07/08 | IF3 N/Q/M/T・Reaction・Deformed実画面 | PARTIAL（overlayメカニズム配線+unit test・実画面はLINER sampling blocker） |
+| I-09 | STALE/INVALID | CLOSED（unit test・gate） |
+| I-10/11/12 | Electron実画面・restart・.spacerproj | CLOSED（Chromium headed実画面・round-trip） |
+
+====================================================================
+2. PR一覧
+====================================================================
+
+| PR | 内容 | SHA |
+|---|---|---|
+| #1016 | Close List固定・下部工Outputs（座標表/数量/2D plan/3D） | a886b493 |
+| #1017 | 上部工Outputs（2D General Arrangement・Quantity・DXF） | 29140f5a |
+| #1018 | CIM解析実行・IF3 Result overlay配線・derived再生成fix | db4d183b |
+| #1019 | parabolic draft変換startElevation保持・LINER blocker回帰test（it.fails） | 7924fe97 |
+
+====================================================================
+3. 実装内容
+====================================================================
+
+- 下部工Rescue Panel: 2D平面ビュー（Support配置SVG）・座標表（Support/測点/XYZ/スキュー）・
+  Quantity（コンクリート体積/杭長・DERIVED）・3Dビュー（substructureSceneBuilder・
+  placementSnapshot fallback表示用・pier編集で柱+フーチング描画確認）
+- 上部工Rescue Panel: 2D General Arrangement（主桁/床版/横桁plan）・Quantity（鋼材/床版）・
+  DXF export（R12・LINE 9 entities・実ファイル）
+- CIM: 解析実行（IF3 Result overlay）ボタン・結果成分切替（N/Q/M/T）・
+  buildDerivedAnalysisDocument derived handoff再生成fix
+- tests: substructureRescuePanel 4件・superstructureDxf 2件・rescuePersistence 2件
+  （frontend total 1733 passed・typecheck・build PASS）
+
+====================================================================
+4. 実画面検証
+====================================================================
+
+- 下部工Outputs: 座標表・数量・2D plan・3D（pier編集後 柱+フーチング描画）表示・pageerrorなし
+- 上部工Outputs: 2D plan・数量・DXF書き出し・NOT_AUTHORIZED(HOLD)表示・pageerrorなし
+- Save/restart: 上部工主桁5本・下部工柱幅3.5 がrestart後も保持（Phase 9-03）
+- screenshots: p9_sub_outputs / p9_super_outputs / p9_gate_* 取得・Luna判定・Discord送信
+
+====================================================================
+5. unresolved（NOT COMPLETEの主要因）
+====================================================================
+
+【LINER sampling blocker（最重要・継続）】
+- CIM上部工3Dレイヤがブラウザ実画面で空（generateSuperstructureSnapshot が
+  「LINER_COORDINATE_FATAL_DIAGNOSTICS at station 100 offset 0」で失敗）
+- 同一コード・同一Reference Mountain seedの node でも再現（回帰testで確定）
+- Sol調査: toVerticalElementDraftのparabolic変換で startElevation が欠落する可能性を指摘
+  → PR #1019 で startElevation 保持を修正（正しい変換改善）・ただしFATALは完全解決せず
+- 影響: CIM上部工3D表示・IF3 N/Q/M/T/Reaction/Deformed実画面overlayが実画面で未成立
+- メカニズム（解析実行→IF3 overlay）は配線済み・unit test済み
+- 再開地点: DefaultGeometryEngineのLINER Coordinate3dInput構築（alignmentConnector）の
+  diagnostics詳細を特定し、Reference Mountain road（clothoid/arc・二重縦断変換）を
+  LINER 3D coordinateで正常評価できるよう修正（回帰test: superstructureLinerSnapshot
+  it.fails に記録）
+
+【その他PARTIAL】
+- 杭layout grid（rows/cols）入力UI: PARTIAL（入力fieldのみ）
+- 旧3ペインCADの2D/寸法/selected highlightの完全統合: PARTIAL（form+outputsで代替）
+- 旧Apollo全field（荷重詳細・横構取付点等）: PARTIAL（Core編集+Outputs確立）
+
+====================================================================
+6. HOLD / NOT_AUTHORIZED（FROZEN境界・未完扱いしない）
+====================================================================
+
+- 上部工: 正式応力度/照査6種 NOT_AUTHORIZED・diaphragm DEFER（資産0件）
+- 下部工: 照査/配筋/耐震 HOLD_NOT_AVAILABLE・AUTO-DETERMINATION BANNED
+- SOURCE_NOT_AVAILABLE値の発明禁止・HOLDを計算済み表示禁止（すべて維持）
+
+====================================================================
+7. Completion Gate判定
+====================================================================
+
+- 下部工 Close List: B-02/03/07/08/09 CLOSED・B-04/05/10/11/12 CLOSED・
+  B-01/06 PARTIAL
+- 上部工 Close List: S-02/04/05/06/08/09/10 CLOSED・S-01/03/07 PARTIAL
+- 統合: I-01..05/09/10/11/12 CLOSED・I-06/07/08 PARTIAL（LINER sampling blocker）
+- 救出対象Close ListにPARTIAL残存 → **Phase 9-04 NOT COMPLETE**
+
+====================================================================
+8. risk / 次の必要作業
+====================================================================
+
+1. 【最優先】ブラウザのroad canonicalとLINER sampling失敗原因を特定・修正
+   （node成功・ブラウザ失敗の差分調査 → generateSuperstructureSnapshotを実画面で成功させ、
+    CIM上部工3D + IF3 N/Q/M/T/Reaction/Deformed overlayを実画面成立）
+2. 杭layout grid入力・3ペインCAD 2D/寸法の完全統合（PARTIAL解消）
+3. 旧Apollo全field救出（荷重詳細・横構等）の継続
+4. 完了後 Completion Gate全PASS・Final Report更新
+
+====================================================================
+9. final SHA
+====================================================================
+
+本PR merge後の最新SHA（merge後に4系統同期で確定）
+
+====================================================================
+10. verdict
+====================================================================
+
+Phase 9-04 NOT COMPLETE
+（救出Close ListのPARTIAL残存あり・最優先=LINER sampling blocker解消）
+STOP
