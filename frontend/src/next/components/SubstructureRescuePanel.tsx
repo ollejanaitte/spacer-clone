@@ -98,6 +98,23 @@ function abutmentField(key: string, label: string, path: (a: NonNullable<Substru
   };
 }
 
+/** Ensure a canonical PileGroup exists; initializes with defaults when absent. */
+function ensurePileGroup(
+  pileGroup: { id: string; pileType: string; diameter: number; length: number; pileCount: number; spacing: { x: number; y: number } } | null | undefined,
+  defaultId: string,
+  patch: Partial<{ diameter: number; length: number; pileCount: number }>,
+): NonNullable<SubstructureSupport["pier"]>["pileGroup"] {
+  const base = (pileGroup ?? {
+    id: defaultId,
+    pileType: "bored_pile" as const,
+    diameter: 1.2,
+    length: 15,
+    pileCount: 4,
+    spacing: { x: 3.6, y: 3.6 },
+  }) as NonNullable<SubstructureSupport["pier"]>["pileGroup"];
+  return base ? { ...base, ...patch } : undefined;
+}
+
 export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
   const manager = getProjectManager();
   const [message, setMessage] = useState<string | null>(null);
@@ -135,15 +152,18 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
     pierField("footing-length", "フーチング長", (p) => p.footing?.length ?? null, (p, v) => ({ ...p, footing: { id: p.footing?.id ?? "ft", length: v ?? 0, width: p.footing?.width ?? 5, thickness: p.footing?.thickness ?? 1.5, topElevation: p.footing?.topElevation ?? 0 } })),
     pierField("footing-width", "フーチング幅", (p) => p.footing?.width ?? null, (p, v) => ({ ...p, footing: { id: p.footing?.id ?? "ft", length: p.footing?.length ?? 5, width: v ?? 0, thickness: p.footing?.thickness ?? 1.5, topElevation: p.footing?.topElevation ?? 0 } })),
     pierField("footing-thickness", "フーチング厚", (p) => p.footing?.thickness ?? null, (p, v) => ({ ...p, footing: { id: p.footing?.id ?? "ft", length: p.footing?.length ?? 5, width: p.footing?.width ?? 5, thickness: v ?? 0, topElevation: p.footing?.topElevation ?? 0 } })),
-    pierField("pile-diameter", "杭径", (p) => p.pileGroup?.diameter ?? null, (p, v) => ({ ...p, pileGroup: p.pileGroup ? { ...p.pileGroup, diameter: v ?? 0 } : undefined })),
-    pierField("pile-length", "杭長", (p) => p.pileGroup?.length ?? null, (p, v) => ({ ...p, pileGroup: p.pileGroup ? { ...p.pileGroup, length: v ?? 0 } : undefined })),
-    pierField("pile-count", "杭本数", (p) => p.pileGroup?.pileCount ?? null, (p, v) => ({ ...p, pileGroup: p.pileGroup ? { ...p.pileGroup, pileCount: Math.max(1, Math.round(v ?? 1)) } : undefined })),
+    pierField("pile-diameter", "杭径", (p) => p.pileGroup?.diameter ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { diameter: v ?? 0 }) })),
+    pierField("pile-length", "杭長", (p) => p.pileGroup?.length ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { length: v ?? 0 }) })),
+    pierField("pile-count", "杭本数", (p) => p.pileGroup?.pileCount ?? null, (p, v) => ({ ...p, pileGroup: ensurePileGroup(p.pileGroup, p.footing?.id ?? "pg", { pileCount: Math.max(1, Math.round(v ?? 1)) }) })),
   ];
 
   const abutmentFields: DimField[] = [
     abutmentField("backwall-height", "背壁高", (a) => a.backwall?.height ?? null, (a, v) => ({ ...a, backwall: { id: a.backwall?.id ?? "bw", height: v ?? 0, thickness: a.backwall?.thickness ?? 0.5, width: a.backwall?.width ?? 5, seatElevation: a.backwall?.seatElevation ?? 0 } })),
     abutmentField("backwall-thickness", "背壁厚", (a) => a.backwall?.thickness ?? null, (a, v) => ({ ...a, backwall: { id: a.backwall?.id ?? "bw", height: a.backwall?.height ?? 3, thickness: v ?? 0, width: a.backwall?.width ?? 5, seatElevation: a.backwall?.seatElevation ?? 0 } })),
     abutmentField("abutment-footing-length", "フーチング長", (a) => a.footing?.length ?? null, (a, v) => ({ ...a, footing: { id: a.footing?.id ?? "aft", length: v ?? 0, width: a.footing?.width ?? 5, thickness: a.footing?.thickness ?? 1.5, topElevation: a.footing?.topElevation ?? 0 } })),
+    abutmentField("abutment-pile-diameter", "杭径", (a) => a.pileGroup?.diameter ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { diameter: v ?? 0 }) })),
+    abutmentField("abutment-pile-length", "杭長", (a) => a.pileGroup?.length ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { length: v ?? 0 }) })),
+    abutmentField("abutment-pile-count", "杭本数", (a) => a.pileGroup?.pileCount ?? null, (a, v) => ({ ...a, pileGroup: ensurePileGroup(a.pileGroup, a.footing?.id ?? "pg", { pileCount: Math.max(1, Math.round(v ?? 1)) }) })),
   ];
 
   if (!doc) {
