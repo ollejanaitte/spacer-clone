@@ -10,9 +10,13 @@
  * are never shown as computed.
  */
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { readSubstructureDocument, writeSubstructureDocument } from "../modules/substructureModuleAdapter";
+import { computeSubstructureQuantity } from "../modules/substructure/substructureDesign";
+import { buildSubstructureSceneGroup } from "../modules/substructure/substructureSceneBuilder";
 import type { SubstructureDocument, SubstructureSupport } from "../modules/substructure/substructureTypes";
 
 export const SUBSTRUCTURE_RESCUE_FLAG = "VITE_SUBSTRUCTURE_RESCUE";
@@ -192,10 +196,210 @@ export function SubstructureRescuePanel({ projectId }: { projectId: string }) {
 
       {message !== null && <p className="next-hint" data-testid="sub-rescue-message">{message}</p>}
 
+      <SubSupportOutputs doc={doc} />
+
       <p className="next-hint" data-testid="sub-rescue-hold">
         安定・断面力・応力・照査・配筋・耐震は HOLD_NOT_AVAILABLE（NOT_AUTHORIZED）です。
         「計算済み」とは表示しません。
       </p>
     </div>
   );
+}
+
+/** Outputs: support coordinate table, quantity, 2D plan view (B-02/07/08). */
+function SubSupportOutputs({ doc }: { doc: SubstructureDocument }) {
+  const quantity = useMemo(() => computeSubstructureQuantity(doc), [doc]);
+  return (
+    <>
+      <h4 className="next-hint">2D平面ビュー（Support配置・plan）</h4>
+      <SubSupportPlanView doc={doc} />
+
+      <h4 className="next-hint">座標表（Support / station / XYZ）</h4>
+      <table className="next-table" data-testid="sub-coordinate-table">
+        <thead>
+          <tr>
+            <th>Support</th>
+            <th>種別</th>
+            <th>測点(m)</th>
+            <th>X</th>
+            <th>Y</th>
+            <th>Z</th>
+            <th>スキュー(rad)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {doc.supports.map((s) => {
+            const snap = s.placementSnapshot ?? s.placement;
+            const pos = snap && "position" in snap && snap.position ? snap.position : undefined;
+            return (
+              <tr key={s.supportId} data-testid={`sub-coord-${s.supportId}`}>
+                <td>{s.supportId}</td>
+                <td>{s.supportType}</td>
+                <td>{s.placement.station ?? "—"}</td>
+                <td>{pos ? pos.x.toFixed(2) : "—"}</td>
+                <td>{pos ? pos.y.toFixed(2) : "—"}</td>
+                <td>{pos ? pos.z.toFixed(2) : "—"}</td>
+                <td>{s.skewRad?.toFixed(3) ?? "—"}</td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+
+      <h4 className="next-hint">Quantity（DERIVED・実計算）</h4>
+      <dl className="next-integrity-meta" data-testid="sub-quantity">
+        <div><dt>コンクリート体積</dt><dd>{quantity.totalConcreteVolumeM3?.toFixed(2) ?? "—"} m³</dd></div>
+        <div><dt>杭長合計</dt><dd>{quantity.totalPileLengthM?.toFixed(1) ?? "—"} m</dd></div>
+        <div><dt>status</dt><dd>{quantity.quantityStatus}</dd></div>
+      </dl>
+
+      <h4 className="next-hint">3Dビュー（Substructure solids）</h4>
+      <Substructure3DPreview doc={doc} />
+    </>
+  );
+}
+
+/** 2D plan SVG: supports placed along the alignment (plan view). */
+function SubSupportPlanView({ doc }: { doc: SubstructureDocument }) {
+  const W = 480;
+  const H = 120;
+  const supports = doc.supports;
+  const stations = supports.map((s) => s.placement.station ?? 0);
+  const minS = Math.min(...stations, 0);
+  const maxS = Math.max(...stations, 1);
+  const span = Math.max(maxS - minS, 1);
+  const toX = (s: number) => 20 + ((s - minS) / span) * (W - 40);
+  return (
+    <svg width={W} height={H} className="next-preview-svg" data-testid="sub-plan-view">
+      <rect width={W} height={H} fill="#f8fafc" stroke="#e2e8f0" />
+      {/* alignment line */}
+      <line x1={10} y1={H / 2} x2={W - 10} y2={H / 2} stroke="#94a3b8" strokeDasharray="4 4" />
+      {supports.map((s) => {
+        const x = toX(s.placement.station ?? 0);
+        const w = s.supportType === "abutment" ? 14 : 8;
+        return (
+          <g key={s.supportId}>
+            <rect x={x - w / 2} y={H / 2 - 16} width={w} height={32}
+              fill={s.supportType === "abutment" ? "#8a6d3b" : "#6b7d99"} stroke="#334155" />
+            <text x={x} y={H / 2 + 22} fontSize="9" textAnchor="middle" fill="#334155">{s.supportId}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** 3D preview of the substructure solids (B-09). */
+function Substructure3DPreview({ doc }: { doc: SubstructureDocument }) {
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [renderError, setRenderError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+    let disposed = false;
+    let frameId = 0;
+    let renderer: THREE.WebGLRenderer | null = null;
+    let controls: OrbitControls | null = null;
+    let camera: THREE.PerspectiveCamera | null = null;
+    try {
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color(0xe8eef4);
+      camera = new THREE.PerspectiveCamera(55, 1, 0.1, 200000);
+      renderer = new THREE.WebGLRenderer({ antialias: true });
+      renderer.setPixelRatio(window.devicePixelRatio);
+      container.appendChild(renderer.domElement);
+      controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      scene.add(new THREE.AmbientLight(0xffffff, 1.0));
+      scene.add(new THREE.DirectionalLight(0xffffff, 1.1));
+
+      const built = buildSubstructureSceneGroup(withFallbackSnapshots(doc), { localOrigin: null });
+      scene.add(built.group);
+      const box = new THREE.Box3().setFromObject(built.group);
+      if (box.isEmpty()) {
+        box.set(new THREE.Vector3(-10, 0, -10), new THREE.Vector3(10, 10, 10));
+      }
+      const center = box.getCenter(new THREE.Vector3());
+      const size = box.getSize(new THREE.Vector3());
+      const radius = Math.max(size.x, size.y, size.z) * 0.6;
+      camera.near = Math.max(0.01, radius / 1000);
+      camera.far = Math.max(100, radius * 100);
+      camera.position.set(center.x + size.x, center.y + size.y, center.z + size.z + radius);
+      camera.lookAt(center);
+      controls.target.copy(center);
+      controls.update();
+
+      const resize = () => {
+        if (!renderer || !camera) return;
+        const w = container.clientWidth || 300;
+        const h = container.clientHeight || 260;
+        renderer.setSize(w, h);
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+      };
+      resize();
+      const ro = new ResizeObserver(resize);
+      ro.observe(container);
+      const animate = () => {
+        if (disposed) return;
+        frameId = requestAnimationFrame(animate);
+        controls?.update();
+        renderer?.render(scene, camera!);
+      };
+      animate();
+      return () => {
+        disposed = true;
+        cancelAnimationFrame(frameId);
+        ro.disconnect();
+        renderer?.dispose();
+        controls?.dispose();
+        if (renderer?.domElement.parentNode === container) container.removeChild(renderer.domElement);
+      };
+    } catch (error) {
+      setRenderError(String(error));
+      return undefined;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [doc]);
+
+  return (
+    <div style={{ height: 260, position: "relative" }} data-testid="sub-3d-preview">
+      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+      {renderError !== null && <div className="next-error">{renderError}</div>}
+    </div>
+  );
+}
+
+/**
+ * Display-only fallback: synthesize placement snapshots for supports missing
+ * them (straight-alignment approximation along the station axis). Never
+ * persisted; exact alignment positions come from the road context / CIM.
+ */
+function withFallbackSnapshots(doc: SubstructureDocument): SubstructureDocument {
+  const hasMissing = doc.supports.some((s) => !s.placementSnapshot);
+  if (!hasMissing) {
+    return doc;
+  }
+  return {
+    ...doc,
+    supports: doc.supports.map((s) => {
+      if (s.placementSnapshot) return s;
+      const station = s.placement.station ?? 0;
+      const offset = s.placement.offset ?? 0;
+      const z = s.zOverride ?? 0;
+      return {
+        ...s,
+        placementSnapshot: {
+          source: "liner",
+          position: { x: station, y: offset, z },
+          tangent: { x: 1, y: 0, z: 0 },
+          transverse: { x: 0, y: 1, z: 0 },
+          vertical: { x: 0, y: 0, z: 1 },
+          azimuthRad: 0,
+          skewRad: s.skewRad ?? 0,
+        },
+      };
+    }),
+  };
 }
