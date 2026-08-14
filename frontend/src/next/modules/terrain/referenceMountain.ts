@@ -96,7 +96,7 @@ export function createReferenceMountain(): ReferenceMountain {
   const roadVertical: VerticalElement[] = [
     { type: "grade", id: "G1", startPhysicalDistance: 0, startElevation: 100, grade: 0.03, length: 250 },
     { type: "parabolic", id: "P1", startPhysicalDistance: 250, startElevation: 107.5, gradeIn: 0.03, gradeOut: -0.02, length: 120 },
-    { type: "grade", id: "G2", startPhysicalDistance: 370, startElevation: 106.5, grade: -0.02, length: 390 },
+    { type: "grade", id: "G2", startPhysicalDistance: 370, startElevation: 108.1, grade: -0.02, length: 390 },
   ];
 
   const roadCrossSection: CrossSectionTemplateDraft = {

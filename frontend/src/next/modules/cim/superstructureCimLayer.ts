@@ -12,6 +12,7 @@ import type { ProjectManager } from "../../project/projectManager";
 import { readSuperstructureDocument } from "../superstructureModuleAdapter";
 import { buildLinerIntermediateFromRoad, generateSuperstructureSnapshot } from "../superstructure/superstructureGeometry";
 import { buildSuperstructureSceneGroup } from "../superstructure/superstructureSceneBuilder";
+import { regenerateSuperstructureDerived } from "../superstructure/superstructurePersistence";
 import { readRoadData } from "../roadModuleAdapter";
 import { loadRoadEditorDraft } from "../road/roadEditorDraft";
 import { verticalDraftAlignmentToElements } from "../road/verticalDraftBridge";
@@ -86,7 +87,7 @@ export function buildSuperstructureCimLayer(
     };
   }
 
-  const generated = generateSuperstructureSnapshot(intermediate, superDoc);
+  const generated = generateSuperstructureSnapshot(intermediate, regenerateSuperstructureDerived(manager, projectId, superDoc));
   if (!generated.ok) {
     return {
       superstructureGroup, bearingGroup, metadata,

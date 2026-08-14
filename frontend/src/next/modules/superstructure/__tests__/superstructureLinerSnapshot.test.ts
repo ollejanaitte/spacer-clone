@@ -39,7 +39,7 @@ describe("superstructure LINER snapshot (Phase 9-04 fix)", () => {
     }
   });
 
-  it.fails("KNOWN BLOCKER: LINER snapshot FATAL at station 100 (LINER_COORDINATE_FATAL_DIAGNOSTICS) through the browser-authentic road path", () => {
+  it("generates the GeometrySnapshot through the browser-authentic road path (reference mountain continuous profile)", () => {
     const project = makeProject();
     const manager = getProjectManager();
     const pid = project.projectId;
