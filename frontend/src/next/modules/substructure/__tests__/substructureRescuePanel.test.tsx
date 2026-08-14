@@ -207,12 +207,14 @@ describe("SubstructureRescuePanel 3-pane CAD + pile grid (Phase 9-04R3 B-01/B-06
     const pid = setupProject();
     const manager = getProjectManager();
     const existing = readSubstructureDocument(manager, pid)!;
-    // give the support pileGroup explicit edge values
+    // give the support pileGroup explicit edge values (both nested and
+    // normalized pileConfigurations must agree)
     writeSubstructureDocument(manager, pid, {
       ...existing,
       supports: existing.supports.map((s) => s.supportId === "P1"
         ? { ...s, pier: { ...s.pier!, pileGroup: { ...s.pier!.pileGroup!, edgeX: 0.5, edgeY: 0.4 } } }
         : s),
+      pileConfigurations: existing.pileConfigurations.map((pc) => pc.id === "pg1" ? { ...pc, edgeX: 0.5, edgeY: 0.4 } : pc),
     });
     const root = await render(<SubstructureRescuePanel projectId={pid} />);
     const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;

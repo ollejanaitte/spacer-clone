@@ -197,10 +197,10 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
     await setField("下フランジ幅", "0.5");
     await setField("下フランジ厚", "0.03");
     await setField("床版厚", "0.25");
+    // FIXED bearing for solver stability (mandatory)
     const anyBearing = page.locator("[data-testid^=super-bearing-fixed-]").first();
-    if ((await anyBearing.count()) > 0) {
-      await anyBearing.selectOption("FIXED");
-    }
+    await expect(anyBearing).toBeVisible();
+    await anyBearing.selectOption("FIXED");
 
     // go to CIM and run analysis
     await page.locator("[data-testid=module-shell-back]").click();
@@ -269,11 +269,15 @@ test.describe.serial("Phase 9-04R3 browser acceptance", () => {
       expect(hasNonZero, `N/Q/M column ${col} must contain a non-zero value`).toBe(true);
     }
 
-    // deformed summary must exist with non-zero max displacement
+    // deformed summary must exist with a non-zero max displacement
     await expect(page.locator("[data-testid=if3-deformed-summary]")).toBeVisible();
     const deformedText = await page.locator("[data-testid=if3-deformed-summary]").textContent();
     expect(deformedText).toBeTruthy();
-    expect(deformedText).toMatch(/node数\s*\d+/);
+    expect(deformedText).toMatch(/node数\s*[1-9]\d*/);
+    const maxUzMatch = deformedText.match(/最大\|uz\|\s*(-?\d+\.\d+)/);
+    expect(maxUzMatch).toBeTruthy();
+    const maxUz = Number(maxUzMatch![1]);
+    expect(Math.abs(maxUz)).toBeGreaterThan(1e-6);
     await page.screenshot({ path: evidencePath("p9-04r3-09-if3-reaction-nqm.png"), fullPage: true });
   });
 

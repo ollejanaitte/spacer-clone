@@ -249,7 +249,13 @@ export function buildAnalysisCimLayer(
     // result kinds present. undefined/unknown/PARTIAL/FAILED/mismatched are
     // INVALID (fail-closed).
     const status = (input.if3Result as { status?: string }).status;
-    const authoritative = status === "SUCCEEDED" && isAuthoritativeIf3For(input.if3Result, document);
+    const authoritative = status === "SUCCEEDED" && isAuthoritativeIf3For(input.if3Result, {
+      documentId: document.documentId,
+      revisionId: document.revisionId,
+      modelChecksum: document.modelChecksum,
+      nodeIds: document.nodes.map((n) => n.entityId),
+      memberIds: document.members.map((m) => m.entityId),
+    });
     resultStatus = authoritative ? "authoritative" : status === "STALE" || status === "stale" ? "stale" : "invalid";
     if (authoritative) {
       const result = extractLinearStaticResultFromIf3(input.if3Result);

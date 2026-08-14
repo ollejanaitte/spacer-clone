@@ -14,6 +14,8 @@ const MATCHING_SOURCE = {
   documentId: "11111111-1111-4111-8111-111111111111",
   revisionId: 1,
   modelChecksum: "a".repeat(64),
+  nodeIds: ["0011bfd9-b117-503b-8c62-6e3a3a69086f", "22222222-2222-4222-8222-222222222222", "6a27c03d-ec97-5476-a605-f5b61b64809b"],
+  memberIds: ["d059b760-59aa-5442-98f2-dc81d5bd486a"],
 };
 
 async function render(node: ReactNode): Promise<Root> {
@@ -72,7 +74,7 @@ describe("AuthoritativeResultPanel (Phase 9-04R3 I-06/07/08)", () => {
     const root = await render(
       <AuthoritativeResultPanel
         if3Result={makeIf3("SUCCEEDED")}
-        sourceDocument={{ documentId: "other-doc", revisionId: 99, modelChecksum: "x".repeat(64) }}
+        sourceDocument={{ documentId: "other-doc", revisionId: 99, modelChecksum: "x".repeat(64), nodeIds: [], memberIds: [] }}
       />,
     );
     expect(document.querySelector('[data-testid="if3-result-status"]')?.textContent).toContain("invalid");

@@ -120,7 +120,13 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
       // Runtime schema + source binding validation (Sol review #2): malformed
       // SUCCEEDED results or results not bound to the current AnalysisDocument
       // are NOT authoritative.
-      const sourceDoc: If3SourceDocumentRef = { documentId: doc.documentId, revisionId: doc.revisionId, modelChecksum: doc.modelChecksum };
+      const sourceDoc: If3SourceDocumentRef = {
+        documentId: doc.documentId,
+        revisionId: doc.revisionId,
+        modelChecksum: doc.modelChecksum,
+        nodeIds: doc.nodes.map((n) => n.entityId),
+        memberIds: doc.members.map((m) => m.entityId),
+      };
       const authoritative = isAuthoritativeIf3For(
         data.if3Result as import("../../contracts/frameAnalysisResultResource").FrameAnalysisResultResource,
         sourceDoc,

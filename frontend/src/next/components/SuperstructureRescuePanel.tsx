@@ -211,6 +211,19 @@ export function SuperstructureRescuePanel({ projectId }: { projectId: string }) 
       get: (d) => d.crossBeamConfiguration?.crossBeams.find((c) => c.widthM !== null)?.widthM ?? null,
       set: (d, v) => ({ ...d, crossBeamConfiguration: setCrossBeamDim(d.crossBeamConfiguration, "widthM", v) }),
     },
+    // Cross frame (Phase 9-02 Freeze convert: swayBracingInterval/lateralBracingEnabled)
+    {
+      label: "横構（sway）間隔",
+      unit: "m",
+      get: (d) => d.crossFrameConfiguration?.swayBracing.intervalM ?? null,
+      set: (d, v) => ({ ...d, crossFrameConfiguration: setCrossFrameInterval(d.crossFrameConfiguration, "swayBracing", v) }),
+    },
+    {
+      label: "横構（lateral）間隔",
+      unit: "m",
+      get: (d) => d.crossFrameConfiguration?.lateralBracing.intervalM ?? null,
+      set: (d, v) => ({ ...d, crossFrameConfiguration: setCrossFrameInterval(d.crossFrameConfiguration, "lateralBracing", v) }),
+    },
     // Material (Phase 7-01C §3.1): E / G / nu / rho
     {
       label: "鋼弾性係数",
@@ -344,6 +357,26 @@ function setCrossBeamDim(
   return {
     ...config,
     crossBeams: config.crossBeams.map((beam) => ({ ...beam, [key]: value })),
+  };
+}
+
+/** Apply a cross frame interval; initializes the configuration when absent. */
+function setCrossFrameInterval(
+  config: SuperstructureDocument["crossFrameConfiguration"],
+  key: "swayBracing" | "lateralBracing",
+  value: number | null,
+): SuperstructureDocument["crossFrameConfiguration"] {
+  if (value === null || !(value > 0)) return config;
+  const base = config ?? {
+    crossFrameSpacingM: value,
+    swayBracing: { intervalM: 8 },
+    lateralBracing: { intervalM: 8 },
+  };
+  return {
+    ...base,
+    crossFrameSpacingM: base.crossFrameSpacingM,
+    swayBracing: { intervalM: key === "swayBracing" ? value : base.swayBracing.intervalM },
+    lateralBracing: { intervalM: key === "lateralBracing" ? value : base.lateralBracing.intervalM },
   };
 }
 

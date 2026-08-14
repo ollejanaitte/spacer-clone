@@ -99,7 +99,11 @@ export function buildAuthorizedDeadLoad(
       tributary.set(node.entityId, length);
     });
     const totalTributary = [...tributary.values()].reduce((sum, v) => sum + v, 0);
-    if (totalTributary <= 0) continue;
+    // Fail-closed conservation (Sol review #7): a girder group with no
+    // tributary length would drop its share and break sum(-Fz) == totalKN.
+    if (!(totalTributary > 0)) {
+      return null;
+    }
     for (const node of sorted) {
       const length = tributary.get(node.entityId) ?? 0;
       if (length <= 0) continue;

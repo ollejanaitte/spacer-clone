@@ -181,14 +181,25 @@ export interface If3SourceDocumentRef {
   readonly documentId: string;
   readonly revisionId: number;
   readonly modelChecksum: string;
+  /** node entityIds (required: displacement/reaction rows must bind). */
+  readonly nodeIds: readonly string[];
+  /** member entityIds (required: memberForce rows must bind). */
+  readonly memberIds: readonly string[];
+}
+
+function hasFiniteValues(values: unknown, keys: readonly string[]): boolean {
+  if (!values || typeof values !== "object" || Array.isArray(values)) return false;
+  const record = values as Record<string, unknown>;
+  return keys.some((k) => typeof record[k] === "number" && Number.isFinite(record[k]) && Math.abs(record[k] as number) > 1e-12);
 }
 
 /**
  * Determine whether an IF3 resource is authoritative for the given
- * AnalysisDocument (Phase 9-04R3 Sol #2). Authoritative = explicit SUCCEEDED
+ * AnalysisDocument (Phase 9-04R3 Sol #2/#3). Authoritative = explicit SUCCEEDED
  * AND runtime schema valid AND source binding (documentId / revision /
- * modelChecksum) matches the current AnalysisDocument AND all required result
- * kinds are present. Any failure -> not authoritative (fail-closed).
+ * modelChecksum) matches the current AnalysisDocument AND required result kinds
+ * are present AND every row entityId binds to the AnalysisDocument AND rows
+ * carry real (non-zero) values. Any failure -> not authoritative (fail-closed).
  */
 export function isAuthoritativeIf3For(
   if3Result: FrameAnalysisResultResource | null | undefined,
@@ -206,11 +217,42 @@ export function isAuthoritativeIf3For(
   const sourceChecksum = if3Result.sourceContentChecksum?.hexDigest;
   if (sourceChecksum !== undefined && sourceChecksum !== analysisDocument.modelChecksum) return false;
 
-  // required result kinds present
-  const payload = (if3Result.payload ?? {}) as Record<string, { rows?: unknown }>;
-  for (const kind of ["nodeDisplacement", "supportReaction", "memberForce"]) {
-    const entry = payload[kind];
-    if (!entry || !Array.isArray(entry.rows) || entry.rows.length === 0) return false;
+  const nodeIdSet = new Set(analysisDocument.nodeIds);
+  const memberIdSet = new Set(analysisDocument.memberIds);
+  const payload = (if3Result.payload ?? {}) as Record<string, { rows?: Array<{ entityId?: unknown; values?: unknown }> }>;
+
+  // nodeDisplacement: every row must bind to a node and at least one row
+  // carries a real (non-zero) value
+  const displacementRows = payload.nodeDisplacement?.rows ?? [];
+  if (displacementRows.length === 0) return false;
+  let hasAnyValue = false;
+  for (const row of displacementRows) {
+    if (typeof row.entityId !== "string" || !nodeIdSet.has(row.entityId)) return false;
+    if (hasFiniteValues(row.values, ["ux", "uy", "uz"])) hasAnyValue = true;
   }
+  if (!hasAnyValue) return false;
+
+  // supportReaction: every row must bind to a node and at least one row
+  // carries a real (non-zero) value
+  const reactionRows = payload.supportReaction?.rows ?? [];
+  if (reactionRows.length === 0) return false;
+  hasAnyValue = false;
+  for (const row of reactionRows) {
+    if (typeof row.entityId !== "string" || !nodeIdSet.has(row.entityId)) return false;
+    if (hasFiniteValues(row.values, ["fx", "fy", "fz"])) hasAnyValue = true;
+  }
+  if (!hasAnyValue) return false;
+
+  // memberForce: every row must bind to a member and at least one row
+  // carries a real (non-zero) value
+  const memberRows = payload.memberForce?.rows ?? [];
+  if (memberRows.length === 0) return false;
+  hasAnyValue = false;
+  for (const row of memberRows) {
+    if (typeof row.entityId !== "string" || !memberIdSet.has(row.entityId)) return false;
+    if (hasFiniteValues(row.values, ["i.fx", "i.fy", "i.fz", "i.my", "i.mz"])) hasAnyValue = true;
+  }
+  if (!hasAnyValue) return false;
+
   return true;
 }

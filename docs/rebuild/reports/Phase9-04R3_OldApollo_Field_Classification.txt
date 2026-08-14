@@ -37,8 +37,8 @@ Phase 9-04R3 S-07 旧Apollo 上部工 field 最終分類表
 | haunch | 新docに非対応・DEFER |
 | roadMarkings | 新docに非対応・DEFER |
 | lateralAngleSection | 新docに非対応・DEFER |
-| swayBracingInterval | 新docのcrossFrameConfigurationにfield有りだがRescue UI編集経路が未実装→FreezeどおりDERIVED/DEFERとして明示（CLOSEDにしない） |
-| lateralBracingEnabled | 同上・FreezeどおりDERIVED/DEFERとして明示 |
+| swayBracingInterval（本） | crossFrameConfiguration.swayBracing.intervalM | convert（本→間隔m） | UI編集（横構間隔）・canonical commit |
+| lateralBracingEnabled | crossFrameConfiguration.lateralBracing.intervalM | convert | UI編集（lateral間隔）・canonical commit |
 
 【NOT_AUTHORIZED（HOLD維持・計算済み表示禁止）】
 | 項目 | 状態 |
