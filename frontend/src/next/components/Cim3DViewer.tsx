@@ -123,11 +123,16 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
       camera.near = Math.max(0.01, radius / 10000);
       camera.far = Math.max(1000, radius * 400);
-      camera.position.set(
-        center.x + size.x * 0.65,
-        center.y + Math.max(size.z, size.y) * 0.75,
-        center.z + size.x * 0.65 + radius,
-      );
+      // FOV-based framing so the box fills ~85% of the viewport.
+      const aspect = (container.clientWidth || 800) / (container.clientHeight || 600);
+      const fovY = (camera.fov * Math.PI) / 180;
+      const fovX = 2 * Math.atan(Math.tan(fovY / 2) * Math.max(aspect, 0.1));
+      const fitAngle = Math.min(fovX, fovY);
+      const dist = (radius / Math.sin(fitAngle / 2)) * 0.85;
+      const dx = dist * 0.62;
+      const dy = dist * 0.45;
+      const dz = dist * 0.62;
+      camera.position.set(center.x + dx, center.y + dy, center.z + dz);
       camera.lookAt(center);
       controls.target.copy(center);
       controls.update();
@@ -141,19 +146,23 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
       const size = box.getSize(new THREE.Vector3());
       const center = box.getCenter(new THREE.Vector3());
       const radius = Math.max(size.x, size.y, size.z) * 0.5;
-      const dist = radius * 2.2;
-      let pos: [number, number, number];
-      if (preset === "plan") {
-        pos = [center.x, center.y + dist * 1.6, center.z + radius * 0.1];
-      } else if (preset === "side") {
-        pos = [center.x, center.y, center.z + dist * 1.6];
-      } else if (preset === "iso") {
-        pos = [center.x + dist * 0.8, center.y + dist * 0.8, center.z + dist * 0.8];
-      } else {
-        pos = [center.x + size.x * 0.65, center.y + Math.max(size.z, size.y) * 0.75, center.z + size.x * 0.65 + radius];
-      }
       camera.near = Math.max(0.01, radius / 10000);
       camera.far = Math.max(1000, radius * 400);
+      const aspect = (container.clientWidth || 800) / (container.clientHeight || 600);
+      const fovY = (camera.fov * Math.PI) / 180;
+      const fovX = 2 * Math.atan(Math.tan(fovY / 2) * Math.max(aspect, 0.1));
+      const fitAngle = Math.min(fovX, fovY);
+      const dist = (radius / Math.sin(fitAngle / 2)) * 0.8;
+      let pos: [number, number, number];
+      if (preset === "plan") {
+        pos = [center.x, center.y + dist * 1.2, center.z];
+      } else if (preset === "side") {
+        pos = [center.x, center.y, center.z + dist * 1.2];
+      } else if (preset === "iso") {
+        pos = [center.x + dist * 0.75, center.y + dist * 0.75, center.z + dist * 0.75];
+      } else {
+        pos = [center.x + dist * 0.62, center.y + dist * 0.45, center.z + dist * 0.62];
+      }
       camera.position.set(...pos);
       camera.lookAt(center);
       controls.target.copy(center);
@@ -161,7 +170,22 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
     };
     presetRef.current = setViewPreset;
 
-    const initialBox = scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup);
+    // Prefer framing the bridge (superstructure + bridge layout) so the bridge
+    // fills the viewport instead of the whole terrain. (Substructure may carry
+    // display-fallback solids at approximated positions, so it is excluded.)
+    const initialBox = (() => {
+      const tryLayer = (layer: CimLayerId): THREE.Box3 | null => {
+        const group = layerClonesRef.current.get(layer);
+        if (!group || group.children.length === 0) return null;
+        const box = new THREE.Box3().setFromObject(group);
+        return box.isEmpty() ? null : box;
+      };
+      // Prefer the road (the bridge lives along it), then the bridge layers.
+      return tryLayer("roadPavement")
+        ?? tryLayer("superstructure")
+        ?? tryLayer("bridgeLayout")
+        ?? (scene.bounds ? scene.bounds.clone() : new THREE.Box3().setFromObject(sceneGroup));
+    })();
     if (viewPreset === "perspective") {
       fitCamera(initialBox);
     } else {
@@ -247,7 +271,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
   return (
     <div
       ref={containerRef}
-      style={{ width: "100%", height: 560, position: "relative" }}
+      style={{ width: "100%", height: "calc(100vh - 250px)", minHeight: 480, position: "relative" }}
       data-testid="cim-3d-viewer"
     >
       {renderError !== null && (
@@ -284,7 +308,7 @@ export function Cim3DViewer({ scene, layerState, onSelect, background = 0xe8eef4
           onClick={() => {
             const box = new THREE.Box3();
             let any = false;
-            for (const layer of ["bridgeLayout", "superstructure", "substructure", "foundation", "bearing"]) {
+            for (const layer of ["superstructure", "bridgeLayout", "bearing"]) {
               const group = layerClonesRef.current.get(layer as CimLayerId);
               if (group && group.children.length > 0) {
                 box.union(new THREE.Box3().setFromObject(group));
