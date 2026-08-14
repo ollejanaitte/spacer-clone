@@ -3,19 +3,20 @@ Phase10_Final_Design_Freeze（STEP 16 Final Design Freeze）
 ====================================================================
 baseline: e3e2d3b
 確認日: 2026-08-15 JST
-status: DRAFT（Sol最終レビュー反映後にPASS確定）
+status: FINAL（Sol最終レビューGO後・Completion Gate PASS）
 ====================================================================
 
 【1. V1.0 scope】
 - Road: 平面線形/座標/要素表・平面図・縦断図・横断図・道路計算書（HTML/CSV）・3D/CIM
 - Bridge: Bridge Layout（支間割/支持点）・span/support表出力
-- Superstructure: 本格入力UI・2D・DXF・Quantity・3D/CIM・設計結果（N/Q/M/T・Reaction）
+- Superstructure: 本格入力UI・2D・DXF・Quantity・3D/CIM（照査結果はNOT_AUTHORIZED・IF3解析結果はAnalysis成果）
 - Substructure: 3-pane CAD・pile grid・座標表・Quantity・2D/3D/CIM
 - Analysis: Solver/IF3 authoritative・Reaction/N/Q/M/T/Deformed・結果CSV export
 - System: Integrated 3D・GLB・.spacerproj・Auto Save/restart/Electron restart・deliverables module
 
-【2. V1.0 deliverables（必須）】
-上記Phase10_V1_Required_Deliverables.txt の「必須」一覧
+【2. V1.0 deliverables（必須・Deliverable ID）】
+RD-01..RD-05 / BL-01..02 / SS-01..05 / SB-01..05 / AN-01..06 / CIM-01..02 / SYS-01..03
+（Phase10_V1_Required_Deliverables.txt が唯一のscope表）
 
 【3. canonical architecture】
 - PDC（Project Data Core）唯一正本・modules.{road,terrain,bridgeLayout,superstructure,substructure,analysis,cim,deliverables}
@@ -32,7 +33,7 @@ status: DRAFT（Sol最終レビュー反映後にPASS確定）
 | bridgeLayout | 橋梁区間・支間割・支持点・span/support handoff |
 | superstructure | 主桁/断面/材料/支承/荷重・2D/DXF/Quantity/3D |
 | substructure | 下部工形状・pile grid・座標/Quantity/2D/3D |
-| analysis | FEM組立・IF3 authoritative・結果表示/export |
+| analysis | FEM組立・IF3 authoritative・結果表示/export（IF3解析結果=AN-02..06・上部工照査結果ではない） |
 | cim | Integrated 3D・GLB/glTF・analysis overlay |
 | deliverables | 図面/報告/export統合（Phase 11で新設） |
 

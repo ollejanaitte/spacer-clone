@@ -9,19 +9,29 @@ status: FINAL（Sol指摘反映）
 【DEFER（V1.0外・未完扱いしない）】
 | 項目 | 理由 |
 |---|---|
-| バイナリPDF生成 | 現状はprint-based HTML・実PDF生成基盤なし・Phase 11で方針決定（V1.0はHTML/print） |
+| バイナリPDF生成 | 現状はprint-based HTML・実PDF生成基盤なし・V1.0はHTML/print |
 | IFC export | コードベースに根拠なし・将来候補 |
 | GA sheet（Apollo drawingSet） | legacy資産・新アプリ統合はDEFER |
 | STL（Apollo/liner frame）新アプリ接続 | legacy稼働・新アプリ接続は任意 |
 | pier/abutment/footing正式図 | Phase 11候補（REWRITE小）・V1.0必須にしない |
+| glTF JSON export | CIM-03任意（GLBのみ必須） |
 | レポートPDF統合 | 任意 |
+
+【DEFER（FROZEN・Phase 9-04R3 FROZEN-DEFER 旧field）】
+Phase 9-04R3 OldApollo分類でFROZEN-DEFERとされた旧field（V1.0対象外・明示転記）:
+- stiffenerSpacing
+- upperLateralBracingEnabled
+- crossFrameAttachment
+- haunch
+- roadMarkings
+- lateralAngleSection
+- diaphragm
 
 【NOT_AUTHORIZED（FROZEN・上部工）】
 - 応力度/照査6種（正式応力度・照査結果）
-- ※ IF3解析結果（member forces/reactions）はAnalysis成果としてV1.0必須（照査ではない）
-
-【DEFER（FROZEN・上部工・別項目）】
-- diaphragm: DEFER（NOT_AUTHORIZEDに含めない）
+  ※ 6種: 主桁の曲げ・せん断・合成桁（応力度）等の照査（Phase 5-02 superstructureBasicChecks
+  NOT_AUTHORIZED scope）。IF3解析結果（member forces/reactions）はAnalysis成果として
+  V1.0必須（照査ではない）。
 
 【HOLD_NOT_AVAILABLE（FROZEN・下部工）】
 - 照査/配筋/耐震
@@ -31,9 +41,9 @@ status: FINAL（Sol指摘反映）
 - 値の発明禁止（欠損はSOURCE_NOT_AVAILABLEとして閉じる）
 
 【optional/future】
-- IFC・PDFバイナリ・STL新アプリ接続・screenshot/report統合
+- IFC・PDFバイナリ・STL新アプリ接続・glTF JSON・screenshot/report統合
 
 【V1.0に入らない＝未完成でない】
 - 上記DEFER/FROZENは明示的境界としてV1.0外に位置づけ
-- Phase 12では「V1.0必須成果」の受入のみ判定
+- Phase 12では「V1.0必須成果（Deliverable ID: RD-01..SYS-03）」の受入のみ判定
 ====================================================================

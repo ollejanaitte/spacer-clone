@@ -3,27 +3,46 @@ Phase10_Phase12_ReferenceBusiness_AcceptanceGate（STEP 15 Phase 12 Gate）
 ====================================================================
 baseline: e3e2d3b
 確認日: 2026-08-15 JST
+status: FINAL（Sol指摘2回反映）
 ====================================================================
 
 【Reference Business（最終受入案件）】
 - 種別: 山岳道路＋曲線高架橋の統合案件
+- fixture: Reference Mountain（REF-MOUNTAIN-1・frontend/src/next/modules/terrain/referenceMountain.ts）
+- fixture checksum: 受入時に readRoadData contentChecksum を記録（決定論判定の基準）
 - 投入方法（明確化）: 「空Project作成＋明示的なReference Mountain fixture import」に固定。
   自動seed（空データ時のReference Mountain自動投入）を受入証拠として暗黙利用しない。
   fixture投入地点・操作・provenanceを証跡として記録。
 - Phase 12では新仕様追加なし・Phase 11成果の受入のみ
 
-【数値oracle（High・橋梁解析の正当性）】
-「非零実値・ダミーでない」に加え、以下を固定:
-- 節点/部材数・支持条件（FIXED/MOVABLE数）の期待値
-- 荷重合計Σ|Fz| と反力合計の釣合い（許容誤差）
-- 代表N/Q/M/Tの期待値or許容範囲・単位・符号規約
-- 変位（最大|uz|）の許容範囲
-- 座標・数量（concrete volume/pile length）の期待値
-- ゼロが正しい成分（対称鉛直荷重でのT等）は「0が正」と明記
+【Reference Mountain 数値oracle（固定）】
+- 平面線形（roadHorizontal）:
+  - S1 straight: azimuth 0・length 300
+  - C1 clothoid: A=90・R 0→70・length 60
+  - A1 arc: R=70・length 90
+  - C2 clothoid: A=90・R 70→∞・length 60
+  - S2 straight: length 250
+  - 総延長 = 300+60+90+60+250 = 760 m
+- 縦断（roadVertical）:
+  - G1 grade 0.03・0→250・startElevation 100（→107.5）
+  - P1 parabolic・250→370・startElevation 107.5
+  - G2 grade -0.02・370→760・startElevation 108.1（→100.3）
+- 横断: 幅員 9.0 m（±4.5・路肩/車線5線）・crossSlope 2%
+- 橋梁（Phase 4-03デフォルト）: 開始station 100・終了450・P1 @ 300（3支持・2支間）
+- 解析（declared section・Phase 9-04R3既定）:
+  - 節点数・部材数・支持数: Phase 11でfixture実行後に固定値を記録（本Gateはその登録枠を定義）
+  - 荷重: DL-STRUCTURAL+DL-DECK合計 → 反力合計と釣合い（許容 1e-6 相対）
+  - 代表N/Q/M/T・最大|uz|: Phase 11でfixture実行後に期待値+許容範囲を登録
+  - T（ねじり）: 対称鉛直荷重で0が正しい（該当荷重ケースLC1・代表部材を特定）
+- 座標・数量: Phase 11でfixture実行後に期待値を登録
+- 比較精度: 相対 1e-3・絶対（m/kN）登録値による
+
+※ 数値はPhase 11でfixture実測し「期待値表」（受入用oracle）へ固定する。
+本Gateは「oracleの登録枠・評価方法」を凍結する。
 
 【受入シナリオ（空Project→成果品出力）】
 1. 空Project作成（/app/business/new）
-2. Terrain / Existing（Reference Mountain）
+2. Terrain / Existing（Reference Mountain fixture import）
 3. Road Alignment（平面/縦断/横断/幅員/横断勾配）
 4. Road CIM（3D表示）
 5. Bridge Layout（橋梁区間・支間割・支持点）
@@ -35,7 +54,7 @@ baseline: e3e2d3b
 11. IF3（authoritative・source binding・非零実値）
 12. Analysis Results（Reaction/N-Q-M/T/Deformed）
 13. Integrated 3D（CIM・GLB export）
-14. Road図面（平面/縦断/横断・DXF実ファイル）
+14. Road図面（平面/縦断/横断・DXF実ファイル・byte/content検証）
 15. Super/Sub成果（2D/DXF/Quantity/座標）
 16. 道路計算書（HTML/CSV）
 17. 解析結果CSV export
@@ -45,27 +64,33 @@ baseline: e3e2d3b
 21. Import
 22. Restore
 
-【Completion Gate（Phase 12判定条件）】
-各成果品:
-- 実画面で生成可能
-- production route経由（新/app正式）
+【Completion Gate（Phase 12判定条件・Deliverable ID単位）】
+各必須成果（Deliverable ID: RD-01..RD-05 / BL-01..02 / SS-01..05 / SB-01..05 /
+AN-01..05 / CIM-01..02 / SYS-01..03）:
+- 実画面で生成可能（新/app production route）
 - 実ファイル出力（DXF/CSV/GLB/HTML/.spacerproj）・byte/content検証
-- canonicalから決定論的生成・dual-writeなし
+- 生成元canonical checksum対応（決定論的・dual-writeなし）
 - FROZEN境界維持（NOT_AUTHORIZED/HOLD表示・値を発明しない）
-- 数値oracle適合（非零実値＋釣合い＋期待値）
+- 数値oracle適合（釣合い＋期待値）
 
-【stale / persistence / 再生成 Gate（High）】
-- 編集によるstale化 → export禁止 → 再生成で解除
+【stale / persistence / 再生成 Gate】
+- 編集→stale化→export禁止→再生成で解除
 - Electron restart後・.spacerproj import後のcanonical checksum一致
 - 成果品の再生成一致（restart/import後も同一）
-- 時刻等の可変メタデータは決定論判定から除外
+- 可変メタデータ（時刻等）は決定論判定から除外
+
+【fail-closed acceptance（各生成host/adapter）】
+- readRoadData === undefined → export禁止
+- draft変換（loadRoadEditorDraft）失敗 → export禁止
+- builder失敗 → export禁止
+- 正式host/adapterの所有moduleは一意に固定（deliverables module・road module分掌をP0-01で確定）
 
 【判定】
-- 全V1.0必須成果（Deliverable ID: RD-01〜SYS-03）が受入可能 → Version 1.0 COMPLETE
+- 全V1.0必須成果（RD-01〜SYS-03）が受入可能 → Version 1.0 COMPLETE
 - 1件でも必須成果が未達 → NOT COMPLETE（Phase 11 backlogへ戻す）
 
 【前提】
-- Phase 11実装（P0-01〜P0-06・P1-01（導線整理）含む）完了後
+- Phase 11実装（P0-01〜P0-06・P1-01含む）完了後
 - Sol最終レビューGO
 - FROZEN境界・V1.0 scope確定済み
 ====================================================================
