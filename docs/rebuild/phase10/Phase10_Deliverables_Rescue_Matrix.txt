@@ -18,8 +18,8 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | RD-02 | 平面図 | liner/drawing（plan builder） | 同上（legacy） | [L] /pro/liner/drawings/plan | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | RD-03 | 縦断図 | liner/drawing（profile） | 同上 | [L] .../profile | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | RD-04 | 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
-| RD-05 | 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | [N] deliverables | HTML/CSV✓ | ✓/✓ | ADAPT | 必須 |
-| RD-02..04 | DXF（plan-type-a/profile-band/cross-section） | liner/dxf | 同上 | [L] | [N] deliverables | DXF✓ | ✓/✓ | ADAPT | 必須 |
+| RD-05 | 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | [N] deliverables | HTML/CSV✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| RD-02..04 | DXF（plan-type-a/profile-band/cross-section） | liner/dxf | 同上 | [L] | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
 | - | DXF（plan-type-b-centerline・plan） | liner/dxf | 同上 | [L] | - | DXF✓ | ✓/✓ | ADAPT（将来方針） | DEFER |
 | - | 2D Preview（新module） | - | next/components/RoadPreviews | [N] | [N] | - | ✓ | KEEP | 補助 |
 | - | 3D/CIM | - | roadCimSurface | [N] | [N] | - | ✓ | KEEP | CIM-01内 |
@@ -62,7 +62,7 @@ Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAIL
 | AN-02 | Reaction | - | AuthoritativeResultPanel | [N] | [N] | - | ✓ | KEEP | 必須 |
 | AN-03 | N/Q/M/T | - | 同上/color map | [N] | [N] | - | ✓ | KEEP | 必須 |
 | AN-04 | Deformed | - | 同上/analysisCimLayer | [N] | [N] | - | ✓ | KEEP | 必須 |
-| AN-05 | 結果CSV export | exports/resultCsvExport・memberForceReport | [L] /pro/analysis/results | [N] analysis/deliverables | CSV✓ | ✓ | KEEP+ADAPT（既存KEEP・新appへADAPT） | 必須 |
+| AN-05 | 結果CSV export | exports/resultCsvExport・memberForceReport | resultCsvExport（legacy） | [L] /pro/analysis/results | [N] analysis/deliverables | CSV✓ | ✓ | KEEP+ADAPT（既存KEEP・新appへADAPT） | 必須 |
 | AN-06 | analysis専用ページ | - | プレースホルダー | - | [N] /app analysis | - | - | REWRITE小 | 必須 |
 | - | PDF報告 | exports/resultPdfReport | [L] | - | - | print-HTML | ✓ | DEFER | 外 |
 

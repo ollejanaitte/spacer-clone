@@ -1,18 +1,19 @@
 {
  "schemaVersion": "1.0.0",
  "comparatorId": "spacer-oracle-comparator-v1",
- "generatedAt": "2026-08-14T22:54:03.102129+00:00",
+ "generatedAt": "2026-08-14T23:00:41.175012+00:00",
  "runConditions": {
   "solver": "scipy_sparse",
   "document": "Phase10_Reference_SolverInput.json(fixed)",
   "loadCaseId": "LC1",
   "section": "declared(Phase9-04R3)",
   "solverBuild": "spacer-clone @ e3e2d3b (main)",
-  "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(REF-MOUNTAIN A1/P1-portal/A2)"
+  "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(REF-MOUNTAIN A1/P1-portal/A2)",
+  "command": "python3 compare_oracle.py --oracle <oracle.json> --input <solver-input.json> --raw <solver-raw-result.json> --sb-quantity sb_quantity_input.json --out <report.json> (PYTHONPATH=backend)"
  },
  "inputChainOfCustody": {
   "oraclePath": "docs/rebuild/phase10/Phase10_Reference_NumberOracle.json",
-  "oracleSha256": "8a1963a98bee523789bdabd3d3cbf0f31b068ad89c5fcd83f702fb40d46ef7f9",
+  "oracleSha256": "530c0c5bdd689b0392d6c1be97c3b74b60d88d41bda6ec9288cae313dac4e3fb",
   "rawResultPath": "docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json",
   "rawResultSha256": "14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e",
   "solverInputPath": "docs/rebuild/phase10/evidence/Phase10_Reference_SolverInput.json",
@@ -22,6 +23,16 @@
   "projectId": "c83b911b-d2a3-4f25-a3b5-0c9c9792e1c2",
   "modelChecksum": "4685609a13015244d6826c6ca2c9651ed00a635d0599c921b99a760c628f0566",
   "contentChecksum": "4685609a13015244d6826c6ca2c9651ed00a635d0599c921b99a760c628f0566"
+ },
+ "comparatorBundle": {
+  "comparatorScript": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
+  "comparatorScriptSha256": "1ebac395f77f2f71b5ba5d96562991884cba4a73acdf9a3739d932fa8e9a4ada",
+  "reportSchemaPath": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
+  "reportSchemaSha256": "2e40bbbba50f77b71b34880754642490f987a91198bd82e748409620d09a5f1f",
+  "negativeFixturesPath": "docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json",
+  "negativeFixturesSha256": "65242c3b979a528e850e21d2ba9d27a5c3334abb68e9de71cd0e23070f27c0d8",
+  "sbQuantityInputPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json",
+  "sbQuantityInputSha256": "c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306"
  },
  "rows": [
   {
@@ -697,10 +708,30 @@
    "rule": "absTol",
    "pass": true,
    "displayScale": null
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelVolume",
+   "expected": 78.913819,
+   "actual": 78.913818662,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001,
+   "dAbs": 3.38e-07,
+   "dRel": 4.286e-09,
+   "rule": "absTol",
+   "pass": true,
+   "displayScale": null
   }
  ],
  "pass": true,
  "failures": [],
+ "rawConsistency": {
+  "pass": true,
+  "checksCount": 1092,
+  "failedChecks": []
+ },
  "modelCounts": {
   "rows": {
    "nodes": {

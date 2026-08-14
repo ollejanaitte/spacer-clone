@@ -21,6 +21,7 @@ import datetime
 import hashlib
 import json
 import math
+import os
 import sys
 
 
@@ -57,6 +58,7 @@ def main():
     ap.add_argument("--sb-quantity", default=None)
     ap.add_argument("--out", required=True)
     ap.add_argument("--solver-build", default="spacer-clone @ e3e2d3b (main)")
+    ap.add_argument("--bundle-dir", default="docs/rebuild/phase10/evidence/oracle-comparator")
     args = ap.parse_args()
 
     sys.path.insert(0, "backend")
@@ -66,6 +68,64 @@ def main():
     doc = json.load(open(args.input))
     raw = json.load(open(args.raw))
     result = run_analysis_document(doc)
+
+    def raw_consistency():
+        """fail-closed: raw artifact と再計算 result の全対象値一致（独立実行の証明）"""
+        checks = []
+        ok = True
+        # reactions: key by nodeId, compare fx/fy/fz/mx/my/mz
+        raw_react = {r["nodeId"]: r for r in raw.get("reactions", [])}
+        cur_react = {r["nodeId"]: r for r in result["reactions"]}
+        if set(raw_react) != set(cur_react):
+            return {"pass": False, "error": "reaction nodeId set mismatch"}
+        for nid, r in raw_react.items():
+            c = cur_react[nid]
+            for comp in ("fx", "fy", "fz", "mx", "my", "mz"):
+                d = abs(r[comp] - c[comp])
+                okk = d <= 1e-6 * max(1.0, abs(r[comp]))
+                checks.append({"nodeId": nid, "component": comp, "raw": r[comp], "recomputed": c[comp], "delta": d, "pass": okk})
+                if not okk:
+                    ok = False
+        # memberEndForces: key by memberId, compare i/j 6 components
+        raw_mem = {m["memberId"]: m for m in raw.get("memberEndForces", [])}
+        cur_mem = {m["memberId"]: m for m in result["memberEndForces"]}
+        if set(raw_mem) != set(cur_mem):
+            return {"pass": False, "error": "memberEndForces memberId set mismatch"}
+        for mid, m in raw_mem.items():
+            c = cur_mem[mid]
+            for side in ("i", "j"):
+                for comp in ("fx", "fy", "fz", "mx", "my", "mz"):
+                    d = abs(m[side][comp] - c[side][comp])
+                    okk = d <= 1e-6 * max(1.0, abs(m[side][comp]))
+                    checks.append({"memberId": mid, "side": side, "component": comp, "raw": m[side][comp], "recomputed": c[side][comp], "delta": d, "pass": okk})
+                    if not okk:
+                        ok = False
+        # displacements: key by nodeId, compare ux/uy/uz
+        raw_disp = {d["nodeId"]: d for d in raw.get("displacements", [])}
+        cur_disp = {d["nodeId"]: d for d in result["displacements"]}
+        if set(raw_disp) != set(cur_disp):
+            return {"pass": False, "error": "displacements nodeId set mismatch"}
+        for nid, d in raw_disp.items():
+            c = cur_disp[nid]
+            for comp in ("ux", "uy", "uz"):
+                if comp not in d or comp not in c:
+                    continue
+                dd = abs(d[comp] - c[comp])
+                okk = dd <= 1e-6 * max(1.0, abs(d[comp]))
+                checks.append({"nodeId": nid, "component": comp, "raw": d[comp], "recomputed": c[comp], "delta": dd, "pass": okk})
+                if not okk:
+                    ok = False
+        return {
+            "pass": ok,
+            "checksCount": len(checks),
+            "failedChecks": [c for c in checks if not c["pass"]][:10],
+        }
+
+    raw_check = raw_consistency()
+
+    sb = None
+    if args.sb_quantity:
+        sb = json.load(open(args.sb_quantity))
 
     node_src = {n["entityId"]: n["sourceEntityId"] for n in doc["nodes"]}
     member_src = {m["entityId"]: m["sourceEntityId"] for m in doc["members"]}
@@ -105,8 +165,7 @@ def main():
     actuals[("quantity", "model", "deckVolume")] = 8.0 * 0.24 * deck_len
     actuals[("quantity", "section", "SECTION-GIRDER.area")] = sec["area"]
     actuals[("quantity", "section", "SECTION-GIRDER.unitWeightPerM")] = sec["unitWeightPerM"]
-    if args.sb_quantity:
-        sb = json.load(open(args.sb_quantity))
+    if sb is not None:
         actuals[("quantity", "substructure", "totalConcreteVolume")] = sb["totalConcrete"]
         actuals[("quantity", "substructure", "totalPileLength")] = sb["totalPile"]
         actuals[("quantity", "substructure:A1", "concreteVolume")] = sb["A1"]["concrete"]
@@ -122,6 +181,19 @@ def main():
     applied = sum(abs(ld["fz"]) for ld in doc["nodalLoads"])
     reaction = sum(r["fz"] for r in result["reactions"])
 
+    bundle_dir = args.bundle_dir
+    bundle = {
+        "comparatorScript": os.path.join(bundle_dir, "compare_oracle.py"),
+        "comparatorScriptSha256": sha(os.path.join(bundle_dir, "compare_oracle.py")),
+        "reportSchemaPath": os.path.join(bundle_dir, "comparison_report.schema.json"),
+        "reportSchemaSha256": sha(os.path.join(bundle_dir, "comparison_report.schema.json")),
+        "negativeFixturesPath": os.path.join(bundle_dir, "schema_negative_fixtures.json"),
+        "negativeFixturesSha256": sha(os.path.join(bundle_dir, "schema_negative_fixtures.json")),
+    }
+    if sb is not None:
+        bundle["sbQuantityInputPath"] = os.path.join(bundle_dir, "sb_quantity_input.json")
+        bundle["sbQuantityInputSha256"] = sha(os.path.join(bundle_dir, "sb_quantity_input.json"))
+
     report = {
         "schemaVersion": "1.0.0",
         "comparatorId": "spacer-oracle-comparator-v1",
@@ -133,6 +205,7 @@ def main():
             "section": "declared(Phase9-04R3)",
             "solverBuild": args.solver_build,
             "substructureQuantitySource": "frontend KEEP computeSubstructureQuantity(REF-MOUNTAIN A1/P1-portal/A2)",
+            "command": "python3 compare_oracle.py --oracle <oracle.json> --input <solver-input.json> --raw <solver-raw-result.json> --sb-quantity sb_quantity_input.json --out <report.json> (PYTHONPATH=backend)",
         },
         "inputChainOfCustody": {
             "oraclePath": args.oracle, "oracleSha256": sha(args.oracle),
@@ -143,10 +216,15 @@ def main():
             "modelChecksum": doc.get("modelChecksum"),
             "contentChecksum": doc.get("contentChecksum"),
         },
+        "comparatorBundle": bundle,
         "rows": [],
         "pass": True,
         "failures": [],
     }
+
+    report["rawConsistency"] = raw_check
+    if not raw_check["pass"]:
+        report["pass"] = False
 
     for row in oracle["rows"]:
         key = (row["kind"], row["entityId"], row["component"])

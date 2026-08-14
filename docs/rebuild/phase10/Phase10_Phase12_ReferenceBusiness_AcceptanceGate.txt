@@ -19,7 +19,7 @@ status: FINAL（Sol指摘2回反映）
 【Reference Mountain 数値oracle（機械判定・JSON正本）】
 - 機械判定用oracle: docs/rebuild/phase10/Phase10_Reference_NumberOracle.json（唯一正本）
   - schemaVersion 1.0.0・reference REF-MOUNTAIN-1・loadCaseId LC1
-  - rows 43件: reaction 6/memberForce 10/displacement 2/quantity 7/coordinate 18・coverage契約
+  - rows 46件: reaction 6/memberForce 10/displacement 2/quantity 10/coordinate 18・coverage契約
   （kind別内訳・wildcard=all-members 1行含む・詳細はoracle JSON参照）
   - 各レコード: {kind, entityId, component, expected, unit, absTol, relTol}
   - modelCounts: nodes 72・members 70・sections 1・materials 1・supports 6・bearings 6・nodalLoads 72（完全一致）
@@ -40,18 +40,20 @@ status: FINAL（Sol指摘2回反映）
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
   未実施ならCompletion Gate PASSにしない。
 - 独立照合記録（2026-08-15・証拠あり・chain of custody）:
-  - oracle JSON sha256 = 6bcd2796132f8ec73748d757a9e4e407ed221f29d317c54c36f84a6471f35bb2（45 row: reaction 6/memberForce 10/displacement 2/quantity 9/coordinate 18・coverage契約あり）
-    ※SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3を含む（quantity 9）
+  - oracle JSON sha256 = 530c0c5bdd689b0392d6c1be97c3b74b60d88d41bda6ec9288cae313dac4e3fb（46 row: reaction 6/memberForce 10/displacement 2/quantity 10/coordinate 18・coverage契約あり）
+    ※SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3を含む（quantity 10）
     （docs/rebuild/phase10/Phase10_Reference_NumberOracle.json）
   - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
     （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
   - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
-    （sha256 d927c8f7a1caecc316e0a4092ccd8d1209045a0f95de6f1bf8da9dc77f3d5919）
+    （sha256 23a3dfc36235ac093b109844b10d9262d131c90e0b79f2afe7dbc8a084bb6b9e）
   - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
-  - 再現bundle（evidence/oracle-comparator/）: compare_oracle.py（sha256 f7748b24...）・comparison_report.schema.json（b668f8a7...）・schema_negative_fixtures.json（65242c3b...）
+  - 再現bundle（evidence/oracle-comparator/）: compare_oracle.py（sha256 1ebac395...）・comparison_report.schema.json（2e40bbbb...）・schema_negative_fixtures.json（65242c3b...）・sb_quantity_input.json（c3c6eafe...）
+  - reportのcomparatorBundleに完全SHA格納・negative fixtures 7件全reject+oracle PASSを機械確認（jsonschema 4.26.0）
   - negative fixtures 7件全reject + oracle本体PASS（jsonschema 4.26.0）を機械確認
     inputChainOfCustody{oracleSha256, rawResultSha256, solverInputSha256, fixtureId=REF-MOUNTAIN-1, projectId}・各rowにdAbs/dRel/判定根拠
-  - 結果: 45 row・45 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
+  - 結果: 46 row・46 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
+  - rawConsistency: raw artifactと再計算resultの全値一致（reaction/memberForce/displacement 1092件チェック・failed 0）をfail-closed検証
   - 数量oracle: nodeCount 72・memberCount 70・totalMemberLength 657.615156m・
     SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3・
     SB-04 concrete 616.72m3（A1 214.4/P1 187.92/A2 214.4・KEEP computeSubstructureQuantity）
@@ -133,7 +135,7 @@ AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
 
 ※ 実ファイル条件はexportを持つID（RD-02..05/BL-02/SS-03/AN-05/CIM-02/SYS-01）のみ。
   数値oracleは解析/数量/座標を持つID（SS-04/SB-03/SB-04/AN-01..05）のみ。適用外は「−」。
-  ※ 数量oracle（kind=quantity 7）と座標oracle（kind=coordinate 18・6支承×XYZ）は同一oracle JSONのrowsに格納。
+  ※ 数量oracle（kind=quantity 10）と座標oracle（kind=coordinate 18・6支承×XYZ）は同一oracle JSONのrowsに格納。
      SS-04はmodel/section数量・SB-04は下部工concrete量（616.72m3）・SB-03は6支承座標を機械照合する。
 
 【生成host所有権（凍結）】

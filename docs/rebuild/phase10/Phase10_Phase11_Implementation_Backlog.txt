@@ -128,7 +128,8 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
   - 適用順序: road→terrain→existing→bridgeLayout→superstructure→substructure→analysis（固定）
   - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceに記録。
     existingはmetadata配下のためexistingChecksumとして別途記録（moduleChecksums対象外であることを明示）
-  - provenance schema: {fixtureId, version, importedAt, moduleChecksums:{moduleId: hexDigest|null}, existingChecksum: hexDigest|null, operator}
+  - provenance schema: {fixtureId, fixtureVersion, importedAt, moduleChecksums:{moduleId: hexDigest|null}, existingChecksum: hexDigest|null, operator}
+    ※ fixtureVersion（oracle/report chain と同一field名に統一）
   - moduleChecksums固定キー: road, terrain, bridgeLayout, superstructure, substructure, analysis（analysisSettings→analysisに正規化）
   - digest形式: sha256 hex・null条件: module未設定時
   - analysisSettingsは分析設定としてanalysis moduleChecksumの生成元（analysisSettings→analysis対応を確定）

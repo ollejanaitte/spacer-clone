@@ -410,6 +410,15 @@
    "unit": "m3",
    "absTol": 0.1,
    "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelVolume",
+   "expected": 78.913819,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
   }
  ],
  "modelCounts": {

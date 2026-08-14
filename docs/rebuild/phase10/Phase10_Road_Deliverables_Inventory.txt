@@ -62,7 +62,7 @@ baseline: e3e2d3b
 | 横断図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須 |
 | DXF | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須（実ファイル） |
 | HTML/CSV報告（RD-05） | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須（P0-03） |
-| PDF | DEFER（print-based・バイナリPDFなし） | 方針決定必要 |
+| PDF | DEFER（V1.0外確定・print-based HTMLのみ） | V1.0外・バイナリPDFなし |
 | 2D Preview（新） | KEEP | 簡易プレビュー |
 
 【Phase 11 Backlogへの要点】

@@ -10,6 +10,8 @@
     "generatedAt",
     "runConditions",
     "inputChainOfCustody",
+    "comparatorBundle",
+    "rawConsistency",
     "rows",
     "modelCounts",
     "loadBalance",
@@ -77,54 +79,111 @@
       }
     },
     "modelCounts": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["rows", "pass"],
-      "properties": {
-        "rows": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["expected", "actual", "delta", "tolerance", "pass"],
-            "properties": {
-              "expected": { "type": "integer" },
-              "actual": { "type": "integer" },
-              "delta": { "type": "integer" },
-              "tolerance": { "type": "integer" },
-              "pass": { "type": "boolean" }
-            }
-          }
-        },
-        "pass": { "type": "boolean" }
-      }
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["rows", "pass"],
+     "properties": {
+      "rows": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["nodes", "members", "sections", "materials", "supports", "bearings", "nodalLoads"],
+       "properties": {
+        "nodes": { "$ref": "#/definitions/countEntry" },
+        "members": { "$ref": "#/definitions/countEntry" },
+        "sections": { "$ref": "#/definitions/countEntry" },
+        "materials": { "$ref": "#/definitions/countEntry" },
+        "supports": { "$ref": "#/definitions/countEntry" },
+        "bearings": { "$ref": "#/definitions/countEntry" },
+        "nodalLoads": { "$ref": "#/definitions/countEntry" }
+       }
+      },
+      "pass": { "type": "boolean" }
+     }
     },
     "loadBalance": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["expected", "actual", "delta", "relTol", "pass"],
-      "properties": {
-        "expected": { "type": "object" },
-        "actual": { "type": "object" },
-        "delta": { "type": "number" },
-        "relTol": { "type": "number", "minimum": 0 },
-        "pass": { "type": "boolean" }
-      }
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["expected", "actual", "delta", "relTol", "pass"],
+     "properties": {
+      "expected": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["applied", "reaction"],
+       "properties": { "applied": { "type": "number" }, "reaction": { "type": "number" } }
+      },
+      "actual": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": ["applied", "reaction"],
+       "properties": { "applied": { "type": "number" }, "reaction": { "type": "number" } }
+      },
+      "delta": { "type": "number" },
+      "relTol": { "type": "number", "minimum": 0 },
+      "pass": { "type": "boolean" }
+     }
     },
     "coverage": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["kind", "entityId", "count", "expectedCount", "checks", "pass"],
-      "properties": {
-        "kind": { "type": "string" },
-        "entityId": { "type": "string" },
-        "count": { "type": "integer" },
-        "expectedCount": { "type": "integer" },
-        "checks": { "type": "object" },
-        "pass": { "type": "boolean" }
-      }
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["kind", "entityId", "count", "expectedCount", "checks", "pass"],
+     "properties": {
+      "kind": { "type": "string" },
+      "entityId": { "type": "string" },
+      "count": { "type": "integer" },
+      "expectedCount": { "type": "integer" },
+      "checks": {
+       "type": "object",
+       "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 3,
+        "required": ["pass"],
+        "properties": {
+         "actualNonZero": { "type": "integer" },
+         "expectedNonZero": { "type": "integer" },
+         "maxAbs": { "type": "number" },
+         "maxAbsBound": { "type": "number" },
+         "pass": { "type": "boolean" }
+        }
+       }
+      },
+      "pass": { "type": "boolean" }
+     }
+    },
+    "rawConsistency": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": ["pass", "checksCount", "failedChecks"],
+     "properties": {
+      "pass": { "type": "boolean" },
+      "checksCount": { "type": "integer" },
+      "failedChecks": { "type": "array" }
+     }
+    },
+    "comparatorBundle": {
+     "type": "object",
+     "additionalProperties": true,
+     "required": [
+      "comparatorScript", "comparatorScriptSha256",
+      "reportSchemaPath", "reportSchemaSha256",
+      "negativeFixturesPath", "negativeFixturesSha256"
+     ]
     },
     "pass": { "type": "boolean" },
     "failures": { "type": "array" }
+  },
+  "definitions": {
+    "countEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["expected", "actual", "delta", "tolerance", "pass"],
+      "properties": {
+        "expected": { "type": "integer" },
+        "actual": { "type": "integer" },
+        "delta": { "type": "integer" },
+        "tolerance": { "type": "integer" },
+        "pass": { "type": "boolean" }
+      }
+    }
   }
 }
