@@ -94,7 +94,7 @@ export function computeSupportEmbedment(
   );
   const pileGroup = support.pier?.pileGroup ?? support.abutment?.pileGroup;
   const pileTip = pileGroup
-    ? computePileTip(elev.pileHeadElevation ?? 0, { id: pileGroup.id, pileType: pileGroup.pileType, diameter: pileGroup.diameter, length: pileGroup.length, pileCount: pileGroup.pileCount, spacing: pileGroup.spacing })
+    ? computePileTip(elev.pileHeadElevation ?? 0, { id: pileGroup.id, pileType: pileGroup.pileType, diameter: pileGroup.diameter, length: pileGroup.length, pileCount: pileGroup.pileCount, spacing: pileGroup.spacing, rows: pileGroup.rows ?? null, cols: pileGroup.cols ?? null, edgeX: pileGroup.edgeX ?? null, edgeY: pileGroup.edgeY ?? null })
     : null;
   return { embedmentM: elev.embedmentM, pileTipElevation: pileTip };
 }

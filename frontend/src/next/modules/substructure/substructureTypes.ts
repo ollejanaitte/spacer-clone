@@ -156,6 +156,13 @@ export interface PileConfiguration {
   readonly length: number;
   readonly pileCount: number;
   readonly spacing: { x: number; y: number };
+  /** Pile grid (B-06): explicit rows/cols so e.g. 2x3 vs 3x2 are
+   * distinguishable. When rows/cols are declared, pileCount === rows*cols is
+   * the consistency rule; edge distances anchor the grid inside the footing. */
+  readonly rows: number | null;
+  readonly cols: number | null;
+  readonly edgeX: number | null;
+  readonly edgeY: number | null;
 }
 
 export interface FoundationConfiguration {

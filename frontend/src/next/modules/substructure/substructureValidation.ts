@@ -29,6 +29,14 @@ function checkFinite(record: Record<string, unknown>, key: string, path: string,
   }
 }
 
+function checkOptionalFinite(record: Record<string, unknown>, key: string, path: string, issues: SubstructureIssue[]): void {
+  const value = record[key];
+  if (value === null || value === undefined) return;
+  if (!isFiniteNumber(value)) {
+    issues.push({ path: `${path}.${key}`, message: `${key} must be a finite number` });
+  }
+}
+
 /** Validate the full SubstructureDocument (fail-closed). */
 export function validateSubstructureDocument(document: SubstructureDocument): readonly SubstructureIssue[] {
   const issues: SubstructureIssue[] = [];
@@ -108,6 +116,17 @@ export function validateSubstructureDocument(document: SubstructureDocument): re
     }
     checkFinite(pile.spacing as unknown as Record<string, unknown>, "x", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
     checkFinite(pile.spacing as unknown as Record<string, unknown>, "y", `substructureDocument.pileConfigurations[${pile.id}].spacing`, issues);
+    const rows = pile.rows;
+    const cols = pile.cols;
+    if (rows !== null && cols !== null) {
+      if (!Number.isInteger(rows) || rows < 1 || !Number.isInteger(cols) || cols < 1) {
+        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].grid`, message: "rows/cols must be positive integers" });
+      } else if (pile.pileCount !== rows * cols) {
+        issues.push({ path: `substructureDocument.pileConfigurations[${pile.id}].pileCount`, message: `pileCount ${pile.pileCount} must equal rows*cols ${rows * cols}` });
+      }
+      if (pile.edgeX !== null) checkOptionalFinite(pile as unknown as Record<string, unknown>, "edgeX", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+      if (pile.edgeY !== null) checkOptionalFinite(pile as unknown as Record<string, unknown>, "edgeY", `substructureDocument.pileConfigurations[${pile.id}]`, issues);
+    }
   }
 
   // derived transient: optional at validation layer (regenerated on restore)

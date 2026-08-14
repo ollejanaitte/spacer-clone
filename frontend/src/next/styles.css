@@ -773,3 +773,34 @@
   align-items: center;
   gap: 6px;
 }
+
+/* Phase 9-04R3 Substructure 3-pane CAD (B-01) */
+.sub-3pane {
+  display: grid;
+  grid-template-columns: 220px 1fr 300px;
+  gap: 12px;
+  align-items: start;
+  width: 100%;
+}
+
+.sub-pane-tree,
+.sub-pane-properties {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  max-height: 640px;
+  overflow: auto;
+}
+
+.sub-pane-viewport {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.sub-tree-selected {
+  font-weight: 700;
+  color: #b45309;
+}

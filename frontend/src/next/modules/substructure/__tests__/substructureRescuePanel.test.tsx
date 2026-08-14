@@ -130,3 +130,52 @@ describe("SubstructureRescuePanel outputs (Phase 9-04 B-02/07/08/09)", () => {
     cleanup(root);
   });
 });
+
+describe("SubstructureRescuePanel 3-pane CAD + pile grid (Phase 9-04R3 B-01/B-06)", () => {
+  it("renders the 3-pane layout with shared selection", async () => {
+    const pid = setupProject();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    expect(document.querySelector('[data-testid="sub-3pane-layout"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="sub-pane-tree"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="sub-pane-viewport"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="sub-pane-properties"]')).toBeTruthy();
+
+    // select P1 -> the plan view highlights it
+    const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;
+    await act(async () => {
+      radio.click();
+    });
+    const planSupport = document.querySelector('[data-testid="sub-plan-support-P1"]');
+    expect(planSupport).toBeTruthy();
+    expect(planSupport?.getAttribute("fill")).toBe("#f59e0b");
+    cleanup(root);
+  });
+
+  it("edits the pile grid rows/cols canonically and derives coordinates (B-06)", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const root = await render(<SubstructureRescuePanel projectId={pid} />);
+    const radio = document.querySelector('[data-testid="sub-support-P1"]') as HTMLInputElement;
+    await act(async () => {
+      radio.click();
+    });
+
+    expect(document.querySelector('[data-testid="pile-grid-editor"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="pile-coordinate-table"]')).toBeTruthy();
+
+    // change rows to 3 -> pileCount 3*2 = 6
+    const rowsInput = document.querySelector('[data-testid="sub-field-X方向本数（rows）"]') as HTMLInputElement;
+    expect(rowsInput).toBeTruthy();
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(rowsInput, "3");
+      rowsInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    const doc = readSubstructureDocument(manager, pid);
+    const pileGroup = doc?.supports[0]?.pier?.pileGroup;
+    expect(pileGroup?.rows).toBe(3);
+    expect(pileGroup?.pileCount).toBe(6);
+    cleanup(root);
+  });
+});
