@@ -37,6 +37,7 @@ export function toVerticalElementDraft(element: VerticalElement): VerticalElemen
     endStation: element.startPhysicalDistance + element.length,
     startGrade: element.gradeIn,
     endGrade: element.gradeOut,
+    startElevation: element.startElevation,
     length: element.length,
   };
 }
