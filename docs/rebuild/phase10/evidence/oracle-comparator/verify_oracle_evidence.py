@@ -117,24 +117,25 @@ def main():
     # 0) run SB derivation test and strictly compare with fixed input
     derive_ok = False
     derive_detail = {}
+    os.makedirs(os.path.dirname(args.sb_output) or ".", exist_ok=True)
     if os.path.exists(args.sb_output):
         os.remove(args.sb_output)
+    env = dict(os.environ)
+    env["P10_SB_OUTPUT"] = args.sb_output
     proc = subprocess.run(
         ["npx", "vitest", "run", args.sb_derivation_test],
-        cwd=args.frontend_dir, capture_output=True, text=True,
+        cwd=args.frontend_dir, capture_output=True, text=True, env=env,
     )
     print("sb derivation vitest rc:", proc.returncode)
     if proc.returncode == 0 and os.path.exists(args.sb_output):
         derived = json.load(open(args.sb_output))
         fixed = json.load(open(args.sb_quantity))
-        norm = lambda v: round(v, 6) if isinstance(v, float) else v
-        derived_norm = {k: norm(v) for k, v in derived.items() if k != "derivation"}
-        fixed_norm = {k: norm(v) for k, v in fixed.items()}
-        derive_ok = derived_norm == fixed_norm
+        # strict: key set + nested structure + exact numeric equality
+        derive_ok = derived == fixed
         derive_detail = {"derivedMatchesFixed": derive_ok, "outputPath": args.sb_output, "fixedPath": args.sb_quantity}
     else:
         derive_detail = {"derivedMatchesFixed": False, "error": "vitest failed or output missing", "stderr": (proc.stderr or "")[-1500:]}
-    print("SB derivation matches fixed input:", derive_ok)
+    print("SB derivation matches fixed input (strict):", derive_ok)
 
     # 1) oracle validates
     ov = jsonschema.Draft202012Validator(oracle_schema)
@@ -168,6 +169,26 @@ def main():
     report_ok = rv.is_valid(report)
     print("report validates:", report_ok)
 
+    # 4b) row-key multiset exact match between oracle and report
+    def rowkey(r):
+        return (r["kind"], r["entityId"], r["component"])
+    oracle_keys = sorted(rowkey(r) for r in oracle["rows"])
+    report_keys = sorted(rowkey(r) for r in report.get("rows", []))
+    row_keys_ok = oracle_keys == report_keys
+    print("row-key multiset match:", row_keys_ok)
+
+    # 4c) fixture consistency: oracle reference vs fixture constants fixtureId, and report fixtureId/version
+    fx = json.load(open(args.fixture_constants))
+    oracle_ref = oracle.get("reference")
+    fx_id = fx.get("fixtureId")
+    report_chain = report.get("inputChainOfCustody", {})
+    ref_ok = oracle_ref == fx_id == report_chain.get("fixtureId") == report_chain.get("fixtureVersion")
+    # solver input projectId consistency
+    doc = json.load(open(args.input))
+    project_ok = doc.get("projectId") == report_chain.get("projectId")
+    fixture_ok = ref_ok and project_ok
+    print("fixture consistency:", fixture_ok)
+
     # 5) record (chain: runner SHA + all input SHAs + generated report SHA)
     result = {
         "comparatorId": "spacer-oracle-comparator-v1",
@@ -191,7 +212,9 @@ def main():
         "negativeFixtures": {"count": len(neg_results), "allRejected": neg_ok, "cases": neg_results},
         "comparison": {"pass": report_pass, "rows": len(report.get("rows", [])), "failures": len(report.get("failures", [])), "rawConsistency": report.get("rawConsistency")},
         "reportSchemaValid": report_ok,
-        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok,
+        "rowKeysMatch": row_keys_ok,
+        "fixtureConsistency": {"ok": fixture_ok, "oracleReference": oracle_ref, "fixtureConstantsId": fx_id, "reportFixtureId": report_chain.get("fixtureId"), "reportFixtureVersion": report_chain.get("fixtureVersion"), "projectIdMatch": project_ok},
+        "overallPass": oracle_ok and neg_ok and report_pass and report_ok and derive_ok and row_keys_ok and fixture_ok,
     }
     json.dump(result, open(args.result, "w"), indent=1)
     print("OVERALL PASS:", result["overallPass"])

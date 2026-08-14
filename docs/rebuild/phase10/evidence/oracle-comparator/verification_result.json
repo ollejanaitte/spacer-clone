@@ -1,6 +1,6 @@
 {
  "comparatorId": "spacer-oracle-comparator-v1",
- "runnerSha256": "fec5a73ebea5f29d06ffb4f50e98edd4e97a860acf72eead69f3f3ca4b96bde6",
+ "runnerSha256": "f2349d8c44d3cd074c5b024137d1ed1d6c882beaee5acb07e668f0ddd00ed0f7",
  "validator": "jsonschema 4.26.0 Draft202012Validator",
  "inputs": {
   "oracle": {
@@ -21,11 +21,11 @@
   },
   "sbDerivationTest": {
    "path": "src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
-   "sha256": "1233505e3b86eb8432c7bc64180b9f6f00ef50c4dd61edf4f995fb726f2d2f34"
+   "sha256": "e524505033281a0cccb72a084d6bc96bb92309231ae19df7a1e483cea8ed577c"
   },
   "fixtureConstants": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
-   "sha256": "59fa8fff6275e973c8e1c87803ace081a50afebfad8549f00a2ab215dde711c5"
+   "sha256": "ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb"
   },
   "negativesSpec": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json",
@@ -33,7 +33,7 @@
   },
   "reportSchema": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
-   "sha256": "df7f89406fc1f24b71f9ff867876321c0b4358e35a16a7274143acf79abc3a69"
+   "sha256": "cb984f96116302fa9169d7fb0138071eb36728304f965d91df9820f01a406e3f"
   },
   "oracleSchema": {
    "path": "docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json",
@@ -41,10 +41,10 @@
   },
   "comparator": {
    "path": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
-   "sha256": "94f7c2f91d4f931eb942fd4260b8dac80a1958a3349f34e2c77b37b773d1eb21"
+   "sha256": "b12f7f36f0d77188b796154c5195167595c30a599e325c924a66ac8219a958a0"
   }
  },
- "generatedReportSha256": "8831141c963b2eeb0972023bfd5209404e701fd0a2a172d7dd5d995854875a2b",
+ "generatedReportSha256": "f1a9864e414752321c66f47cbf190d9c6e2e0bbae19743240bd64126ec4cd645",
  "sbDerivation": {
   "executed": true,
   "derivedMatchesFixed": true,
@@ -124,5 +124,14 @@
   }
  },
  "reportSchemaValid": true,
+ "rowKeysMatch": true,
+ "fixtureConsistency": {
+  "ok": true,
+  "oracleReference": "REF-MOUNTAIN-1",
+  "fixtureConstantsId": "REF-MOUNTAIN-1",
+  "reportFixtureId": "REF-MOUNTAIN-1",
+  "reportFixtureVersion": "REF-MOUNTAIN-1",
+  "projectIdMatch": true
+ },
  "overallPass": true
 }

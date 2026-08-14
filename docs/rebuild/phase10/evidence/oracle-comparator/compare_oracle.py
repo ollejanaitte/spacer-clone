@@ -267,6 +267,10 @@ def main():
     if os.path.exists(verify_runner):
         bundle["verifyRunnerPath"] = verify_runner
         bundle["verifyRunnerSha256"] = sha(verify_runner)
+    oracle_schema_path = os.path.join(os.path.dirname(bundle_dir), "Phase10_Reference_NumberOracle.schema.json")
+    if os.path.exists(oracle_schema_path):
+        bundle["oracleSchemaPath"] = oracle_schema_path
+        bundle["oracleSchemaSha256"] = sha(oracle_schema_path)
 
     report = {
         "schemaVersion": "1.0.0",

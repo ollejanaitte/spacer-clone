@@ -15,7 +15,7 @@ import { buildSubstructureDocument } from "../substructureDocumentDomain";
 import { computeSubstructureQuantity } from "../substructureDesign";
 
 const FIXTURE = "../docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json";
-const OUT = "/tmp/opencode/p10-oracle/sb_quantity_output.json";
+const OUT = process.env.P10_SB_OUTPUT ?? "/tmp/opencode/p10-oracle/sb_quantity_output.json";
 
 describe("Phase10 SB-04 quantity derivation (REF-MOUNTAIN-1)", () => {
   function build(supportId: string, kind: Parameters<typeof generateSample>[0], station: number) {
@@ -48,7 +48,6 @@ describe("Phase10 SB-04 quantity derivation (REF-MOUNTAIN-1)", () => {
     const qs = docs.map((d) => computeSubstructureQuantity(d));
     const out = {
       supports: sub.supports,
-      derivation: "computeSubstructureQuantity(generateSample declared geometry) from fixture_constants.json",
       A1: { concrete: qs[0].totalConcreteVolumeM3, pile: qs[0].totalPileLengthM },
       P1: { concrete: qs[1].totalConcreteVolumeM3, pile: qs[1].totalPileLengthM },
       A2: { concrete: qs[2].totalConcreteVolumeM3, pile: qs[2].totalPileLengthM },
