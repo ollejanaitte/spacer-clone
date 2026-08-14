@@ -61,7 +61,7 @@ baseline: e3e2d3b
 | 縦断図 | RESTORE/ADAPT（同上） | V1.0必須 |
 | 横断図 | RESTORE/ADAPT（同上） | V1.0必須 |
 | DXF | RESTORE/ADAPT（legacy→新アプリ） | V1.0必須（実ファイル） |
-| HTML/CSV報告 | ADAPT（新アプリへ接続） | V1.0必須（計算書候補） |
+| HTML/CSV報告（RD-05） | ADAPT（新アプリへ接続） | V1.0必須（P0-03） |
 | PDF | DEFER（print-based・バイナリPDFなし） | 方針決定必要 |
 | 2D Preview（新） | KEEP | 簡易プレビュー |
 

@@ -29,16 +29,23 @@ status: FINAL（Sol指摘2回反映）
     M-L-G1-S2 i.fx=92.788/i.fz=3386.943/j.my=-71750.774・M-L-G1-S3 i.fx=81.871/i.fz=2988.442/j.my=-101646.411
   - 変位 girderPanel:G1:200: uz.raw=-190.883 m（solver実値・absTol 0.001）・uz.display=-19088.288 m（=raw×100・表示倍率・DERIVED）
   - T（ねじりi.mx）: 全member 0（wildcard・absTol 1e-6）
-- 比較: relTol 1e-3（釣合い1e-6）・absTol 各レコード固定
+- 比較規則（row別優先）: 各rowの{absTol, relTol}を優先し、dAbs<=absTol または dRel<=relTol でPASS。
+  全row PASSでoracle適合。loadBalanceはrelTol 1e-6。
+- oracle schema: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json（JSON Schema 2020-12・
+  rowsの7フィールド必須・wildcard=all-membersはentityId="*"で明示・displayScale=表示倍率はunitと分離）
 - 独立照合（Freeze条件）: 本oracleはPhase 9-04R3実測値。
   Phase 10完了前に独立照合（荷重-反力釣合い・非零実値・代表値のレビュー承認）を実施し、
   golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
   未実施ならCompletion Gate PASSにしない。
-- 独立照合記録（2026-08-15）:
+- 独立照合記録（2026-08-15・証拠あり）:
   - oracle JSON sha256 = 69b0aa9eed8b9746b7ed99c9ac1f5bbad13371b47345d03b72d94546e19fe6b6
-  - 荷重-反力釣合い: Σ|Fz|(applied)=27905.5 = Σ|Fz|(reaction)=27905.5（自己矛盾なし・機械確認）
-  - 非零実値: N/Q/M全70部材非零（機械確認）
-  - レビュー承認: Sol最終レビューGOにて承認（Phase 10 Completion Gate参照）
+  - solver raw result artifact sha256 = 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e
+    （backend/engine/solver.run_analysis_document を固定生成条件で独立実行）
+  - 機械比較レポート: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
+    （18 row・18 PASS・failures 0・sha256 fbd9889f...）
+  - 荷重-反力釣合い: Σ|Fz|(applied)=27905.5 = Σ|Fz|(reaction)=27905.5（機械確認）
+  - N/Q/M全70部材非零（機械確認）
+  - 承認: 本Sol最終レビューGO通過後に記録（完了時に追記）
 - raw/display分離: uz.displayは表示専用DERIVED（正本へ書き戻さない）
 
 【受入シナリオ（空Project→成果品出力）】

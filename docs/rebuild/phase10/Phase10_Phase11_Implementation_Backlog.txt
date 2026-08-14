@@ -112,16 +112,26 @@ P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
 - goal: 「空Project＋明示的なReference Mountain fixture import」を受入セットアップとして確立。
   自動seedを暗黙利用しない。
 - source: createReferenceMountain（terrain/referenceMountain.ts）・既存E2E（referenceMountainE2E/referenceRoadE2E）パターン
-- target: 受入用fixture importer（UI/APIの正式投入地点を固定）・fixture bundle形式をFreeze
+- target: 受入用fixture importer（deliverables module UI・一意）
 - policy:
-  - 正式import経路（一意）: deliverables moduleの「fixture import」UI
+  - 正式import経路（一意・代替なし）: deliverables moduleの「fixture import」UIのみ
     route = /app/projects/{id}/modules/deliverables・import API = POST /api/rebuild/fixture/import（backend）
-    または実装簡易化時はLoadBusinessPage（/app/business/load）の.spacerproj equivalentをfixture bundleとして使用（二択は残さない）
-  - fixture version: REF-MOUNTAIN-1・bundle = {road, terrain, existing, bridgeLayout, superstructure, substructure, analysisSettings}
-  - 全bundle要素: schema version・生成元・必須payload・適用順序（road→terrain→existing→bridgeLayout→superstructure→substructure→analysis）を定義
-  - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceとして記録
-  - provenance schema: {fixtureId, version, importedAt, moduleChecksums:{moduleId:hexDigest}, operator}
-  - 存在しないchecksum: module未設定時はnullとし、比較時はnull一致扱い（明示）
+  - 所有: 全bundle要素のimport所有=deliverables module（一意）
+  - fixture version: REF-MOUNTAIN-1・bundle要素（schema version固定）:
+    | 要素 | schema version | 生成元 | 必須payload |
+    |---|---|---|---|
+    | road | CanonicalRoadData 0.3.0 | createReferenceMountain.roadHorizontal/Vertical/CrossSection | alignment/vertical/crossSections |
+    | terrain | TerrainDocument 0.1.0 | createReferenceMountain.terrainGrid | grid/mesh |
+    | existing | ExistingConditionsDocument | createReferenceMountain.existing | entities[] |
+    | bridgeLayout | BridgeLayoutDocument 0.1.0 | bridgeLayoutFromRange(100,450)+P1@300 | bridgeId/range/supports/spans |
+    | superstructure | SuperstructureDocument 0.1.0 | generateSuperstructureFromLayout+declared section | girder/section/material/deck/bearing |
+    | substructure | SubstructureDocument 0.1.0 | generateSubstructureFromLayout | supports/placement/pile |
+    | analysisSettings | AnalysisSettings 1.0.0 | declared section/material | section/material/settings |
+  - 適用順序: road→terrain→existing→bridgeLayout→superstructure→substructure→analysis（固定）
+  - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceに記録。
+    existingはmetadata配下のためexistingChecksumとして別途記録（moduleChecksums対象外であることを明示）
+  - provenance schema: {fixtureId, version, importedAt, moduleChecksums:{moduleId: hexDigest|null}, operator}
+  - 存在しないchecksum: module未設定時はnull・比較時はnull一致扱い（明示）
 - module: 全module横断・import経路はdeliverables/Roadに一意
 - tests: fixture import round-trip test・checksum一致test
 - E2E: 空Project→fixture import→解析→成果品（Phase 12シナリオの前段）・P0-07 PASS必須

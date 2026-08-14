@@ -28,11 +28,11 @@ baseline: e3e2d3b
 
 【screenshot/report integration】
 - 実画面証跡: docs/rebuild/evidence（Phase 9-04R3で多数取得）
-- 報告統合: 新アプリに明示統合なし → Phase 11候補
+- 報告統合: optional（V1.0外）
 
 【判定】
 - Integrated 3D（CIM-01）・GLB（CIM-02）: KEEP（V1.0必須）・glTF（CIM-03）: 任意
-- STL: ADAPT候補（V1.0任意・新アプリへ接続任意）
+- STL: ADAPT（optional・V1.0外）
 - IFC: DEFER
 - screenshot/report統合: Phase 11候補（任意）
 ====================================================================

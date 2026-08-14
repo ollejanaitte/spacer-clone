@@ -1,187 +1,204 @@
 {
- "schemaVersion": "1.0.0",
  "reference": "REF-MOUNTAIN-1",
  "loadCaseId": "LC1",
- "checksums": {},
  "rows": [
   {
    "kind": "reaction",
    "entityId": "supportPoint:A1:G1",
    "component": "fz",
    "expected": 3986.19,
+   "actual": 3986.188699,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 1e-06
+   "relTol": 1e-06,
+   "pass": true
   },
   {
    "kind": "reaction",
    "entityId": "supportPoint:A1:G2",
    "component": "fz",
    "expected": 3986.15,
+   "actual": 3986.150184,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 1e-06
+   "relTol": 1e-06,
+   "pass": true
   },
   {
    "kind": "reaction",
    "entityId": "supportPoint:P1:G1",
    "component": "fz",
    "expected": 6977.29,
+   "actual": 6977.290436,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 1e-06
+   "relTol": 1e-06,
+   "pass": true
   },
   {
    "kind": "reaction",
    "entityId": "supportPoint:P1:G2",
    "component": "fz",
    "expected": 6977.46,
+   "actual": 6977.460196,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 1e-06
+   "relTol": 1e-06,
+   "pass": true
   },
   {
    "kind": "reaction",
    "entityId": "supportPoint:A2:G1",
    "component": "fz",
    "expected": 2989.27,
+   "actual": 2989.270865,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 1e-06
+   "relTol": 1e-06,
+   "pass": true
   },
   {
    "kind": "reaction",
    "entityId": "supportPoint:A2:G2",
    "component": "fz",
    "expected": 2989.14,
+   "actual": 2989.13962,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 1e-06
+   "relTol": 1e-06,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S1",
    "component": "i.fx",
    "expected": 103.705,
+   "actual": 103.705377,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S1",
    "component": "i.fz",
    "expected": 3785.443,
+   "actual": 3785.443418,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S1",
    "component": "j.my",
    "expected": -37868.637,
+   "actual": -37868.636991,
    "unit": "kNm",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S2",
    "component": "i.fx",
    "expected": 92.788,
+   "actual": 92.788124,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S2",
    "component": "i.fz",
    "expected": 3386.943,
+   "actual": 3386.942933,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S2",
    "component": "j.my",
    "expected": -71750.774,
+   "actual": -71750.773982,
    "unit": "kNm",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S3",
    "component": "i.fx",
    "expected": 81.871,
+   "actual": 81.870871,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S3",
    "component": "i.fz",
    "expected": 2988.442,
+   "actual": 2988.442449,
    "unit": "kN",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "M-L-G1-S3",
    "component": "j.my",
    "expected": -101646.411,
+   "actual": -101646.410973,
    "unit": "kNm",
    "absTol": 0.01,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "displacement",
    "entityId": "girderPanel:G1:200",
    "component": "uz.raw",
    "expected": -190.882884,
+   "actual": -190.882884,
    "unit": "m",
    "absTol": 0.001,
-   "relTol": 0.001
+   "relTol": 0.001,
+   "pass": true
   },
   {
    "kind": "displacement",
    "entityId": "girderPanel:G1:200",
    "component": "uz.display",
    "expected": -19088.288,
-   "unit": "m",
+   "actual": -19088.288419,
+   "unit": "m(scale100)",
    "absTol": 0.1,
    "relTol": 0.001,
-   "displayScale": 100
+   "pass": true
   },
   {
    "kind": "memberForce",
    "entityId": "*",
    "component": "i.mx",
-   "expected": 0.0,
+   "expected": 0,
+   "actual": 0.0,
    "unit": "kNm",
-   "absTol": 1e-06,
-   "relTol": 0,
-   "wildcard": "all-members"
+   "pass": true
   }
  ],
- "modelCounts": {
-  "nodes": 72,
-  "members": 70,
-  "sections": 1,
-  "materials": 1,
-  "supports": 6,
-  "bearings": 6,
-  "nodalLoads": 72
- },
- "loadBalance": {
-  "totalKN": 27905.5,
-  "applied": 27905.5,
-  "reaction": 27905.5,
-  "relTol": 1e-06
- }
+ "pass": true,
+ "failures": []
 }

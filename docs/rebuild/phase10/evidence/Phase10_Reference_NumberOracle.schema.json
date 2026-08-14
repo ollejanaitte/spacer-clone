@@ -1,0 +1,142 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Phase 10 Reference Number Oracle",
+ "description": "\u6a5f\u68b0\u5224\u5b9a\u7528Reference Mountain\u6570\u5024oracle\uff08Phase 12\u53d7\u5165\u57fa\u6e96\uff09",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schemaVersion",
+  "reference",
+  "loadCaseId",
+  "rows",
+  "modelCounts",
+  "loadBalance"
+ ],
+ "properties": {
+  "schemaVersion": {
+   "type": "string",
+   "const": "1.0.0"
+  },
+  "reference": {
+   "type": "string"
+  },
+  "loadCaseId": {
+   "type": "string"
+  },
+  "rows": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "kind",
+     "entityId",
+     "component",
+     "expected",
+     "unit",
+     "absTol",
+     "relTol"
+    ],
+    "properties": {
+     "kind": {
+      "enum": [
+       "reaction",
+       "memberForce",
+       "displacement"
+      ]
+     },
+     "entityId": {
+      "type": "string"
+     },
+     "component": {
+      "type": "string"
+     },
+     "expected": {
+      "type": "number"
+     },
+     "unit": {
+      "type": "string"
+     },
+     "absTol": {
+      "type": "number",
+      "minimum": 0
+     },
+     "relTol": {
+      "type": "number",
+      "minimum": 0
+     },
+     "wildcard": {
+      "type": "string",
+      "enum": [
+       "all-members"
+      ]
+     },
+     "displayScale": {
+      "type": "number"
+     }
+    }
+   }
+  },
+  "modelCounts": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "nodes",
+    "members",
+    "sections",
+    "materials",
+    "supports",
+    "bearings",
+    "nodalLoads"
+   ],
+   "properties": {
+    "nodes": {
+     "type": "integer"
+    },
+    "members": {
+     "type": "integer"
+    },
+    "sections": {
+     "type": "integer"
+    },
+    "materials": {
+     "type": "integer"
+    },
+    "supports": {
+     "type": "integer"
+    },
+    "bearings": {
+     "type": "integer"
+    },
+    "nodalLoads": {
+     "type": "integer"
+    }
+   }
+  },
+  "loadBalance": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "totalKN",
+    "applied",
+    "reaction",
+    "relTol"
+   ],
+   "properties": {
+    "totalKN": {
+     "type": "number"
+    },
+    "applied": {
+     "type": "number"
+    },
+    "reaction": {
+     "type": "number"
+    },
+    "relTol": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  }
+ }
+}
