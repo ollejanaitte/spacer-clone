@@ -238,8 +238,11 @@ export function buildAnalysisCimLayer(
   // Result overlay (only when an IF3 result is supplied)
   let resultStatus: "none" | "authoritative" | "stale" | "invalid" = "none";
   if (input.if3Result) {
+    // Sol review #9 (Phase 9-04R3): authoritative only on an EXPLICIT success
+    // status. `undefined`/unknown/missing metadata are INVALID (fail-closed);
+    // the previous `undefined -> authoritative` promotion was a fail-open path.
     const status = (input.if3Result as { status?: string }).status;
-    const authoritative = status === "SUCCEEDED" || status === "authoritative" || status === undefined;
+    const authoritative = status === "SUCCEEDED" || status === "authoritative";
     resultStatus = authoritative ? "authoritative" : status === "STALE" || status === "stale" ? "stale" : "invalid";
     if (authoritative) {
       const result = extractLinearStaticResultFromIf3(input.if3Result);

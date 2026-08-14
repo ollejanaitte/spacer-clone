@@ -1,12 +1,15 @@
 /**
- * Superstructure Rescue Editor (Phase 9-03 WP-A/C).
+ * Superstructure Rescue Editor (Phase 9-03 WP-A/C / Phase 9-04R3 S-01/S-07).
  *
  * Controlled editor that edits the canonical SuperstructureDocument from the
  * regular /app Superstructure Module. Every change commits atomically to the
  * document (atomic -> validate -> write -> Auto Save). NOT_AUTHORIZED / HOLD
  * areas are rendered as read-only / HOLD so they are never shown as computed.
  *
- * Field mapping follows Phase 9-02 Design Freeze (Apollo field -> document field).
+ * Field mapping follows Phase 9-02 Design Freeze (Apollo field -> document
+ * field). Phase 9-04R3 adds the remaining S-01 fields: cross beams (spacing /
+ * depth / width), bearings (type / fixed-or-movable), material configuration
+ * (E/G/nu/rho, Phase 7-01C §3.1), and the AUTHORIZED dead-load view.
  */
 
 import { useMemo, useState } from "react";
@@ -14,15 +17,24 @@ import { getProjectManager } from "../project/projectManagerInstance";
 import { readSuperstructureDocument, writeSuperstructureDocument } from "../modules/superstructureModuleAdapter";
 import { regenerateSuperstructureDerived } from "../modules/superstructure/superstructurePersistence";
 import { deriveGirderOffsets } from "../modules/superstructure/superstructureDocumentDomain";
-import { computeSuperstructureSectionProperties } from "../modules/superstructure/superstructureComponents";
+import { computeSuperstructureSectionProperties, buildCrossBeamConfiguration } from "../modules/superstructure/superstructureComponents";
 import { buildSuperstructureDxf, downloadSuperstructureDxf } from "../modules/superstructure/superstructureDxf";
-import type { SuperstructureDocument } from "../modules/superstructure/superstructureTypes";
+import { buildDeadLoads } from "../modules/superstructure/superstructureLoadModel";
+import type { BearingSeat, CrossBeamConfiguration, MaterialConfiguration, SuperstructureDocument } from "../modules/superstructure/superstructureTypes";
 
 export const SUPERSTRUCTURE_RESCUE_FLAG = "VITE_SUPERSTRUCTURE_RESCUE";
 export function isSuperstructureRescueEnabled(): boolean {
   const env = (import.meta as unknown as { env?: Record<string, string> }).env;
   return env?.[SUPERSTRUCTURE_RESCUE_FLAG] === "true";
 }
+
+/** Frozen engineering default steel (Phase 7-01C §3.1) shown as the declared baseline. */
+export const DEFAULT_MATERIAL_CONFIGURATION: MaterialConfiguration = {
+  elasticModulusKN_M2: 205000000,
+  shearModulusKN_M2: 80000000,
+  poissonRatio: 0.3,
+  densityKN_M3: 78.5,
+};
 
 interface NumericField {
   readonly label: string;
@@ -176,6 +188,54 @@ export function SuperstructureRescuePanel({ projectId }: { projectId: string }) 
       get: (d) => d.deckConfiguration.overhangRightM,
       set: (d, v) => ({ ...d, deckConfiguration: { ...d.deckConfiguration, overhangRightM: v } }),
     },
+    // Cross beams (S-02 / crossBeamSpacingM)
+    {
+      label: "横桁間隔",
+      unit: "m",
+      get: (d) => d.crossBeamConfiguration?.crossBeamSpacingM ?? null,
+      set: (d, v) => {
+        const spacing = v ?? null;
+        if (spacing === null) return { ...d, crossBeamConfiguration: null };
+        return { ...d, crossBeamConfiguration: rebuildCrossBeams(d, spacing) };
+      },
+    },
+    {
+      label: "横桁せい",
+      unit: "m",
+      get: (d) => d.crossBeamConfiguration?.crossBeams.find((c) => c.depthM !== null)?.depthM ?? null,
+      set: (d, v) => ({ ...d, crossBeamConfiguration: setCrossBeamDim(d.crossBeamConfiguration, "depthM", v) }),
+    },
+    {
+      label: "横桁幅",
+      unit: "m",
+      get: (d) => d.crossBeamConfiguration?.crossBeams.find((c) => c.widthM !== null)?.widthM ?? null,
+      set: (d, v) => ({ ...d, crossBeamConfiguration: setCrossBeamDim(d.crossBeamConfiguration, "widthM", v) }),
+    },
+    // Material (Phase 7-01C §3.1): E / G / nu / rho
+    {
+      label: "鋼弾性係数",
+      unit: "kN/m2",
+      get: (d) => d.materialConfiguration?.elasticModulusKN_M2 ?? null,
+      set: (d, v) => ({ ...d, materialConfiguration: setMaterialField(d.materialConfiguration, "elasticModulusKN_M2", v) }),
+    },
+    {
+      label: "鋼せん断弾性係数",
+      unit: "kN/m2",
+      get: (d) => d.materialConfiguration?.shearModulusKN_M2 ?? null,
+      set: (d, v) => ({ ...d, materialConfiguration: setMaterialField(d.materialConfiguration, "shearModulusKN_M2", v) }),
+    },
+    {
+      label: "鋼ポアソン比",
+      unit: "—",
+      get: (d) => d.materialConfiguration?.poissonRatio ?? null,
+      set: (d, v) => ({ ...d, materialConfiguration: setMaterialField(d.materialConfiguration, "poissonRatio", v) }),
+    },
+    {
+      label: "鋼密度",
+      unit: "kN/m3",
+      get: (d) => d.materialConfiguration?.densityKN_M3 ?? null,
+      set: (d, v) => ({ ...d, materialConfiguration: setMaterialField(d.materialConfiguration, "densityKN_M3", v) }),
+    },
   ];
 
   if (!doc) {
@@ -225,6 +285,12 @@ export function SuperstructureRescuePanel({ projectId }: { projectId: string }) 
         data-testid="super-cross-preview"
       />
 
+      <h4 className="next-hint">支承（Phase 9-02 FROZEN・support×girder）</h4>
+      <BearingEditor doc={doc} onChange={(next) => commit(next)} />
+
+      <h4 className="next-hint">AUTHORIZED荷重（DL-STRUCTURAL + DL-DECK・FROZEN load model）</h4>
+      <AuthorizedLoadView doc={doc} />
+
       <SuperstructureOutputs doc={doc} />
 
       <p className="next-hint">照査・応力度・たわみ等は NOT_AUTHORIZED（HOLD）です。「計算済み」とは表示しません。</p>
@@ -243,6 +309,52 @@ function buildGirderLines(girderCount: number, spacingM: number) {
     materialRefId: null,
     sectionIntentRefId: null,
   }));
+}
+
+/** Rebuild the cross beam configuration from the support stations + spacing. */
+function rebuildCrossBeams(doc: SuperstructureDocument, spacingM: number): CrossBeamConfiguration {
+  const supports = (doc.supportReferences?.supports ?? []).map((s) => ({
+    supportId: s.supportId,
+    station: s.station,
+    supportType: s.supportType,
+  }));
+  const previous = doc.crossBeamConfiguration?.crossBeams ?? [];
+  if (supports.length === 0) {
+    // supportReferences are transient (regenerated from Bridge Layout on
+    // restore). Without resolvable stations, preserve the declared beams and
+    // only update the spacing (fail-safe; never invent stations).
+    return { crossBeamSpacingM: spacingM, crossBeams: previous };
+  }
+  const config = buildCrossBeamConfiguration(supports, spacingM);
+  // preserve declared dimensions from the previous configuration
+  const withDims = config.crossBeams.map((beam) => {
+    const prev = previous.find((p) => p.crossBeamId === beam.crossBeamId);
+    return prev ? { ...beam, depthM: prev.depthM, widthM: prev.widthM } : beam;
+  });
+  return { crossBeamSpacingM: spacingM, crossBeams: withDims };
+}
+
+/** Apply a declared dimension (depthM/widthM) to every cross beam. */
+function setCrossBeamDim(
+  config: CrossBeamConfiguration | null,
+  key: "depthM" | "widthM",
+  value: number | null,
+): CrossBeamConfiguration | null {
+  if (config === null) return null;
+  return {
+    ...config,
+    crossBeams: config.crossBeams.map((beam) => ({ ...beam, [key]: value })),
+  };
+}
+
+/** Apply a material field; initializes the configuration with the frozen default when absent. */
+function setMaterialField(
+  config: MaterialConfiguration | null,
+  key: keyof MaterialConfiguration,
+  value: number | null,
+): MaterialConfiguration | null {
+  const base = config ?? DEFAULT_MATERIAL_CONFIGURATION;
+  return { ...base, [key]: value };
 }
 
 function SuperstructureCrossSectionPreview({ doc, deckWidth }: { doc: SuperstructureDocument; deckWidth: number }) {
@@ -274,6 +386,106 @@ function SuperstructureCrossSectionPreview({ doc, deckWidth }: { doc: Superstruc
       ))}
       <text x={center} y={24} fontSize="10" textAnchor="middle" fill="#475569">床版厚 {doc.deckConfiguration.thicknessM ?? "—"}m / 幅 {deckWidth}m</text>
     </svg>
+  );
+}
+
+/**
+ * Bearing editor: per-support bearing type + fixed/movable selection applied to
+ * every bearing seat of that support (support x girder). Canonical commit via
+ * the panel onChange (validate -> write -> Auto Save).
+ */
+function BearingEditor({ doc, onChange }: { doc: SuperstructureDocument; onChange: (next: SuperstructureDocument) => void }) {
+  const relationSupports = doc.bearingConfiguration.bearingSupportRelation;
+  const supportIds = [...new Set(relationSupports.map((r) => r.supportId))];
+  if (supportIds.length === 0) {
+    return <p className="next-hint">支承配置には Bridge Layout の support が必要です。</p>;
+  }
+  return (
+    <div className="cim-layer-list" data-testid="super-bearing-editor">
+      {supportIds.map((supportId) => {
+        const seats = doc.bearingConfiguration.bearingSeats.filter((s) => s.supportId === supportId);
+        if (seats.length === 0) return null;
+        const seat = seats[0]!;
+        return (
+          <div key={supportId} className="next-form-grid" data-testid={`super-bearing-${supportId}`}>
+            <span className="next-hint">{supportId}（seat {seats.length}件）</span>
+            <label className="next-field">
+              <span>支承種別</span>
+              <select
+                data-testid={`super-bearing-type-${supportId}`}
+                value={seat.bearingType ?? ""}
+                onChange={(e) => {
+                  const bearingType = (e.currentTarget.value === "" ? null : e.currentTarget.value) as BearingSeat["bearingType"];
+                  onChange(updateSeats(doc, supportId, { bearingType }));
+                }}
+              >
+                <option value="">未指定</option>
+                <option value="rubber">ゴム支承</option>
+                <option value="fixed">固定支承</option>
+                <option value="movable">可動支承</option>
+              </select>
+            </label>
+            <label className="next-field">
+              <span>固定/可動</span>
+              <select
+                data-testid={`super-bearing-fixed-${supportId}`}
+                value={seat.fixedOrMovable}
+                onChange={(e) => {
+                  const fixedOrMovable = e.currentTarget.value as BearingSeat["fixedOrMovable"];
+                  onChange(updateSeats(doc, supportId, { fixedOrMovable }));
+                }}
+              >
+                <option value="FIXED">FIXED</option>
+                <option value="MOVABLE">MOVABLE</option>
+                <option value="UNDECIDED">UNDECIDED</option>
+              </select>
+            </label>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function updateSeats(
+  doc: SuperstructureDocument,
+  supportId: string,
+  patch: Partial<Pick<BearingSeat, "bearingType" | "fixedOrMovable">>,
+): SuperstructureDocument {
+  return {
+    ...doc,
+    bearingConfiguration: {
+      ...doc.bearingConfiguration,
+      bearingSeats: doc.bearingConfiguration.bearingSeats.map((seat) =>
+        seat.supportId === supportId ? { ...seat, ...patch } : seat,
+      ),
+    },
+  };
+}
+
+/** AUTHORIZED dead-load view: DL-STRUCTURAL + DL-DECK from the FROZEN load model. */
+function AuthorizedLoadView({ doc }: { doc: SuperstructureDocument }) {
+  const dead = buildDeadLoads(doc);
+  const rows = [
+    { name: "DL-STRUCTURAL（主桁自重）", entry: dead.structuralGirder },
+    { name: "DL-STRUCTURAL（二次部材）", entry: dead.structuralSecondary },
+    { name: "DL-DECK（床版自重）", entry: dead.deck },
+    { name: "DL-PAVEMENT", entry: dead.pavement },
+    { name: "DL-APPURTENANCE", entry: dead.appurtenances },
+  ];
+  return (
+    <dl className="next-integrity-meta" data-testid="super-authorized-load">
+      {rows.map((row) => (
+        <div key={row.name}>
+          <dt>{row.name}</dt>
+          <dd data-testid={`super-load-${row.name}`}>
+            {row.entry.valueKN !== null ? `${row.entry.valueKN.toFixed(1)} kN` : "—"}
+            <span className="next-hint">（{row.entry.state}）</span>
+          </dd>
+        </div>
+      ))}
+      <p className="next-hint">AUTHORIZED範囲は DL-STRUCTURAL + DL-DECK のみ。未認可荷重は生成しません。</p>
+    </dl>
   );
 }
 

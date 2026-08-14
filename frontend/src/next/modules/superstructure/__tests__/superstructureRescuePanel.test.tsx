@@ -95,6 +95,124 @@ describe("SuperstructureRescuePanel (Phase 9-03 WP-A/C)", () => {
     expect(document.querySelector('[data-testid="super-cross-section-preview"]')).toBeTruthy();
     cleanup(root);
   });
+
+  it("edits material configuration and commits canonically (Phase 7-01C §3.1)", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const root = await render(<SuperstructureRescuePanel projectId={pid} />);
+
+    const matInput = document.querySelector('[data-testid="super-field-鋼弾性係数"]') as HTMLInputElement;
+    expect(matInput).toBeTruthy();
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(matInput, "210000000");
+      matInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    const doc = readSuperstructureDocument(manager, pid);
+    expect(doc).toBeDefined();
+    if (doc) {
+      expect(doc.materialConfiguration?.elasticModulusKN_M2).toBe(210000000);
+      // unset fields fall back to the frozen default baseline
+      expect(doc.materialConfiguration?.poissonRatio).toBe(0.3);
+    }
+    cleanup(root);
+  });
+
+  it("edits cross beam spacing and dimensions canonically", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    // give the document an initial cross-beam configuration so the fields exist
+    const existing = readSuperstructureDocument(manager, pid)!;
+    writeSuperstructureDocument(manager, pid, {
+      ...existing,
+      crossBeamConfiguration: {
+        crossBeamSpacingM: 10,
+        crossBeams: [
+          { crossBeamId: "XB-A1", kind: "support", stationM: 0, depthM: 0.8, widthM: 0.4 },
+          { crossBeamId: "XB-A2", kind: "support", stationM: 40, depthM: 0.8, widthM: 0.4 },
+        ],
+      },
+    });
+
+    const root = await render(<SuperstructureRescuePanel projectId={pid} />);
+    const spacingInput = document.querySelector('[data-testid="super-field-横桁間隔"]') as HTMLInputElement;
+    expect(spacingInput).toBeTruthy();
+    await act(async () => {
+      const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+      setter?.call(spacingInput, "10");
+      spacingInput.dispatchEvent(new Event("input", { bubbles: true }));
+    });
+
+    const doc = readSuperstructureDocument(manager, pid);
+    expect(doc).toBeDefined();
+    if (doc) {
+      expect(doc.crossBeamConfiguration?.crossBeamSpacingM).toBe(10);
+      expect((doc.crossBeamConfiguration?.crossBeams.length ?? 0)).toBeGreaterThan(0);
+      const depthInput = document.querySelector('[data-testid="super-field-横桁せい"]') as HTMLInputElement;
+      await act(async () => {
+        const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+        setter?.call(depthInput, "0.8");
+        depthInput.dispatchEvent(new Event("input", { bubbles: true }));
+      });
+      const after = readSuperstructureDocument(manager, pid);
+      expect(after?.crossBeamConfiguration?.crossBeams.every((c) => c.depthM === 0.8)).toBe(true);
+    }
+    cleanup(root);
+  });
+
+  it("edits bearing type and fixed/movable canonically", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const existing = readSuperstructureDocument(manager, pid)!;
+    writeSuperstructureDocument(manager, pid, {
+      ...existing,
+      supportReferences: {
+        handoffId: "SH-1",
+        schemaVersion: "1.0.0",
+        generatedAt: new Date().toISOString(),
+        supports: [
+          { supportId: "A1", supportType: "abutment", label: "A1", station: 0, position: { domainX: 0, domainY: 0, elevation: 0 }, tangentAzimuthRad: 0, skewAngleRad: 0, terrainElevation: 0, roadReferenceId: "R", coordinateContextId: null },
+          { supportId: "A2", supportType: "abutment", label: "A2", station: 40, position: { domainX: 40, domainY: 0, elevation: 0 }, tangentAzimuthRad: 0, skewAngleRad: 0, terrainElevation: 0, roadReferenceId: "R", coordinateContextId: null },
+        ],
+      },
+      bearingConfiguration: {
+        bearingSupportRelation: [
+          { supportId: "A1", girderId: "G1" },
+          { supportId: "A2", girderId: "G1" },
+        ],
+        bearingSeats: [
+          { seatId: "BRG-A1-G1", supportId: "A1", girderId: "G1", bearingType: null, fixedOrMovable: "UNDECIDED", longitudinalDirection: null, transverseDirection: null },
+          { seatId: "BRG-A2-G1", supportId: "A2", girderId: "G1", bearingType: null, fixedOrMovable: "UNDECIDED", longitudinalDirection: null, transverseDirection: null },
+        ],
+      },
+    });
+
+    const root = await render(<SuperstructureRescuePanel projectId={pid} />);
+    const typeSelect = document.querySelector('[data-testid="super-bearing-type-A1"]') as HTMLSelectElement;
+    expect(typeSelect).toBeTruthy();
+    await act(async () => {
+      typeSelect.value = "fixed";
+      typeSelect.dispatchEvent(new Event("change", { bubbles: true }));
+    });
+    const doc = readSuperstructureDocument(manager, pid);
+    expect(doc?.bearingConfiguration.bearingSeats.find((s) => s.supportId === "A1")?.bearingType).toBe("fixed");
+    expect(doc?.bearingConfiguration.bearingSeats.find((s) => s.supportId === "A2")?.bearingType).toBeNull();
+    cleanup(root);
+  });
+
+  it("renders the AUTHORIZED dead-load view", async () => {
+    const pid = setupProject();
+    const manager = getProjectManager();
+    const existing = readSuperstructureDocument(manager, pid)!;
+    writeSuperstructureDocument(manager, pid, {
+      ...existing,
+      deckConfiguration: { ...existing.deckConfiguration, thicknessM: 0.25, unitWeight: 24.5, resolvedWidthM: 12 },
+    });
+    const root = await render(<SuperstructureRescuePanel projectId={pid} />);
+    expect(document.querySelector('[data-testid="super-authorized-load"]')).toBeTruthy();
+    cleanup(root);
+  });
 });
 
 function cleanup(root: Root) {

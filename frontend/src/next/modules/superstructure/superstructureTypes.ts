@@ -125,6 +125,20 @@ export interface GirderConfiguration {
   readonly girderSectionModel: GirderSectionModel;
 }
 
+/**
+ * Steel material configuration (Phase 7-01C §3.1 FROZEN).
+ * Optional: when unset the frozen engineering default steel applies
+ * (E=2.05e8 kN/m2, G=8.0e7, nu=0.3, rho=78.5 kN/m3, DERIVED). When declared
+ * the values become CONFIRMED (AUTHORIZED input; the frozen default is
+ * overridden upstream).
+ */
+export interface MaterialConfiguration {
+  readonly elasticModulusKN_M2: number | null;
+  readonly shearModulusKN_M2: number | null;
+  readonly poissonRatio: number | null;
+  readonly densityKN_M3: number | null;
+}
+
 export interface DeckConfiguration {
   readonly deckId: string;
   readonly deckKind: "rc_non_composite";
@@ -290,6 +304,7 @@ export interface SuperstructureDocument {
   readonly superstructureType: string;
   readonly structuralSystem: StructuralSystem;
   readonly girderConfiguration: GirderConfiguration;
+  readonly materialConfiguration: MaterialConfiguration | null;
   readonly deckConfiguration: DeckConfiguration;
   readonly crossBeamConfiguration: CrossBeamConfiguration | null;
   readonly crossFrameConfiguration: CrossFrameConfiguration | null;

@@ -24,6 +24,7 @@ import {
   type CimLayerId,
 } from "../modules/cim/integrated3dScene";
 import { Cim3DViewer, type CimViewPreset } from "../components/Cim3DViewer";
+import { AuthoritativeResultPanel } from "../components/AuthoritativeResultPanel";
 import { exportCimSceneAsGlb, downloadGlb } from "../modules/cim/cimExport";
 import type { ProjectModuleKey } from "../project/schema";
 
@@ -288,6 +289,10 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
         {analysisMsg !== null && <span className="next-hint" data-testid="cim-analysis-message">{analysisMsg}</span>}
         <span className="next-hint" data-testid="cim-export-message">{exportMessage}</span>
       </div>
+
+      <AuthoritativeResultPanel
+        if3Result={if3Result as import("../../contracts/frameAnalysisResultResource").FrameAnalysisResultResource | null}
+      />
     </section>
   );
 }

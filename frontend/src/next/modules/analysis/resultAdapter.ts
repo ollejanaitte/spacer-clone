@@ -61,8 +61,18 @@ export function extractLinearStaticResultFromIf3(
   resource: FrameAnalysisResultResource,
 ): LinearStaticResultView {
   const payload = (resource.payload ?? {}) as unknown as Record<string, unknown>;
-  const rowsOf = (kind: string): readonly Record<string, unknown>[] =>
-    Array.isArray(payload[kind]) ? (payload[kind] as readonly Record<string, unknown>[]) : [];
+  const rowsOf = (kind: string): readonly Record<string, unknown>[] => {
+    const entry = payload[kind];
+    if (Array.isArray(entry)) {
+      // legacy array shape (test fixtures)
+      return entry as readonly Record<string, unknown>[];
+    }
+    if (entry && typeof entry === "object" && Array.isArray((entry as { rows?: unknown }).rows)) {
+      // canonical FrameAnalysisResultResource payload entry: {schemaVersion, rows}
+      return (entry as { rows: readonly Record<string, unknown>[] }).rows;
+    }
+    return [];
+  };
 
   const nodeRows = rowsOf("nodeDisplacement");
   const reactionRows = rowsOf("supportReaction");

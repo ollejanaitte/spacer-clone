@@ -173,4 +173,25 @@ describe("Analysis CIM layer (Phase 8-02 WP-H)", () => {
     expect(result.deformedGroup.children.length).toBe(0);
     expect(result.resultGroup.children.length).toBe(0);
   });
+
+  it("treats an undefined/unknown IF3 status as INVALID (fail-closed, Sol #9)", () => {
+    const project = makeProject();
+    const doc = makeAnalysisDocument();
+    const serialized = serializeAnalysisModuleDataForPersistence({ analysisDocument: doc });
+    const record = createInitialModuleData();
+    getProjectManager().updateProjectModule(project.projectId, "analysis", {
+      ...record,
+      data: serialized,
+    } as never);
+    // no status field / unknown status must NOT be promoted to authoritative
+    const noStatus = { payload: {} } as never;
+    const unknownStatus = { status: "PARTIAL", payload: {} } as never;
+    const r1 = buildAnalysisCimLayer(getProjectManager(), project.projectId, { if3Result: noStatus });
+    expect(r1.resultStatus).toBe("invalid");
+    expect(r1.reactionGroup.children.length).toBe(0);
+    const r2 = buildAnalysisCimLayer(getProjectManager(), project.projectId, { if3Result: unknownStatus });
+    expect(r2.resultStatus).toBe("invalid");
+    expect(r2.deformedGroup.children.length).toBe(0);
+    expect(r2.resultGroup.children.length).toBe(0);
+  });
 });
