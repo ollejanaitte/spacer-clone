@@ -14,6 +14,8 @@ status: FINAL（Sol指摘反映）
 | GA sheet（Apollo drawingSet） | legacy資産・新アプリ統合はDEFER |
 | STL（Apollo/liner frame）新アプリ接続 | V1.0 scope=DEFER・将来方針=ADAPT候補（新アプリ接続は将来） |
 | pier/abutment/footing正式図 | DEFER（V1.0外・REWRITE小） |
+| Bridge一般図/layout drawing | DEFER（V1.0外・専用図面生成なし・BL-02 span/support表CSVのみ必須） |
+| DXF plan-type-b-centerline・plan | DEFER（V1.0外・将来方針=ADAPT候補・V1必須はplan-type-a/profile-band/cross-section） |
 | glTF JSON export | CIM-03任意（GLBのみ必須） |
 | レポートPDF統合 | 任意 |
 

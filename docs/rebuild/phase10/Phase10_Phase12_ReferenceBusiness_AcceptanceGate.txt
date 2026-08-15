@@ -80,7 +80,11 @@ status: FINAL（Sol指摘2回反映）
     fixtureId=REF-MOUNTAIN-1・fixtureVersion同値（P0-07でmoduleChecksums manifest凍結）
   - 比較式（row別優先・fail-closed）: 各rowの{absTol,relTol}で dAbs<=absTol または dRel<=relTol（abs(exp)==0の場合はabsTolのみ）・
     欠損/NaN/Infinity/不一致rowは即FAIL（fail-closed）・全row PASSで適合
-  - 承認: 本Sol最終レビューGO通過後に記録（完了時に追記）
+  - 承認: Sol最終レビューGO（2026-08-15・docs/phase10-design-freeze @ 596e76d）にて承認。
+    承認記録: 最終レビュー19回目で「GO」・前回Medium条件（vitest list fail-closed除外検証）解消・
+    oracle独立照合・rawConsistency 1092件・negative 7件・row一意性・fixture consistency・
+    SB導出strict一致・report schema PASSを機械検証（verification_result.json OVERALL PASS）。
+    承認者: Sol（gpt-5.6-sol・read-only）・作業実施: opencode。Discord通知は最終Reportにて実施。
 - raw/display分離: uz.displayは表示専用DERIVED（正本へ書き戻さない）
 
 【受入シナリオ（空Project→成果品出力）】
