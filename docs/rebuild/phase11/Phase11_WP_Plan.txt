@@ -1,0 +1,101 @@
+====================================================================
+Phase 11 WP分解計画（STEP 1）
+====================================================================
+baseline: main @ 34916d0（Phase 10 Freeze merge済み・PR #1034）
+worktree: /tmp/opencode/p11-wp（branch feat/phase11-implementation）
+====================================================================
+
+P0-01..08 + P1-01 をWPへ分解（巨大PR一本にしない）
+
+--------------------------------------------------------------------
+WP-1 deliverables module shell新設（P0-01・SYS-03）
+- target: frontend/src/next/pages/DeliverablesModuleShellPage.tsx
+- 内容: /app/projects/{id}/modules/deliverables 正式ページ化・成果品一覧+export
+- NextApp.tsx に route追加
+- existing: 各成果品ソース（DXF/roadReport/CSV/GLB）
+- canonical: 各module正本・manifestのみ保存
+- stale: source fingerprint変化でSTALE・export禁止
+- tests: shell UI test・integration
+- risk: 低
+
+--------------------------------------------------------------------
+WP-2 analysis module shell新設（P0-05・AN-06）
+- target: frontend/src/next/pages/AnalysisModuleShellPage.tsx
+- 内容: /app/.../modules/analysis 正式ページ化（解析実行+結果+export）
+- CimModuleShellPageから分析UIを分離（共用コンポーネント化・REWRITE小）
+- existing: handleRunAnalysis・AuthoritativeResultPanel
+- tests: shell UI test・IF3→CSV
+- risk: 中
+
+--------------------------------------------------------------------
+WP-3 Road図面DXF production接続（P0-02・RD-02..04）
+- 内容: CanonicalRoadData→BuildIntermediateInput→正式図面pipeline→DXF
+- existing: roadEditorDraft.loadRoadEditorDraft・liner/drawing/formalDrawingWorkspaceDocuments・
+  liner/dxf/export/exportFormalDrawingDxf
+- 経路: readRoadData→loadRoadEditorDraft→buildIntermediateInputFromDomainDraft→
+  formal drawing pipeline（plan-type-a/profile-band/cross-section）→DXF byte
+- fail-closed: checksum mismatch時export禁止
+- tests: drawing bridge unit・DXF byte test
+- risk: 中
+
+--------------------------------------------------------------------
+WP-4 Road計算書production接続（P0-03・RD-05）
+- 内容: CanonicalRoadData→RoadReportContext→HTML/CSV bundle
+- existing: liner/exports/roadReport.ts・roadReportExport.ts・roadReportContext.ts
+- tests: roadReport接続test・byte/content
+- risk: 低
+
+--------------------------------------------------------------------
+WP-5 解析結果CSV export（P0-04・AN-05）
+- 内容: AuthoritativeResultPanel拡張（displacements/reactions/member forces CSV）
+- existing: exports/resultCsvExport.ts・memberForceReport.ts・if3ExportGate.ts
+- authoritative gate維持・IF3 resource→CSV
+- tests: IF3→CSV test
+- risk: 低
+
+--------------------------------------------------------------------
+WP-6 Bridge Layout span/support表CSV（P0-06・BL-02）
+- 内容: canonical bridgeLayoutDocument→span/support表CSV（preamble+superset列 Freeze）
+- existing: bridgeLayoutSpans.generateSpans・bridgeLayoutPlacement
+- CSV schema Freeze: preamble #spacer:type=bridge-layout;version=1.0;checksum=<hex>
+  superset列: type,id,index,supportType,label,startSupportId,endSupportId,startStation,
+  endStation,spanLength,startSkew,endSkew,station,skewRad,terrainElevation
+- tests: 表生成test・CSV byte/content
+- risk: 低
+
+--------------------------------------------------------------------
+WP-7 Reference Fixture Import API（P0-07）
+- 内容: POST /api/rebuild/fixture/import（backend新規）
+- REF-MOUNTAIN-1: road/terrain/existing/bridgeLayout/superstructure/substructure/
+  analysisSettings 全要素・原子commit・rollback・非null必須
+- 適用順: road→terrain→existing→bridgeLayout→superstructure→substructure→analysis
+- provenance: {fixtureId, fixtureVersion, importedAt, moduleChecksums, existingChecksum, operator}
+- frontend: deliverables moduleのfixture import UI
+- tests: round-trip・checksum一致・partial禁止
+- risk: 中
+
+--------------------------------------------------------------------
+WP-8 成果品byte/content検証Gate（P0-08）
+- 内容: V1必須exportのbyte/content/checksum検証test群
+- 対象: RD-02/03/04 DXF・SS-03 DXF・AN-05 CSV・CIM-02 GLB・RD-05 HTML/CSV・
+  BL-02 CSV・SYS-01 .spacerproj
+- tests: 各export byte/content unit test
+- risk: 低
+
+--------------------------------------------------------------------
+WP-9 旧/新導線整理（P1-01）
+- 内容: legacy /pro を「資産確認・参照」・新 /app をproduction正・canonical書込みは新/appのみ
+- existing: App.tsx routes
+- risk: 低
+
+--------------------------------------------------------------------
+WP-10 Number Oracle維持・End-to-End・Save/Restart・.spacerproj・UI Acceptance
+- 内容: Oracle再実行（46 row維持）・E2E縦断・Save/Electron Restart・.spacerproj round trip・
+  UI実画面Acceptance・screenshots・Luna確認・Sol Final Review・Final Report
+- risk: 中
+
+--------------------------------------------------------------------
+全WP共通:
+- target: 各WPでPR作成・main merge・Discord報告
+- 禁止: main直接commit・force push・reset --hard・dirty差分破棄・Oracle無断変更
+====================================================================
