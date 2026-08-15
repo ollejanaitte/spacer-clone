@@ -28,6 +28,7 @@ import { SuperstructureModuleShellPage } from "./pages/SuperstructureModuleShell
 import { SubstructureModuleShellPage } from "./pages/SubstructureModuleShellPage";
 import { CimModuleShellPage } from "./pages/CimModuleShellPage";
 import { DeliverablesModuleShellPage } from "./pages/DeliverablesModuleShellPage";
+import { AnalysisModuleShellPage } from "./pages/AnalysisModuleShellPage";
 import { SaveStatusIndicator } from "./components/SaveStatusIndicator";
 import { getProjectManager } from "./project/projectManagerInstance";
 import "./styles.css";
@@ -139,6 +140,8 @@ export function NextApp() {
             <SuperstructureModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "substructure" ? (
             <SubstructureModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
+          ) : route.moduleId === "analysis" ? (
+            <AnalysisModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "cim" ? (
             <CimModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "deliverables" ? (
