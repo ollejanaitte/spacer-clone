@@ -170,7 +170,11 @@ spacer-clone:
   - shard2: 2 failed（App.linerSaveLoad.test.tsx）→ **個別実行では PASS（順序依存flaky・既存）**
   - shard3: 1 failed（alignmentReconstruction.test.ts）→ 個別実行 PASS 確認（shard2対象に含めて確認）
   - shard4: 17 failed（App.linerReset 等 legacy /pro 系）→ 個別実行 11/11 PASS（順序依存flaky・既存）
-  - shard1: 実行継続中（PENDING・別途確認）
+  - shard1: 900sでは完了せず。verbose付き再実行（1800s）でも30分以上かかるため
+    **ユーザー指示により強制終了（JSON未生成）**。
+    → shard1 は遅延shardと特定。verboseログで **bridgeProject 系の重いE2Eが集中**することを確認:
+      mountain500.fullchain.e2e 約12s/テスト・cbdmDocument CBDM Save/Load/Replay 約9s・
+      superstructureAdapter 約6s 等（three.js系の重いファイルが shard1 に集中）
 
 site-context-prototype:
 - npm test: 19 files / 137 tests 全PASS（前回確認）
@@ -211,18 +215,21 @@ site-context-prototype:
 
 18. GitHub へ push した commit 一覧
 --------------------------------------------------------------------------------
-spacer-clone（294f324..301bebd）:
+spacer-clone（294f324..78b6b94）:
 - 0adc371 docs(integration): site-context unification contract P0
   (canonical=spacer-clone, boundaries, adapter contract)
 - 301bebd feat(integration): siteContext shared interface + schema mapping manifest
   + contract tests (P1)
+- 78b6b94 docs: final report - repository unification audit & integration preparation
+  （+ shard1強制終了後の最終状態追記）
 site-context-prototype（b2c87ab..9e499c0）:
 - 9e499c0 docs(integration): record unification strategy as absorbed repo
   (canonical=spacer-clone, mapping, phased plan)
 
 19. 残課題
 --------------------------------------------------------------------------------
-- spacer-clone 全件vitestの shard1 が完了していない（PENDING・実行継続中）
+- spacer-clone 全件vitest shard1 は未完了（遅延shard: bridgeProject系重いE2Eが集中。
+  900s・1800s とも完了せず、ユーザー指示で強制終了）
 - spacer-clone typecheck/build の既存エラー3件（phase10SbQuantityDerivation.test.ts・
   origin/main 由来・今回変更と無関係）
 - 全件実行時の legacy /pro App 系テスト（App.linerReset / App.linerSaveLoad /
@@ -233,7 +240,8 @@ site-context-prototype（b2c87ab..9e499c0）:
 
 20. 次に行うべき具体的な作業
 --------------------------------------------------------------------------------
-1. shard1 完了確認（完了後、全件 JSON の集計結果を記録）
+1. 全件vitest shard1 の遅延原因調査（bridgeProject系重いE2Eの分割・タイムアウト設定見直し。
+   必要なら Codex Sol へ委任）と、完了時の全件 JSON 集計記録
 2. P2: .sitecontext（zip）→ .spacerproj（spacerproj-json-v1）の Importer/Exporter を
    frontend/src/next/persistence/package/ に実装（integrity check・旧データ読込テスト）
 3. P3: terrain モジュール強化（EPSG分類器・平面直角変換・Heightfield/SCT1・GSI DEM取得を
@@ -249,5 +257,6 @@ site-context-prototype（b2c87ab..9e499c0）:
 - 統合監査・正本決定（Option A: spacer-clone正本）・統合境界確定・共有interface/schema
   mapping契約・関連テスト（14/14 PASS）・ドキュメント化・commit/push は完了。
 - 既知問題は全て「今回変更と無関係の既存・前回由来」（typecheck既存エラー・全件実行時の
-  legacy系 flaky・shard1 PENDING）であり、統合作業自体の完了は妨げていない。
+  legacy系 flaky・shard1の未完了＝bridgeProject系重いE2Eの集中による遅延＋ユーザー指示の
+  強制終了）であり、統合作業自体の完了は妨げていない。
 ================================================================================
