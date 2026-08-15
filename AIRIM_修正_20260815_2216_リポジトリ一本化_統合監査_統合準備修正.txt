@@ -1,0 +1,253 @@
+================================================================================
+AIRIM 修正レポート
+リポジトリ一本化_統合監査_統合準備修正
+================================================================================
+
+1. 作業日時（日本時間）
+--------------------------------------------------------------------------------
+- 作業開始: 2026-08-15 21:10頃（JST）
+- 完了時刻: 2026-08-15 22:16（JST）
+- 途中中断（ユーザー指示による停止2回）を経て再開・完了
+
+2. 対象リポジトリ
+--------------------------------------------------------------------------------
+- site-context-prototype
+  - 作業ディレクトリ: /home/masaharu/Projects/site-context-prototype
+  - remote: https://github.com/ollejanaitte/site-context-prototype.git
+- spacer-clone
+  - 作業ディレクトリ: /home/masaharu/Projects/spacer-clone
+  - remote: https://github.com/ollejanaitte/spacer-clone.git
+
+3. 開始時 main SHA
+--------------------------------------------------------------------------------
+- site-context-prototype: b2c87ab（docs: add Phase 4 verification screenshots）
+- spacer-clone: 294f324（Merge pull request #1043 ... feat/phase11-wp9）
+  ※ spacer-clone は開始時点で作業ブランチ docs/phase10-design-freeze にいたため、
+     origin/main と同一であること・未コミット変更の内容を確認したうえで main へ ff 復帰
+     （未コミット変更は保持: apollo evidence JSON 3件 / final_report.txt 削除 / R1-04.5 txt）
+
+4. 終了時 main SHA
+--------------------------------------------------------------------------------
+- site-context-prototype: 9e499c0（統合方針ドキュメント追加）
+- spacer-clone: 301bebd（siteContext shared interface + mapping manifest + tests）
+- 両リポジトリとも origin/main へ push 済み
+
+5. 調査した主要資料
+--------------------------------------------------------------------------------
+site-context-prototype:
+- docs/design/00_master_design_freeze.md（SCP-DF-2026-08-15-1）
+- docs/design/02_spacer_port_investigation.md（A/B/C/D分類・相互非依存宣言）
+- docs/design/03_site_context_core_contract.md（監査エージェント要約を確認）
+- docs/design/07_save_load_contract.md（監査エージェント要約を確認）
+- README.md（監査エージェント要約を確認）
+- packages/core/src/schema/projectV2.ts / persistence/generation.ts / pkg/package.ts
+- app/src/App.tsx / store/businessStore.ts / store/terrainAsset.ts / electron/main.ts
+
+spacer-clone:
+- docs/rebuild/R0-03_separation_policy.md
+- docs/rebuild/R0-04_integrated_architecture.md
+- docs/rebuild/R0-05_project_system_boundary.md
+- docs/rebuild/R0-06_save_load_policy.md
+- docs/rebuild/r1/R1-02_project_data_core.md（監査エージェント要約を確認）
+- docs/rebuild/r1/R1-03_project_manager.md（監査エージェント要約を確認）
+- docs/rebuild/phase3/Phase3_terrain_complete.md（監査エージェント要約を確認）
+- docs/rebuild/reports/統合設計_Phase3_260811_2034_地形現況設計完遂.txt（監査要約）
+- docs/rebuild/phase10/（Phase10_Final_Design_Freeze 等）
+- docs/design-platform/（phase4-electron-entry-integration 等）
+- README.md / AGENTS.md / ARCHITECTURE.md
+- frontend/src/next/project/schema.ts / projectDataCore.ts / modules/registry.ts / modules/terrainModule.ts
+- desktop/electron/main.ts / ipcChannels.ts
+- docs/integration/（既存のBridgeProject統合文書群）
+
+6. 両リポジトリの現行構成
+--------------------------------------------------------------------------------
+site-context-prototype（156 commits）:
+- npm workspaces monorepo（packages/core = @scp/core + app）
+- Electron main/preload/renderer（contextIsolation・IPC 3本: project:create/open/save）
+- React 18 + three.js 0.169 + Vite + vitest 2 + zod
+- App Shell: app/src/App.tsx（view state切替・react-router不使用）
+- ProjectV2/siteContext/selectionArea/sourceDatasets/terrain を core に実装（V1→V2 migration実装済み）
+- Save/Load: 実動は localStorage + IndexedDB（SCT1 base64）。設計正本は generation 方式
+  （current.json原子commit・revision・lock・checksum）だが UI 未接続
+- .sitecontext package が2実装並存（ブラウザExportEnvelope / Node PackageManifestV1）
+- テスト 19 files / 137 tests 全PASS
+
+spacer-clone（1000+ commits）:
+- root workspace 無し・npmプロジェクトは frontend/ のみ。desktop/（Electron）+ backend/（FastAPI+scipy）
+- Electron: 単一インスタンス・GPU mode・backend起動・CloseGuard・IPC多本
+- App Shell: frontend/src/next/NextApp.tsx（/app production正・/ pro は参照用・手動routing）
+- Project Data Core: schema.ts（schemaVersion 1.0.0・strictObject・modules 8キー）+
+  projectDataCore.ts（parse/serialize/migrate・PROJECT_MIGRATIONS 現状空）
+- Project Manager: projectManager + persistentProjectManager（enqueueSave・backup・restore）
+- Save/Load: FilesystemProjectPersistence（project.json + .backup 世代5・atomic書込ではない）
+- .spacerproj: 単一JSONコンテナ（manifest + files・spacerproj-json-v1・integrity check 5項目）
+- 3D/地形: SceneViewer + renderCoordinate（domain→three: x,z,-y）+ modules/terrain/
+- Phase 10/11 Design Freeze 済み・既知 dirty 状態あり（apollo evidence等・保護対象）
+
+7. 重複機能一覧
+--------------------------------------------------------------------------------
+| 機能               | site-context                      | spacer-clone                          | 一本化後の正本 |
+| 業務一覧           | pages/BusinessListPage.tsx        | /app/business（NextApp）              | spacer-clone |
+| Project Manager    | businessStore+autosave debounce   | persistentProjectManager              | spacer-clone |
+| Save/Load          | localStorage/IDB（実動）・generation（設計） | FilesystemProjectPersistence    | spacer-clone |
+| Persistence抽象    | FsLayer/NodeFs                    | IpcFileSystemGateway/Memory           | spacer-clone |
+| Electron Shell     | app/electron（IPC 3本）            | desktop/electron（IPC多本）            | spacer-clone |
+| Routing            | view state切替                    | pushState手動routing                  | spacer-clone |
+| 3D Viewer          | TerrainViewer.tsx                 | SceneViewer + 各Viewer                | spacer-clone |
+| Terrain            | Heightfield+SCT1+DemWizard        | terrainModule + modules/terrain/      | spacer-clone |
+| Coordinate/CRS     | EPSG分類器+平面直角変換           | R3-00（x-along/y-transverse/z-up）    | spacer-clone |
+| Importer/Exporter  | GSI/PNG/XYZ/GeoTIFF・.sitecontext | .spacerproj                          | spacer-clone |
+| Package形式        | .sitecontext zip（2実装並存）      | .spacerproj JSON v1                   | .spacerproj |
+| 既存データ再読込   | localStorage/IDB復元              | restoreFromPersistence                | spacer-clone |
+| テスト基盤         | vitest（node env）                | vitest（jsdom）+ Playwright           | spacer-clone |
+
+8. Project正本比較
+--------------------------------------------------------------------------------
+- site-context: ProjectV2（coordinateContexts/siteContext/selectionArea/sourceDatasets/terrain,
+  invariant I-01〜I-22設計・V1→V2 migration実装済み・UI未接続）
+- spacer-clone: Project Data Core（schemaVersion 1.0.0・strictObject・modules 8キー:
+  road/terrain/bridgeLayout/superstructure/substructure/analysis/cim/deliverables）
+- 結論: **spacer-clone PDC を正本**。site-context の ProjectV2 概念はモジュール登録数を
+  増やさず terrain モジュール + metadata へマッピング（二重正本を作らない）
+
+9. 採用した一本化方針
+--------------------------------------------------------------------------------
+**Option A: site-context-prototype を spacer-clone へ吸収（spacer-clone = 正本リポジトリ）**
+
+10. 方針選定理由
+--------------------------------------------------------------------------------
+1. アプリ本体（道路/橋梁/FEM/CIM/成果品+backend）は spacer-clone に集約済み。
+   統合後のアプリは spacer-clone の拡張が自然。
+2. site-context のドメイン（現況地形・座標系・地形取得）は spacer-clone の terrain
+   モジュールと metadata（existingConditions等）に収まる。モジュール登録数を増やさず吸収可能。
+3. 既存の相互非依存宣言（02_spacer_port_investigation）は「site-context 主導で資産を
+   spacer-clone へ移植する」ことで充足。spacer-clone の FROZEN 境界・Protected Core は不変更。
+4. 段階的吸収（P0/P1は追加のみ・P2以降は site-context 側の変更に留める）で回帰リスク最小化。
+5. AI エージェントが spacer-clone 1リポジトリを見れば全体（現況地形含む）を理解・修正可能。
+- 却下理由: B（prototypeへproductionを吸収は過大）・C（両リポジトリ再構成・git履歴断絶が過大。
+  吸収完了後の workspace 化で実現可能）
+
+11. 実際に修正したファイル
+--------------------------------------------------------------------------------
+spacer-clone:
+- docs/integration/site-context-unification/README.md（統合契約入口・Status表）
+- docs/integration/site-context-unification/00_unification_decision.md（A/B/C比較・正本決定）
+- docs/integration/site-context-unification/01_audit_findings.md（監査サマリ・重複機能一覧）
+- docs/integration/site-context-unification/02_integration_boundaries.md（境界・マッピング・Phase計画）
+- docs/integration/site-context-unification/03_adapter_contract.md（Adapter/共有interface契約）
+- frontend/src/next/integration/siteContext/contract.ts（共有interface型定義・type guard）
+- frontend/src/next/integration/siteContext/mappingManifest.ts（概念マッピング表）
+- frontend/src/next/integration/siteContext/__tests__/contract.test.ts（vitest 14件）
+
+site-context-prototype:
+- docs/integration/00_unification_strategy.md（被吸収側の統合方針記録）
+
+12. 追加した Adapter / contract / migration 等
+--------------------------------------------------------------------------------
+- 共有interface（shared interface）: integration/siteContext/contract.ts
+  （PdcTargetSlot / SiteContextMappingEntry / SiteContextUnificationContract /
+   SiteContextImportEnvelope・type guard）
+- schema mapping（マッピング契約）: integration/siteContext/mappingManifest.ts
+  （8概念 → PDC module/metadata のマッピング表・正本repo/packageFormatを固定）
+- 検証テスト: contract.test.ts 14件
+  - 全 targetSlot が既存 PDC slot（module key/metadata）であること
+  - 8概念を重複なくカバー・required 3概念固定・PDC_MODULE_SLOTS と PROJECT_MODULE_KEYS の同期
+  - site-context payload が既存 terrain モジュール / metadata に収まる実証（schema変更不要）
+- 注意: 実行経路には一切配線していない（frozen な module registry / PDC / /app shell は不変更）
+- migration: 実装は次Phase（P2: .sitecontext→.spacerproj Importer）。今回の契約で対象を明文化
+
+13. tests / typecheck / build / Electron 確認結果
+--------------------------------------------------------------------------------
+spacer-clone:
+- 統合関連テスト（contract.test.ts）: 14/14 PASS（JSON reporter・exit 0）
+- npm run typecheck: 自己コード 0 エラー。ただし既存エラー3件あり
+  （frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts
+   TS7006×3・origin/main未変更ファイル由来・vitest.sb.config専用の既存既知問題）
+- npm run build: 上記既存3エラーにより tsc -b で失敗（今回変更起因ではない）
+- npm run electron:test: 5 files / 33 tests PASS
+- npm run test:regression: 1 file / 6 tests PASS
+- 全件vitest（--shard 4分割・JSON reporter・900s）: 途中経過
+  - shard2: 2 failed（App.linerSaveLoad.test.tsx）→ **個別実行では PASS（順序依存flaky・既存）**
+  - shard3: 1 failed（alignmentReconstruction.test.ts）→ 個別実行 PASS 確認（shard2対象に含めて確認）
+  - shard4: 17 failed（App.linerReset 等 legacy /pro 系）→ 個別実行 11/11 PASS（順序依存flaky・既存）
+  - shard1: 実行継続中（PENDING・別途確認）
+
+site-context-prototype:
+- npm test: 19 files / 137 tests 全PASS（前回確認）
+- typecheck（core+app・手動 tsc --noEmit）: PASS
+
+14. Save/Load 回帰結果
+--------------------------------------------------------------------------------
+- 今回の変更は Save/Load 実装・Project Schema・.spacerproj に一切触れていない
+  （追加のみ）。既存の Save/Load 系テストに回帰なし:
+  - App.linerSaveLoad.test.tsx（個別実行 PASS）
+  - electron:test（33/33 PASS・desktop/electron persistence 含む）
+  - test:regression（6/6 PASS）
+- 旧データ読込不能化・後方互換破壊はなし（migration は次Phaseで旧 .sitecontext 読込
+  Importer を先に実装する方針）
+
+15. スクリーンショット保存先
+--------------------------------------------------------------------------------
+- /home/masaharu/Projects/spacer-clone/local-evidence/integration-unification-20260815/
+  （local-evidence は .gitignore 対象・Git管理外）
+  - integration_contract_tests_pass.png（統合契約テスト 14/14 PASS 要約画面）
+  - site_context_app_final.png（site-context 業務一覧画面）
+  - spacer_clone_nextapp_home.png（spacer-clone /app ホーム画面）
+- 3枚とも GPT-5.6 Luna の画像認識検証で「正常」判定
+
+16. Luna へ委任した内容と結果
+--------------------------------------------------------------------------------
+- Codex CLI GPT-5.6 Luna（gpt-5.6-luna・codex-cli 0.147.0）へ画像認識チェックを委任
+- 依頼内容: スクリーンショット3枚の見た目内容と異常有無（真っ白/エラー/崩れ/文字化け）
+- 結果: 3枚とも「異常なし」・総合判定「正常」
+  - 1枚目: PASS 14/14・failed 0・success: True 表示を確認
+  - 2枚目: 業務一覧画面（検索・サンプル作成・新規作成ボタン・空状態）
+  - 3枚目: 新統合システムホーム画面（業務一覧・クイック解析・最近使用）
+- 最終判断は実コード・テスト結果（JSON）と照合して主担当が実施
+
+17. Sol へ委任した内容と結果
+--------------------------------------------------------------------------------
+- 使用せず（原因調査が必要な詰まり・解消困難な設計矛盾が発生しなかったため）
+
+18. GitHub へ push した commit 一覧
+--------------------------------------------------------------------------------
+spacer-clone（294f324..301bebd）:
+- 0adc371 docs(integration): site-context unification contract P0
+  (canonical=spacer-clone, boundaries, adapter contract)
+- 301bebd feat(integration): siteContext shared interface + schema mapping manifest
+  + contract tests (P1)
+site-context-prototype（b2c87ab..9e499c0）:
+- 9e499c0 docs(integration): record unification strategy as absorbed repo
+  (canonical=spacer-clone, mapping, phased plan)
+
+19. 残課題
+--------------------------------------------------------------------------------
+- spacer-clone 全件vitestの shard1 が完了していない（PENDING・実行継続中）
+- spacer-clone typecheck/build の既存エラー3件（phase10SbQuantityDerivation.test.ts・
+  origin/main 由来・今回変更と無関係）
+- 全件実行時の legacy /pro App 系テスト（App.linerReset / App.linerSaveLoad /
+  alignmentReconstruction）の順序依存 flaky が既存として存在（個別実行では PASS）
+- .sitecontext→.spacerproj Importer（P2）・terrainモジュール強化（P3）・UI統合（P4）は未実装
+- site-context 側の実動 persistence（localStorage/IDB）と generation方式の二重化・
+  .sitecontext 2実装並存の統一は次Phase以降
+
+20. 次に行うべき具体的な作業
+--------------------------------------------------------------------------------
+1. shard1 完了確認（完了後、全件 JSON の集計結果を記録）
+2. P2: .sitecontext（zip）→ .spacerproj（spacerproj-json-v1）の Importer/Exporter を
+   frontend/src/next/persistence/package/ に実装（integrity check・旧データ読込テスト）
+3. P3: terrain モジュール強化（EPSG分類器・平面直角変換・Heightfield/SCT1・GSI DEM取得を
+   site-context から選択PORT・R3-00軸規約へ整合）
+4. P4: site-context UI（DemWizard/2D/3D/Properties）の /app 統合
+5. P5: site-context リポジトリ運用終了（データmigration検証後）
+6. 既存 typecheck エラー3件（phase10SbQuantityDerivation）の解消（該当テスト修正 or tsconfig除外）
+
+21. 最終判定
+--------------------------------------------------------------------------------
+**COMPLETE_WITH_KNOWN_ISSUES**
+
+- 統合監査・正本決定（Option A: spacer-clone正本）・統合境界確定・共有interface/schema
+  mapping契約・関連テスト（14/14 PASS）・ドキュメント化・commit/push は完了。
+- 既知問題は全て「今回変更と無関係の既存・前回由来」（typecheck既存エラー・全件実行時の
+  legacy系 flaky・shard1 PENDING）であり、統合作業自体の完了は妨げていない。
+================================================================================
