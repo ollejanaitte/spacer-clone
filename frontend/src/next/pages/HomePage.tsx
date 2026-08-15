@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Project } from "../project/schema";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
-import { navigateTo, NEXT_BUSINESS_LIST_PATH, NEXT_QUICK_PATH } from "../routes";
+import { navigateTo, NEXT_BUSINESS_LIST_PATH, NEXT_QUICK_PATH, LEGACY_SYSTEM_PATH } from "../routes";
 
 export type RecentDataItem =
   | { kind: "project"; project: Project }
@@ -56,6 +56,21 @@ export function HomePage() {
             新規解析
           </button>
         </article>
+      </div>
+
+      <div className="next-home-note" data-testid="home-production-note">
+        <p className="next-ok-text">本環境（/app）がproduction正です。canonicalデータの書込みはすべて /app 経由で行います。</p>
+        <p className="next-hint">
+          <button
+            type="button"
+            className="next-link-button"
+            data-testid="home-legacy-reference"
+            onClick={() => window.location.assign(LEGACY_SYSTEM_PATH)}
+          >
+            legacy /pro（資産確認・参照用）
+          </button>
+          <span> は既存資産の確認・参照にのみ利用します。</span>
+        </p>
       </div>
 
       <div className="next-home-recent" data-testid="home-recent">
