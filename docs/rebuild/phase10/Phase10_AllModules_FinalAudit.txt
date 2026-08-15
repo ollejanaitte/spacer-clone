@@ -35,7 +35,7 @@ baseline: e3e2d3b（main・Phase 9-04R3 COMPLETE後）
 - core: domain/placement/piers/spans/supportHandoff/spanHandoff/integrityGate
 - 3D: bridgeLayoutScene・BridgeLayoutSceneViewer
 - tests: 11＋UI 3
-- 状態: COMPLETE（成果品としてlayout drawing候補はPhase 11評価）
+- 状態: COMPLETE（layout drawingはBL-02/DEFERに分類確定）
 
 【5. Superstructure】
 - route: /app/projects/{id}/modules/superstructure
@@ -85,12 +85,12 @@ baseline: e3e2d3b（main・Phase 9-04R3 COMPLETE後）
   - Superstructure DXF: 新アプリ
   - CIM GLB: 新アプリ
   - .spacerproj: 新アプリ
-- IFC export: なし（DEFER候補）
-- バイナリPDF: なし（全てprint-based HTML）→ DEFER/方針決定
+- IFC export: なし（DEFER確定）
+- バイナリPDF: なし（全てprint-based HTML）→ DEFER確定
 - deliverables module: 登録のみ（専用ページなし・プレースホルダー）
 
 【総括】
 - 計算・CIM・解析・Rescue・PDC/persistence: COMPLETE
 - 成果品出力（図面/報告/export）: 新アプリへの正式統合がPhase 11の主作業
-- 特にRoad図面（平面/縦断/横断）・Analysis結果export・STLを新アプリへ接続する設計が必要
+- 特にRoad図面（平面/縦断/横断）・Analysis結果exportを新アプリへ接続する設計が必要（STLはDEFER・V1.0外）
 ====================================================================

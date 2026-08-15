@@ -1,0 +1,179 @@
+====================================================================
+Phase10_Phase11_Implementation_Backlog（STEP 14 Phase 11実装Backlog）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+優先度: P0（V1.0必須・Phase 12完走に必須）/ P1（V1.0必須・RESTORE/ADAPT）/ P2（品質・補助）/ DEFER（V1.0外）
+
+--------------------------------------------------------------------
+P0-01 deliverables module 新設（成果品ページ・SYS-03）
+- goal: /app/projects/{id}/modules/deliverables を正式ページ化し、図面/報告/exportを統合
+- source: 既存成果品各（Road図面/Super DXF/Sub 2D/解析export）
+- target: next/pages/DeliverablesModuleShellPage.tsx
+- policy: deliverablesのSoT境界を固定
+  - canonical保存: 生成条件・manifestのみ（図面/CSV/DXF等の成果値は複製保存しない）
+  - derived: 成果品は各canonicalから決定論的に再生成
+  - 依存module: road・bridgeLayout・superstructure・substructure・analysis・cim（registry依存を拡張）
+  - fingerprint/stale/invalid gate: 各sourceのfingerprint変化でSTALE・export禁止・再生成で解除
+- module: deliverables
+- tests: shell UI test・integration・stale/再生成test
+- E2E: /app 成果品ページ表示・各export実行
+- acceptance: 成果品一覧→各exportボタン→実ファイル（byte/content検証）
+- risk: 低
+
+P0-02 Road図面（平面/縦断/横断・RD-02..04）を新アプリへ接続
+- goal: 新Road canonical（CanonicalRoadData）から平面図/縦断図/横断図を生成・DXF実出力
+- source: liner/drawing/・liner/dxf/（legacy資産）
+- target: road moduleがhost（図面生成・DXF builder所有）・deliverables moduleがmanifest/download/stale判定所有
+- policy: 正式経路を固定
+  readRoadData（checksum検証）→ loadRoadEditorDraft(canonical)（内部で
+  buildIntermediateInputFromDomainDraft(canonical.domainDraft)を実行しBuildIntermediateInputを返す）→
+  formal drawing pipeline（ADAPT）。
+  変換関数の二重呼出しはしない。invalid/checksum mismatch時はexport禁止（fail-closed）。
+- module: road（builder所有）＋deliverables（manifest/download所有）
+- tests: drawing bridge unit・DXF byte test・checksum mismatch拒否test
+- E2E: 新アプリで平面（plan-type-a）/縦断（profile-band）/横断（cross-section）のDXFダウンロードを個別Gate化（plan-type-b-centerline・planは任意）
+- acceptance: 実画面で図面SVG+DXF実ファイル（byte/content検証）・Luna確認
+- risk: 中（data interface bridge）
+
+P0-03 Road計算書（HTML/CSV・RD-05）を新アプリへ接続
+- goal: 新canonicalから道路計算書（HTML+CSV bundle）を出力
+- source: liner/exports/roadReport.ts・roadReportExport.ts
+- target: deliverables module内（builder=road module所有）
+- policy: 同上bridge・ADAPT・manifest/download/stale=deliverables
+- module: road（builder）＋deliverables（manifest）
+- tests: roadReport接続test
+- E2E: HTML/CSVダウンロード
+- acceptance: 実ファイル・内容検証
+- risk: 低
+
+P0-04 解析結果export（CSV・AN-05）を新アプリへ接続
+- goal: AuthoritativeResultPanelにCSV export（displacements/reactions/member forces）
+- source: exports/resultCsvExport.ts・memberForceReport.ts（IF3 gate）
+- target: analysis/deliverables・AuthoritativeResultPanel拡張（builder=analysis module所有）
+- policy: IF3 resource→CSV・authoritative gate維持（ADAPT）・manifest/download=deliverables
+- module: analysis（builder）＋deliverables（manifest）
+- tests: IF3→CSV test
+- E2E: authoritative後CSVダウンロード
+- acceptance: 実CSV・非零値・IF3 gate
+- risk: 低
+
+P0-05 analysis module 専用shellページ新設（AN-06）
+- goal: /app/.../modules/analysis を正式ページ化（解析実行+結果表示+export）
+- source: CimModuleShellPageのhandleRunAnalysis＋AuthoritativeResultPanel
+- target: next/pages/AnalysisModuleShellPage.tsx
+- policy: CIM shellから解析UIを分離・共用コンポーネント化（REWRITE小）
+- module: analysis
+- tests: shell UI test
+- E2E: /app analysisで解析→IF3→export
+- acceptance: 実画面・authoritative・export
+- risk: 中
+
+P0-06 Bridge Layout span/support表出力（BL-02）
+- goal: span table/support表を成果品としてCSV出力（形式・列・checksum格納をFreeze）
+- source: bridgeLayoutSpans/bridgeLayoutPlacement
+- target: deliverables内（canonical=bridgeLayoutDocument・builder=bridgeLayout module所有）
+- policy: 軽量REWRITE小・canonicalから導出・manifest/download=deliverables・CSV schema Freeze:
+  - 単一CSVファイル（span行/support行をtype列で区別）・1行=1エンティティ
+  - 共通superset列（1本）: type,id,index,supportType,label,startSupportId,endSupportId,startStation,endStation,spanLength,startSkew,endSkew,station,skewRad,terrainElevation
+  - 行種別別 required/optional（必須=入力・optional=空文字可）:
+    - span行（type=span）: required=type,id,index,startSupportId,endSupportId,startStation,endStation,spanLength・
+      optional=label,startSkew,endSkew・空文字=supportType,station,skewRad,terrainElevation
+    - support行（type=support）: required=type,id,label,station・optional=skewRad,terrainElevation,supportType・
+      空文字=index,startSupportId,endSupportId,startStation,endStation,spanLength,startSkew,endSkew
+  - 単位（列単位）: station/length=m（精度3桁）・skew/角度=rad（精度6桁）・index=整数・label/type/id=文字列・
+    terrainElevation=m（精度3桁・未設定=空文字）
+  - ソート: station昇順（span行はstartStation昇順）
+  - 文字コードUTF-8・改行LF・quoting規則のみRFC 4180（適用範囲を明記）
+  - checksum: canonical contentChecksumをmanifestとpreamble行へ格納
+  - preamble（1行目）文法（Freeze）: #spacer:type=bridge-layout;version=1.0;checksum=<hex>
+    ・BL-02 parserは1行目を検証して読み飛ばす（必須）
+    ・2行目=CSV header（superset列）・3行目以降=データ
+    ・preamble/header存在・checksum一致をP0-08で検証
+- module: bridgeLayout/deliverables
+- tests: 表生成test・CSV byte/content検証（列/単位/null=空文字/ソート/checksum/quoting）
+- acceptance: 実画面+CSV実ファイル（content検証）
+- risk: 低
+
+--------------------------------------------------------------------
+P1-01 旧/新画面切り替え時の導線整理（/pro legacy と /app の関係）【Phase 12 Completion Gate必須】
+- goal: legacy /pro を「資産確認・参照」とし、新 /app をproduction正とする明示
+- source: App.tsx routes
+- target: ガイド（lobby/home）・production navigationからlegacyを外す（参照用途表示）
+- policy: 非破壊（legacy残す・新appを正式化・canonical書込みは新/app経由のみ）
+- risk: 低
+
+--------------------------------------------------------------------
+P0-07 Reference Mountain fixture import経路（Phase 12開始必須条件）
+- goal: 「空Project＋明示的なReference Mountain fixture import」を受入セットアップとして確立。
+  自動seedを暗黙利用しない。
+- source: createReferenceMountain（terrain/referenceMountain.ts）・既存E2E（referenceMountainE2E/referenceRoadE2E）パターン
+- target: 受入用fixture importer（deliverables module UI・一意）
+- policy:
+  - 正式import経路（一意・代替なし）: deliverables moduleの「fixture import」UIのみ
+    route = /app/projects/{id}/modules/deliverables・import API = POST /api/rebuild/fixture/import（backend）
+  - 所有: 全bundle要素のimport所有=deliverables module（一意）
+  - fixture version: REF-MOUNTAIN-1・bundle要素（schema version固定）:
+    | 要素 | schema version | 生成元 | 必須payload |
+    |---|---|---|---|
+    | road | CanonicalRoadData 0.3.0 | createReferenceMountain.roadHorizontal/Vertical/CrossSection | alignment/vertical/crossSections |
+    | terrain | TerrainDocument 0.1.0 | createReferenceMountain.terrainGrid | grid/mesh |
+    | existing | ExistingConditionsDocument 0.1.0 | createReferenceMountain.existing | entities[] |
+    | bridgeLayout | BridgeLayoutDocument 0.1.0 | bridgeLayoutFromRange(100,450)+P1@300 | bridgeId/range/supports/spans |
+    | superstructure | SuperstructureDocument 0.1.0 | generateSuperstructureFromLayout+declared section | girder/section/material/deck/bearing |
+    | substructure | SubstructureDocument 0.1.0 | generateSubstructureFromLayout | supports/placement/pile |
+    | analysisSettings | AnalysisSettings 1.0.0 | declared section/material | section/material/settings |
+  - 適用順序: road→terrain→existing→bridgeLayout→superstructure→substructure→analysis（固定）
+  - 原子性（Freeze）: 全bundle要素を先にschema/checksum検証→単一transactionで全module commit→provenance記録。
+    途中失敗時はProjectを無変更（rollback）とする（部分適用禁止）
+  - REF-MOUNTAIN-1は全要素必須: 6 moduleChecksumsとexistingChecksumは全て非null必須（欠落moduleはimport拒否）
+  - checksum: module別contentChecksum集合（road/terrain/bridgeLayout/superstructure/substructure/analysis）をprovenanceに記録。
+    existingはmetadata配下のためexistingChecksumとして別途記録（moduleChecksums対象外であることを明示）
+  - provenance schema: {fixtureId, fixtureVersion, importedAt, moduleChecksums:{moduleId: hexDigest|null}, existingChecksum: hexDigest|null, operator}
+    ※ fixtureVersion（oracle/report chain と同一field名に統一）
+  - moduleChecksums固定キー: road, terrain, bridgeLayout, superstructure, substructure, analysis（analysisSettings→analysisに正規化）
+  - digest形式: sha256 hex・null条件: module未設定時
+  - analysisSettingsは分析設定としてanalysis moduleChecksumの生成元（analysisSettings→analysis対応を確定）
+  - checksum比較: REF-MOUNTAIN-1は全module非null必須（nullはimport拒否）・将来のoptional moduleのみnull許容（現時点は非null一択）
+- module: 全module横断・import所有=deliverables module一意（代替なし）
+- tests: fixture import round-trip test・checksum一致test
+- E2E: 空Project→fixture import→解析→成果品（Phase 12シナリオの前段）・P0-07 PASS必須
+- acceptance: 投入地点・操作・provenance（fixtureId/version/moduleChecksums）記録
+- risk: 中
+
+P0-08 成果品byte/content検証Gate（V1必須全export・P0）
+- goal: 全V1必須exportの実バイト・parse・content検証（ファイル名・非空byteだけでPASSさせない）
+- policy: 各Deliverable IDについて生成元canonical checksum対応・parser・必須content・意味検証を実施:
+  - RD-02 DXF（plan-type-a）: canonical checksum対応・DXF entity（LINE/ARC/TEXT/LWPOLYLINE等）・必須content（道路外郭/中心線）
+  - RD-03 DXF（profile-band）: 同上・縦断線/station/地盤線
+  - RD-04 DXF（cross-section）: 同上・横断勾配線/路肩/車線
+  - SS-03 DXF: 同様（主桁/床版/横桁）
+  - AN-05 CSV: ヘッダ/列/値（非零・単位）
+  - CIM-02 GLB: 生成元checksum・必須ノード（layer:*）
+  - RD-05 HTML/CSV: 必須セクション・grid_points/ldist等
+  - BL-02 CSV: preamble（1行目）検証・skip・2行目header検証・列/checksum一致
+  - SYS-01 .spacerproj: package parser・schema/version・module集合・manifest・sha256/integrity・import後canonical一致
+- tests: 各exportのbyte/content unit test
+- E2E: 実ファイルdownload→parse/content検証
+- risk: 低
+
+P2-01 品質向上・補助
+- goal: V1必須exportのbyte/content検証はP0-08が唯一の正とし、P2では追加品質項目のみ
+- 追加項目: 大規模Projectでのexport性能・多重export並列・UIレスポンス計測（P0-08対象外の補助）
+- risk: 低
+
+P2-02 evidence/screenshot統合
+- goal: 成果品画面をdocs/rebuild/evidenceへ自動収集
+
+--------------------------------------------------------------------
+DEFER（V1.0外）
+- バイナリPDF生成（DEFER・V1.0外・Phase 11実装禁止）
+- IFC export
+- GA sheet（Apollo drawingSet）新アプリ統合
+- pier/abutment/footing正式図（DEFER・V1.0外）
+- 下部工計算書（HOLD_NOT_AVAILABLE維持）
+- STL export新アプリ接続（DEFER・V1.0外・将来方針=ADAPT候補・P1-02廃止）
+
+====================================================================

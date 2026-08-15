@@ -30,9 +30,14 @@ baseline: e3e2d3b
 【3. DXF export】
 - formal DXF（5 kind）: liner/dxf/export/exportFormalDrawingDxf.ts
   - plan-type-a（road_shape）・plan-type-b-centerline・plan・profile-band・cross-section
+- V1必須kind決定（固定）:
+  - RD-02 平面図: plan-type-a（road_shape・全幅道路形）に固定
+  - RD-03 縦断図: profile-band に固定
+  - RD-04 横断図: cross-section に固定
+  - plan-type-b-centerline・plan（重複）: 任意（V1.0必須にしない）
 - legacy Toolbar DXF: liner/exports/{linerPlanDxf,linerProfileDxf}.ts
 - E2E: tests/e2e/phase5-step3-dxf-export.spec.ts・p3-d07-print-dxf-parity.spec.ts（byte検証）
-- 状態: legacyでREAL .dxf生成・新アプリ未接続
+- 状態: legacyでREAL .dxf生成・新アプリ未接続（Phase 11・RD-02..04接続）
 
 【4. 報告（計算書）】
 - HTML+CSV: liner/exports/roadReport.ts・roadReportExport.ts（grid_points/ldist/haunch/hoso CSV）
@@ -52,12 +57,12 @@ baseline: e3e2d3b
 | 成果 | 判定 | 備考 |
 |---|---|---|
 | 平面線形/座標/要素表 | KEEP（新module） | V1.0必須 |
-| 平面図 | RESTORE/ADAPT（legacy→新アプリ接続） | V1.0必須・新canonicalへbridge |
-| 縦断図 | RESTORE/ADAPT（同上） | V1.0必須 |
-| 横断図 | RESTORE/ADAPT（同上） | V1.0必須 |
-| DXF | RESTORE/ADAPT（legacy→新アプリ） | V1.0必須（実ファイル） |
-| HTML/CSV報告 | ADAPT（新アプリへ接続） | V1.0必須（計算書候補） |
-| PDF | DEFER（print-based・バイナリPDFなし） | 方針決定必要 |
+| 平面図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須・新canonicalへbridge |
+| 縦断図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須 |
+| 横断図 | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須 |
+| DXF | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須（実ファイル） |
+| HTML/CSV報告（RD-05） | KEEP+ADAPT（既存コードKEEP・新アプリへADAPT） | V1.0必須（P0-03） |
+| PDF | DEFER（V1.0外確定・print-based HTMLのみ） | V1.0外・バイナリPDFなし |
 | 2D Preview（新） | KEEP | 簡易プレビュー |
 
 【Phase 11 Backlogへの要点】

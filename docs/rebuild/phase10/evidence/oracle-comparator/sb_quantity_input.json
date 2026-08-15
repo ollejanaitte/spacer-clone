@@ -1,0 +1,21 @@
+{
+  "supports": [
+    "A1",
+    "P1",
+    "A2"
+  ],
+  "A1": {
+    "concrete": 214.4,
+    "pile": 0
+  },
+  "P1": {
+    "concrete": 187.92000000000002,
+    "pile": 0
+  },
+  "A2": {
+    "concrete": 214.4,
+    "pile": 0
+  },
+  "totalConcrete": 616.72,
+  "totalPile": 0
+}

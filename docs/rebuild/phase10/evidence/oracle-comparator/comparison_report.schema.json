@@ -1,0 +1,646 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Phase 10 Oracle Comparison Report Schema",
+ "description": "spacer-oracle-comparator-v1 \u306e\u51fa\u529b\u5951\u7d04\uff08\u518d\u73fe\u53ef\u80fd\u306a\u691c\u8a3c\u8a3c\u8de1\uff09",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schemaVersion",
+  "comparatorId",
+  "generatedAt",
+  "runConditions",
+  "inputChainOfCustody",
+  "comparatorBundle",
+  "rawConsistency",
+  "rows",
+  "modelCounts",
+  "loadBalance",
+  "coverage",
+  "pass",
+  "failures"
+ ],
+ "properties": {
+  "schemaVersion": {
+   "type": "string",
+   "const": "1.0.0"
+  },
+  "comparatorId": {
+   "type": "string",
+   "const": "spacer-oracle-comparator-v1"
+  },
+  "generatedAt": {
+   "type": "string"
+  },
+  "runConditions": {
+   "type": "object",
+   "additionalProperties": true,
+   "required": [
+    "solver",
+    "document",
+    "loadCaseId",
+    "solverBuild"
+   ]
+  },
+  "inputChainOfCustody": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "oraclePath",
+    "oracleSha256",
+    "rawResultPath",
+    "rawResultSha256",
+    "solverInputPath",
+    "solverInputSha256",
+    "fixtureId",
+    "fixtureVersion",
+    "projectId",
+    "modelChecksum",
+    "contentChecksum"
+   ],
+   "properties": {
+    "oraclePath": {
+     "type": "string"
+    },
+    "oracleSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "rawResultPath": {
+     "type": "string"
+    },
+    "rawResultSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "solverInputPath": {
+     "type": "string"
+    },
+    "solverInputSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "fixtureId": {
+     "type": "string"
+    },
+    "fixtureVersion": {
+     "type": "string"
+    },
+    "projectId": {
+     "type": "string"
+    },
+    "modelChecksum": {
+     "type": "string"
+    },
+    "contentChecksum": {
+     "type": "string"
+    }
+   }
+  },
+  "rows": {
+   "type": "array",
+   "minItems": 46,
+   "maxItems": 46,
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "kind",
+     "entityId",
+     "component",
+     "expected",
+     "actual",
+     "unit",
+     "absTol",
+     "relTol",
+     "dAbs",
+     "dRel",
+     "rule",
+     "pass"
+    ],
+    "properties": {
+     "kind": {
+      "enum": [
+       "reaction",
+       "memberForce",
+       "displacement",
+       "quantity",
+       "coordinate"
+      ]
+     },
+     "entityId": {
+      "type": "string"
+     },
+     "component": {
+      "type": "string"
+     },
+     "expected": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "actual": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "unit": {
+      "type": "string"
+     },
+     "absTol": {
+      "type": "number",
+      "minimum": 0
+     },
+     "relTol": {
+      "type": "number",
+      "minimum": 0
+     },
+     "dAbs": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "dRel": {
+      "type": [
+       "number",
+       "null"
+      ]
+     },
+     "rule": {
+      "enum": [
+       "absTol",
+       "relTol",
+       "FAIL",
+       "FAIL(abs0)",
+       "missing"
+      ]
+     },
+     "pass": {
+      "type": "boolean"
+     },
+     "displayScale": {
+      "type": [
+       "number",
+       "null"
+      ]
+     }
+    }
+   }
+  },
+  "modelCounts": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "rows",
+    "pass"
+   ],
+   "properties": {
+    "rows": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "nodes",
+      "members",
+      "sections",
+      "materials",
+      "supports",
+      "bearings",
+      "nodalLoads"
+     ],
+     "properties": {
+      "nodes": {
+       "$ref": "#/definitions/countEntry"
+      },
+      "members": {
+       "$ref": "#/definitions/countEntry"
+      },
+      "sections": {
+       "$ref": "#/definitions/countEntry"
+      },
+      "materials": {
+       "$ref": "#/definitions/countEntry"
+      },
+      "supports": {
+       "$ref": "#/definitions/countEntry"
+      },
+      "bearings": {
+       "$ref": "#/definitions/countEntry"
+      },
+      "nodalLoads": {
+       "$ref": "#/definitions/countEntry"
+      }
+     }
+    },
+    "pass": {
+     "type": "boolean"
+    }
+   }
+  },
+  "loadBalance": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "expected",
+    "actual",
+    "delta",
+    "relTol",
+    "pass"
+   ],
+   "properties": {
+    "expected": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "applied",
+      "reaction"
+     ],
+     "properties": {
+      "applied": {
+       "type": "number"
+      },
+      "reaction": {
+       "type": "number"
+      }
+     }
+    },
+    "actual": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "applied",
+      "reaction"
+     ],
+     "properties": {
+      "applied": {
+       "type": "number"
+      },
+      "reaction": {
+       "type": "number"
+      }
+     }
+    },
+    "delta": {
+     "type": "number"
+    },
+    "relTol": {
+     "type": "number",
+     "minimum": 0
+    },
+    "pass": {
+     "type": "boolean"
+    }
+   }
+  },
+  "coverage": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind",
+    "entityId",
+    "count",
+    "expectedCount",
+    "checks",
+    "pass"
+   ],
+   "properties": {
+    "kind": {
+     "type": "string"
+    },
+    "entityId": {
+     "type": "string"
+    },
+    "count": {
+     "type": "integer"
+    },
+    "expectedCount": {
+     "type": "integer"
+    },
+    "checks": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "i.fx",
+      "i.fz",
+      "j.my",
+      "i.mx"
+     ],
+     "properties": {
+      "i.fx": {
+       "$ref": "#/definitions/coverageEntry"
+      },
+      "i.fz": {
+       "$ref": "#/definitions/coverageEntry"
+      },
+      "j.my": {
+       "$ref": "#/definitions/coverageEntry"
+      },
+      "i.mx": {
+       "$ref": "#/definitions/coverageEntry"
+      }
+     }
+    },
+    "pass": {
+     "type": "boolean"
+    }
+   }
+  },
+  "rawConsistency": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "pass",
+    "absTol",
+    "checksCount",
+    "failedChecks",
+    "counts"
+   ],
+   "properties": {
+    "pass": {
+     "type": "boolean"
+    },
+    "absTol": {
+     "type": "number",
+     "minimum": 0
+    },
+    "checksCount": {
+     "type": "integer",
+     "const": 1092
+    },
+    "failedChecks": {
+     "type": "array",
+     "maxItems": 0
+    },
+    "counts": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "reactions",
+      "memberEndForces",
+      "displacements"
+     ],
+     "properties": {
+      "reactions": {
+       "type": "integer",
+       "const": 6
+      },
+      "memberEndForces": {
+       "type": "integer",
+       "const": 70
+      },
+      "displacements": {
+       "type": "integer",
+       "const": 72
+      }
+     }
+    }
+   }
+  },
+  "comparatorBundle": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "comparatorScript",
+    "comparatorScriptSha256",
+    "reportSchemaPath",
+    "reportSchemaSha256",
+    "negativeFixturesPath",
+    "negativeFixturesSha256",
+    "fixtureConstantsPath",
+    "fixtureConstantsSha256",
+    "sbDerivationScriptPath",
+    "sbDerivationScriptSha256",
+    "sbQuantityInputPath",
+    "sbQuantityInputSha256",
+    "verifyRunnerPath",
+    "verifyRunnerSha256",
+    "oracleSchemaPath",
+    "oracleSchemaSha256",
+    "sbVitestConfigPath",
+    "sbVitestConfigSha256",
+    "standardVitestConfigPath",
+    "standardVitestConfigSha256"
+   ],
+   "properties": {
+    "comparatorScript": {
+     "type": "string"
+    },
+    "comparatorScriptSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "reportSchemaPath": {
+     "type": "string"
+    },
+    "reportSchemaSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "negativeFixturesPath": {
+     "type": "string"
+    },
+    "negativeFixturesSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "fixtureConstantsPath": {
+     "type": "string"
+    },
+    "fixtureConstantsSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "sbDerivationScriptPath": {
+     "type": "string"
+    },
+    "sbDerivationScriptSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "sbQuantityInputPath": {
+     "type": "string"
+    },
+    "sbQuantityInputSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "verifyRunnerPath": {
+     "type": "string"
+    },
+    "verifyRunnerSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "oracleSchemaPath": {
+     "type": "string"
+    },
+    "oracleSchemaSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "sbVitestConfigPath": {
+     "type": "string"
+    },
+    "sbVitestConfigSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    },
+    "standardVitestConfigPath": {
+     "type": "string"
+    },
+    "standardVitestConfigSha256": {
+     "type": "string",
+     "pattern": "^[0-9a-f]{64}$"
+    }
+   }
+  },
+  "pass": {
+   "type": "boolean"
+  },
+  "failures": {
+   "type": "array"
+  }
+ },
+ "allOf": [
+  {
+   "if": {
+    "properties": {
+     "pass": {
+      "const": true
+     }
+    }
+   },
+   "then": {
+    "properties": {
+     "failures": {
+      "type": "array",
+      "maxItems": 0
+     },
+     "modelCounts": {
+      "properties": {
+       "pass": {
+        "const": true
+       }
+      }
+     },
+     "loadBalance": {
+      "properties": {
+       "pass": {
+        "const": true
+       }
+      }
+     },
+     "coverage": {
+      "properties": {
+       "pass": {
+        "const": true
+       }
+      }
+     },
+     "rawConsistency": {
+      "properties": {
+       "pass": {
+        "const": true
+       }
+      }
+     },
+     "rows": {
+      "type": "array",
+      "items": {
+       "type": "object",
+       "required": [
+        "pass"
+       ],
+       "properties": {
+        "pass": {
+         "const": true
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ ],
+ "definitions": {
+  "countEntry": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "expected",
+    "actual",
+    "delta",
+    "tolerance",
+    "pass"
+   ],
+   "properties": {
+    "expected": {
+     "type": "integer"
+    },
+    "actual": {
+     "type": "integer"
+    },
+    "delta": {
+     "type": "integer"
+    },
+    "tolerance": {
+     "type": "integer"
+    },
+    "pass": {
+     "type": "boolean"
+    }
+   }
+  },
+  "coverageNonZero": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "actualNonZero",
+    "expectedNonZero",
+    "pass"
+   ],
+   "properties": {
+    "actualNonZero": {
+     "type": "integer"
+    },
+    "expectedNonZero": {
+     "type": "integer"
+    },
+    "pass": {
+     "type": "boolean"
+    }
+   }
+  },
+  "coverageBound": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "maxAbs",
+    "maxAbsBound",
+    "pass"
+   ],
+   "properties": {
+    "maxAbs": {
+     "type": "number"
+    },
+    "maxAbsBound": {
+     "type": "number"
+    },
+    "pass": {
+     "type": "boolean"
+    }
+   }
+  },
+  "coverageEntry": {
+   "anyOf": [
+    {
+     "$ref": "#/definitions/coverageNonZero"
+    },
+    {
+     "$ref": "#/definitions/coverageBound"
+    }
+   ]
+  }
+ }
+}

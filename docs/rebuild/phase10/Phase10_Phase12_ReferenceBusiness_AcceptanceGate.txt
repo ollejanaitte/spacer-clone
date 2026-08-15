@@ -1,0 +1,186 @@
+====================================================================
+Phase10_Phase12_ReferenceBusiness_AcceptanceGate（STEP 15 Phase 12 Gate）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+status: FINAL（Sol指摘2回反映）
+====================================================================
+
+【Reference Business（最終受入案件）】
+- 種別: 山岳道路＋曲線高架橋の統合案件
+- fixture: Reference Mountain（REF-MOUNTAIN-1・frontend/src/next/modules/terrain/referenceMountain.ts）
+- fixture checksum: P0-07のmoduleChecksums集合（road/terrain/bridgeLayout/superstructure/substructure/analysisのcontentChecksum）を
+  provenanceに記録し、受入時に全module一致を決定論判定の基準とする（P0-07のmoduleChecksumsと一致）
+- 投入方法（明確化）: 「空Project作成＋明示的なReference Mountain fixture import」に固定。
+  自動seed（空データ時のReference Mountain自動投入）を受入証拠として暗黙利用しない。
+  fixture投入地点・操作・provenanceを証跡として記録。
+- Phase 12では新仕様追加なし・Phase 11成果の受入のみ
+
+【Reference Mountain 数値oracle（機械判定・JSON正本）】
+- 機械判定用oracle: docs/rebuild/phase10/Phase10_Reference_NumberOracle.json（唯一正本）
+  - schemaVersion 1.0.0・reference REF-MOUNTAIN-1・loadCaseId LC1
+  - rows 46件: reaction 6/memberForce 10/displacement 2/quantity 10/coordinate 18・coverage契約
+  （kind別内訳・wildcard=all-members 1行含む・詳細はoracle JSON参照）
+  - 各レコード: {kind, entityId, component, expected, unit, absTol, relTol}
+  - modelCounts: nodes 72・members 70・sections 1・materials 1・supports 6・bearings 6・nodalLoads 72（完全一致）
+  - loadBalance: totalKN=27905.5・applied=27905.5・reaction=27905.5・relTol 1e-6
+- 代表値（JSON由来）:
+  - 反力fz（kN・absTol 0.01）: A1:G1=3986.19・A1:G2=3986.15・P1:G1=6977.29・P1:G2=6977.46・A2:G1=2989.27・A2:G2=2989.14
+  - 部材力（kN/kNm・absTol 0.01・relTol 1e-3）: M-L-G1-S1 i.fx=103.705/i.fz=3785.443/j.my=-37868.637・
+    M-L-G1-S2 i.fx=92.788/i.fz=3386.943/j.my=-71750.774・M-L-G1-S3 i.fx=81.871/i.fz=2988.442/j.my=-101646.411
+  - 変位 girderPanel:G1:200: uz.raw=-190.883 m（solver実値・absTol 0.001）・uz.display=-19088.288 m（=raw×100・表示倍率・DERIVED）
+  - T（ねじりi.mx）: 全member 0（wildcard・absTol 1e-6）
+- 比較規則（row別優先）: 各rowの{absTol, relTol}を優先し、dAbs<=absTol または dRel<=relTol でPASS。
+  全row PASSでoracle適合。loadBalanceはrelTol 1e-6。
+- oracle schema: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json（JSON Schema 2020-12・
+  rowsの7フィールド必須・wildcard↔entityId="*"双方向制約（allOf/if-then）・coverage=components構造・displayScale=unit分離）
+  - schema検証証跡: jsonschema 4.26.0 Draft202012で実oracle PASS・negative fixtures 7件（NEG-1..7: coverage欠落/誤key/過剰key/empty・wildcard双方向違反）全てrejectを機械確認（verify_oracle_evidence.pyが決定論的に適用・一括検証）
+- 独立照合（Freeze条件）: 本oracleはPhase 9-04R3実測値。
+  Phase 10完了前に独立照合（荷重-反力釣合い・非零実値・代表値のレビュー承認）を実施し、
+  golden checksum・照合日・承認者を本Gateへ追記して解除条件とする。
+  未実施ならCompletion Gate PASSにしない。
+- 独立照合記録（2026-08-15・証拠あり・chain of custody）:
+  - oracle JSON sha256 = 530c0c5bdd689b0392d6c1be97c3b74b60d88d41bda6ec9288cae313dac4e3fb（46 row: reaction 6/memberForce 10/displacement 2/quantity 10/coordinate 18・coverage契約あり）
+    ※SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3を含む（quantity 10）
+    （docs/rebuild/phase10/Phase10_Reference_NumberOracle.json）
+  - solver raw result artifact = docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json
+    （sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e・backend solver独立実行・49024 bytes）
+  - 機械比較レポート = docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
+    （sha256 7ccbcdf3ffb03613626c045a34f0977ce600488196f51219d4afb48f440298b7）
+  - レポートchain: comparatorId=spacer-oracle-comparator-v1・generatedAt ISO・
+  - 再現bundle（evidence/oracle-comparator/）:
+    compare_oracle.py = ebc3041f32d96498abdbe09e88bc4bf5e2df7b89ea511fa35fdb7830837bfc1c
+    verify_oracle_evidence.py = be04f016e437a4c654fca146b5f9545eddcc33a23e0e3826b88344a2220f9415
+    comparison_report.schema.json = e7748fc00a48230f527a1b7a8d148b5fc7c502e4d24219999089f45afaf8b505
+    Phase10_Reference_NumberOracle.schema.json = 4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f
+    schema_negative_fixtures.json = 0ec294025a6d0f16704ba4afbd3c4589e9543c63faaa9d8f70ae31a4ed372495
+    sb_quantity_input.json = c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306
+    fixture_constants.json = ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb（A1 station=100統一）
+    SB導出test（単一正本）= frontend/src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts
+    　sha256 33a74bff4871ce8b9b19e431a8263d690f9d4b87744328546559c4170060e40e（P10_SB_OUTPUT必須・fallbackなし）
+    　専用実行: vitest.sb.config.ts（fd08338d...）・通常npm testからexclude（vitest.config.ts f0cc5d7a...（tests/e2e-p904r3/** exclude追加・SB test除外をvitest listで検証））
+    - verify runnerがvitest list（rc=0・matchedCount=0）で対象test除外をfail-closed検証・記録（sbExcludedFromStandardSuite={returnCode:0,matchedCount:0}）・両config SHAをinputs/comparatorBundleへ固定
+  - report.comparatorBundleに全bundle完全SHA格納・verify_oracle_evidence.pyが「SB導出→固定入力厳密一致→oracle PASS→7件reject→比較→report schema PASS」を一括実行し
+    verification_result.json（95f08d898c015a1de28fe9aed0ad9e7513c8f294881252500aa0412f77815e9f）に構造化記録（OVERALL PASS・rawConsistency 1092件 failed 0）
+  - row-key multiset: oracle/reportの（kind,entityId,component）キー集合完全一致+両者一意性（oracleUnique/reportUnique）をfail-closed検証・
+    重複row negative（report row複製）検出を確認
+  - fixture consistency: oracle reference=REF-MOUNTAIN-1=fixture_constants.fixtureId=report fixtureId/version一致・solver input projectId一致を検証
+  - negative fixtures 7件全reject + oracle本体PASS（jsonschema 4.26.0）を機械確認
+    inputChainOfCustody{oracleSha256, rawResultSha256, solverInputSha256, fixtureId=REF-MOUNTAIN-1, projectId}・各rowにdAbs/dRel/判定根拠
+  - 結果: 46 row・46 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS
+  - rawConsistency: raw artifactと再計算resultの全値一致（reaction/memberForce/displacement 1092件チェック・failed 0）をfail-closed検証
+  - 数量oracle: nodeCount 72・memberCount 70・totalMemberLength 657.615156m・
+    SS-04 steel volume 78.913819m3・steel weight 6076.364kN・deck volume 672m3・
+    SB-04 concrete 616.72m3（A1 214.4/P1 187.92/A2 214.4・KEEP computeSubstructureQuantity）
+  - 座標oracle: 6支承×XYZ 18行（A1-G1/G2・P1-G1/G2・A2-G1/G2）
+  - N/Q/M各70部材非零・max|T|<=1e-6（coverage）
+  - 数量oracle: nodeCount 72・memberCount 70・supportCount 6・totalMemberLength 657.615156m・totalSteelVolume 78.913819m3・section area 0.12m2
+  - 座標oracle: A1-G1(200,496,103.08)・P1-G1(400,496,108.5592)・A2-G1(503.0568,582.7107,106.58)等 6支承
+  - solver入力固定: evidence/Phase10_Reference_SolverInput.json（sha256 450fa1ac...・modelChecksum 4685609a...・projectId c83b911b...）
+    fixtureId=REF-MOUNTAIN-1・fixtureVersion同値（P0-07でmoduleChecksums manifest凍結）
+  - 比較式（row別優先・fail-closed）: 各rowの{absTol,relTol}で dAbs<=absTol または dRel<=relTol（abs(exp)==0の場合はabsTolのみ）・
+    欠損/NaN/Infinity/不一致rowは即FAIL（fail-closed）・全row PASSで適合
+  - 承認: Sol最終レビューGO（2026-08-15・docs/phase10-design-freeze @ 596e76d）にて承認。
+    承認記録: 最終レビュー19回目で「GO」・前回Medium条件（vitest list fail-closed除外検証）解消・
+    oracle独立照合・rawConsistency 1092件・negative 7件・row一意性・fixture consistency・
+    SB導出strict一致・report schema PASSを機械検証（verification_result.json OVERALL PASS）。
+    承認者: Sol（gpt-5.6-sol・read-only）・作業実施: opencode。Discord通知は最終Reportにて実施。
+- raw/display分離: uz.displayは表示専用DERIVED（正本へ書き戻さない）
+
+【受入シナリオ（空Project→成果品出力）】
+1. 空Project作成（/app/business/new）
+2. Terrain / Existing（Reference Mountain fixture import）
+3. Road Alignment（平面/縦断/横断/幅員/横断勾配）
+4. Road CIM（3D表示）
+5. Bridge Layout（橋梁区間・支間割・支持点）
+6. Superstructure（主桁/断面/横桁/材料/支承/荷重入力・declared section）
+7. Bearing（FIXED/MOVABLE設定）
+8. Substructure / Foundation（3-pane・pile grid）
+9. FEM Model（自動組立）
+10. Solver（declared sectionでSUCCEEDED）
+11. IF3（authoritative・source binding・非零実値）
+12. Analysis Results（Reaction/N-Q-M/T/Deformed）
+13. Integrated 3D（CIM・GLB export）
+14. Road図面（平面/縦断/横断・DXF実ファイル・byte/content検証）
+15. Super/Sub成果（2D/DXF/Quantity/座標）
+16. 道路計算書（HTML/CSV）
+17. 解析結果CSV export
+18. Save（Auto Save）
+19. Electron Restart（復元）
+20. .spacerproj Export
+21. Import
+22. Restore
+
+【Completion Gate（Phase 12判定条件・Deliverable ID単位）】
+各必須成果（Deliverable ID: RD-01..RD-05 / BL-01..BL-02 / SS-01..SS-05 / SB-01..SB-05 /
+AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03）:
+- 実画面で生成可能（新/app production route）
+- 実ファイル出力（DXF/CSV/GLB/HTML/.spacerproj）・byte/content検証
+- 生成元canonical checksum対応（決定論的・dual-writeなし）
+- FROZEN境界維持（NOT_AUTHORIZED/HOLD表示・値を発明しない）
+- 数値oracle適合（釣合い＋期待値）
+
+【Deliverable ID別PASS条件（適用有無を明示）】
+| ID | 成果 | UI表示 | 実ファイルexport | byte/content検証 | checksum | 数値oracle | stale/restart/import後再生 |
+|---|---|---|---|---|---|---|---|
+| RD-01 | 平面線形/座標/要素表 | ○ | − | − | ○ | − | ○ |
+| RD-02 | 平面図 | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| RD-03 | 縦断図 | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| RD-04 | 横断図 | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| RD-05 | 道路計算書 | ○ | HTML/CSV | ○(P0-08) | ○ | − | ○ |
+| BL-01 | Bridge Layout | ○ | − | − | ○ | − | ○ |
+| BL-02 | span/support表 | ○ | CSV | ○(P0-08) | ○ | − | ○ |
+| SS-01 | 入力UI | ○ | − | − | ○ | − | ○ |
+| SS-02 | 2D | ○ | − | − | ○ | − | ○ |
+| SS-03 | DXF | ○ | DXF | ○(P0-08) | ○ | − | ○ |
+| SS-04 | Quantity | ○ | − | − | ○ | ○(数量oracle) | ○ |
+| SS-05 | 3D/CIM | ○ | − | − | ○ | − | ○ |
+| SB-01 | 3-pane CAD | ○ | − | − | ○ | − | ○ |
+| SB-02 | pile grid | ○ | − | − | ○ | − | ○ |
+| SB-03 | 座標表 | ○ | − | − | ○ | ○(座標oracle) | ○ |
+| SB-04 | Quantity | ○ | − | − | ○ | ○(数量oracle) | ○ |
+| SB-05 | 2D/3D/CIM | ○ | − | − | ○ | − | ○ |
+| AN-01 | Solver/IF3 | ○ | − | − | ○ | ○(loadBalance) | ○ |
+| AN-02 | Reaction | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-03 | N-Q-M/T | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-04 | Deformed | ○ | − | − | ○ | ○(oracle JSON) | ○ |
+| AN-05 | 結果CSV export | ○ | CSV | ○(P0-08) | ○ | ○(oracle) | ○ |
+| AN-06 | analysis専用ページ | ○ | − | − | ○ | − | ○ |
+| CIM-01 | Integrated 3D | ○ | − | − | ○ | − | ○ |
+| CIM-02 | GLB | ○ | GLB | ○(P0-08) | ○ | − | ○ |
+| SYS-01 | .spacerproj | ○ | .spacerproj | ○(P0-08) | ○ | − | ○ |
+| SYS-02 | Auto Save/restart/Electron restart | ○ | − | − | ○ | − | ○(restart/import) |
+| SYS-03 | deliverables module | ○ | − | − | ○ | − | ○ |
+
+※ 実ファイル条件はexportを持つID（RD-02..05/BL-02/SS-03/AN-05/CIM-02/SYS-01）のみ。
+  数値oracleは解析/数量/座標を持つID（SS-04/SB-03/SB-04/AN-01..05）のみ。適用外は「−」。
+  ※ 数量oracle（kind=quantity 10）と座標oracle（kind=coordinate 18・6支承×XYZ）は同一oracle JSONのrowsに格納。
+     SS-04はmodel/section数量・SB-04は下部工concrete量（616.72m3）・SB-03は6支承座標を機械照合する。
+
+【生成host所有権（凍結）】
+- canonical読取: 各source module（road/bridgeLayout/superstructure/substructure/analysis）が所有
+- builder: road図面はroad moduleが所有・他成果品は各source moduleが所有
+- manifest生成・download開始・stale判定: deliverables moduleが所有（P0-01で実装）
+- 一意・dual-writeなし
+
+【stale / persistence / 再生成 Gate】
+- 編集→stale化→export禁止→再生成で解除
+- Electron restart後・.spacerproj import後のcanonical checksum一致
+- 成果品の再生成一致（restart/import後も同一）
+- 可変メタデータ（時刻等）は決定論判定から除外
+
+【fail-closed acceptance（各生成host/adapter）】
+- readRoadData === undefined → export禁止
+- draft変換（loadRoadEditorDraft）失敗 → export禁止
+- builder失敗 → export禁止
+- 正式host/adapterの所有moduleは一意に固定（deliverables module・road module分掌をP0-01で確定）
+
+【判定】
+- 全V1.0必須成果（RD-01〜SYS-03）が受入可能 → Version 1.0 COMPLETE
+- 1件でも必須成果が未達 → NOT COMPLETE（Phase 11 backlogへ戻す）
+
+【前提】
+- Phase 11実装（P0-01〜P0-08・P1-01含む）完了後・P0-07（fixture import）PASSとP0-08（byte/content検証）PASSをPhase 12開始の明示必須条件とする
+- Sol最終レビューGO
+- FROZEN境界・V1.0 scope確定済み
+====================================================================

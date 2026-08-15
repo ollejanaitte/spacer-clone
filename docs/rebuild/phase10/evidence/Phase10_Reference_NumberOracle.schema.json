@@ -1,0 +1,283 @@
+{
+ "$schema": "https://json-schema.org/draft/2020-12/schema",
+ "title": "Phase 10 Reference Number Oracle",
+ "description": "機械判定用Reference Mountain数値oracle（Phase 12受入基準）",
+ "type": "object",
+ "additionalProperties": false,
+ "required": [
+  "schemaVersion",
+  "reference",
+  "loadCaseId",
+  "rows",
+  "modelCounts",
+  "loadBalance",
+  "coverage"
+ ],
+ "properties": {
+  "schemaVersion": {
+   "type": "string",
+   "const": "1.0.0"
+  },
+  "reference": {
+   "type": "string"
+  },
+  "loadCaseId": {
+   "type": "string"
+  },
+  "rows": {
+   "type": "array",
+   "items": {
+    "type": "object",
+    "additionalProperties": false,
+    "required": [
+     "kind",
+     "entityId",
+     "component",
+     "expected",
+     "unit",
+     "absTol",
+     "relTol"
+    ],
+    "properties": {
+     "kind": {
+      "enum": [
+       "reaction",
+       "memberForce",
+       "displacement",
+       "quantity",
+       "coordinate"
+      ]
+     },
+     "entityId": {
+      "type": "string"
+     },
+     "component": {
+      "type": "string"
+     },
+     "expected": {
+      "type": "number"
+     },
+     "unit": {
+      "type": "string"
+     },
+     "absTol": {
+      "type": "number",
+      "minimum": 0
+     },
+     "relTol": {
+      "type": "number",
+      "minimum": 0
+     },
+     "wildcard": {
+      "type": "string",
+      "enum": [
+       "all-members"
+      ]
+     },
+     "displayScale": {
+      "type": "number"
+     }
+    },
+    "allOf": [
+     {
+      "if": {
+       "required": [
+        "wildcard"
+       ],
+       "properties": {
+        "wildcard": {
+         "const": "all-members"
+        }
+       }
+      },
+      "then": {
+       "properties": {
+        "entityId": {
+         "const": "*"
+        }
+       }
+      }
+     },
+     {
+      "if": {
+       "required": [
+        "entityId"
+       ],
+       "properties": {
+        "entityId": {
+         "const": "*"
+        }
+       }
+      },
+      "then": {
+       "required": [
+        "wildcard"
+       ],
+       "properties": {
+        "wildcard": {
+         "const": "all-members"
+        }
+       }
+      }
+     }
+    ]
+   }
+  },
+  "modelCounts": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "nodes",
+    "members",
+    "sections",
+    "materials",
+    "supports",
+    "bearings",
+    "nodalLoads"
+   ],
+   "properties": {
+    "nodes": {
+     "type": "integer"
+    },
+    "members": {
+     "type": "integer"
+    },
+    "sections": {
+     "type": "integer"
+    },
+    "materials": {
+     "type": "integer"
+    },
+    "supports": {
+     "type": "integer"
+    },
+    "bearings": {
+     "type": "integer"
+    },
+    "nodalLoads": {
+     "type": "integer"
+    }
+   }
+  },
+  "loadBalance": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "totalKN",
+    "applied",
+    "reaction",
+    "relTol"
+   ],
+   "properties": {
+    "totalKN": {
+     "type": "number"
+    },
+    "applied": {
+     "type": "number"
+    },
+    "reaction": {
+     "type": "number"
+    },
+    "relTol": {
+     "type": "number",
+     "minimum": 0
+    }
+   }
+  },
+  "checksums": {
+   "type": "object",
+   "additionalProperties": {
+    "type": "string"
+   }
+  },
+  "coverage": {
+   "type": "object",
+   "additionalProperties": false,
+   "required": [
+    "kind",
+    "entityId",
+    "components",
+    "count",
+    "unit"
+   ],
+   "properties": {
+    "kind": {
+     "type": "string"
+    },
+    "entityId": {
+     "type": "string"
+    },
+    "components": {
+     "type": "object",
+     "additionalProperties": false,
+     "required": [
+      "i.fx",
+      "i.fz",
+      "j.my",
+      "i.mx"
+     ],
+     "properties": {
+      "i.fx": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nonZeroCount"
+       ],
+       "properties": {
+        "nonZeroCount": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "i.fz": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nonZeroCount"
+       ],
+       "properties": {
+        "nonZeroCount": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "j.my": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "nonZeroCount"
+       ],
+       "properties": {
+        "nonZeroCount": {
+         "type": "integer",
+         "minimum": 0
+        }
+       }
+      },
+      "i.mx": {
+       "type": "object",
+       "additionalProperties": false,
+       "required": [
+        "maxAbsBound"
+       ],
+       "properties": {
+        "maxAbsBound": {
+         "type": "number",
+         "minimum": 0
+        }
+       }
+      }
+     }
+    },
+    "count": {
+     "type": "integer"
+    },
+    "unit": {
+     "type": "string"
+    }
+   }
+  }
+ }
+}

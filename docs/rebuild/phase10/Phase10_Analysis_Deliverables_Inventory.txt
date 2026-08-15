@@ -20,18 +20,18 @@ baseline: e3e2d3b
 | solver metadata | AuthoritativeResultPanel（solver/version/revision/checksum） | COMPLETE |
 | revision/checksum | modelChecksum/contentChecksum・source binding | COMPLETE |
 
-【未救出（Phase 11候補）】
-| 成果 | 現状 | 候補 |
+【Phase 11実装（必須）】
+| 成果 | 現状 | 判定 |
 |---|---|---|
 | result export（CSV） | exports/resultCsvExport.ts（legacy・IF3 gate） | ADAPT（新アプリへ接続） |
 | member force report CSV | exports/memberForceReport.ts（legacy） | ADAPT |
-| PDF report | exports/resultPdfReport.ts（print-based HTML） | ADAPT/方針決定 |
-| analysis module専用ページ | なし（/modules/analysisはプレースホルダー） | Phase 11候補（専用shell新設） |
-| result表の正式ダウンロード | AuthoritativeResultPanelは表示のみ | Phase 11候補 |
+| PDF report | exports/resultPdfReport.ts（print-based HTML） | DEFER（V1.0外） |
+| analysis module専用ページ（AN-06） | なし（/modules/analysisはプレースホルダー） | 必須（P0-05専用shell新設） |
+| result表の正式ダウンロード（AN-05） | AuthoritativeResultPanelは表示のみ | 必須（P0-04 CSV export） |
 
 【判定】
 - 解析・IF3 authoritative成果: KEEP（V1.0必須）
-- CSV/報告export: ADAPT（新アプリのanalysis/deliverablesへ接続）・V1.0候補
-- analysis module専用ページ: Phase 11候補（新規・軽量）
-- バイナリPDF: DEFER/方針決定（現状print-based）
+- CSV/報告export: ADAPT（AN-05必須・PDFはDEFER）
+- analysis module専用ページ（AN-06）: 必須（P0-05）
+- バイナリPDF: DEFER確定（現状print-based）
 ====================================================================

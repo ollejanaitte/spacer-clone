@@ -1,0 +1,54 @@
+====================================================================
+Phase10_Final_EndToEnd_Workflow（STEP 13 End-to-End業務フロー Final Freeze）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+====================================================================
+
+最終production workflow（Phase 12受入シナリオの骨格）
+
+Project作成
+→ Terrain / Existing
+→ Road Alignment（平面/縦断/横断/幅員/横断勾配）
+→ Road CIM
+→ Bridge Layout（橋梁区間・支間割・A1/A2/P1..支持点）
+→ Superstructure（主桁/断面/横桁/材料/支承/荷重入力）
+→ Bearing
+→ Substructure / Foundation（3-pane・pile grid）
+→ FEM Model（自動組立）
+→ Solver（declared section）
+→ IF3（authoritative・source binding）
+→ Analysis Results（Reaction/N-Q-M/T/Deformed）
+→ Integrated 3D（CIM）
+→ Road図面（平面/縦断/横断・DXF）
+→ Super/Sub成果（2D/DXF/Quantity/座標）
+→ 道路計算書（HTML/CSV）
+→ 解析結果export（CSV）
+→ Save（Auto Save）
+→ Electron Restart（復元）
+→ .spacerproj Export
+→ Import
+→ Restore
+
+【handoff Freeze】
+| source | target | canonical | derived | checksum | stale | invalid | fail-closed | persist | regen |
+|---|---|---|---|---|---|---|---|---|---|
+| Road | BridgeLayout | CanonicalRoadData | alignment context | contentChecksum | fingerprint | - | ✓ | ✓ | ✓ |
+| BridgeLayout | Superstructure | BridgeLayoutDocument | span/support handoff | layoutFingerprint | ✓ | - | ✓ | ✓ | regenerateSuperstructureDerived |
+| BridgeLayout | Substructure | BridgeLayoutDocument | support handoff | layoutFingerprint | ✓ | - | ✓ | ✓ | regenerateSubstructureDerived |
+| Superstructure | Analysis | SuperstructureDocument | FEM fragment | modelChecksum | ✓ | ✓ | ✓ | ✓ | buildDerivedAnalysisDocument |
+| Substructure | Analysis | SubstructureDocument | FEM fragment | modelChecksum | ✓ | ✓ | ✓ | ✓ | 同上 |
+| Analysis | IF3 | AnalysisDocument | result resource | modelChecksum/source binding | STALE(3-gate) | INVALID | ✓ | ✓ | 再解析 |
+| 各module | CIM | 各canonical | scene layers | fingerprint | ✓ | ✓ | ✓ | ✓ | buildIntegrated3DScene |
+| Project | .spacerproj | 全canonical | package | sha256 | - | - | ✓ | ✓ | import/restore |
+| Project | Electron | 全canonical | filesystem | - | - | - | ✓ | ✓ | restoreFromPersistence |
+
+【principle】
+- PDC唯一正本・dual-writeなし・derivedは決定論的再生成
+- 全handoffはfail-closed（欠損→INVALID/STALE・値を発明しない）
+- 編集→stale化→export禁止→再生成で解除
+- Electron restart後・.spacerproj import後のcanonical checksum一致・成果品再生成一致
+- 可変メタデータ（時刻等）は決定論判定から除外
+- deliverables module: 成果品はcanonicalからderived再生成（複製保存禁止）
+- Phase 12で新仕様追加なし・Phase 11成果の受入のみ
+====================================================================

@@ -18,13 +18,16 @@ baseline: e3e2d3b
 | reaction（支承反力） | bearing seats・authorizedDeadLoad | COMPLETE（解析由来） |
 | N/Q/M/Tとの関係 | IF3 authoritative（解析由来） | COMPLETE |
 
-【未救出（Phase 11候補）】
+※ IF3解析結果（member forces/reactions）はAnalysis成果としてV1.0必須。
+  上部工「正式応力度・照査結果」は NOT_AUTHORIZED（FROZEN）であり、解析結果と混同しない。
+
+【V1.0外（DEFER・optional）】
 | 成果 | 現状 | 候補 |
 |---|---|---|
 | design result table（正式照査結果表） | NOT_AUTHORIZED（FROZEN） | 照査6種はNOT_AUTHORIZED維持 |
-| calculation output（計算書） | Apollo report legacyあり | ADAPT候補（IF3結果から） |
-| drawing/export（正式図面） | DXFのみ | plan/elevation/section図の正式化候補 |
-| GA sheet（Apollo legacy） | apollo/drawing/drawingSetModel.ts | legacy・ADAPT候補 |
+| calculation output（計算書） | Apollo report legacyあり | DEFER（V1.0外） |
+| drawing/export（正式図面） | DXFのみ | 2D/DXF（SS-02/03）がV1必須・elevation/section正式化はDEFER |
+| GA sheet（Apollo legacy） | apollo/drawing/drawingSetModel.ts | legacy・optional（V1.0外） |
 
 【FROZEN境界】
 - 応力度/照査6種: NOT_AUTHORIZED（維持・V1.0対象外）
@@ -32,7 +35,7 @@ baseline: e3e2d3b
 
 【判定】
 - 救出済み成果（2D/DXF/Quantity/3D/CIM/section/material）: KEEP（V1.0必須）
-- calculation output: ADAPT（IF3結果→計算書）・V1.0候補
-- GA sheet/drawing正式化: Phase 11候補（ADAPT/REWRITE）
+- calculation output: DEFER（V1.0外）
+- GA sheet/drawing正式化: DEFER（V1.0外・Deferred_Frozen_List参照）
 - 照査/応力度: NOT_AUTHORIZED（FROZEN・V1.0外）
 ====================================================================

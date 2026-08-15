@@ -18,13 +18,13 @@ baseline: e3e2d3b
 | 3D preview | Substructure3DPreview（WebGL） | COMPLETE |
 | 3D/CIM | substructureSceneBuilder・substructureCimLayer | COMPLETE |
 
-【未救出（Phase 11候補）】
+【DEFER（V1.0外・Phase 11実装禁止・将来候補）】
 | 成果 | 現状 | 候補 |
 |---|---|---|
-| pier drawing（正式図） | なし | Phase 11候補（REWRITE小/ADAPT） |
+| pier drawing（正式図） | なし | DEFER（V1.0外・将来候補） |
 | abutment drawing（正式図） | なし | 同上 |
 | footing/foundation drawing | なし | 同上 |
-| 杭layout drawing（正式） | pile grid plan（SVG内） | Phase 11候補 |
+| 杭layout drawing（正式） | pile grid plan（SVG内） | DEFER（V1.0外・将来候補） |
 | calculation output（下部工計算書） | designEngine legacy（NOT_AUTHORIZED） | FROZEN（HOLD_NOT_AVAILABLE） |
 | STL（下部工ソリッド） | apollo STL（legacy） | ADAPT候補 |
 
@@ -34,7 +34,7 @@ baseline: e3e2d3b
 
 【判定】
 - 救出済み成果（3-pane/pile grid/座標/Quantity/2D/3D/CIM）: KEEP（V1.0必須）
-- pier/abutment/footing/foundation正式図: Phase 11候補（REWRITE小）
+- pier/abutment/footing/foundation正式図: DEFER・V1.0外・Phase 11実装禁止（将来候補）
 - 下部工計算書: HOLD_NOT_AVAILABLE（V1.0外）
-- STL: ADAPT候補（V1.0任意）
+- STL: 将来方針=ADAPT候補・V1.0 scope=DEFER（外）
 ====================================================================

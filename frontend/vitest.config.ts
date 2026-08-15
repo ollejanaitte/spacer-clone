@@ -7,9 +7,11 @@ export default defineConfig({
     testTimeout: 40000,
     exclude: [
       "tests/e2e/**",
+      "tests/e2e-p904r3/**",
       "node_modules/**",
       "dist/**",
       "src/bridgeDefinition/__tests__/regression.golden.test.ts",
+      "src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
     ],
   },
 });

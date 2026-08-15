@@ -7,80 +7,79 @@ baseline: e3e2d3b
 
 記号: [N]=新アプリ /app [L]=legacy /pro [B]=両方 なし=未実装
 Decision: KEEP/RESTORE/ADAPT/MERGE/REWRITE/DEFER/NOT_AUTHORIZED/SOURCE_NOT_AVAILABLE/HOLD_NOT_AVAILABLE
+- Current Route: 現状の到達経路
+- V1 Prod Route: V1.0での正式到達経路（すべて新/app・deliverables/各module）
+- Deliverable ID: Phase10_V1_Required_Deliverables.txt と対応
 
 【Road】
-| Deliverable | Old Impl | Current | Prod Route | Export | Test/E2E | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| 平面線形/座標/要素表 | liner/core | road/horizontal・stationing | [N] | - | ✓ | KEEP | 必須 |
-| 平面図 | liner/drawing（plan builder） | 同上（legacy） | [L] /pro/liner/drawings/plan | DXF✓ | ✓/✓ | RESTORE→ADAPT | 必須 |
-| 縦断図 | liner/drawing（profile） | 同上 | [L] .../profile | DXF✓ | ✓/✓ | RESTORE→ADAPT | 必須 |
-| 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | DXF✓ | ✓/✓ | RESTORE→ADAPT | 必須 |
-| 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | HTML/CSV✓ | ✓/✓ | ADAPT | 必須 |
-| DXF（formal） | liner/dxf | 同上 | [L] | DXF✓ | ✓/✓ | ADAPT | 必須 |
-| 2D Preview | - | next/components/RoadPreviews | [N] | - | ✓ | KEEP | 補助 |
-| 3D/CIM | roadCimSurface | 同上 | [N] | - | ✓ | KEEP | 必須 |
-| PDF（バイナリ） | なし | - | - | - | - | DEFER（print-based） | 外 |
+| ID | Deliverable | Old Impl | Current | Current Route | V1 Prod Route | Export | Test/E2E | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| RD-01 | 平面線形/座標/要素表 | liner/core | road/horizontal・stationing | [N] | [N] | - | ✓ | KEEP | 必須 |
+| RD-02 | 平面図 | liner/drawing（plan builder） | 同上（legacy） | [L] /pro/liner/drawings/plan | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| RD-03 | 縦断図 | liner/drawing（profile） | 同上 | [L] .../profile | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| RD-04 | 横断図 | liner/drawing（cross-section） | 同上 | [L] .../cross-section | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| RD-05 | 道路計算書（HTML/CSV） | liner/exports/roadReport | 同上 | [L] /pro/liner/preview | [N] deliverables | HTML/CSV✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| RD-02..04 | DXF（plan-type-a/profile-band/cross-section） | liner/dxf | 同上 | [L] | [N] deliverables | DXF✓ | ✓/✓ | KEEP+ADAPT | 必須 |
+| - | DXF（plan-type-b-centerline・plan） | liner/dxf | 同上 | [L] | - | DXF✓ | ✓/✓ | ADAPT（将来方針） | DEFER |
+| - | 2D Preview（新module） | - | next/components/RoadPreviews | [N] | [N] | - | ✓ | KEEP | 補助 |
+| - | 3D/CIM | - | roadCimSurface | [N] | [N] | - | ✓ | KEEP | CIM-01内 |
+| - | PDF（バイナリ） | なし | - | - | - | - | - | DEFER | 外 |
 
 【Bridge Layout】
-| Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| 支間割/span表 | - | bridgeLayoutSpans | [N] | - | ✓ | KEEP | 必須 |
-| 支持点/station/skew | - | bridgeLayoutPlacement | [N] | - | ✓ | KEEP | 必須 |
-| 3D | - | bridgeLayoutScene | [N] | - | ✓ | KEEP | 必須 |
-| 一般図/layout drawing | なし | - | - | - | - | REWRITE小（Phase11） | 候補 |
-| span/support表出力 | なし | - | - | - | - | REWRITE小 | 候補 |
+| ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| BL-01 | 支間割/span表/支持点/3D | - | bridgeLayoutSpans/Placement/Scene | [N] | [N] | - | ✓ | KEEP | 必須 |
+| BL-02 | span/support表出力 | なし | - | - | [N] deliverables | CSV✓ | - | REWRITE小 | 必須 |
+| - | 一般図/layout drawing | なし | - | - | - | - | - | DEFER | 外 |
 
 【Superstructure】
-| Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| 本格入力UI | apollo/BridgeStructureInputPanel | SuperstructureRescuePanel | [N] | - | ✓ | KEEP | 必須 |
-| 2D plan | apollo/GeneralArrangement | RescuePanel plan view | [N] | - | ✓ | KEEP | 必須 |
-| DXF | - | superstructureDxf | [N] | DXF✓ | ✓ | KEEP | 必須 |
-| Quantity | apollo/quantity | RescuePanel（実数値） | [N] | - | ✓ | KEEP | 必須 |
-| 3D/CIM | - | sceneBuilder/CimLayer | [N] | - | ✓ | KEEP | 必須 |
-| section/material | - | components/materialConfig | [N] | - | ✓ | KEEP | 必須 |
-| 設計結果表 | apollo/report | NOT_AUTHORIZED | - | - | - | NOT_AUTHORIZED | 外 |
-| GA sheet | apollo/drawing/drawingSetModel | [L] | - | DXF/SVG | ✓ | ADAPT候補 | 任意 |
+| ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| SS-01 | 本格入力UI（含section/material） | apollo/BridgeStructureInputPanel | SuperstructureRescuePanel | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SS-02 | 2D plan | apollo/GeneralArrangement | RescuePanel plan view | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SS-03 | DXF | - | superstructureDxf | [N] | [N] | DXF✓ | ✓ | KEEP | 必須 |
+| SS-04 | Quantity | apollo/quantity | RescuePanel（実数値） | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SS-05 | 3D/CIM | - | sceneBuilder/CimLayer | [N] | [N] | - | ✓ | KEEP | 必須 |
+| - | GA sheet | apollo/drawing/drawingSetModel | [L] | - | - | DXF/SVG | ✓ | ADAPT（将来方針） | DEFER |
+| - | 照査/応力度 | - | NOT_AUTHORIZED | - | - | - | - | NOT_AUTHORIZED | 外 |
 
 【Substructure】
-| Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| 3-pane CAD | substructure/planning | SubstructureRescuePanel | [N] | - | ✓ | KEEP | 必須 |
-| pile grid | planning/piles | RescuePanel（B-06） | [N] | - | ✓ | KEEP | 必須 |
-| 座標表 | planning/CoordinateTable | RescuePanel | [N] | - | ✓ | KEEP | 必須 |
-| Quantity | design/geometricQuantity | computeSubstructureQuantity | [N] | - | ✓ | KEEP | 必須 |
-| 2D/3D | planning/SubstructureViewport | RescuePanel | [N] | - | ✓ | KEEP | 必須 |
-| pier/abutment/footing図 | なし | - | - | - | - | REWRITE小 | 候補 |
-| 照査/配筋/耐震 | design/designEngine | HOLD_NOT_AVAILABLE | - | - | - | HOLD_NOT_AVAILABLE | 外 |
-| STL（下部工） | apollo STL | [L] | - | STL | ✓ | ADAPT候補 | 任意 |
+| ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| SB-01 | 3-pane CAD | substructure/planning | SubstructureRescuePanel | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SB-02 | pile grid | planning/piles | RescuePanel（B-06） | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SB-03 | 座標表 | planning/CoordinateTable | RescuePanel | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SB-04 | Quantity | design/geometricQuantity | computeSubstructureQuantity | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SB-05 | 2D/3D/CIM | planning/SubstructureViewport | RescuePanel | [N] | [N] | - | ✓ | KEEP | 必須 |
+| - | pier/abutment/footing図 | なし | - | - | - | - | - | REWRITE小 | DEFER |
+| - | 照査/配筋/耐震 | design/designEngine | HOLD_NOT_AVAILABLE | - | - | - | - | HOLD_NOT_AVAILABLE | 外 |
+| - | STL（下部工） | apollo STL | [L] | - | - | STL | ✓ | ADAPT（将来方針） | DEFER |
 
 【Analysis / IF3】
-| Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| Solver/IF3 | - | solver_input/if3_normalizer | [B] | - | ✓ | KEEP | 必須 |
-| Reaction | - | AuthoritativeResultPanel | [N] | - | ✓ | KEEP | 必須 |
-| N/Q/M/T | - | 同上/color map | [N] | - | ✓ | KEEP | 必須 |
-| Deformed | - | 同上/analysisCimLayer | [N] | - | ✓ | KEEP | 必須 |
-| result table | - | AuthoritativeResultPanel | [N] | - | ✓ | KEEP | 必須 |
-| CSV export | exports/resultCsvExport | [L] | - | CSV✓ | ✓ | ADAPT | 候補 |
-| member force CSV | exports/memberForceReport | [L] | - | CSV✓ | ✓ | ADAPT | 候補 |
-| PDF報告 | exports/resultPdfReport | [L] | - | print-HTML | ✓ | ADAPT/方針 | 候補 |
-| analysis専用ページ | - | プレースホルダー | - | - | - | REWRITE小 | 候補 |
+| ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| AN-01 | Solver/IF3 | - | solver_input/if3_normalizer | [B] | [N] | - | ✓ | KEEP | 必須 |
+| AN-02 | Reaction | - | AuthoritativeResultPanel | [N] | [N] | - | ✓ | KEEP | 必須 |
+| AN-03 | N/Q/M/T | - | 同上/color map | [N] | [N] | - | ✓ | KEEP | 必須 |
+| AN-04 | Deformed | - | 同上/analysisCimLayer | [N] | [N] | - | ✓ | KEEP | 必須 |
+| AN-05 | 結果CSV export | exports/resultCsvExport・memberForceReport | resultCsvExport（legacy） | [L] /pro/analysis/results | [N] analysis/deliverables | CSV✓ | ✓ | KEEP+ADAPT（既存KEEP・新appへADAPT） | 必須 |
+| AN-06 | analysis専用ページ | - | プレースホルダー | - | [N] /app analysis | - | - | REWRITE小 | 必須 |
+| - | PDF報告 | exports/resultPdfReport | [L] | - | - | print-HTML | ✓ | DEFER | 外 |
 
 【CIM / Export】
-| Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| Integrated 3D | viewer | cimSceneBuilder | [N] | - | ✓ | KEEP | 必須 |
-| GLB | - | cimExport | [N] | GLB✓ | ✓ | KEEP | 必須 |
-| STL | apollo/liner STL | [L] | - | STL✓ | ✓ | ADAPT候補 | 任意 |
-| IFC | なし | - | - | - | - | DEFER | 外 |
+| ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| CIM-01 | Integrated 3D | viewer | cimSceneBuilder | [N] | [N] | - | ✓ | KEEP | 必須 |
+| CIM-02 | GLB | - | cimExport | [N] | [N] | GLB✓ | ✓ | KEEP | 必須 |
+| CIM-03 | glTF JSON | - | cimExport | [N] | [N] | JSON | ✓ | KEEP | 任意（V1必須にしない） |
+| - | STL | apollo/liner STL | [L] | - | - | STL✓ | ✓ | ADAPT（将来方針） | DEFER |
+| - | IFC | なし | - | - | - | - | - | DEFER | 外 |
 
 【System】
-| Deliverable | Old | Current | Route | Export | Test | Decision | V1.0 |
-|---|---|---|---|---|---|---|---|
-| .spacerproj export/import | - | projectPackage* | [N] | .spacerproj✓ | ✓ | KEEP | 必須 |
-| Auto Save/restart | - | PersistentProjectManager | [N] | - | ✓ | KEEP | 必須 |
-| Electron restart | - | electron-persistence.spec | [N] | - | ✓ | KEEP | 必須 |
-| deliverables module | - | プレースホルダー | [N] | - | - | REWRITE（新設） | 必須 |
+| ID | Deliverable | Old | Current | Current Route | V1 Prod Route | Export | Test | Decision | V1.0 |
+|---|---|---|---|---|---|---|---|---|---|
+| SYS-01 | .spacerproj export/import | - | projectPackage* | [N] | [N] | .spacerproj✓ | ✓ | KEEP | 必須 |
+| SYS-02 | Auto Save/restart/Electron restart | - | PersistentProjectManager | [N] | [N] | - | ✓ | KEEP | 必須 |
+| SYS-03 | deliverables module | - | プレースホルダー | - | [N] /app deliverables | - | - | REWRITE新設 | 必須 |
 
 ====================================================================

@@ -1,0 +1,159 @@
+{
+ "comparatorId": "spacer-oracle-comparator-v1",
+ "runnerSha256": "be04f016e437a4c654fca146b5f9545eddcc33a23e0e3826b88344a2220f9415",
+ "validator": "jsonschema 4.26.0 Draft202012Validator",
+ "inputs": {
+  "oracle": {
+   "path": "docs/rebuild/phase10/Phase10_Reference_NumberOracle.json",
+   "sha256": "530c0c5bdd689b0392d6c1be97c3b74b60d88d41bda6ec9288cae313dac4e3fb"
+  },
+  "solverInput": {
+   "path": "docs/rebuild/phase10/evidence/Phase10_Reference_SolverInput.json",
+   "sha256": "450fa1acad2aac01ffdde09541bf8784ee7d8b935f493417611cd7e55c41c0b7"
+  },
+  "rawResult": {
+   "path": "docs/rebuild/phase10/evidence/Phase10_Reference_SolverRawResult.json",
+   "sha256": "14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e"
+  },
+  "sbQuantityFixed": {
+   "path": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json",
+   "sha256": "c3c6eafe1c4a154534671500d44f76e07f54c1d8e51f0f8ae786fe51626ca306"
+  },
+  "sbDerivationTest": {
+   "path": "src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
+   "sha256": "33a74bff4871ce8b9b19e431a8263d690f9d4b87744328546559c4170060e40e"
+  },
+  "sbVitestConfig": {
+   "path": "vitest.sb.config.ts",
+   "sha256": "fd08338da003c7edca0581f352cc2699fbb7c531f47ee774c55b545dedc771a8"
+  },
+  "standardVitestConfig": {
+   "path": "vitest.config.ts",
+   "sha256": "f0cc5d7a928280ec21ca1b6bd060cf07e986b28f415986783cacb72c54c33fbc"
+  },
+  "fixtureConstants": {
+   "path": "docs/rebuild/phase10/evidence/oracle-comparator/fixture_constants.json",
+   "sha256": "ad3b1815379be76fccaba1391bfbd7293bf52a1fa469a30185355ab2d273eeeb"
+  },
+  "negativesSpec": {
+   "path": "docs/rebuild/phase10/evidence/oracle-comparator/schema_negative_fixtures.json",
+   "sha256": "0ec294025a6d0f16704ba4afbd3c4589e9543c63faaa9d8f70ae31a4ed372495"
+  },
+  "reportSchema": {
+   "path": "docs/rebuild/phase10/evidence/oracle-comparator/comparison_report.schema.json",
+   "sha256": "e7748fc00a48230f527a1b7a8d148b5fc7c502e4d24219999089f45afaf8b505"
+  },
+  "oracleSchema": {
+   "path": "docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json",
+   "sha256": "4d2320dfd46bcf8c30baa27d96449c6393216f58d5c52da674dd930fd6994e7f"
+  },
+  "comparator": {
+   "path": "docs/rebuild/phase10/evidence/oracle-comparator/compare_oracle.py",
+   "sha256": "ebc3041f32d96498abdbe09e88bc4bf5e2df7b89ea511fa35fdb7830837bfc1c"
+  }
+ },
+ "generatedReportSha256": "7ccbcdf3ffb03613626c045a34f0977ce600488196f51219d4afb48f440298b7",
+ "sbDerivation": {
+  "executed": true,
+  "derivedMatchesFixed": true,
+  "outputPath": "/tmp/opencode/p10-oracle/sb_quantity_output.json",
+  "fixedPath": "docs/rebuild/phase10/evidence/oracle-comparator/sb_quantity_input.json"
+ },
+ "sbExcludedFromStandardSuite": {
+  "ok": true,
+  "returnCode": 0,
+  "matchedCount": 0,
+  "testPath": "src/next/modules/substructure/__tests__/phase10SbQuantityDerivation.test.ts",
+  "configPath": "vitest.config.ts"
+ },
+ "oracleSchemaValid": true,
+ "negativeFixtures": {
+  "count": 7,
+  "allRejected": true,
+  "cases": [
+   {
+    "id": "NEG-1",
+    "name": "coverage.components missing i.mx",
+    "mutation": "pop:coverage>components>i.mx",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-2",
+    "name": "coverage.i.fx missing nonZeroCount",
+    "mutation": "pop:coverage>components>i.fx>nonZeroCount",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-3",
+    "name": "coverage.i.mx has nonZeroCount instead of maxAbsBound",
+    "mutation": "set:coverage>components>i.mx={\"nonZeroCount\":70}",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-4",
+    "name": "coverage extra component j.fy",
+    "mutation": "set:coverage>components>j.fy={\"nonZeroCount\":70}",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-5",
+    "name": "row entityId='*' without wildcard",
+    "mutation": "set:rows>0>entityId=*;pop:rows>0>wildcard",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-6",
+    "name": "row wildcard=all-members but entityId!='*'",
+    "mutation": "set:rows>0>wildcard=all-members;set:rows>0>entityId=X",
+    "expected": "reject",
+    "result": "reject"
+   },
+   {
+    "id": "NEG-7",
+    "name": "coverage empty components object",
+    "mutation": "set:coverage>components={}",
+    "expected": "reject",
+    "result": "reject"
+   }
+  ]
+ },
+ "comparison": {
+  "pass": true,
+  "rows": 46,
+  "failures": 0,
+  "rawConsistency": {
+   "pass": true,
+   "absTol": 1e-09,
+   "checksCount": 1092,
+   "failedChecks": [],
+   "counts": {
+    "reactions": 6,
+    "memberEndForces": 70,
+    "displacements": 72
+   }
+  }
+ },
+ "reportSchemaValid": true,
+ "rowKeysMatch": {
+  "ok": true,
+  "oracleUnique": true,
+  "reportUnique": true,
+  "oracleKeyCount": 46,
+  "reportKeyCount": 46,
+  "uniquenessNegativeDetected": true
+ },
+ "fixtureConsistency": {
+  "ok": true,
+  "oracleReference": "REF-MOUNTAIN-1",
+  "fixtureConstantsId": "REF-MOUNTAIN-1",
+  "reportFixtureId": "REF-MOUNTAIN-1",
+  "reportFixtureVersion": "REF-MOUNTAIN-1",
+  "projectIdMatch": true
+ },
+ "overallPass": true
+}

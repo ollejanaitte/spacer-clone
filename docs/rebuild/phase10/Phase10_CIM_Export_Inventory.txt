@@ -11,8 +11,8 @@ baseline: e3e2d3b
 | Integrated 3D scene | cimSceneBuilder.ts（18 layer） | COMPLETE |
 | layer structure | integrated3dScene.ts（CimLayerId・metadata） | COMPLETE |
 | stableId/sourceEntityId | attachCimMetadata | COMPLETE |
-| GLB export | cimExport.ts（real .glb・新アプリ） | COMPLETE |
-| glTF JSON | cimExport.ts | COMPLETE |
+| GLB export（CIM-02） | cimExport.ts（real .glb・新アプリ） | COMPLETE |
+| glTF JSON（CIM-03） | cimExport.ts | COMPLETE（V1.0は任意） |
 | Road CIM surface | roadCimSurface.ts | COMPLETE |
 | Super/Sub CIM layer | superstructureCimLayer・substructureCimLayer | COMPLETE |
 | Analysis overlay | analysisCimLayer（FEM/IF3・stale guard） | COMPLETE |
@@ -28,11 +28,11 @@ baseline: e3e2d3b
 
 【screenshot/report integration】
 - 実画面証跡: docs/rebuild/evidence（Phase 9-04R3で多数取得）
-- 報告統合: 新アプリに明示統合なし → Phase 11候補
+- 報告統合: V1.0 scope=DEFER（外）
 
 【判定】
-- Integrated 3D・GLB・glTF: KEEP（V1.0必須）
-- STL: ADAPT候補（V1.0任意・新アプリへ接続任意）
+- Integrated 3D（CIM-01）・GLB（CIM-02）: KEEP（V1.0必須）・glTF（CIM-03）: 任意
+- STL: 将来方針=ADAPT候補・V1.0 scope=DEFER（外）
 - IFC: DEFER
 - screenshot/report統合: Phase 11候補（任意）
 ====================================================================

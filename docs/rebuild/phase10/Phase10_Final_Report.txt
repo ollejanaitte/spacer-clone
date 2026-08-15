@@ -1,0 +1,99 @@
+================================================================================
+Phase 10  統合設計最終完成監査・成果品資産救出設計・Final Design Freeze  最終報告書
+================================================================================
+対象: spacer-clone 統合システム再構築（Phase 10）
+監査日: 2026-08-15
+作成場所: /home/masaharu/Projects/spacer-clone/docs/rebuild/phase10/
+状態: FINAL（Sol最終レビューGO・Completion Gate PASS相当）
+レビュー: Sol（gpt-5.6-sol・read-only）最終判定 GO（2026-08-15・19回目）
+実装・文書作成: opencode
+
+================================================================================
+1. 開始時 baseline
+================================================================================
+- Canonical repo    : /home/masaharu/Projects/spacer-clone
+- Canonical branch  : main
+- baseline SHA      : e3e2d3b（Phase 9-04R3 COMPLETE）
+- Phase 9-04R3 state: COMPLETE（PARTIAL=0・unresolved=0・frontend 1960 PASS・backend 1100 PASS）
+- FROZEN境界        : 維持（NOT_AUTHORIZED/HOLD_NOT_AVAILABLE/SOURCE_NOT_AVAILABLE/FROZEN-DEFER 旧field）
+
+================================================================================
+2. 成果物（Phase 10 監査・Freeze 文書 16件）
+================================================================================
+STEP 1-8（main 9a2ffd1 へ commit/push 済み）:
+- Phase10_AllModules_FinalAudit.txt
+- Phase10_OldAsset_Inventory.txt
+- Phase10_Road_Deliverables_Inventory.txt
+- Phase10_Bridge_Deliverables_Inventory.txt
+- Phase10_Superstructure_Deliverables_Inventory.txt
+- Phase10_Substructure_Deliverables_Inventory.txt
+- Phase10_Analysis_Deliverables_Inventory.txt
+- Phase10_CIM_Export_Inventory.txt
+- Phase10_Deliverables_Rescue_Matrix.txt
+
+STEP 11-16（branch docs/phase10-design-freeze・PR #1034）:
+- Phase10_V1_Required_Deliverables.txt（Deliverable ID: RD-01..05/BL-01..02/SS-01..05/SB-01..05/AN-01..06/CIM-01..02/SYS-01..03）
+- Phase10_Deferred_Frozen_List.txt
+- Phase10_Final_EndToEnd_Workflow.txt
+- Phase10_Phase11_Implementation_Backlog.txt（P0-01..08 + P1-01）
+- Phase10_Phase12_ReferenceBusiness_AcceptanceGate.txt
+- Phase10_Final_Design_Freeze.txt
+
+================================================================================
+3. 数値Oracle（機械判定・Phase 12受入基準）
+================================================================================
+- 正本: docs/rebuild/phase10/Phase10_Reference_NumberOracle.json
+  sha256 530c0c5bdd689b0392d6c1be97c3b74b60d88d41bda6ec9288cae313dac4e3fb
+  46 row: reaction 6 / memberForce 10 / displacement 2 / quantity 10 / coordinate 18
+  coverage契約（N/Q/M各70部材非零・max|T|<=1e-6）
+- 独立solver実行: backend/engine solver・raw artifact
+  sha256 14a55f0ec4431e89081f0a8ab35e6235d1dc7964d62453b98d453a0d15a8c06e
+- 機械比較レポート: docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle_ComparisonReport.json
+  sha256 7ccbcdf3ffb03613626c045a34f0977ce600488196f51219d4afb48f440298b7
+  46 PASS・failures 0・modelCounts PASS・loadBalance PASS・coverage PASS・rawConsistency 1092件 failed 0
+- 検証bundle（evidence/oracle-comparator/）: comparator・verify runner・schemas・negative fixtures・
+  SB導出test・fixture_constants・両vitest config・verification_result
+  verification_result sha256 95f08d898c015a1de28fe9aed0ad9e7513c8f294881252500aa0412f77815e9f（OVERALL PASS）
+
+================================================================================
+4. Sol最終レビュー経過
+================================================================================
+- 回数: 1〜18回NO-GO/条件付き → 19回目「GO」
+- 主な修正: oracle独立性chain（独立solver artifact・SHA・機械比較report・generatedAt/chain of custody）・
+  P0-07単一路線+bundle契約（schema version/生成元/payload/適用順・原子commit・非null必須）・
+  schema fail-closed化（wildcard双方向・coverage components契約・negative fixtures）・
+  数量/座標oracle追加（SS-04/SB-04/SB-03）・row一意性・fixture consistency・
+  SB導出strict比較（専用vitest config・通常suite除外・vitest list fail-closed検証）・
+  DEFER境界統一・CIM-03 scope明確化・Decision統一
+- 最終判定: GO（Low 1件はscope外表・文書整理として追記対応済み）
+
+================================================================================
+5. Phase 12 Gate 前提（Freeze確定）
+================================================================================
+- Reference Business: Reference Mountain（空Project→fixture import→解析→成果品→Save→Electron Restart→Import）
+- fixture import単一路線: deliverables module（/app/projects/{id}/modules/deliverables・POST /api/rebuild/fixture/import）
+- 各Deliverable IDのPASS条件表（UI/export/byte-content/checksum/oracle/stale-restart適用有無）確定
+- Completion Gate PASS条件: 実画面生成・実ファイル出力・byte/content検証・canonical checksum・
+  FROZEN境界維持・数値oracle適合・stale/restart/import後再生
+
+================================================================================
+6. 保護対象（変更なし）
+================================================================================
+- M docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity,stl-metadata}.json
+- D final_report.txt
+- untracked docs/rebuild/reports/R1-04.5_GPT-5.6-Luna_Vision_Delegation_検証結果.txt
+
+================================================================================
+7. 後続（Phase 11 以降）
+================================================================================
+- Phase 11: P0-01..08 実装（byte/content Gate・fixture import・stale/restart等）
+- Phase 12: Reference Business 受入・Completion Gate 判定
+- 本Phase 10のFreezeはPhase 11/12の設計根拠として凍結
+
+================================================================================
+8. 結論
+================================================================================
+- 統合設計最終完成監査・成果品資産救出設計・Final Design Freeze は Sol最終レビューGO を取得。
+- Completion Gate PASS相当（Phase 12 受入条件はFreeze済み・実行はPhase 12）。
+- Phase 10 完了。
+================================================================================

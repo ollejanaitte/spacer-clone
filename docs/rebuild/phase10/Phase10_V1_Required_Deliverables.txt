@@ -1,0 +1,82 @@
+====================================================================
+Phase10_V1_Required_Deliverables（STEP 11 V1.0必須成果品を確定・唯一のscope表）
+====================================================================
+baseline: e3e2d3b
+確認日: 2026-08-15 JST
+status: FINAL（Sol指摘2回反映）
+====================================================================
+
+V1.0 COMPLETE判定の唯一のscope表。一行一Deliverable ID。
+各成果はmatrix/inventories/backlog/Phase 12証跡でこのIDへ紐付ける。
+候補・補助項目は必須列に含めない。
+
+【Road】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| RD-01 | 平面線形/座標/要素表 | 必須（KEEP） | 新module・COMPLETE |
+| RD-02 | 平面図 | 必須（KEEP+ADAPT） | 旧LINER資産を新アプリへ接続・DXF実出力 |
+| RD-03 | 縦断図 | 必須（KEEP+ADAPT） | 同上 |
+| RD-04 | 横断図 | 必須（KEEP+ADAPT） | 同上 |
+| RD-05 | 道路計算書（HTML/CSV） | 必須（ADAPT） | 旧roadReportを新アプリへ接続 |
+
+※ Road 3D/CIMは必須（CIM-01統合3Dの一部として扱う。RD IDには含めない）
+
+【Bridge】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| BL-01 | Bridge Layout（支間割/支持点） | 必須（KEEP） | 新module・COMPLETE |
+| BL-02 | span/support表出力 | 必須（REWRITE小） | 形式: CSV（Phase 11で確定・列/checksum固定） |
+
+【Superstructure】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| SS-01 | 本格入力UI | 必須（KEEP） | Phase 9-04R3 COMPLETE |
+| SS-02 | 2D | 必須（KEEP） | 同上 |
+| SS-03 | DXF | 必須（KEEP） | 新アプリ実出力 |
+| SS-04 | Quantity | 必須（KEEP） | 実数値 |
+| SS-05 | 3D/CIM | 必須（KEEP） | 同上 |
+
+※ IF3解析結果（N/Q/M/T・Reaction）はAN-02/AN-03として分類（上部工照査結果ではない）。
+  section/materialはSS-01入力UIの一部（独立IDにしない）。
+
+【Substructure】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| SB-01 | 3-pane CAD | 必須（KEEP） | Phase 9-04R3 COMPLETE |
+| SB-02 | pile grid | 必須（KEEP） | 同上 |
+| SB-03 | 座標表 | 必須（KEEP） | 同上 |
+| SB-04 | Quantity | 必須（KEEP） | 実数値 |
+| SB-05 | 2D/3D/CIM | 必須（KEEP） | 同上 |
+
+【Analysis】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| AN-01 | Solver/IF3 authoritative | 必須（KEEP） | Phase 9-04R3 COMPLETE |
+| AN-02 | Reaction | 必須（KEEP） | AuthoritativeResultPanel |
+| AN-03 | N/Q/M/T | 必須（KEEP） | 同上 |
+| AN-04 | Deformed | 必須（KEEP） | 同上 |
+| AN-05 | 結果CSV export | 必須（ADAPT） | 旧exportsを新アプリへ接続 |
+| AN-06 | analysis専用ページ | 必須（REWRITE小） | /app/.../modules/analysis 正式化 |
+
+【CIM / Export】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| CIM-01 | Integrated 3D | 必須（KEEP） | 既にCOMPLETE |
+| CIM-02 | GLB export | 必須（KEEP） | 実出力 |
+| CIM-03 | glTF JSON export | capability（Completion Gate対象外） | 実装済み・V1.0 Gate対象外（GLBのみ必須） |
+
+【System】
+| ID | 成果 | 状態 | 備考 |
+|---|---|---|---|
+| SYS-01 | .spacerproj export/import | 必須（KEEP） | 既にCOMPLETE |
+| SYS-02 | Auto Save/Restart/Electron restart | 必須（KEEP） | 既にCOMPLETE |
+| SYS-03 | deliverables module | 必須（REWRITE新設） | Phase 11で図面/報告/export統合UI |
+
+====================================================================
+V1.0必須成果ID一覧（Phase 12判定対象）
+RD-01..RD-05 / BL-01..BL-02 / SS-01..SS-05 / SB-01..SB-05 /
+AN-01..AN-06 / CIM-01..CIM-02 / SYS-01..SYS-03
+
+V1.0外項目（DEFER/NOT_AUTHORIZED/HOLD/SOURCE_NOT_AVAILABLE）は
+独立文書「Phase10_Deferred_Frozen_List.txt」を唯一のscope外表として参照。
+=====================================================================

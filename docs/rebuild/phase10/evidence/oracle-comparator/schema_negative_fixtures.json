@@ -1,0 +1,53 @@
+{
+ "title": "Phase 10 Oracle Schema Negative Fixtures",
+ "description": "verify_oracle_evidence.py が唯一正本として読込・適用するnegative fixtures（全てreject必須）",
+ "schema": "docs/rebuild/phase10/evidence/Phase10_Reference_NumberOracle.schema.json",
+ "validator": "jsonschema 4.26.0 Draft202012Validator",
+ "runner": "docs/rebuild/phase10/evidence/oracle-comparator/verify_oracle_evidence.py",
+ "cases": [
+  {
+   "id": "NEG-1",
+   "name": "coverage.components missing i.mx",
+   "mutation": "pop:coverage>components>i.mx",
+   "expected": "reject"
+  },
+  {
+   "id": "NEG-2",
+   "name": "coverage.i.fx missing nonZeroCount",
+   "mutation": "pop:coverage>components>i.fx>nonZeroCount",
+   "expected": "reject"
+  },
+  {
+   "id": "NEG-3",
+   "name": "coverage.i.mx has nonZeroCount instead of maxAbsBound",
+   "mutation": "set:coverage>components>i.mx={\"nonZeroCount\":70}",
+   "expected": "reject"
+  },
+  {
+   "id": "NEG-4",
+   "name": "coverage extra component j.fy",
+   "mutation": "set:coverage>components>j.fy={\"nonZeroCount\":70}",
+   "expected": "reject"
+  },
+  {
+   "id": "NEG-5",
+   "name": "row entityId='*' without wildcard",
+   "mutation": "set:rows>0>entityId=*;pop:rows>0>wildcard",
+   "expected": "reject"
+  },
+  {
+   "id": "NEG-6",
+   "name": "row wildcard=all-members but entityId!='*'",
+   "mutation": "set:rows>0>wildcard=all-members;set:rows>0>entityId=X",
+   "expected": "reject"
+  },
+  {
+   "id": "NEG-7",
+   "name": "coverage empty components object",
+   "mutation": "set:coverage>components={}",
+   "expected": "reject"
+  }
+ ],
+ "verifiedAt": "2026-08-15",
+ "result": "全7件reject・oracle PASS・SB導出一致・report PASSをverify_oracle_evidence.pyが一括実行（verification_result.json参照）"
+}

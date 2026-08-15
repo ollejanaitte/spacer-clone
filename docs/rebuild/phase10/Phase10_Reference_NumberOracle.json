@@ -1,0 +1,459 @@
+{
+ "schemaVersion": "1.0.0",
+ "reference": "REF-MOUNTAIN-1",
+ "loadCaseId": "LC1",
+ "checksums": {},
+ "rows": [
+  {
+   "kind": "reaction",
+   "entityId": "supportPoint:A1:G1",
+   "component": "fz",
+   "expected": 3986.19,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "reaction",
+   "entityId": "supportPoint:A1:G2",
+   "component": "fz",
+   "expected": 3986.15,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "reaction",
+   "entityId": "supportPoint:P1:G1",
+   "component": "fz",
+   "expected": 6977.29,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "reaction",
+   "entityId": "supportPoint:P1:G2",
+   "component": "fz",
+   "expected": 6977.46,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "reaction",
+   "entityId": "supportPoint:A2:G1",
+   "component": "fz",
+   "expected": 2989.27,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "reaction",
+   "entityId": "supportPoint:A2:G2",
+   "component": "fz",
+   "expected": 2989.14,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 1e-06
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S1",
+   "component": "i.fx",
+   "expected": 103.705,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S1",
+   "component": "i.fz",
+   "expected": 3785.443,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S1",
+   "component": "j.my",
+   "expected": -37868.637,
+   "unit": "kNm",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S2",
+   "component": "i.fx",
+   "expected": 92.788,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S2",
+   "component": "i.fz",
+   "expected": 3386.943,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S2",
+   "component": "j.my",
+   "expected": -71750.774,
+   "unit": "kNm",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S3",
+   "component": "i.fx",
+   "expected": 81.871,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S3",
+   "component": "i.fz",
+   "expected": 2988.442,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "M-L-G1-S3",
+   "component": "j.my",
+   "expected": -101646.411,
+   "unit": "kNm",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "displacement",
+   "entityId": "girderPanel:G1:200",
+   "component": "uz.raw",
+   "expected": -190.882884,
+   "unit": "m",
+   "absTol": 0.001,
+   "relTol": 0.001
+  },
+  {
+   "kind": "displacement",
+   "entityId": "girderPanel:G1:200",
+   "component": "uz.display",
+   "expected": -19088.288,
+   "unit": "m",
+   "absTol": 0.1,
+   "relTol": 0.001,
+   "displayScale": 100
+  },
+  {
+   "kind": "memberForce",
+   "entityId": "*",
+   "component": "i.mx",
+   "expected": 0.0,
+   "unit": "kNm",
+   "absTol": 1e-06,
+   "relTol": 0,
+   "wildcard": "all-members"
+  },
+  {
+   "kind": "quantity",
+   "entityId": "section",
+   "component": "SECTION-GIRDER.area",
+   "expected": 0.12,
+   "unit": "m2",
+   "absTol": 1e-06,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "section",
+   "component": "SECTION-GIRDER.unitWeightPerM",
+   "expected": 9.24,
+   "unit": "kN/m",
+   "absTol": 0.001,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G1",
+   "component": "x",
+   "expected": 200.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G1",
+   "component": "y",
+   "expected": 496.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G1",
+   "component": "z",
+   "expected": 103.08,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G2",
+   "component": "x",
+   "expected": 200.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G2",
+   "component": "y",
+   "expected": 504.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A1:G2",
+   "component": "z",
+   "expected": 102.92,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G1",
+   "component": "x",
+   "expected": 400.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G1",
+   "component": "y",
+   "expected": 496.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G1",
+   "component": "z",
+   "expected": 108.5592,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G2",
+   "component": "x",
+   "expected": 400.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G2",
+   "component": "y",
+   "expected": 504.0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:P1:G2",
+   "component": "z",
+   "expected": 108.3992,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G1",
+   "component": "x",
+   "expected": 503.0568,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G1",
+   "component": "y",
+   "expected": 582.7107,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G1",
+   "component": "z",
+   "expected": 106.58,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G2",
+   "component": "x",
+   "expected": 495.139,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G2",
+   "component": "y",
+   "expected": 581.5667,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "coordinate",
+   "entityId": "supportPoint:A2:G2",
+   "component": "z",
+   "expected": 106.42,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0.0001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure",
+   "component": "totalConcreteVolume",
+   "expected": 616.72,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure",
+   "component": "totalPileLength",
+   "expected": 0,
+   "unit": "m",
+   "absTol": 0.01,
+   "relTol": 0
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure:A1",
+   "component": "concreteVolume",
+   "expected": 214.4,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure:P1",
+   "component": "concreteVolume",
+   "expected": 187.92,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "substructure:A2",
+   "component": "concreteVolume",
+   "expected": 214.4,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelWeight",
+   "expected": 6076.364,
+   "unit": "kN",
+   "absTol": 0.01,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "deckVolume",
+   "expected": 672.0,
+   "unit": "m3",
+   "absTol": 0.1,
+   "relTol": 0.001
+  },
+  {
+   "kind": "quantity",
+   "entityId": "model",
+   "component": "totalSteelVolume",
+   "expected": 78.913819,
+   "unit": "m3",
+   "absTol": 0.01,
+   "relTol": 0.001
+  }
+ ],
+ "modelCounts": {
+  "nodes": 72,
+  "members": 70,
+  "sections": 1,
+  "materials": 1,
+  "supports": 6,
+  "bearings": 6,
+  "nodalLoads": 72
+ },
+ "loadBalance": {
+  "totalKN": 27905.5,
+  "applied": 27905.5,
+  "reaction": 27905.5,
+  "relTol": 1e-06
+ },
+ "coverage": {
+  "kind": "memberForce",
+  "entityId": "*",
+  "components": {
+   "i.fx": {
+    "nonZeroCount": 70
+   },
+   "i.fz": {
+    "nonZeroCount": 70
+   },
+   "j.my": {
+    "nonZeroCount": 70
+   },
+   "i.mx": {
+    "maxAbsBound": 1e-06
+   }
+  },
+  "count": 70,
+  "unit": "-"
+ }
+}
