@@ -48,6 +48,7 @@ describe("DeliverablesModuleShellPage (Phase 11 P0-01)", () => {
       expect(btn.disabled).toBe(true);
     }
     expect(document.querySelector('[data-testid="deliverables-status"]')?.textContent).toBeTruthy();
+    expect(document.querySelector('[data-testid="deliverables-import-fixture"]')).toBeTruthy();
     root.unmount();
   });
 });

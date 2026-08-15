@@ -38,6 +38,7 @@ import { buildRoadHtmlReport } from "../../liner/exports/roadReport";
 import { buildRoadReportContext, assessRoadExportReadiness } from "../../liner/exports/roadReportContext";
 import { buildIntegrated3DScene } from "../modules/cim/cimSceneBuilder";
 import { exportCimSceneAsGlb, downloadGlb } from "../modules/cim/cimExport";
+import { importReferenceMountainFixture, type FixtureImportResult } from "../modules/deliverables/referenceFixture";
 
 export interface DeliverableUiItem {
   readonly id: string;
@@ -64,6 +65,8 @@ export function DeliverablesModuleShellPage({ projectId, moduleId }: { projectId
   const definition = getModuleDefinition(moduleId as ProjectModuleKey);
   const [exportMessage, setExportMessage] = useState<string | null>(null);
   const [exporting, setExporting] = useState<string | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<FixtureImportResult | null>(null);
 
   const roadData = useMemo(() => readRoadData(getProjectManager(), projectId), [projectId]);
   const bridgeLayout = useMemo(() => readBridgeLayoutDocument(getProjectManager(), projectId), [projectId]);
@@ -242,6 +245,18 @@ export function DeliverablesModuleShellPage({ projectId, moduleId }: { projectId
     }
   }
 
+  async function handleImportFixture() {
+    setImporting(true);
+    setImportResult(null);
+    try {
+      const result = importReferenceMountainFixture(getProjectManager(), projectId);
+      setImportResult(result);
+      setExportMessage(result.ok ? "Reference Mountain fixture import 完了（provenance記録済み）。" : "fixture import 失敗（rollback済み）。");
+    } finally {
+      setImporting(false);
+    }
+  }
+
   if (!project) {
     return (
       <section className="next-page" data-testid="deliverables-module-page">
@@ -322,6 +337,40 @@ export function DeliverablesModuleShellPage({ projectId, moduleId }: { projectId
       </table>
 
       {exportMessage !== null && <p className="next-hint" data-testid="deliverables-export-message">{exportMessage}</p>}
+
+      <h2 className="next-home-section-title">Reference Mountain fixture import（P0-07）</h2>
+      <p className="next-hint">
+        空Projectに対して REF-MOUNTAIN-1 を明示的にimportします（road→terrain→existing→bridgeLayout→superstructure→substructure→analysis・原子commit）。
+      </p>
+      <div className="next-form-row">
+        <button
+          type="button"
+          className="next-button"
+          data-testid="deliverables-import-fixture"
+          disabled={importing}
+          onClick={() => void handleImportFixture()}
+        >
+          {importing ? "import中..." : "Reference Mountain fixture import"}
+        </button>
+      </div>
+      {importResult !== null && (
+        <div className="next-integrity-block" data-testid="deliverables-import-result">
+          {importResult.ok && importResult.provenance ? (
+            <>
+              <p className="next-ok-text">import成功（fixtureId={importResult.provenance.fixtureId}・version={importResult.provenance.fixtureVersion}）</p>
+              <dl className="next-integrity-meta">
+                {Object.entries(importResult.provenance.moduleChecksums).map(([key, value]) => (
+                  <div key={key}><dt>{key}</dt><dd>{value}</dd></div>
+                ))}
+              </dl>
+            </>
+          ) : (
+            <ul className="next-integrity-reasons">
+              {importResult.issues.map((i) => <li key={`${i.path}:${i.message}`}>{i.path}: {i.message}</li>)}
+            </ul>
+          )}
+        </div>
+      )}
     </section>
   );
 }
