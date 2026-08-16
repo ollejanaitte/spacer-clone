@@ -1,0 +1,158 @@
+================================================================================
+SPACER CLONE — Phase W1 Lane A Final Report
+================================================================================
+ファイル名: SPACER_PhaseW1-LaneA_20260816_1829_Persistence安全柵Wave1.txt
+作成日時  : 2026-08-16 18:29 (JST)
+担当Lane  : Lane A — Persistence / Schema
+branch    : lane-a/persistence-schema
+worktree  : ~/Projects/spacer-clone-lane-a
+開始SHA   : 1840cb66 (Wave0 基準) → ff-only 追従後 31a1113
+終了SHA   : 3e6e393 (HEAD, push済み)
+Wave1範囲 : A-2 Schema Drift Guard → A-3 Default Project Conformance → A-4 Generic Persistence Roundtrip
+
+--------------------------------------------------------------------------------
+1. 実施ステップ
+--------------------------------------------------------------------------------
+1) 開始時確認 (fetch / branch / SHA / ff-only 追従)
+   - lane-a worktree が origin/main (1840cb66) より遅延していたため
+     git merge --ff-only origin/main で 31a1113 へ fast-forward
+   - 未コミット差分なしで安全に追従できた
+2) A-2 Schema Drift Guard 実装
+3) A-3 Default Project Conformance 実装
+4) A-4 Generic Persistence Roundtrip 実装
+5) 各Gate実行 (test:fast / test:ui / typecheck / build)
+6) commit / push と Final Report 作成
+
+--------------------------------------------------------------------------------
+2. 実装・変更内容
+--------------------------------------------------------------------------------
+【A-2 Schema Drift Guard】
+- 新規 frontend/src/persistence/schemaGuard.ts
+  - projectModelTopLevelKeys(): Record<keyof ProjectModel, true> による
+    コンパイル時完全列挙 (新フィールド追加時の列挙更新漏れを typecheck が検知)
+  - projectSchemaTopLevelKeys(): schemas/project.schema.json の properties を列挙
+  - analyzeSchemaDrift(): schema-only / model-only 両方向の差分を報告
+  - SCHEMA_ONLY_ALLOWLIST = ["substructure"] (既知 schema-only key の正式 allowlist)
+- 新規 frontend/src/persistence/__tests__/schemaDriftGuard.test.ts (6件)
+  - schema-only = allowlist のみ / model-only = 0件 / allowlist外driftなし 等
+- Schema / types.ts は変更せず additionalProperties:false を維持
+
+【A-3 Default Project Conformance】
+- 更新 frontend/src/data/defaultProject.ts
+  - createDefaultProject の analysisSettings に solver: "scipy_sparse" を追加
+    (Schema の required solver 充足。型上 optional のため安全)
+- 新規 frontend/src/persistence/projectSchemaValidator.ts
+  - ajv による公式 Schema 検証の共有 validator (getProjectSchemaValidator /
+    validateProjectAgainstSchema)。A-05 でも再利用可能な設計
+- 新規 frontend/src/persistence/__tests__/defaultProjectConformance.test.ts (3件)
+  - createDefaultProject が公式 Schema 適合
+  - createEmptyProject は非保存対象 runtime transient (conscious exception) として
+    既知不適合 (nodes/materials/sections/loadCases 空 + solver 欠落) を明示アサート
+  - schema の minItems / solver は緩めていない
+
+【A-4 Generic Persistence Roundtrip】
+- 新規 frontend/src/persistence/canonicalRoundtrip.ts
+  - runCanonicalRoundtrip(): 主経路チェーン
+    serializeApolloPhase1Unit2ForPersistence → serializeProjectForPersistence
+    → JSON (stringify/parse) → migrateProject
+    → hydrateProjectLinerFromPersistence → hydrateApolloPhase1Unit2FromPersistence
+    を純関数化
+- 新規 frontend/src/persistence/__tests__/genericProjectRoundtrip.test.ts (4件)
+  - createDefaultProject roundtrip 成立 / persisted 表現の Schema 適合 /
+    hydrate 後 Project の app 成立 / apolloPhase1Unit2 sidecar 付きでも成立
+  - 全フィールド同値はアサートしない (意図的 non-identity を維持)
+
+--------------------------------------------------------------------------------
+3. 変更ファイル一覧
+--------------------------------------------------------------------------------
+- frontend/src/persistence/schemaGuard.ts                      (新規)
+- frontend/src/persistence/projectSchemaValidator.ts           (新規)
+- frontend/src/persistence/canonicalRoundtrip.ts               (新規)
+- frontend/src/persistence/__tests__/schemaDriftGuard.test.ts  (新規)
+- frontend/src/persistence/__tests__/defaultProjectConformance.test.ts (新規)
+- frontend/src/persistence/__tests__/genericProjectRoundtrip.test.ts   (新規)
+- frontend/src/data/defaultProject.ts                           (更新: solver 追加)
+
+--------------------------------------------------------------------------------
+4. test / typecheck / build 結果
+--------------------------------------------------------------------------------
+- npm run test:fast : 428 files / 3177 tests 全PASS (LaneA新規13件含む)
+  ※ lane-a worktree に .venv が無く golden test 2件が初期失敗したため
+    main worktree の .venv を symlink して解決 (環境問題)
+- npm run test:ui   : 125 files / 758 tests 全PASS
+- npm run typecheck : PASS
+- npm run build     : PASS
+- 既存回帰: projectMigration / linerProjectDraft / defaultProject /
+  App.linerSaveLoad / App.linerReset 等 回帰なし
+
+--------------------------------------------------------------------------------
+5. commit 一覧
+--------------------------------------------------------------------------------
+9526478 feat(A-02): Schema Drift Guard を追加
+4ec23d4 feat(A-03): Default Project Conformance を追加
+6677773 feat(A-04): Generic Persistence Roundtrip を追加
+3e6e393 fix(A-03): typecheck 通過のため ajv validate の戻り値を boolean へ明示
+
+--------------------------------------------------------------------------------
+6. push 結果
+--------------------------------------------------------------------------------
+git push origin lane-a/persistence-schema
+1840cb6..3e6e393  lane-a/persistence-schema -> lane-a/persistence-schema
+成功 (upstream 設定済み)
+
+--------------------------------------------------------------------------------
+7. Luna 利用
+--------------------------------------------------------------------------------
+利用なし
+
+--------------------------------------------------------------------------------
+8. Sol 利用
+--------------------------------------------------------------------------------
+利用なし (Phase A-01 時点で計画自体へのレビューは実施済み。Wave1 は計画に沿った
+純実装であり重大設計矛盾なしと判断)
+
+--------------------------------------------------------------------------------
+9. blocker / 残課題
+--------------------------------------------------------------------------------
+- なし (Wave1範囲内でのblocking issueなし)
+- 注記: test:fast 実行時に docs/apollo/step4c_appurtenance_haunch/evidence/*.json が
+  テスト副作用として再生成される (timestamp 差分のみ)。Lane A の変更とは無関係のため
+  未ステージのまま保全。統合担当は無視してよい
+- 環境注記: lane-a worktree には .venv が無い。test:fast の bridgeDefinition golden
+  test は .venv を要求するため、main worktree の .venv への symlink を張って解決。
+  git 管理外のため commit には含まれない
+
+--------------------------------------------------------------------------------
+10. 他 Lane への引渡し事項
+--------------------------------------------------------------------------------
+- ProjectModel / JSON Schema の正本は Lane A 所有のまま維持 (変更なし)
+- allowlist 契約: schema-only key は "substructure" のみ。
+  新フィールド追加時は Lane A と調整してから追加すること
+- A-05 (Validation Boundary) / A-06 (Exceptional Paths) / A-07 (Migration Guard) /
+  A-08 (Gate Integration) は Wave2 以降。projectSchemaValidator.ts は A-05 で再利用可能
+- persist 表現の Schema 適合は実測済み (A-04) のため、A-05 の境界導入は回帰しない土台が確定
+
+--------------------------------------------------------------------------------
+11. Gmail 完了報告
+--------------------------------------------------------------------------------
+- 送信手段: 本環境に Gmail/SMTP 送信手段の明示的な認証済みクライアントが確認できないため、
+  外部送信は実施せず、下記を記録する
+- 宛先  : hatapon223101@gmail.com
+- 件名  : [SPACER] Phase W1 Lane A 完了 — Persistence安全柵Wave1
+- 本文  : 以下を添付して送信予定
+    SPACER_PhaseW1-LaneA_20260816_1829_Persistence安全柵Wave1.txt
+  (本文例)
+  こんにちは。
+  SPACER CLONE の並列Lane作業のうち、Lane A (Persistence/Schema) の
+  Wave 1 (A-2 Schema Drift Guard / A-3 Default Project Conformance /
+  A-4 Generic Persistence Roundtrip) が完了しました。
+  branch: lane-a/persistence-schema (3e6e393) を push 済みです。
+  main 統合は統合担当セッションでお願いします。
+
+--------------------------------------------------------------------------------
+12. Wave 1 終了宣言
+--------------------------------------------------------------------------------
+Wave 1 担当Lane (Lane A) 完了。main統合待ち。
+
+mainへのmerge・Wave2への進行は行わない。
+================================================================================
