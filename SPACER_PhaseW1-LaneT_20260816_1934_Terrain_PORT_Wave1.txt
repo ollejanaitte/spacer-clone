@@ -1,0 +1,184 @@
+========================================================================
+SPACER CLONE × site-context-prototype
+Wave 1「Lane T — site-context Terrain PORT」ファイナルレポート
+========================================================================
+作成日時: 2026-08-16 19:34 (JST)
+担当 Lane: T (Terrain / CRS / DEM / Heightfield / SCT1)
+
+1. branch / worktree
+------------------------------------------------------------------------
+- branch  : lane-t/sitecontext-terrain-port
+- worktree: ~/Projects/spacer-clone-lane-t
+- 参照リポジトリ（読み取りのみ・変更なし）: ~/Projects/site-context-prototype
+
+2. 開始SHA / 終了SHA
+------------------------------------------------------------------------
+- 開始SHA (追従後) : 31a111362ec39f31f74a40f4dd59e2e002a49035
+- 終了SHA (HEAD)   : a83ab8c4057ce7af3dbb58c8ede4c396894ff588
+- 開始時: git fetch origin → branch が origin/main より遅れており、
+  未コミット差分なし・fast-forward 可能だったため `git merge --ff-only origin/main` で追従。
+
+3. T-1 PORT 対象資産確定（完了）
+------------------------------------------------------------------------
+成果物: docs/development/site-context-terrain-port-map.md
+- site-context-prototype の Terrain 関連資産を A〜F 分類で棚卸し。
+  A=そのままPORT / B=軽微な依存除去 / C=Adapter必要 / D=Viewer(Lane V) /
+  E=Persistence(T-5) / F=今回不要
+- Wave 1 PORT 対象: C1〜C4 (CRS/Coord) / G1〜G3 (GSI DEM) / H1〜H4 (Heightfield/SCT1/checksum)
+- 郡上市八幡 baseline・Lane B/V/U/S への I/F・Wave1/2 区分を確定。
+
+4. T-2 CRS / Coordinate Core PORT（完了）
+------------------------------------------------------------------------
+destination: frontend/src/terrain/
+- coordinate/transform.ts   : JGD2011 平面直角座標系 (EPSG 6669-6687) 横メルカトル(GRS80) 正逆変換
+  latLonToPlane / planeToLatLon / JGD2011_ZONES / ZONE_BY_EPSG
+- coordinate/epsgClassifier.ts : EPSG 分類 (projected=6669-6687, geographic=4326/6668/4269/4612)
+  EPSG_CLASSIFIER_VERSION / classifyCrs / classifyEpsg / isPlaneRectangular
+- coordinate/renderAdapter.ts : RenderCoordinateAdapter (canonical x=easting,y=northing,z=up ↔
+  Three.js Y-up 表示専用変換) / azimuthToDir / rightNormal
+- types.ts : GridSpec / Bounds / Point3 / Vec3 / LocalOrigin（zod 依存を除去した素の interface）
+- test: transform / epsgClassifier / renderAdapter（郡上市八幡 pyproj 参照・全 zone round-trip 含む）
+
+5. T-3 GSI DEM PORT（完了）
+------------------------------------------------------------------------
+destination: frontend/src/terrain/gsi/
+- gsi.ts        : tileXY / tileRangeForBBox (RJ-F03) / GSI_DATASETS (dem5a/dem5b/dem10b) /
+  DEM_FALLBACK_CHAIN / tileResolutionMeters / fetchDemTiles（multi-tile 先勝ち結合・
+  100%no-data タイル=invalid・404 等で fallback・GSI-TOO-MANY-TILES / GSI-EMPTY-RANGE guard）
+- png.ts        : decodePng（最小 PNG デコーダ 8bit RGB/RGBA 非インターレース）/ decodeDemTile（GSI 2^23 標高復号・no-data 含む）
+- dem10bMapping.ts : dem10bChildToParentPixel（Z14 親タイル → Z15 子タイル画素マッピング）
+- heightfield.ts : NO_DATA(-9999) 定数（gsi.ts の依存として移植・クラス本体は T-4 で検証）
+- test: png / gsi（fixture fetcher でネットワーク非依存・fallback / multi-tile / 過大タイル拒否）/ dem10bMapping
+
+6. T-4 Heightfield / SCT1 PORT（完了）
+------------------------------------------------------------------------
+destination: frontend/src/terrain/
+- heightfield.ts : Heightfield クラス（cell-center 規則・双一次補間 FN-F04 最終行/列縮退・
+  no-data sentinel -9999・bounds / contains / getElevation）
+- sct1.ts       : SCT1 バイナリ encode/decode + base64（DataView/Uint8Array 版を正とし
+  Node Buffer 版 serialize.ts と一本化。magic "SCT1"・formatVersion=1・header 42byte・
+  float32 LE row-major）serializeHeightfieldBinary / deserializeHeightfieldBinary /
+  heightfieldToBase64 / base64ToHeightfield / SCT1_MAGIC / SCT1_HEADER_SIZE
+- canonicalize.ts : canonicalize / sha256Hex / canonicalHash（Lane B §3.16 checksum 2 系統の
+  canonicalHash 側に対応）
+- index.ts      : 他 Lane 向け公開 re-export 面
+- test: heightfield（bilinear golden / outside / hole / bounds）/ sct1（round-trip / base64 /
+  byte layout / TER-BAD-MAGIC）/ canonicalize（決定性 / 数値正規化 / sha256 既知値）
+
+7. source → destination mapping
+------------------------------------------------------------------------
+| source (site-context-prototype)                    | destination (SPACER)                        | 分類 |
+| packages/core/src/coordinate/transform.ts          | frontend/src/terrain/coordinate/transform.ts  | A  |
+| packages/core/src/coordinate/epsgClassifier.ts     | frontend/src/terrain/coordinate/epsgClassifier.ts | A |
+| packages/core/src/coordinate/adapter.ts            | frontend/src/terrain/coordinate/renderAdapter.ts | A |
+| packages/core/src/schema/project.ts (GridSpec/Bounds 型) | frontend/src/terrain/types.ts             | B  |
+| packages/core/src/importer/gsi.ts                  | frontend/src/terrain/gsi/gsi.ts               | A  |
+| packages/core/src/importer/png.ts                  | frontend/src/terrain/gsi/png.ts               | A  |
+| packages/core/src/importer/dem10bMapping.ts        | frontend/src/terrain/gsi/dem10bMapping.ts     | A  |
+| packages/core/src/terrain/heightfield.ts           | frontend/src/terrain/heightfield.ts           | B  |
+| packages/core/src/importer/heightfieldBinary.ts    | frontend/src/terrain/sct1.ts                  | A  |
+| packages/core/src/terrain/serialize.ts (Buffer版)  | frontend/src/terrain/sct1.ts（一本化）        | A  |
+| packages/core/src/util/canonicalize.ts             | frontend/src/terrain/canonicalize.ts          | A  |
+| packages/core/src/schema/projectV2.ts (型参照)     | modules.terrain.data.siteContext（Lane B）    | C  |
+
+8. 変更ファイル
+------------------------------------------------------------------------
+新規: docs/development/site-context-terrain-port-map.md
+更新: docs/development/README.md（インデックス登録）
+新規: frontend/src/terrain/types.ts
+新規: frontend/src/terrain/coordinate/{transform,epsgClassifier,renderAdapter}.ts
+新規: frontend/src/terrain/{heightfield,sct1,canonicalize,index}.ts
+新規: frontend/src/terrain/gsi/{gsi,png,dem10bMapping}.ts
+新規: frontend/src/terrain/__tests__/{transform,epsgClassifier,renderAdapter,heightfield,sct1,canonicalize,png,gsi,dem10bMapping}.test.ts (9 件)
+Lane A 所有領域（types.ts / schemas/* / projectMigration.ts / canonical Save/Load/validation/migration/Persistence Guard）: 変更なし
+
+9. test / typecheck / build 結果
+------------------------------------------------------------------------
+- terrain 単体 : 9 file / 54 test PASS
+- npm run test:fast : 434 file / 3218 test PASS（※ .venv / node_modules を main リポジトリから
+  symlink して実行。worktree 単独では .venv 不在により bridgeDefinition の Python 依存 golden 2 件が
+  環境要因で fail するが、symlink 後は全 PASS を確認。コード起因ではない）
+- npm run typecheck : PASS
+- npm run build : PASS（chunk-size 警告のみ・既存）
+- git diff --check : clean
+
+10. commit 一覧 / push 結果
+------------------------------------------------------------------------
+| commit | 内容 | push |
+| 006e6df | docs: Wave 1 Lane T-1 terrain asset PORT map | OK |
+| 56b792f | feat: Wave 1 Lane T-2 CRS / Coordinate Core PORT | OK |
+| 50e51e2 | feat: Wave 1 Lane T-3 GSI DEM PORT | OK |
+| a83ab8c | feat: Wave 1 Lane T-4 Heightfield / SCT1 PORT | OK |
+- branch lane-t/sitecontext-terrain-port へ逐次 push 済み。main へは merge していない。
+- 開始前から存在した無関係差分: なし（開始時 status クリーン）。
+- 注意: `npm run test:fast` 実行時に docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity}.json が
+  テスト再生成されタイムスタンプ差分が発生。これはテスト実行の既知アーティファクトであり、
+  commit 対象外として保全している（main リポジトリでも同様に発生）。
+
+11. Luna 利用
+------------------------------------------------------------------------
+なし（簡単なファイル探索・画像判定等を委任する場面がなかったため）
+
+12. Sol 利用
+------------------------------------------------------------------------
+なし（15〜20 分以上詰まる問題・重大レビュー対象は発生せず）
+
+13. blocker / 残課題
+------------------------------------------------------------------------
+- T-5 以降（Terrain Generation / Persistence 接続 / IndexedDB 資産化 H5 /
+  buildTerrainFromBounds 純関数化 S3）は Wave 2。本 Wave では実施しない。
+- meshResource 受け口（Lane B mapping §4 で deferred）は SPACER terrain module に未実装。
+- ブラウザ Canvas ベースの DEM 取得（demFetch.ts G4）・URL policy（policy.ts G6）は Lane U 担当。
+- terrainDocument mirror（軸規約変換）は Lane B 契約どおり保留（raw payload + metadata のみ）。
+- worktree 実行時の .venv 不在による golden test 環境依存（コード起因ではない・symlink で解決確認）。
+
+14. Lane A への変更要求
+------------------------------------------------------------------------
+なし。全 field が既存 loose slot（metadata.* / modules.terrain.data.*）に収まる
+（Lane B field-mapping §5 と同一結論）。
+
+15. Lane B/V/U/S への引渡し事項
+------------------------------------------------------------------------
+- Lane B: Terrain primitive 公開 I/F = frontend/src/terrain/index.ts。CRS metadata =
+  types.ts の GridSpec / Bounds。sourceDataset 必要 field = coordinateContextId / epsg
+  （classifyEpsg 照合）/ gsiMeta。checksum は canonicalize.ts（canonicalHash）を提供。
+- Lane V: Viewer へ渡す shape = Heightfield（width/height/cellSize/originX/originY/data/noDataValue）
+  + GridSpec/Bounds。canonical/render = RenderCoordinateAdapter。bounds/origin/Z は
+  bounds()・originX/originY・Z=標高(m)。mock/fixture 置換可能 = TileFetcher 注入型 fetchDemTiles。
+- Lane U: DEM 取得 input = GsiFetchOptions（bbox/zoom/preferred/fetcher/maxTiles/signal）。
+  progress/warning/error 候補 = GsiDemResult.tiles / fallbackHistory / 各 throw
+  （GSI-TOO-MANY-TILES / GSI-EMPTY-RANGE / CRS-UNKNOWN-EPSG）。
+- Lane S: 郡上市八幡 baseline（中心 35.7512N/136.9567E・EPSG:6674・5km×5km・DEM5A ZL15 36 tiles
+  x28847-28852×y12892-12897・pyproj X=86,522.4/Y=-27,181.2）。fixture 化は Heightfield + sct1 base64
+  で可能。完成 sample は T-6。
+
+16. Gmail 完了報告（送信不可の記録）
+------------------------------------------------------------------------
+- 宛先: hatapon223101@gmail.com
+- 件名: [SPACER CLONE] Wave 1 Lane T 完了 — site-context Terrain PORT
+- 本文（送信予定）:
+  "SPACER CLONE Wave 1 Lane T（site-context Terrain PORT）が完了しました。
+  T-1〜T-4 すべて完了・branch lane-t/sitecontext-terrain-port へ push 済み・
+  test:fast 434file/3218test PASS・typecheck/build PASS。
+  詳細は添付 Final Report（SPACER_PhaseW1-LaneT_20260816_1934_Terrain_PORT_Wave1.txt）参照。
+  結論: Wave 1 Lane T 完了。main 統合待ち。"
+- 送信不可理由: 本環境に Gmail/SMTP 送信手段（msmtp / sendmail / mutt / SMTP 認証情報）が
+  存在しないため。Gmail SMTP は認証（アプリパスワード or OAuth）必須であり、認証情報なしでの
+  外部送信は不可。無理に外部送信を試行せず、本レポートに記録してユーザーへ提示する。
+- ※ Gmail 送信不可のみを Wave 1 失敗扱いにしない。
+
+17. 最終結論
+------------------------------------------------------------------------
+「Wave 1 Lane T 完了。main 統合待ち。」
+
+- T-1/T-2/T-3/T-4 すべて完了
+- site-context 既存資産を再利用（ゼロから再実装なし）
+- Lane A 所有領域への無断変更なし
+- Lane B/V/U/S への I/F 明記済み
+- 必要な targeted test（terrain 54件 + test:fast 3218件）+ typecheck + build PASS
+- 小 step ごとの commit/push 完了（4 commits）
+- Discord 逐次報告完了
+- Final Report 作成・push・Discord 送信
+- Gmail 完了報告: 送信不可（環境要因・記録済み）
+- T-5 へ進まず停止
+- main へ merge しない

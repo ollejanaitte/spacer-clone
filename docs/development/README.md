@@ -22,6 +22,7 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [site-context-spacer-data-contract.md](site-context-spacer-data-contract.md) | Wave 1 Lane B-1 site-context × SPACER data contract re-verification |
 | [site-context-spacer-field-mapping.md](site-context-spacer-field-mapping.md) | Wave 1 Lane B-2 site-context → SPACER field mapping freeze |
 | [site-context-spacer-adapter-interface.md](site-context-spacer-adapter-interface.md) | Wave 1 Lane B-3 `.sitecontext` → SPACER import adapter interface |
+| [site-context-terrain-port-map.md](site-context-terrain-port-map.md) | Wave 1 Lane T terrain asset PORT map (site-context → SPACER) |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |
