@@ -8,6 +8,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     testTimeout: 40000,
+    setupFiles: ["src/test/ui.setup.ts"],
     include: scan().ui,
   },
 });

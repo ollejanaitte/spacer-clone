@@ -39,10 +39,21 @@ function render(ui: React.ReactNode) {
   return { container, root };
 }
 
+// Dimension2DLayer は SVG 内で使う想定のコンポーネント。SVG コンテキスト無しで
+// 直接描画すると React 19 が <g>/<line>/<text> を未知タグと警告するため、
+// テストでは <svg> で包んで描画する。
+function renderSvg(ui: React.ReactNode) {
+  const container = document.createElement("div");
+  document.body.appendChild(container);
+  const root = createRoot(container);
+  act(() => root.render(<svg aria-hidden="true" width="100" height="100">{ui}</svg>));
+  return { container, root };
+}
+
 describe("Dimension2DLayer", () => {
   it("renders dimension lines for all-mode", () => {
     const dims = buildDimensions([group("A1")], "all");
-    const { container } = render(
+    const { container } = renderSvg(
       <Dimension2DLayer dimensions={dims} toSvg={(x, y) => [x, y]} />,
     );
     expect(container.querySelector('[data-testid="dimension-2d-layer"]')).not.toBeNull();
@@ -52,7 +63,7 @@ describe("Dimension2DLayer", () => {
 
   it("renders no lines when off", () => {
     const dims = buildDimensions([group("A1")], "off");
-    const { container } = render(
+    const { container } = renderSvg(
       <Dimension2DLayer dimensions={dims} toSvg={(x, y) => [x, y]} />,
     );
     expect(container.querySelectorAll('[data-testid^="dim2d-"]')).toHaveLength(0);
