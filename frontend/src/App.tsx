@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { ApiClientError, apiClient, resolveApiUrl, type If3AnalysisSidecar } from "./api/client";
 import { buildRunAnalysisIf3Metadata } from "./if3";
@@ -154,6 +154,11 @@ import {
 } from "./workflow/routes";
 import { createEmptyProject as createEmptyWorkflowProject } from "./next/project/projectDataCore";
 import type { Project as PdcProject } from "./next/project/schema";
+import {
+  workflowProjectIdFor,
+  persistWorkflowProject,
+  restoreWorkflowProject,
+} from "./workflow/workflowProjectPersistence";
 import type { CanonicalWorkflowStep } from "./workflow/canonicalWorkflow";
 import { buildApolloVisualizationModel } from "./apollo/visualization";
 import type { ViewerDisplayModel } from "./viewer/types";
@@ -403,8 +408,16 @@ export function App() {
   }, []);
 
   const createWorkflowProject = useCallback(() => {
-    setWorkflowProject(createEmptyWorkflowProject(project.project.name || "ワークフローProject"));
-  }, [project.project.name]);
+    // F-2: workflow Project は legacy 業務 Project id から deterministic な
+    // projectId を導出し、正規 Save/Load 経路で復元可能にする。
+    const base = createEmptyWorkflowProject(project.project.name || "ワークフローProject");
+    const withStableId: PdcProject = {
+      ...base,
+      projectId: workflowProjectIdFor(project.project.id),
+    };
+    setWorkflowProject(withStableId);
+    void persistWorkflowProject(withStableId);
+  }, [project.project.name, project.project.id]);
 
   const openRoadWorkflow = useCallback(() => {
     if (workflowProject === null) {
@@ -442,9 +455,32 @@ export function App() {
       (isRoadWorkflowRoute(currentPathname) || isBridgeWorkflowRoute(currentPathname)) &&
       workflowProject === null
     ) {
-      setWorkflowProject(createEmptyWorkflowProject(project.project.name || "ワークフローProject"));
+      const id = workflowProjectIdFor(project.project.id);
+      let cancelled = false;
+      void (async () => {
+        const restored = await restoreWorkflowProject(id);
+        if (cancelled) return;
+        setWorkflowProject(
+          restored ?? {
+            ...createEmptyWorkflowProject(project.project.name || "ワークフローProject"),
+            projectId: id,
+          },
+        );
+      })();
+      return () => {
+        cancelled = true;
+      };
     }
-  }, [currentPathname, workflowProject, project.project.name]);
+  }, [currentPathname, workflowProject, project.project.name, project.project.id]);
+
+  // F-2: workflow Project が変化したら正規 Save 経路へ反映 (auto-save)。
+  const workflowProjectRef = useRef<PdcProject | null>(null);
+  workflowProjectRef.current = workflowProject;
+  useEffect(() => {
+    const current = workflowProjectRef.current;
+    if (current === null) return;
+    void persistWorkflowProject(current);
+  }, [workflowProject]);
 
   const createLinerModel = useCallback(() => {
     const draft = createDefaultLinerDraft();

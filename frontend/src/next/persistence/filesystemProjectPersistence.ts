@@ -1,4 +1,4 @@
-import { parseProject, serializeProject } from "../project/projectDataCore";
+import { parseProject, serializeProject, migrateProject } from "../project/projectDataCore";
 import type { Project } from "../project/schema";
 import type { FileSystemGateway } from "./fileSystemGateway";
 import type { ProjectLoadResult, ProjectPersistence, ProjectSaveResult } from "./projectPersistence";
@@ -7,6 +7,10 @@ export const PROJECT_JSON_FILE = "project.json";
 export const BACKUP_DIR = ".backup";
 export const BACKUP_EXTENSION = ".spacerbak";
 export const BACKUP_RETENTION_COUNT = 5;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
 
 export interface FilesystemProjectPersistenceOptions {
   rootDir?: string;
@@ -105,11 +109,19 @@ export class FilesystemProjectPersistence implements ProjectPersistence {
     } catch {
       return { ok: false, projectId, reason: "invalid-json" };
     }
-    const parsed = parseProject(raw);
-    if (!parsed.ok) {
-      return { ok: false, projectId, reason: `invalid-schema: ${parsed.issues.join("; ")}` };
+    // Load 経路: schemaVersion 検出 → migration (future fail-closed) →
+    // official Schema validation → hydrate。
+    const version = isRecord(raw) && typeof raw.schemaVersion === "string"
+      ? raw.schemaVersion
+      : undefined;
+    if (version === undefined) {
+      return { ok: false, projectId, reason: "invalid-schema: schemaVersion missing or invalid" };
     }
-    return { ok: true, project: parsed.project };
+    const migrated = migrateProject(raw, version);
+    if (!migrated.ok) {
+      return { ok: false, projectId, reason: `invalid-schema: ${migrated.issues.join("; ")}` };
+    }
+    return { ok: true, project: migrated.project };
   }
 
   async deleteProject(projectId: string): Promise<ProjectSaveResult> {
