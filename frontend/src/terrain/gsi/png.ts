@@ -1,7 +1,9 @@
-import { inflateSync } from "node:zlib";
+import { unzlibSync } from "fflate";
 
 // 最小PNGデコーダ（GSI標高タイル用: 8bit・RGB/RGBA・非インターレース）
 // 移植元: site-context-prototype packages/core/src/importer/png.ts
+// 注: inflate はブラウザ/Node 両対応の純JS実装 fflate（unzlibSync）を使用し、
+//     node:zlib 依存を排除（vite build の browser externalize 問題を回避）。
 export interface PngImage {
   width: number;
   height: number;
@@ -37,7 +39,7 @@ export function decodePng(buf: Buffer): PngImage {
   if (interlace !== 0) throw new Error('GSI-UNSUPPORTED-INTERLACE');
 
   const channels = colorType === 6 ? 4 : 3;
-  const raw = inflateSync(Buffer.concat(idat));
+  const raw = unzlibSync(new Uint8Array(Buffer.concat(idat)));
   const stride = width * channels;
   const out = new Uint8Array(width * height * 4);
   const prev = new Uint8Array(stride);
