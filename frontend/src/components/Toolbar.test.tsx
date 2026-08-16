@@ -82,4 +82,19 @@ describe("Toolbar", () => {
     button.click();
     expect(onOpenApolloPhase1).toHaveBeenCalledTimes(1);
   });
+
+  test("hides the Site Context entry when the handler is not provided", () => {
+    const { container } = renderToolbar();
+    expect(container.querySelector('[data-testid="open-site-context"]')).toBeNull();
+  });
+
+  test("opens Site Context when the entry handler is provided", () => {
+    const onOpenSiteContext = vi.fn();
+    const { container } = renderToolbar({ onOpenSiteContext });
+    const button = container.querySelector('[data-testid="open-site-context"]') as HTMLButtonElement;
+    expect(button).not.toBeNull();
+    expect(button.textContent).toContain(ja.workflow.toolbar.openSiteContext);
+    button.click();
+    expect(onOpenSiteContext).toHaveBeenCalledTimes(1);
+  });
 });

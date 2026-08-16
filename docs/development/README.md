@@ -25,6 +25,7 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [site-context-terrain-port-map.md](site-context-terrain-port-map.md) | Wave 1 Lane T terrain asset PORT map (site-context → SPACER) |
 | [unified-3d-viewer-boundary.md](unified-3d-viewer-boundary.md) | Wave 1 Lane V-1 existing 3D viewer boundary audit |
 | [unified-3d-viewer-layer-contract.md](unified-3d-viewer-layer-contract.md) | Wave 1 Lane V-2 unified viewer layer contract |
+| [canonical-workflow.md](canonical-workflow.md) | Lane U Wave 1 canonical workflow (業務フロー正式定義) |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |

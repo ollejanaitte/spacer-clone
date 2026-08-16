@@ -1,4 +1,4 @@
-﻿import { Activity, Download, FileText, FolderOpen, LineChart, Map, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
+﻿import { Activity, Download, FileText, FolderOpen, LineChart, Map, MapPinned, Play, RotateCcw, Save, ShieldCheck, Waves } from "lucide-react";
 import { ja } from "../i18n/ja";
 import { Trash2 } from "lucide-react";
 
@@ -38,6 +38,7 @@ type ToolbarProps = {
   onOpenLinerList?: () => void;
   onOpenApolloPhase1?: () => void;
   apolloPhase1EntryTitle?: string;
+  onOpenSiteContext?: () => void;
 };
 
 const t = ja.toolbar;
@@ -78,6 +79,7 @@ export function Toolbar({
   onOpenLinerList,
   onOpenApolloPhase1,
   apolloPhase1EntryTitle,
+  onOpenSiteContext,
 }: ToolbarProps) {
   return (
     <header className="toolbar">
@@ -147,6 +149,17 @@ export function Toolbar({
             >
               <Map size={16} />
               {ja.liner.toolbar.openButton}
+            </button>
+          )}
+          {onOpenSiteContext && (
+            <button
+              type="button"
+              onClick={onOpenSiteContext}
+              title={ja.workflow.toolbar.openSiteContextTitle}
+              data-testid="open-site-context"
+            >
+              <MapPinned size={16} />
+              {ja.workflow.toolbar.openSiteContext}
             </button>
           )}
           {(onOpenApolloPhase1 || apolloPhase1EntryTitle) && (

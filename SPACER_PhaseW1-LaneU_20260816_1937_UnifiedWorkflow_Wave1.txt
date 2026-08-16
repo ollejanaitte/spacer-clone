@@ -1,0 +1,227 @@
+SPACER Phase W1 Lane U — Wave 1「Lane U — Unified Workflow」ファイナルレポート
+================================================================================
+
+作成日時: 2026-08-16 19:37 (JST)
+対象: Wave 1 (U-1 Canonical Workflow確定 / U-2 App Shell入口設計・最小実装)
+
+--------------------------------------------------------------------
+0. 基本情報
+--------------------------------------------------------------------
+- branch:   lane-u/unified-workflow
+- worktree: ~/Projects/spacer-clone-lane-u
+- 開始SHA:  31a111362ec39f31f74a40f4dd59e2e002a49035 (origin/main ff追従後)
+- 終了SHA:  05e5092297b41d392ada68fc51334f654ad2cbb7
+- 参照リポジトリ: ~/Projects/site-context-prototype (読み取りのみ・未変更)
+- mainへのmerge: なし
+
+--------------------------------------------------------------------
+1. U-1 Canonical Workflow確定
+--------------------------------------------------------------------
+成果物: docs/development/canonical-workflow.md (commit 1adb042)
+
+- 10 step の正式な業務フローを定義:
+  1. 新規Project / Project選択
+  2. 現況・地理情報 (Site Context)
+  3. 道路線形 / 道路設計
+  4. 橋梁配置 / 支間割
+  5. 上部工設計
+  6. 下部工設計
+  7. 構造解析
+  8. 統合3D / CIM
+  9. 成果物 / Export
+  10. 保存 / Close / Reopen
+- 各 step について user goal / screen / route / input / output /
+  Project上の引継ぎ対象 / 完了判定 / 次step / 戻り先 / owner Lane / subsystem /
+  未接続箇所 を整理。
+- route / page / component の責務と同一Project引継ぎルールを明記。
+- Lane B/T/V/S/A への接続点を明記:
+  - Lane B: SiteContextImportAdapter (inspect/import)・SiteContextImportReport・
+    SiteContextWarning/UnsupportedField/SC-ERR-* を UI で可視化する領域を要求
+  - Lane T: DEM取得のUI input + progress/loading/cancel/error I/F を要求
+  - Lane V: Unified 3D Viewer への route/component入口 + Project/selection/layer 受渡しを要求
+  - Lane S: Reference Business 001 / Tutorial Sample への導線を要求
+  - Lane A: 新規 field 要求なし (Wave 1 では ProjectModel/Schema 変更要求なし)
+
+--------------------------------------------------------------------
+2. U-2 App Shell入口設計・最小実装
+--------------------------------------------------------------------
+成果物 (commit 05e5092):
+
+- frontend/src/workflow/canonicalWorkflow.ts
+  - 10 step Canonical Workflow の単一ソース (純データ + 純関数)
+  - connectionStatus: connected / partial / pending
+  - resolveWorkflowNavigation (戻る/次へ) / workflowProgress / isWorkflowStepEntryEnabled
+- frontend/src/workflow/routes.ts
+  - SITE_CONTEXT_ROUTE_PATH = "/pro/site-context" ほか canonical route 定数
+  - isSiteContextRoute()
+- frontend/src/workflow/CanonicalWorkflowNav.tsx (+ .module.css)
+  - 現在step表示 / 戻る/次へ / 未接続step(route無し・pending)は disabled
+- frontend/src/workflow/SiteContextEntryPage.tsx (+ .module.css)
+  - Project guard (isEmptyProject 時)
+  - 現況の取得元4択 (地図から取得=次Wave / 2D図面・3Dデータ・測量=次期対応, disabled)
+  - workflow骨格 (CanonicalWorkflowNav)
+- frontend/src/components/Toolbar.tsx
+  - onOpenSiteContext (App Shell から /pro/site-context への入口)
+- frontend/src/App.tsx
+  - /pro/site-context route 配線 (最小差分: import + 1分岐 + 1 prop)
+- frontend/src/i18n/ja.ts
+  - workflow セクション追加 (stepラベル/説明/接続状態/Site Context/ツールバー)
+- テスト:
+  - frontend/src/workflow/canonicalWorkflow.test.ts (FAST)
+  - frontend/src/App.siteContextRoute.test.tsx (UI / route統合)
+  - frontend/src/components/Toolbar.test.tsx へ2件追加 (入口表示/遷移)
+
+--------------------------------------------------------------------
+3. route / navigation変更
+--------------------------------------------------------------------
+- 新規 route: /pro/site-context (現況・地理情報 入口)
+- 既存 route は変更なし。全面再設計なし。
+- main.tsx の /pro/* → <App /> 分岐のまま (既存routing尊重)。
+- back/forward・refresh後 route・SPA直URL を UI テストで確認 (popstate 経由)。
+- legacy redirect (timeHistory/routeRedirect) には影響なし。
+
+--------------------------------------------------------------------
+4. 変更ファイル
+--------------------------------------------------------------------
+docs/development/canonical-workflow.md            (新規, U-1)
+docs/development/README.md                        (index 追記, U-1)
+frontend/src/workflow/canonicalWorkflow.ts        (新規, U-2)
+frontend/src/workflow/canonicalWorkflow.test.ts   (新規, U-2)
+frontend/src/workflow/routes.ts                   (新規, U-2)
+frontend/src/workflow/CanonicalWorkflowNav.tsx    (新規, U-2)
+frontend/src/workflow/CanonicalWorkflowNav.module.css (新規, U-2)
+frontend/src/workflow/SiteContextEntryPage.tsx    (新規, U-2)
+frontend/src/workflow/SiteContextEntryPage.module.css (新規, U-2)
+frontend/src/App.siteContextRoute.test.tsx        (新規, U-2)
+frontend/src/App.tsx                              (最小変更, U-2)
+frontend/src/components/Toolbar.tsx               (最小変更, U-2)
+frontend/src/components/Toolbar.test.tsx          (変更, U-2)
+frontend/src/i18n/ja.ts                           (workflow文字列追加, U-2)
+
+※ 他Lane所有領域 (ProjectModel / schemas/project.schema.json / migration /
+  canonical Save/Load / site-context Adapter / CRS/DEM / Terrain / Viewer Layer) は
+  一切変更していない。
+
+--------------------------------------------------------------------
+5. test / typecheck / build 結果
+--------------------------------------------------------------------
+- npm run typecheck          : PASS (tsc -b)
+- npm run test:fast          : PASS 426 files / 3172 tests
+  ※ 初回実行時、worktreeに .venv が無いため bridgeDefinition golden 2件が
+     環境起因で FAIL した。他の Lane と同様に .venv を main repo へ symlink して解決。
+     (gitignore 対象の環境補完であり commit 対象外。コード起因の失敗なし)
+- npm run test:ui (App関連7ファイル) : PASS 7 files / 30 tests
+- npm run build              : PASS (chunk size warning は既存)
+- npm run lint               : exit 0 (新規ファイルの日本語ハードコードなしを確認)
+- git diff --check           : clean
+- 環境メモ: frontend/node_modules は既存 Lane と同様に main repo へ symlink 済み。
+
+--------------------------------------------------------------------
+6. screenshot / evidence
+--------------------------------------------------------------------
+Playwright + vite dev server (localhost:5199) でヘッドレス検証:
+- /tmp/opencode/site-context-entry-empty.png
+  - 10 step の workflow 表示 / 現在step=現況・地理情報 (2/10) /
+    Project guard 表示 / 取得元4択表示 / console error なし
+- /tmp/opencode/app-shell-with-entry.png
+  - App Shell (`/pro`) に「現況・地理情報」ボタン表示 → クリックで
+    /pro/site-context へ遷移 / console error なし
+- DOM検証: workflow-step-* 10個描画・sourceカードdisabled・back遷移・
+  workflow step クリックで /pro/linear-coordinate へ遷移 を UI テストでも確認。
+  ※ 画像の目視は実行モデルの画像入力非対応のため不可。DOM/console 検証を evidence とする。
+
+--------------------------------------------------------------------
+7. commit一覧 / push結果
+--------------------------------------------------------------------
+- 1adb042 docs(U-1): Canonical Workflow確定 (10step業務フロー正式定義・Lane別接続点明記)
+- 05e5092 feat(U-2): App ShellからSite Context (現況・地理情報) への最小入口
+         + Canonical Workflow navigation skeleton
+- push: origin/lane-u/unified-workflow 成功 (両commit)。mainへのmergeなし。
+
+--------------------------------------------------------------------
+8. Luna / Sol 利用
+--------------------------------------------------------------------
+- Luna (簡単作業委任): 利用せず。必要なファイル探索・grep・route一覧・
+  スクリーンショット判定は自前で完結した (スクリーンショットは DOM/console 検証)。
+- Sol (高度レビュー/原因調査): 利用せず。Wave 1 範囲では重大欠落・route責務の
+  矛盾・Project context 破綻・Lane I/F 衝突は検出されず、共有ファイル変更も
+  最小 (App.tsx 差分: import 2行 + 分岐 15行 + prop 1行) のため、
+  指定の「最低限レビュー」対象に該当しなかった。
+
+--------------------------------------------------------------------
+9. blocker / 残課題
+--------------------------------------------------------------------
+- ProjectModel / Schema 変更は不要 (新規 field 要求なし)。
+- Lane B / T / V / S の実 I/F は Wave 1 では未統合のため、Site Context 本体画面
+  (U-3)・DEM取得UI・実Terrain表示・Unified Viewer は本 Wave では実装しない。
+- 残課題 (後続 Wave へ):
+  - U-3: Site Context 画面 PORT (site-context-prototype の SituationFlow / MapPanel / DemWizard / TerrainViewer)
+  - GSI DEM取得UI・progress/loading/cancel/error (Lane T I/F確定後)
+  - Road / Bridge / Analysis / 3D の本接続
+  - Full workflow E2E
+  - Project status詳細UI
+  - 成果物一覧画面の完成
+- 環境補完メモ: worktree の node_modules / .venv は main repo への symlink を
+  使用 (他 Lane と同方式・gitignore 対象)。
+
+--------------------------------------------------------------------
+10. Lane A/B/T/V/S への引渡し事項
+--------------------------------------------------------------------
+- Lane A: 特になし (新規 field 要求なし)。A-05/A-07 (Schema validation / migration guard)
+  は Lane A Wave 1 で実施済みと理解。主経路 roundtrip は UI 側で阻害しない。
+- Lane B: /pro/site-context から Site Context Import を呼ぶ UI 側 Adapter 入口を
+  Wave 2 以降に接続する。warning / error / unsupported field を表示する領域を
+  Site Context 画面に用意する (U-3 で実装予定)。
+- Lane T: DEM取得開始の UI input と progress/loading/cancel/error の I/F を
+  Site Context 画面側で受け付ける定義を U-3 で用意する。
+- Lane V: Unified 3D Viewer への route/component 入口と Project/selection/layer
+  visibility の受渡しを U-3/以降で接続する。
+- Lane S: Reference Business 001 / Tutorial Sample を開く導線を Workflow へ
+  追加する。現状 pending 表示。
+
+--------------------------------------------------------------------
+11. Gmail完了報告 (送信可否)
+--------------------------------------------------------------------
+- 送信手段: 本環境に Gmail/SMTP 送信手段はない。
+- 送信不可理由: Gmail API 認証 (OAuth) や SMTP 設定 (SMTPユーザー/パスワード/
+  アプリパスワード) が未提供のため、外部送信は実施しない。
+  (無理に外部送信を試行せず記録する指示に従う)
+- 宛先: hatapon223101@gmail.com
+- 件名: [SPACER] Wave 1 Lane U (Unified Workflow) 完了報告
+- 送信用本文:
+  以下を Gmail で送信してください (添付: 本 Final Report TXT)。
+
+  ---
+  件名: [SPACER] Wave 1 Lane U (Unified Workflow) 完了報告
+
+  Wave 1 Lane U が完了しました。
+  - branch: lane-u/unified-workflow (main未merge)
+  - 開始SHA: 31a1113 / 終了SHA: 05e5092
+  - U-1: Canonical Workflow確定 (docs/development/canonical-workflow.md)
+  - U-2: App ShellからSite Context入口 + Canonical Workflow navigation skeleton
+        (/pro/site-context, Toolbar入口)
+  - test:fast 426files/3172tests PASS / typecheck PASS / build PASS / lint exit0
+  - commit: 1adb042, 05e5092 (push済み)
+  - 詳細は添付の Final Report TXT を参照してください。
+  ---
+
+- この送信不可は Wave 1 失敗理由としない (指示 §21 に従う)。
+
+--------------------------------------------------------------------
+12. Wave 1 完了判定
+--------------------------------------------------------------------
+- [x] U-1 Canonical Workflow確定
+- [x] U-2 App Shell入口設計・最小実装完了
+- [x] route / navigation 責務明確 (既存routing尊重・全面再設計なし)
+- [x] 同一Project引継ぎ前提明確 (App.tsx project state を正とし新storeなし)
+- [x] Lane A/B/T/V 所有領域へ無断変更なし
+- [x] Lane B/T/V/S への I/F 明記
+- [x] 必要な targeted test / UI確認 PASS
+- [x] 小stepごとの commit/push 完了
+- [x] Discord 逐次報告完了
+- [x] Final Report 作成・push (本ファイル)
+- [x] Gmail完了報告 (送信手段なしのため送信用本文を記録)
+- [x] U-3 へ進まず停止
+- [x] main へ merge しない
+
+判定: **Wave 1 Lane U 完了。main統合待ち。**
