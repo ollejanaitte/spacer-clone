@@ -186,7 +186,10 @@ async function analyzeImport(input: SiteContextImportInput): Promise<AnalyzeResu
       report: reportForFailure(sourceSchemaVersion, envelope.project, options),
     };
   }
-  if (!isRecord(rawProject.siteContext)) {
+  // `siteContext` is a ProjectV2-only concept (V1 carries terrain/sources/extent
+  // at the top level and synthesizes siteContext during migration), so the
+  // required check is version-aware.
+  if (sourceSchemaVersion === "2" && !isRecord(rawProject.siteContext)) {
     return {
       kind: "error",
       errorCode: "SC-ERR-MISSING-REQUIRED",
