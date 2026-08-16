@@ -1,0 +1,161 @@
+==================================================
+SPACER Phase A-00 Project Persistence Pipeline 現況監査
+ファイナルレポート
+==================================================
+作成日時: 2026-08-16 16:47 (日本時間 JST)
+
+1. 作業日時（日本時間）
+   2026-08-16 16:25〜16:47 JST
+
+2. 作業時間
+   約 22 分
+
+3. 開始時 main SHA
+   bdf7967c48ba232ae464dba193528dd3259abbbb
+
+4. 終了時 main SHA
+   c8afac1f8dbfa6dc36d2c01468199a44723e6bad
+
+5. 監査した主要ファイル
+   - frontend/src/types.ts (ProjectModel 型:250)
+   - schemas/project.schema.json (公式 JSON Schema)
+   - frontend/src/projectMigration.ts (migrateProject)
+   - frontend/src/data/defaultProject.ts (createEmptyProject / createDefaultProject)
+   - frontend/src/App.tsx (saveProject:737 / openProjectViaDialog:713 / hydrateProjectFromJsonText:678)
+   - frontend/src/liner/adapters/linerProjectDraft.ts (serialize:145 / hydrate:99)
+   - frontend/src/apollo/importExport.ts / unit2Draft.ts / bridgeStructure/projectBsdd.ts
+   - frontend/src/bridgeProject/projectSuperstructure.ts
+   - frontend/src/desktop/projectFileDialog.ts, desktop/electron/ (dialogIpc / preload / ipcChannels / main / projectPersistenceIpc)
+   - backend/app/main.py (/api/projects/save|load|autosave|validate)
+   - frontend/src/apollo/workspace.ts, frontend/src/apollo/drawing/artifactBundle.ts
+   - frontend/src/substructure/planning/persistence.ts, design/adapterPersistence.ts
+   - frontend/src/next/persistence/, frontend/src/liner/importer/storage/, frontend/src/platform/storage/
+   - 関連テスト (frontend 7件 + backend 3件 + 補助層 複数)
+
+6. ProjectModel / Schema の位置
+   - ProjectModel 型: frontend/src/types.ts:250
+   - schemaVersion 定数: frontend/src/projectMigration.ts:3 (CURRENT_PROJECT_SCHEMA_VERSION = 1)
+   - 初期 Project: frontend/src/data/defaultProject.ts (createEmptyProject:11 / createDefaultProject:49)
+   - 公式 JSON Schema: schemas/project.schema.json (top-level additionalProperties:false,
+     schemaVersion=integer min1 任意, project.schemaVersion=const "1.0.0")
+   - Schema 参照元: liner/headless/validateGeneratedLinerProject.ts, substructure regression test,
+     headless test, backend/tests/test_project_schema.py
+   - 別 schema: liner/importer/schema/project.schema.json, next/project/schema.ts (zod)
+
+7. serializer / deserializer / migration の位置
+   - migration: frontend/src/projectMigration.ts:9 (schemaVersion 補完のみ。version 分岐なし)
+   - serializer (liner): frontend/src/liner/adapters/linerProjectDraft.ts:145 (RDD 埋め込み / domainDraft 除去)
+   - deserializer (liner): 同:99 (RDD→domainDraft 復元)
+   - serializer (apollo unit2): frontend/src/apollo/unit2Draft.ts:368
+   - deserializer (apollo unit2): 同:329
+   - BSDD: frontend/src/apollo/bridgeStructure/projectBsdd.ts:34(hydrate)/83(serialize)
+   - superstructure: frontend/src/bridgeProject/projectSuperstructure.ts:35/56
+   - apollo import/export: frontend/src/apollo/importExport.ts:152/223
+
+8. Save / Load / import / export の位置
+   - Save: App.tsx:737 saveProject → projectFileDialog.ts:55 → Electron IPC
+     (desktop/electron/dialogIpc.ts:77, preload.ts:61) or downloadText (App.tsx:1687)
+   - Load: App.tsx:713 openProjectViaDialog → projectFileDialog.ts:48 → IPC dialogIpc.ts:50
+   - 形式: project.json / .spacerproj (next package)
+   - backend: main.py:447(save)/468(load)/497(autosave)/84(validate) → backend/data/projects/
+   - Apollo workspace: apollo/workspace.ts (localStorage, unit2 のみ)
+   - 成果物 ZIP: apollo/drawing/artifactBundle.ts:181 (生 Project 直接埋め込み)
+
+9. Persistence データフロー
+   [保存] ProjectModel → serializeApolloPhase1Unit2ForPersistence → serializeProjectForPersistence
+   → JSON.stringify → saveProjectFile (Electron or download)。apollo ルートは
+   exportApolloProjectToText (bsdd→superstructure→unit2→liner)。
+   [読込] JSON.parse → migrateProject → hydrateProjectLinerFromPersistence →
+   hydrateApolloPhase1Unit2FromPersistence → commitProject。
+   [apollo import] decode → envelope/sidecar strict validation → migrate → hydrate
+   (liner→unit2→bsdd→superstructure) → validateApolloPhase1Unit2Draft。
+   ※ 主経路に JSON Schema validation は無い (概念図と実装順序が異なる)。
+
+10. 現行 validation
+    - 解析ゲート: /api/projects/validate → validate_project → parse_model (FEM parser)
+    - apollo import: 手書き strict validation (envelope / sidecar)
+    - headless/importer: ajv による公式 / importer schema
+    - backend save/autosave: find_non_finite (NaN/Infinity) のみ
+    - 主経路 save/load は公式 Schema で検証されていない (確定)
+
+11. 現行 migration
+    - migrateProject() が唯一。schemaVersion 補完のみで version 分岐なし。
+    - liner は別レイヤー migrateLinerDraftToVNext (liner/schema/projectLinerMigration.ts)。
+    - apollo import は migration より先に top-level schemaVersion を必須検証する (経路差)。
+
+12. 現行 roundtrip / persistence 関連 test
+    - projectMigration.test.ts / linerProjectDraft.test.ts / App.linerSaveLoad.test.tsx /
+      apollo/__tests__/importExport.test.ts / projectSchemaRegression.test.ts /
+      createHeadlessLinerFrameProject.test.ts / contracts persistence migrationIntegration.test.ts
+    - backend: test_project_schema.py / test_api.py / test_atomic_json_persistence.py
+    - 補助: next/persistence 群, importer storage.test.ts, business persistence.test.ts,
+      substructure adapterPersistence/persistence.test.ts, workspace.test.ts, projectFileDialog.test.ts,
+      dialogIpc.test.ts, e2e/substructure-persistence.spec.ts
+    - 実行確認: frontend 4件 42 passed / backend 2件 45 passed (存在・健全性確認のみ)
+    - CI (.github/workflows/ci.yml) は test:fast + typecheck + build のみ
+
+13. 最大の同期漏れリスク
+    (1) 主経路に schema validation が無く、標準生成 Project (createEmptyProject /
+    createDefaultProject) 自体が公式 Schema 不適合 (nodes/materials/loadCases の minItems:1 と
+    analysisSettings.solver 必須を満たさない)
+    (2) ProjectModel 型 ⇔ Schema の drift 未検知 (substructure が schema のみに存在)
+    (3) substructure 実保存形式 (AdapterEnvelope: alignmentRefs/metadata) が公式 Schema と非互換
+    (4) version 2 系への migration 未整備 (分岐なし)
+    (5) Apollo workspace は unit2 のみで ProjectModel を localStorage 保存 (共通チェーン非使用)
+
+14. 自動化されていない箇所
+    型⇔schema key 集合一致チェック / 主経路 schema validation / 標準生成 Project の schema 適合 /
+    substructure 実形式の schema 適合 / workspace・artifactBundle 経路の検知 / version migration 必須化 /
+    全 sidecar の汎用 roundtrip / backend save 時の schema validation
+    ※ autosave は AUTOSAVE_ENABLED=false (App.tsx:151) で休止中
+
+15. Phase A 本体で最初に実装すべき自動チェック候補 (1〜3件)
+    1) Schema drift 検知テスト (ProjectModel top-level key ⇔ schema properties,
+       additionalProperties:false 整合)
+    2) 標準生成 Project の公式 Schema conformance テスト (既存不適合を可視化し、初期値整合方針を強制)
+    3) generic ProjectModel roundtrip テスト (保存→復元で migration+hydration 成功 + 保存形式が
+       schema 適合。現行は意図的に非恒等・正規化型なので「全フィールド同値」ではなく成立性を保証)
+
+16. Codex CLI GPT-5.6 Sol レビュー結果
+    監査マップを 1 回レビュー。判定: 「監査文書の重大な欠陥あり」。
+    指摘 P0×3 / P1×5 / P2×2 (内容は監査文書 §17 に反映)。
+
+17. Sol レビュー後に追加監査した内容
+    指摘 10 件すべてを実ファイルで検証し、全て裏付け確認。結果を監査文書へ反映した
+    (標準生成 Project 不適合 / substructure 実形式非互換 / workspace 分離 / autosave 休止 /
+    save の state 副作用 / roundtrip 非恒等 / import の version 事前必須 / ZIP 生埋め込み /
+    resolveSafe / テスト追記)。追加監査は 1 回のみで終了。
+
+18. 変更ファイル一覧
+    - docs/development/project-persistence-map.md (新規作成 → Sol レビュー反映で更新)
+    - (production コード / Schema / test 実装は変更なし)
+
+19. commit 一覧
+    - 819634a docs: SPACER Phase A-00 Project Persistence Pipeline 現況監査マップを作成
+    - c8afac1 docs: SPACER Phase A-00 Sol監査レビュー結果を監査マップへ反映 (既存不整合の確定・追記)
+
+20. push 結果
+    - 両 commit とも origin/main へ push 成功
+      (bdf7967 → 819634a → c8afac1)
+
+21. 開始前から存在した無関係差分の扱い
+    - final_report.txt (削除済み, D) — 変更せず現状保全
+    - docs/rebuild/reports/R1-04.5_GPT-5.6-Luna_Vision_Delegation_検証結果.txt (未追跡, ??) — 変更せず現状保全
+    いずれも今回の commit に含めていない。
+
+22. 未確定事項
+    - substructure の ProjectModel (project.json) 埋め込み経路 (実保存は単独ファイルのみ)
+    - sidecar 各定義の TS 型と schema 内部の完全一致 (追加検証は未実施)
+    - next/project (zod Project) と ProjectModel の関係
+    - backend の「legacy project JSON」命名理由
+    - /api/projects/save|load のクライアント呼び出し元不在の意図
+    - AUTOSAVE_ENABLED=false の意図 (休止 / 廃止)
+
+23. Phase A-01 開始判定
+    → Phase A-01 へ進める
+    (ただし「標準生成 Project の schema 不適合」「substructure 実保存形式の schema 不適合」を
+    事前認識し、最初の自動チェック実装時に明示的に取り扱うこと)
+
+==================================================
+Phase A-01 へ進める
+==================================================
