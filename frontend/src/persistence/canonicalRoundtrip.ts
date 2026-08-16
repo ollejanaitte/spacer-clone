@@ -1,7 +1,7 @@
 import type { ProjectModel } from "../types";
-import { migrateProject } from "../projectMigration";
 import { serializeProjectForPersistence, hydrateProjectLinerFromPersistence } from "../liner/adapters/linerProjectDraft";
 import { serializeApolloPhase1Unit2ForPersistence, hydrateApolloPhase1Unit2FromPersistence } from "../apollo/unit2Draft";
+import { validatePersistedProjectForSave, validateLoadedProjectBeforeHydrate } from "./validationBoundary";
 
 /**
  * A-04 Generic Persistence Roundtrip — 主経路チェーン
@@ -11,8 +11,9 @@ import { serializeApolloPhase1Unit2ForPersistence, hydrateApolloPhase1Unit2FromP
  *   runtime ProjectModel
  *     → serializeApolloPhase1Unit2ForPersistence
  *     → serializeProjectForPersistence
+ *     → [A-05 save validation: 公式 Schema, fail-closed]
  *     → JSON.stringify → project.json
- *     → JSON.parse → migrateProject
+ *     → JSON.parse → migrateProject → [A-05 load validation: 公式 Schema, fail-closed]
  *     → hydrateProjectLinerFromPersistence → hydrateApolloPhase1Unit2FromPersistence
  *     → runtime ProjectModel
  *
@@ -37,7 +38,19 @@ export function runCanonicalRoundtrip(source: ProjectModel): CanonicalRoundtripR
   }
 
   const persisted = JSON.parse(JSON.stringify(serialized.project));
-  const migrated = migrateProject(persisted);
+
+  // A-05 save boundary: persisted 表現を書込み前に公式 Schema で検証 (fail-closed)。
+  const saveValidation = validatePersistedProjectForSave(persisted);
+  if (!saveValidation.ok) {
+    return { ok: false, project: source, persisted, diagnostics: saveValidation.diagnostics };
+  }
+
+  // A-05 load boundary: migrate 後・hydration 前に公式 Schema で検証 (fail-closed)。
+  const loadValidation = validateLoadedProjectBeforeHydrate(persisted);
+  if (!loadValidation.ok) {
+    return { ok: false, project: source, persisted, diagnostics: loadValidation.diagnostics };
+  }
+  const migrated = loadValidation.project;
 
   const linerHydrated = hydrateProjectLinerFromPersistence(migrated);
   if (!linerHydrated.ok) {

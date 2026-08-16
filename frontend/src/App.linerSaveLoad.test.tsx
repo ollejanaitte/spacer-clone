@@ -153,6 +153,23 @@ async function openProjectJson(projectJson: Record<string, unknown>) {
   });
 }
 
+/**
+ * A-05: save 境界は fail-closed のため、既存の roundtrip シナリオは
+ * 公式 Schema 適合プロジェクト (createDefaultProject の persisted 形式) を
+ * ベースに実行する。空プロジェクト (runtime transient) は保存対象外。
+ */
+async function loadConformantDefaultProject() {
+  const { createDefaultProject } = await import("./data/defaultProject");
+  const { serializeProjectForPersistence } = await import(
+    "./liner/adapters/linerProjectDraft",
+  );
+  const serialized = serializeProjectForPersistence(createDefaultProject());
+  if (!serialized.ok) {
+    throw new Error("default project serialization failed");
+  }
+  await openProjectJson(serialized.project as unknown as Record<string, unknown>);
+}
+
 afterEach(() => {
   if (root) {
     act(() => root?.unmount());
@@ -174,6 +191,7 @@ describe("App LINER save/load integration", () => {
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
+    await loadConformantDefaultProject();
     await openLinerSetupViaLauncher();
 
     await act(async () => {
@@ -253,6 +271,7 @@ describe("App LINER save/load integration", () => {
     window.history.pushState({}, "", "/pro");
 
     await render(<App />);
+    await loadConformantDefaultProject();
     await openLinerSetupViaLauncher();
 
     await switchLinerSetupTab("review");
@@ -475,5 +494,21 @@ describe("App LINER save/load integration", () => {
     expect(reloadedPayload.domainDraft.drawingSettings).toEqual(drawingSettings);
     expect(reloadedSave.drawingDocument).toBeUndefined();
     expect(reloadedSave.liner?.drawingDocument).toBeUndefined();
+  }, 40000);
+
+  it("refuses to save a non-conformant (empty runtime-transient) project fail-closed", async () => {
+    installObjectURLMocks();
+    vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+
+    const { App } = await import("./App");
+    window.history.pushState({}, "", "/pro");
+
+    await render(<App />);
+    await act(async () => {
+      buttonByTitle("現在のモデルを project.json として保存します。").click();
+    });
+
+    expect(createObjectURLMock).not.toHaveBeenCalled();
+    expect(document.body.textContent).toContain("PROJECT_SAVE_ERROR");
   }, 40000);
 });

@@ -11,7 +11,6 @@ import { ResultsPanel } from "./components/ResultsPanel";
 import { Toolbar } from "./components/Toolbar";
 import { createEmptyProject, createSuspendedDeckProject } from "./data/defaultProject";
 import { resetProjectModelContents } from "./modelReset";
-import { migrateProject } from "./projectMigration";
 import {
   buildAppIf3ExportGateInput,
   buildIf3MemberForceReportCsv,
@@ -68,6 +67,10 @@ import {
   hydrateProjectLinerFromPersistence,
   serializeProjectForPersistence,
 } from "./liner/adapters/linerProjectDraft";
+import {
+  validateLoadedProjectJsonBeforeHydrate,
+  validatePersistedProjectForSave,
+} from "./persistence/validationBoundary";
 import { buildLinerPlanDxf } from "./liner/exports/linerPlanDxf";
 import { buildLinerProfileDxf } from "./liner/exports/linerProfileDxf";
 import { buildLinerFrameStl } from "./liner/exports/linerFrameStl";
@@ -678,7 +681,11 @@ export function App() {
   const apolloImportExportActive = isApolloRoute(pathnameForRouting) && apolloPhase1Enabled;
 
   const hydrateProjectFromJsonText = (content: string) => {
-    const parsed = migrateProject(JSON.parse(content));
+    const boundary = validateLoadedProjectJsonBeforeHydrate(content);
+    if (!boundary.ok) {
+      throw new Error(boundary.diagnostics.join("; "));
+    }
+    const parsed = boundary.project;
     const linerHydration = hydrateProjectLinerFromPersistence(parsed);
     if (!linerHydration.ok) {
       throw new Error(linerHydration.diagnostics.join("; "));
@@ -695,6 +702,10 @@ export function App() {
       const content = await file.text();
       const nextProject = apolloImportExportActive
         ? (() => {
+            const loadBoundary = validateLoadedProjectJsonBeforeHydrate(content);
+            if (!loadBoundary.ok) {
+              throw new Error(loadBoundary.diagnostics.join("; "));
+            }
             const imported = importApolloProjectFromText(content);
             if (!imported.ok) {
               throw new Error(imported.diagnostics.join("; "));
@@ -717,6 +728,10 @@ export function App() {
     if (result.canceled) return false;
     try {
       if (apolloImportExportActive) {
+        const loadBoundary = validateLoadedProjectJsonBeforeHydrate(result.content);
+        if (!loadBoundary.ok) {
+          throw new Error(loadBoundary.diagnostics.join("; "));
+        }
         const imported = importApolloProjectFromText(result.content);
         if (!imported.ok) {
           throw new Error(imported.diagnostics.join("; "));
@@ -782,6 +797,17 @@ export function App() {
       }
       payload = `${JSON.stringify(serialized.project, null, 2)}\n`;
       serializedProject = serialized.project;
+    }
+    const saveBoundary = validatePersistedProjectForSave(serializedProject);
+    if (!saveBoundary.ok) {
+      log(`Failed to save project.json: ${saveBoundary.diagnostics.join("; ")}`);
+      pushApiError(
+        new Error(saveBoundary.diagnostics.join("; ")),
+        "PROJECT_SAVE_ERROR",
+        setApiErrors,
+      );
+      setBottomTab("errors");
+      return false;
     }
     if (nativeFileDialogs) {
       const result = await saveProjectFile(payload, "project.json");
