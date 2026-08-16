@@ -566,6 +566,11 @@ export function ApolloPhase1Shell({
       setEditorPane("materials");
       return;
     }
+    // Empty draft with an already-empty selection: skip re-setting to avoid an
+    // infinite re-render loop (clearApolloSelection allocates a fresh object).
+    if (selectionState.orderedRefs.length === 0 && selectionState.anchorRef === null) {
+      return;
+    }
     setSelectionState(clearApolloSelection());
   }, [draft, selectionState]);
 
