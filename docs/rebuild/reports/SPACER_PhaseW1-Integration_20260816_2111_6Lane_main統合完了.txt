@@ -1,0 +1,116 @@
+SPACER CLONE × site-context-prototype
+Wave 1「6 Lane main統合」Final Report
+============================================================
+
+1. 作業日時 JST
+   2026-08-16 21:11 JST 完了 (開始 2026-08-16 20:53 頃)
+
+2. 開始main SHA
+   31a111362ec39f31f74a40f4dd59e2e002a49035
+
+3. 終了main SHA
+   3ac3877053de0c20561068ddc2ad252462b47855
+
+4. origin/main SHA
+   3ac3877053de0c20561068ddc2ad252462b47855 (local main と一致)
+
+5. 各Lane remote HEAD (git fetch origin --prune 後の実測)
+   lane-a/persistence-schema          c9ee62925bc0beec14b12ea15b5d679d18ab7481
+   lane-b/sitecontext-contract-adapter 9fb2f099b3ef4930914197eab4383903bc3507e7
+   lane-t/sitecontext-terrain-port     eff17685a94e1b0ae04334e1097820bd9d63c891
+   lane-v/unified-3d-viewer            2ad05cc2b679c08911b6b980c7587d7edbe65896
+   lane-u/unified-workflow             716a53efeda398babbe7ce2f964eeca9533c9538
+   lane-s/reference-business-001       76aef00f0ad3e2d7edb11eb773a7029bd731c6e6
+   ※ 報告済み目安SHAと異なる分はすべて Final Report 追加コミット等の正当な差分と判定。
+
+6. merge順序
+   A → B → T → V → U → S
+
+7. 各merge commit
+   Lane A: e57881b merge: Wave 1 Lane A (persistence-schema) into main
+   Lane B: 92eb8f9 merge: Wave 1 Lane B (sitecontext-contract-adapter) into main
+   Lane T: 079888d merge: Wave 1 Lane T (sitecontext-terrain-port) into main
+   Lane V: bce311a merge: Wave 1 Lane V (unified-3d-viewer) into main
+   Lane U: 0906e3b merge: Wave 1 Lane U (unified-workflow) into main
+   Lane S: 3ac3877 merge: Wave 1 Lane S (reference-business-001) into main
+
+8. conflict一覧
+   - Lane T merge時: docs/development/README.md (index行)
+   - Lane V merge時: docs/development/README.md (index行)
+   - Lane U merge時: docs/development/README.md (index行)
+   - Lane S merge時: docs/development/README.md (index行)
+   ※ Lane A / Lane B は衝突なし。App.tsx / Toolbar / i18n / testIndex.mjs は自動マージ成功。
+
+9. conflict解消内容
+   docs/development/README.md の Index 表について、
+   base/main 側 index 行 と incoming Lane の index 行 をすべて共存させる方針で解消。
+   最終的に Lane B(3行) / Lane T(1行) / Lane V(2行) / Lane U(1行) / Lane S(6行) の
+   全 index 行が保持された。ours/theirs の丸ごと採用はしていない。
+
+10. 統合時追加修正
+    なし (conflict 解消のみ。実コードの修正・追加なし)
+
+11. 各Lane targeted test結果
+    Lane A: schemaDriftGuard / defaultProjectConformance / genericProjectRoundtrip 3ファイル 13テスト PASS
+    Lane B: adapterContract 1ファイル 12テスト PASS
+    Lane T: terrain 9ファイル 54テスト PASS
+    Lane V: test:3d 32ファイル 185テスト PASS / viewer layers+unified 5ファイル 43テスト PASS
+    Lane U: App.siteContextRoute + Toolbar + canonicalWorkflow 3ファイル 20テスト PASS
+    Lane S: roadAlignment 1ファイル 7テスト PASS
+    各Lane merge直後に typecheck / git diff --check も PASS
+
+12. Wave 1 Milestone Gate結果
+    PASS (全項目)
+
+13. test:fast
+    443ファイル / 3286テスト PASS (42.0s)
+
+14. test:ui
+    126ファイル / 766テスト PASS (65.4s)
+
+15. test:3d
+    32ファイル / 185テスト PASS (7.7s)
+
+16. typecheck
+    PASS (tsc -b)
+
+17. build
+    PASS (vite build 4,184.24kB / gzip 1,157.00kB。chunk 500kB 警告のみ)
+
+18. git diff --check
+    PASS
+
+19. Luna利用
+    なし (今回の統合では委任不要と判断)
+
+20. Sol利用
+    なし (設計衝突・契約矛盾・原因不明回帰なし)
+
+21. blocker / 残課題
+    - blocker: なし
+    - 残課題: Lane T (terrain) と Lane V (viewer) の型統一は Wave 1 では意図的に未実施
+      (双方が独立に型を持つ設計のまま。最小adapter接続はWave 2で実施)
+    - Lane V mock (mockScene等) は standalone demo (UnifiedViewerDemo) のみで使用。
+      production経路への接続は Wave 2 (V-3〜) 以降。
+    - Lane B adapter の本実装は Wave 2 (B-4〜) 以降。
+
+22. Wave 2開始可否
+    可
+
+23. Wave 2開始時の注意事項
+    - 各Laneは最新origin/mainへ ff-only 追従してから作業開始すること
+    - 依存順:
+      A-5〜A-7 と B-4〜B-6 → mainへ A→B 順で統合
+      → T-5〜T-7 → mainへ T
+      → V-3〜V-5 / U-3〜U-4 / S-4〜S-6
+    - docs/development/README.md の index 行追加は今後も既存行を保持し共存させる
+    - DEMのnetwork実アクセスを必須にしない (fixture / unit test優先)
+
+24. main / origin/main同期確認
+    終了時 local main == origin/main == 3ac3877053de0c20561068ddc2ad252462b47855
+    全6 Lane統合分のpushが完了していることを確認済
+
+25. Discord報告実施記録
+    作業開始前 / Step1〜Step10 各開始・終了 / conflict発生時 を全て Discord Webhook へ報告済
+    各merge後にpush成功も報告済
+    Final Report添付送信は Step 11 で実施
