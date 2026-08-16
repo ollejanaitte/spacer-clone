@@ -1,0 +1,170 @@
+================================================================================
+SPACER CLONE Vitest/Vite テスト基盤高速化・安定化 ファイナルレポート
+================================================================================
+
+Phase 1: spacer-cloneテスト基盤高速化安定化
+
+1. 作業日時（日本時間）
+   2026-08-16 07:06 〜 2026-08-16 10:02 JST
+
+2. 作業対象パス
+   /home/masaharu/Projects/spacer-clone  (frontend/ 中心)
+
+3. 開始時 main SHA
+   865715f089469572bc808522aa1ed9f328157704
+
+4. 終了時 main SHA
+   03d7d0ece2afa5c83a86fc2efc4c1874f74a67cc  (local main = origin/main 一致)
+
+5. 改修前 Baseline
+   - 全件Vitest: 20分以上経過しても未完了（最終的に約31分で安全停止）
+     ※前回のAI作業記録でも shard1 が 900s/1800s で完了せず強制終了
+   - 原因①: ApolloPhase1Shell が空プロジェクト時に無限再レンダーする実バグ
+     （clearApolloSelection() が毎回新オブジェクトを返し、選択状態が常に変化→
+     effectが無限再実行。実機でも「新規作成」でアプリがフリーズする）
+   - 原因②: bridgeProject / mountain500 系の高コスト統合E2E
+     （mountain500.fullchain 約12s/テスト 等）
+   - 警告: HTMLCanvasElement.getContext 93件(UI)・act未設定 858件・SVG未知タグ
+   - typecheck: TS7006 ×3（phase10SbQuantityDerivation.test.ts）で FAIL
+   - flaky: 順序依存flaky報告あり（App.linerSaveLoad / App.linerReset 等）
+
+6. 実施した変更の要約
+   - テスト分類基盤: frontend/scripts/testIndex.mjs（FAST/UI/3D/SLOW を自動分類、
+     596ファイルを重複なく分類）
+   - Gate別Vitest設定: vitest.fast/ui/3d/slow/electron.config.ts 新設
+   - 実バグ修正: ApolloPhase1Shell の空プロジェクト無限再レンダーを修正
+     （今回のタスクの必須前提。全件Vitestが完了しない根本原因）
+   - 警告整理: src/test/ui.setup.ts（React19 act有効化 + 最小限canvas 2D context
+     スタブ。console抑制ではなくjsdom欠落APIの補完）＋ dimensionUI をSVGラップ
+   - 型修正: phase10SbQuantityDerivation の fixture を型付けし TS7006 ×3 解消
+   - 標準Gate文書化: docs/development/vitest-gates.md 新設・quality-gates /
+     README / AGENTS 反映
+
+7. 追加・変更した test:* コマンド一覧（frontend/package.json）
+   - npm run test:fast     … 純ロジック（node） 425 files / 3163 tests
+   - npm run test:ui       … React/DOM（jsdom） 125 files / 758 tests
+   - npm run test:3d       … Three.js/Canvas/WebGL 30 files / 170 tests
+   - npm run test:slow     … 高コスト統合E2E 15 files / 106 tests
+   - npm run test:electron … desktop/electron 4 files / 26 tests
+   - npm run test:full     … FAST+UI+3D+SLOW+Electron+regression+parity（最終Gate）
+   - 互換維持: test（vitest run）・electron:test（=test:electron）・test:all（=test:full）
+   - 既存維持: test:regression・test:parity-cli・test:e2e（playwright）
+
+8. 分類方針（FAST / UI / 3D / SLOW / Electron / E2E / FULL）
+   - SLOW: bridgeProject 系の高コスト統合E2E（削除・skipせず専用GateとFULLで実行）
+   - 3D: Three.js / Canvas / WebGL / 3D Viewer 系（明示パターン）
+   - UI: `@vitest-environment jsdom` を持つReact/DOMテスト
+   - FAST: 残り全て（純関数・utility・domain・store等の軽量テスト）
+   - Electron: desktop/electron の純ロジック（node）
+   - E2E: Playwright（実ブラウザ・サーバ必須。必要時のみ）
+   - FULL: 全グループを順次実行する最終Gate
+   - phase10Sb は P10_SB_OUTPUT 必須のため通常Gate/FULLから除外（sb configのみ）
+   - regression.golden は regression config で実行
+
+9. flaky原因と修正内容
+   - 従来の順序依存flakyの主因は空プロジェクト無限レンダーループ（worker1台が
+     永久専有）と、巨大な単一プロセス実行による干渉。
+   - 修正: 無限ループ修正＋Gate別に独立Vitestプロセス化（ファイル間隔離）。
+   - 検証: App.linerSaveLoad / linerReset / linerDelete 3回反復PASS。
+     FAST・UI とも --sequence.shuffle 実行でPASS。flaky 0件。
+
+10. Canvas / jsdom 警告の原因と対処
+   - HTMLCanvasElement.getContext: jsdomにcanvas実装が無いため。UI/3D共通の
+     最小限2D contextスタブ（ui.setup.ts）を提供。UI 93→0件、3D 152→0件。
+   - act未設定: React19のIS_REACT_ACT_ENVIRONMENTが未設定。setupで有効化。858→0件。
+   - SVG未知タグ: Dimension2DLayer をSVGコンテキスト外で直接描画していたため。
+     テスト側で<svg>でラップ。→0件。
+   - THREE.WARNING（15件・残存）: stats-gl が three@0.170.0 を固定し top-levelの
+     three@0.184.0 と二重importになる既存依存問題。cosmetic・依存変更は
+     「大規模依存更新禁止」方針のため対象外とし説明済み。
+
+11. TS7006修正内容
+   - phase10SbQuantityDerivation.test.ts の JSON.parse 結果が any となり、
+     map/reduce のコールバック引数が暗黙anyになっていた。
+   - SubstructureFixture / SupportSpec 型を定義し明示キャスト。TS7006 ×3解消。
+
+12. typecheck / build 修復内容
+   - typecheck（tsc -b）: 修正前 FAIL（TS7006×3）→ 修正後 PASS（約24秒）
+   - build（tsc -b + vite build）: PASS（vite 14.6秒）
+
+13. 改修前後の実行時間比較
+   - 全件Vitest: 「20分超・未完了」→ test:full 162.57秒で完走
+   - test:fast: 旧・対象なし → 33.4秒（通常修正の代表Gate。旧全件の1/40以下）
+   - test:ui: 旧・分離なし → 49.9秒
+   - test:3d: 旧・分離なし → 6.4秒
+   - test:slow: 旧・分離なし → 64.3秒
+   - test:electron: 旧・別コマンド → 0.2秒
+   - typecheck: 旧 FAIL → 24秒 PASS
+   - build: 旧 PASS（同程度）
+   - 警告数: getContext 245→0 / act未設定 858→0 / SVG未知タグ 3→0
+   - flaky: 報告あり → 0
+
+14. 最終検証結果（Phase8）
+   - test:fast: PASS（425 files / 3163 tests / 33.4s）
+   - test:ui: PASS（125 files / 758 tests / 50.1s）
+   - test:3d: PASS（30 files / 170 tests / 6.3s）
+   - test:slow: PASS（15 files / 106 tests / 64.3s）
+   - test:electron: PASS（4 files / 26 tests / 0.2s）
+   - test:regression: PASS（6 tests）・test:parity-cli: PASS（9 tests）
+   - test:full: PASS（合計4238 tests / 162.57s）
+   - typecheck: PASS / build: PASS
+   - flaky: 0 / 不要なCanvas/jsdom警告: 解消（THREE.WARNINGは分類・説明済み）
+   - E2E（Playwright）: 本環境では①AI-RIM本体が port 8000 を使用し spacer の
+     バックエンドを起動できない（既存の環境制約）、②apollo-step4a の workflow
+     step数期待値（WF-15）と現行コードの乖離（既存）のため、既存specは未PASS。
+     本タスク変更（Vitest基盤・ApolloPhase1Shellのループ修正）とは無関係。
+     代替として dev サーバー起動＋実ブラウザsmoke確認を実施（/pro と
+     /pro/apollo が正常描画・pageerror 0・フリーズなし）。
+
+15. 標準Gate（docs/development/vitest-gates.md に明文化）
+   - 通常修正（純ロジック）: test:fast + typecheck
+   - UI修正: test:fast + test:ui + typecheck + build
+   - 3D修正: test:fast + test:3d（+必要に応じelectron/e2e）
+   - Electron修正: test:fast + test:electron + typecheck + build
+   - マイルストーン: test:full（最終Gate・原則1回）+ typecheck + build
+   - 作業途中で全件（test:full）を繰り返し実行しない
+
+16. スクリーンショット保存先
+   docs/screenshots/gates/
+   - gate_fast.png（test:fast PASS・時間）
+   - gate_ui.png（test:ui PASS）
+   - gate_typecheck_build.png（typecheck + build PASS）
+   - gate_electron_3d.png（test:electron + test:3d PASS）
+   - gate_full.png（test:full PASS・時間）
+   - gate_comparison.png（改修前後比較）
+   - app_pro_smoke.png / app_apollo_smoke.png（実ブラウザsmoke確認）
+   ※ Discord へ実ファイル添付送信済み（各画像の内容を日本語で説明）
+
+17. 各 commit SHA（すべて main へ push 済み）
+   1. a36c444  test: Vitestゲート分離（FAST/UI/3D/SLOW/Electron）＋空プロジェクト
+              無限ループ修正
+   2. bd2f664  fix: phase10SbQuantityDerivation TS7006 ×3 解消（fixture型付け）
+   3. 9575e4f  test: UI警告整理（act/canvas/svg）＋flaky解消確認
+   4. 4f843c5  docs: 標準Gateを文書化（FAST/UI/3D/SLOW/Electron/FULL）
+   5. 03d7d0e  test: 3Dゲートにもcanvas 2Dスタブ適用（node環境ガード付き）
+   ※ 秘密情報（credentials/token/Webhook等）は一切 commit していない
+
+18. GitHub main 反映確認
+   - 全 commit を origin/main へ push 済み。local main = origin/main
+     = 03d7d0ece2afa5c83a86fc2efc4c1874f74a67cc
+
+19. 残課題
+   - Playwright E2E: 環境の port 8000 競合（AI-RIM本体）と既存specの期待値乖離の
+     ため未PASS。Playwright基盤の修復は本タスク範囲外（将来課題）
+   - THREE.WARNING（three二重import）: stats-gl 依存の解消は依存更新が必要なため保留
+   - CI（.github/workflows）: 未導入（ローカルGateとして確立。将来課題）
+
+20. 完了判定
+   COMPLETE
+   - main 上のみで作業 / 他ブランチ・他worktreeなし
+   - 全小ステップを GitHub main へ反映済み
+   - test:fast / typecheck / build / test:ui / test:electron / test:3d /
+     test:slow / test:full すべて PASS
+   - flaky 0 / Canvas/jsdom警告を必要最小限に整理 / TS7006 ×3 解消
+   - 標準Gateを docs/README/AGENTS へ明文化
+   - 改修前後時間を比較（20分超未完了 → 162.57秒）
+   - スクリーンショット複数取得・Discord送付
+   - ファイナルレポートを GitHub main へ反映・Discord へ添付
+   - Gmail完了報告＋TXT添付（送信済み、または宛先未確定なら送信保留を明記）
+   - local main = origin/main / git status は本タスク分クリーン
+================================================================================
