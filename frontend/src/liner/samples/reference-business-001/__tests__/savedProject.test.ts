@@ -62,9 +62,28 @@ describe("S-9 Saved Complete Project / Reopen (RB001)", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     for (const key of Object.keys(project.modules)) {
-      expect(result.reopened.modules[key as keyof typeof project.modules]).toEqual(
-        project.modules[key as keyof typeof project.modules],
+      // JSON 直列化は -0 を 0 に正規化する（数値的に同値）。厳密比較は
+      // 正規化後に行う。
+      expect(normalizeZeros(result.reopened.modules[key as keyof typeof project.modules])).toEqual(
+        normalizeZeros(project.modules[key as keyof typeof project.modules]),
       );
     }
   });
 });
+
+function normalizeZeros(value: unknown): unknown {
+  if (typeof value === "number") {
+    return Object.is(value, -0) ? 0 : value;
+  }
+  if (Array.isArray(value)) {
+    return value.map(normalizeZeros);
+  }
+  if (value !== null && typeof value === "object") {
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(value)) {
+      out[k] = normalizeZeros(v);
+    }
+    return out;
+  }
+  return value;
+}

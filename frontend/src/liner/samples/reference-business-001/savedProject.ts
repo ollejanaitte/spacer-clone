@@ -29,6 +29,11 @@ import { buildRb001Analysis } from "./analysis";
 import { RB001_BRIDGE_ID, RB001_BRIDGE_NAME, RB001_BRIDGE_LENGTH } from "./bridgeArrangement";
 import { buildRb001BridgeLayout } from "./bridgeArrangement";
 import { REF_BUSINESS_001_ROAD_ID } from "./roadAlignment";
+import {
+  writeSuperstructureModuleToProject,
+  writeSubstructureModuleToProject,
+  writeAnalysisModuleToProject,
+} from "../../../next/persistence/unifiedModuleWriter";
 
 export const RB001_COMPLETE_PROJECT_NAME = "RB001 郡上市八幡 長良川橋 完成Project" as const;
 
@@ -87,15 +92,36 @@ export function buildRb001CompleteProject(): Rb001CompleteProjectResult {
     placedAt: "2026-08-16T00:00:00.000Z",
   });
 
+  // superstructure (RB001-SUPER-1) + bearings (S-5)
+  const superstructure = buildRb001Superstructure();
+  const superWrite = writeSuperstructureModuleToProject(project, superstructure);
+  if (!superWrite.ok) {
+    throw new Error(`RB001-SUPER-PERSIST-FAILED: ${superWrite.issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`);
+  }
+  project = superWrite.project;
+
+  // substructure (RB001-SUB-1) (S-6)
+  const substructure = buildRb001Substructure();
+  const subWrite = writeSubstructureModuleToProject(project, substructure);
+  if (!subWrite.ok) {
+    throw new Error(`RB001-SUB-PERSIST-FAILED: ${subWrite.issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`);
+  }
+  project = subWrite.project;
+
   // analysis (S-7; NOT_RUN 維持 — 架空結果を作らない)
   const analysis = buildRb001Analysis();
+  const analysisWrite = writeAnalysisModuleToProject(project, analysis.document);
+  if (!analysisWrite.ok) {
+    throw new Error(`RB001-ANL-PERSIST-FAILED: ${analysisWrite.issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`);
+  }
+  project = analysisWrite.project;
 
   const summary = {
     terrainDocumentId: extractTerrainDocument(project)?.terrainId,
     roadId: REF_BUSINESS_001_ROAD_ID,
     bridgeId: RB001_BRIDGE_ID,
-    superstructureDocumentId: buildRb001Superstructure().documentId,
-    substructureDocumentId: buildRb001Substructure().documentId,
+    superstructureDocumentId: superstructure.documentId,
+    substructureDocumentId: substructure.documentId,
     analysisStatus: analysis.document.analysisStatus,
     moduleKeys: Object.keys(project.modules),
   };
