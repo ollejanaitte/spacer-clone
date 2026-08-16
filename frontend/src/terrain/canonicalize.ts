@@ -67,6 +67,19 @@ export async function sha256Hex(input: string): Promise<string> {
   return createHash('sha256').update(data).digest('hex');
 }
 
+/** バイト列の sha256（ブラウザ crypto.subtle / Node node:crypto の両対応） */
+export async function sha256BytesHex(bytes: Uint8Array): Promise<string> {
+  if (typeof crypto !== 'undefined' && crypto.subtle) {
+    const buf = await crypto.subtle.digest('SHA-256', bytes as unknown as BufferSource);
+    return Array.from(new Uint8Array(buf))
+      .map((b) => b.toString(16).padStart(2, '0'))
+      .join('');
+  }
+  // Node（vitest・Electron main）
+  const { createHash } = await import('node:crypto');
+  return createHash('sha256').update(bytes).digest('hex');
+}
+
 /** canonicalize + sha256（決定性ハッシュ） */
 export async function canonicalHash(obj: unknown): Promise<string> {
   return sha256Hex(canonicalize(obj));

@@ -9,11 +9,81 @@ export {
   deserializeHeightfieldBinary,
   heightfieldToBase64,
   base64ToHeightfield,
+  bytesToBase64,
+  base64ToBytes,
   SCT1_MAGIC,
   SCT1_HEADER_SIZE,
 } from "./sct1";
 
-export { canonicalize, sha256Hex, canonicalHash } from "./canonicalize";
+export {
+  gridBoundsFromHeightfield,
+  elevationRangeFromHeightfield,
+  buildTerrainAsset,
+  buildTerrainDocument,
+  buildTerrainAssetManifest,
+  generateTerrain,
+  type TerrainAsset,
+  type TerrainAssetManifest,
+  type TerrainAssetManifestEntry,
+  type TerrainGenerationInput,
+  type TerrainGenerationResult,
+} from "./generation";
+export {
+  TERRAIN_ASSET_MANIFEST_KEY,
+  persistTerrain,
+  extractTerrainDocument,
+  extractTerrainAssetManifest,
+  extractTerrainAsset,
+  verifyTerrainAssetChecksum,
+  saveTerrainElevation,
+  loadTerrainElevation,
+  saveTerrainBinary,
+  loadTerrainBinary,
+  verifyReopenedTerrain,
+  type TerrainPersistenceError,
+} from "./terrainPersistence";
+export {
+  createIndexedDbTerrainElevationStore,
+  createMemoryTerrainElevationStore,
+  heightfieldToAsset,
+  makeHeightfield,
+  type TerrainBinaryAsset,
+  type TerrainElevationRecord,
+  type TerrainElevationStore,
+} from "./terrainAssetStore";
+export {
+  buildTerrainProject,
+  terrainDocumentsEqual,
+  roundtrip,
+  storeRoundtrip,
+  type TerrainRoundtripResult,
+  type StoreRoundtripResult,
+} from "./terrainRoundtrip";
+export {
+  GUJO_CENTER_WGS84,
+  GUJO_EPSG,
+  GUJO_CENTER_EPSG6674,
+  GUJO_BOUNDS_WGS84,
+  GUJO_BOUNDS_EPSG6674,
+  GUJO_DEM5A,
+  GUJO_FIXTURE_TIMESTAMP,
+  GUJO_COORDINATE_CONTEXT_ID,
+  GUJO_COORDINATE_CONTEXT,
+  GUJO_SOURCE_DATASET,
+  GUJO_SAMPLE_TERRAIN_ID,
+  GUJO_SAMPLE_ASSET_PATH,
+  GUJO_FIXTURE_GRID,
+  GUJO_SAMPLE_ASSET_SIZE,
+  GUJO_SAMPLE_ASSET_CHECKSUM,
+  GUJO_SAMPLE_SCT1_BASE64,
+  buildGujoSampleHeightfield,
+  loadGujoSampleHeightfield,
+  buildGujoSampleTerrainDocument,
+  buildGujoSampleAsset,
+  buildGujoSampleProject,
+} from "./gujoSample";
+
+export { canonicalize, sha256Hex, sha256BytesHex, canonicalHash } from "./canonicalize";
 
 export { JGD2011_ZONES, ZONE_BY_EPSG, latLonToPlane, planeToLatLon, type Zone } from "./coordinate/transform";
 export {

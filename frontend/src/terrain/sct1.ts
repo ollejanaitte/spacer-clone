@@ -63,18 +63,25 @@ export function deserializeHeightfieldBinary(bytes: Uint8Array): Heightfield {
   return new Heightfield(spec, data);
 }
 
-export function heightfieldToBase64(hf: Heightfield): string {
-  const bytes = serializeHeightfieldBinary(hf);
+export function bytesToBase64(bytes: Uint8Array): string {
   let bin = '';
   for (let i = 0; i < bytes.length; i++) bin += String.fromCharCode(bytes[i]);
   return btoa(bin);
 }
 
-export function base64ToHeightfield(b64: string): Heightfield {
+export function base64ToBytes(b64: string): Uint8Array {
   const bin = atob(b64);
   const bytes = new Uint8Array(bin.length);
   for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
-  return deserializeHeightfieldBinary(bytes);
+  return bytes;
+}
+
+export function heightfieldToBase64(hf: Heightfield): string {
+  return bytesToBase64(serializeHeightfieldBinary(hf));
+}
+
+export function base64ToHeightfield(b64: string): Heightfield {
+  return deserializeHeightfieldBinary(base64ToBytes(b64));
 }
 
 export { NO_DATA };
