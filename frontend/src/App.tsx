@@ -137,6 +137,8 @@ import {
   hydrateApolloPhase1Unit2FromPersistence,
   serializeApolloPhase1Unit2ForPersistence,
 } from "./apollo/unit2Draft";
+import { SiteContextEntryPage } from "./workflow/SiteContextEntryPage";
+import { isSiteContextRoute, SITE_CONTEXT_ROUTE_PATH } from "./workflow/routes";
 import { buildApolloVisualizationModel } from "./apollo/visualization";
 import type { ViewerDisplayModel } from "./viewer/types";
 
@@ -1360,6 +1362,22 @@ export function App() {
     );
   }
 
+  if (isSiteContextRoute(currentPathname)) {
+    return (
+      <SiteContextEntryPage
+        projectName={project.project.name}
+        projectId={project.project.id}
+        isEmptyProject={isEmptyProject}
+        onBackToApp={() => navigatePro("/pro")}
+        onNavigateStep={(step) => {
+          if (step.route !== null) {
+            navigatePro(step.route);
+          }
+        }}
+      />
+    );
+  }
+
   if (isSubstructureRoute(currentPathname)) {
     const handoffSupports = linerDraft ? linerPiersToSupportHandoff(linerDraft.piers ?? []) : [];
     const handoffAlignmentId = linerDraft
@@ -1459,6 +1477,7 @@ export function App() {
             ? "Apollo Phase 1-NN shell"
             : "Apollo Phase 1-NN shell is installed but disabled until Apollo mode or VITE_APOLLO_PHASE1_NN_ENABLED=true is enabled."
         }
+        onOpenSiteContext={() => navigatePro(SITE_CONTEXT_ROUTE_PATH)}
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge
