@@ -38,6 +38,12 @@ export {
   type TerrainPersistenceError,
 } from "./terrainPersistence";
 export {
+  buildTerrainProject,
+  terrainDocumentsEqual,
+  roundtrip,
+  type TerrainRoundtripResult,
+} from "./terrainRoundtrip";
+export {
   GUJO_CENTER_WGS84,
   GUJO_EPSG,
   GUJO_CENTER_EPSG6674,
