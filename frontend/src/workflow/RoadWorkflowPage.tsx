@@ -7,6 +7,7 @@ import type { Project } from "../next/project/schema";
 import { readRoadWorkflowState, writeRoadWorkflowState, type RoadWorkflowState } from "./workflowState";
 import { buildRb001RoadWorkflowState } from "./roadBridgeSamples";
 import { buildReferenceBusiness001RoadSample } from "../liner/samples/reference-business-001/roadAlignment";
+import { ProjectStatusPanel } from "./ProjectStatusPanel";
 import styles from "./RoadWorkflowPage.module.css";
 
 export interface RoadWorkflowPageProps {
@@ -88,6 +89,7 @@ export function RoadWorkflowPage({
 
       <section className={styles.body}>
         <CanonicalWorkflowNav currentStepId="road" onNavigateStep={handleNavigateStep} />
+        <ProjectStatusPanel project={project} />
 
         <div className={styles.panels}>
           <section className={styles.panel} data-testid="road-workflow-sample">
