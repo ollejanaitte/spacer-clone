@@ -1,0 +1,49 @@
+SPACER CLONE Phase 5 完了報告
+残課題・今後課題 Issue一覧文書化
+========================================
+
+作業日時   : 2026-08-16 15:44 (JST) 完了
+作業時間   : 約 15 分 (目標 10〜15 分)
+開始時 main SHA : a60a1fca727306416f7139364108a3e8f86a11fa
+終了時 main SHA : c0f7d82 (Step 1 文書 commit)
+
+Issue一覧文書
+  docs/development/issue-backlog.md
+  (docs/development/README.md にリンク追記)
+
+整理した残課題 4 件
+  E2E-001   apollo-step5-jp3a: コールド起動時 180s timeout (perf/timeout/hang)
+  E2E-002   apollo-step5-jp3c: onboarding overlay が pointer events を遮断
+  ROUTE-001 /th/run 直行時に lobby 表示 (redirectLegacyRoutes / replaceStateのみ)
+  ROUTE-002 th-analysis-revamp 関連 FAIL 2件目 (ROUTE-001と統合可否は要確認)
+
+整理した今後課題
+  TEST-001    E2E Gate 3階層化 (smoke / critical / full) 検討
+  CI-001      CI への E2E / test:full 追加検討
+  OPS-001     開発・テストルールの実装強制検討
+  SCHEMA-001  Schema / Persistence 同期チェック自動化検討
+  FIXTURE-001 E2E fixture / helper 標準化検討
+
+コード変更なし
+  frontend/src / backend / schemas / tests / package.json / CI定義 等は一切変更なし
+
+test / build / E2E 未実行
+  文書のみの変更のため (依頼指示通り)。確認は git diff --check と目視のみ。
+
+GitHub 反映 commit
+  c0f7d82  docs: SPACER Phase 5 残課題・今後課題 Issue一覧文書 (issue-backlog.md) を追加
+  push 後 : origin/main = c0f7d82
+
+残課題
+  - 本一覧文書の項目は実装未対応 (文書化のみ)
+  - E2E-001 根本原因 / ROUTE-002 の統合可否は未確定 (要次回確認)
+  - GitHub Issue 実作成は行っていない (今回対象外)
+
+次回候補
+  - E2E-001 / E2E-002 の根本原因調査と修正
+  - ROUTE-001 の routing state 更新修正と /th/run 回帰確認
+  - TEST-001 E2E 3階層化の設計
+  - 将来の GitHub Issue 化
+
+開始前からの無関係未コミット差分
+  (final_report.txt 削除 / R1-04.5 Luna report 追加) は保全し今回対象外
