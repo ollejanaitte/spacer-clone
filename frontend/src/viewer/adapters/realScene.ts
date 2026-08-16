@@ -1,11 +1,11 @@
 /**
- * Lane V-4 — Real-data unified scene assembler (terrain + road).
+ * Lane V-5 — Real-data unified scene assembler (terrain + road + bridge).
  *
  * Builds a UnifiedViewerModel from REAL Reference Business 001 data
- * (Gujo terrain + RB001 road alignment), all expressed in the shared
+ * (Gujo terrain + RB001 road alignment + bridge), all expressed in the shared
  * canonical world frame (EPSG:6674: X=easting/along, Y=northing/transverse,
  * Z=elevation). The single render transform (domainToThree) is applied by the
- * viewer; no CRS conversion is re-implemented here. V-5 adds the bridge.
+ * viewer; no CRS conversion is re-implemented here.
  */
 
 import type { TerrainDocument } from "../../next/modules/terrainModule";
@@ -27,12 +27,16 @@ import {
 import { DEFAULT_RENDER_COORDINATE_TRANSFORM } from "../layers/renderCoordinate";
 import { heightfieldToTerrainLayer, projectOriginFromTerrainDocument } from "./terrainAdapter";
 import { roadAlignmentToLayer, elevationAt } from "./roadAdapter";
+import {
+  bridgeCandidateToLayers,
+  type RealBridgeCandidateInput,
+} from "./bridgeAdapter";
 
 const REAL_SOURCE: LayerSource = {
   lane: "V",
   moduleId: "reference-business-001",
-  format: "lane-t-terrain+s-liner",
-  revision: "2",
+  format: "lane-t-terrain+s-liner+bridge-sample",
+  revision: "3",
 };
 
 export interface RealGujoSceneInput {
@@ -42,6 +46,7 @@ export interface RealGujoSceneInput {
     readonly label?: string;
   };
   readonly road?: Rb001RoadSample | null;
+  readonly bridge?: RealBridgeCandidateInput | null;
 }
 
 /** Canonical world basis for the Gujo Reference Business 001 scene. */
@@ -65,9 +70,11 @@ export function createRealGujoWorldBasis(
 export function buildRealGujoUnifiedScene(input: RealGujoSceneInput): UnifiedViewerModel {
   const terrainLayer = buildTerrainLayer(input.terrain);
   const roadLayer = buildRoadLayer(input.road);
+  const bridgeLayers = buildBridgeLayers(input.bridge, input.road);
 
   const layers: ViewerLayer[] = [terrainLayer];
   if (roadLayer) layers.push(roadLayer);
+  layers.push(...bridgeLayers);
 
   const origin =
     input.terrain.document
@@ -112,6 +119,52 @@ function buildRoadLayer(road: Rb001RoadSample | null | undefined): ViewerLayer |
       horizontalCrs: "EPSG:6674",
     },
   });
+}
+
+function buildBridgeLayers(
+  bridge: RealBridgeCandidateInput | null | undefined,
+  road: Rb001RoadSample | null | undefined,
+): ViewerLayer[] {
+  if (!bridge) return [];
+  const resolved = bridge.candidate
+    ? bridge
+    : road
+      ? {
+          ...bridge,
+          candidate: {
+            startStation: road.bridgeCandidate.startStation,
+            endStation: road.bridgeCandidate.endStation,
+            nominalSpanM: road.bridgeCandidate.nominalSpanM,
+          },
+        }
+      : bridge;
+  const built = bridgeCandidateToLayers(resolved);
+  const layers: ViewerLayer[] = [];
+  layers.push(
+    createViewerLayer({
+      id: "layer-real-superstructure",
+      data: built.superstructure,
+      source: REAL_SOURCE,
+      metadata: { label: "Superstructure (RB001 bridge)", bridgeId: built.bridgeId },
+    }),
+  );
+  layers.push(
+    createViewerLayer({
+      id: "layer-real-bearing",
+      data: built.bearings,
+      source: REAL_SOURCE,
+      metadata: { label: "Bearings (RB001 bridge)", bridgeId: built.bridgeId },
+    }),
+  );
+  layers.push(
+    createViewerLayer({
+      id: "layer-real-substructure",
+      data: built.substructure,
+      source: REAL_SOURCE,
+      metadata: { label: "Substructure (RB001 bridge)", bridgeId: built.bridgeId },
+    }),
+  );
+  return layers;
 }
 
 // ---------------------------------------------------------------------------
@@ -228,6 +281,30 @@ export function buildRealGujoTerrainScene(): UnifiedViewerModel {
       heightfield: buildGujoSampleHeightfield(),
       document: null,
       label: "Terrain (Gujo DEM sample fixture)",
+    },
+  });
+}
+
+/** Full Reference Business 001 real scene (terrain + road + bridge). */
+export function buildRealGujoReferenceScene(): UnifiedViewerModel {
+  const road = buildReferenceBusiness001RoadSample();
+  const terrain = buildRepresentativeGujoTerrainHeightfield();
+  return buildRealGujoUnifiedScene({
+    terrain: {
+      heightfield: terrain,
+      document: null,
+      label: "Terrain (Gujo full-bounds representative)",
+    },
+    road,
+    bridge: {
+      roadAlignment: road.horizontal,
+      vertical: road.vertical,
+      candidate: {
+        startStation: road.bridgeCandidate.startStation,
+        endStation: road.bridgeCandidate.endStation,
+        nominalSpanM: road.bridgeCandidate.nominalSpanM,
+      },
+      terrainHeight: (x, y) => terrain.getElevation(x, y).z ?? 0,
     },
   });
 }
