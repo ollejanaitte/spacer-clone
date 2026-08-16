@@ -37,6 +37,11 @@
 - Reference Business 001 は `lane-s/reference-business-001` 配下の sample/fixture 領域で管理。
 - Tutorial Sample は別領域 (例: `frontend/src/liner/samples/tutorial-*`) で管理予定。
 - 本 Wave 1 では Tutorial Sample の実装を行わない。
+- **Wave 3 (S-10) で実装済み**: `frontend/src/liner/samples/reference-business-001/tutorialSample.ts`
+  - 合成地形 16×16・道路 300m (直線+右カーブ)・1径間橋 100m の軽量構成。
+  - RB001 とは分離 (TUTORIAL_* ID・`JSON.stringify` に RB001/gujo を含まない)。
+  - Site Context (terrain) → Road → Bridge を同一 Project で接続し、Save 可能。
+  - `buildTutorialSampleProject()` / `validateTutorialProject()`。
 
 ## Related Documents
 

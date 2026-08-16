@@ -5,6 +5,7 @@ import {
   validateRb001Substructure,
 } from "../substructure";
 import { substructureDocumentIdFor } from "../../../../next/modules/substructure/substructureDocumentDomain";
+import { GUJO_SAMPLE_ASSET_PATH, GUJO_COORDINATE_CONTEXT_ID } from "../../../../terrain/gujoSample";
 import { RB001_BRIDGE_ID } from "../bridgeArrangement";
 
 describe("S-6 Substructure Sample (RB001-SUB-1)", () => {
@@ -30,8 +31,9 @@ describe("S-6 Substructure Sample (RB001-SUB-1)", () => {
     expect(doc.bridgeLayoutReference?.bridgeId).toBe(RB001_BRIDGE_ID);
     expect(doc.superstructureReference?.superstructureDocumentId).toBe("RB001-SUPER-1");
     expect(doc.roadReference?.alignmentId).toBe("RB001-ROAD-1");
-    expect(doc.terrainReferences?.surfaceReference).toBe("assets/terrain/gujo-hachiman-sample.sct1");
-    expect(doc.terrainReferences?.coordinateContextId).toBe("ctx-gujo-jgd2011-6674");
+    // S-11: Gujo 定数は共通 import から (ハードコード禁止)
+    expect(doc.terrainReferences?.surfaceReference).toBe(GUJO_SAMPLE_ASSET_PATH);
+    expect(doc.terrainReferences?.coordinateContextId).toBe(GUJO_COORDINATE_CONTEXT_ID);
   });
 
   it("passes substructure validation with no issues", () => {

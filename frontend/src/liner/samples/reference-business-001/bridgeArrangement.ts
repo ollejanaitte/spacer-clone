@@ -36,6 +36,7 @@ import {
 } from "../../../next/modules/bridgeLayout/bridgeLayoutTypes";
 import { generateSpans, validateSpanConfiguration } from "../../../next/modules/bridgeLayout/bridgeLayoutSpans";
 import { validateBridgeLayoutDocument, createValidationState } from "../../../next/modules/bridgeLayout/bridgeLayoutValidation";
+import { GUJO_COORDINATE_CONTEXT_ID } from "../../../terrain/gujoSample";
 
 export const RB001_BRIDGE_ID = "RB001-BRIDGE-1";
 export const RB001_BRIDGE_NAME = "郡上市八幡 長良川橋";
@@ -133,7 +134,7 @@ export function buildRb001BridgeLayout(): BridgeLayoutDocument {
     terrainReference: {
       moduleId: "terrain",
       surfaceReference: "assets/terrain/gujo-hachiman-sample.sct1",
-      coordinateContextId: "ctx-gujo-jgd2011-6674",
+      coordinateContextId: GUJO_COORDINATE_CONTEXT_ID,
     },
     existingConditionsReference: { moduleId: "terrain", documentReferenceId: "existing-gujo-hachiman" },
   };

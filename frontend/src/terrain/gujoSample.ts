@@ -84,6 +84,12 @@ export const GUJO_SOURCE_DATASET = {
   resolution: { cellSize: 5, units: "m" },
   quality: { method: "bilinear", verticalM: 5, horizontalM: 5 },
   datasetContentHash: "5f7bbe228ec7cef26aef499e1dfbb88e3c6db2f072f4cc90162dc7771f0107bc",
+  // NOTE (S-11): datasetContentHash は「実 GSI DEM の内容 hash」ではなく、
+  // 本 sample の代表 fixture (GUJO_SAMPLE_SCT1_BASE64) の SCT1 checksum と同値。
+  // これは意図的な substitute 契約である (GSI 実タイルはライセンス上 bundle 不可。
+  // representative fixture を正本として network 不要で検証可能にする)。
+  // fixture checksum 変更時は本 hash も同じ変更単位で更新する (site-context
+  // data-contract: datasetContentHash は checksum 照合に使用)。
   gsiMeta: {
     datasetId: "dem5a_png",
     zoom: 15,
