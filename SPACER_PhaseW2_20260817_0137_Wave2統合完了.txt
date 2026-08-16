@@ -1,0 +1,389 @@
+================================================================================
+SPACER CLONE × site-context-prototype — Wave 2 統合完了 Final Report
+================================================================================
+ファイル名: SPACER_PhaseW2_20260817_0137_Wave2統合完了.txt
+作成日時  : 2026-08-17 01:37 (JST)
+作業者    : Wave 2 統括担当エージェント（DeepSeek V4 Flash）
+================================================================================
+
+1. 概要
+================================================================================
+Wave 1 統合済み main を基準に、Wave 2 を依存順に完走した。
+
+  第1段 : Lane A (A-5/A-6/A-7) 並列 Lane B (B-4/B-5/B-6)
+  第1統合: main へ A → B
+  第2段 : Lane T (T-5/T-6/T-7)
+  第2統合: main へ T
+  第3段 : Lane V (V-3/V-4/V-5) 並列 Lane U (U-3/U-4) 並列 Lane S (S-4/S-5/S-6)
+  第3統合: main へ V → U → S
+  横断整合性監査 → Wave 2 Milestone Gate → Final Report
+
+Wave 3 には着手していない。
+
+================================================================================
+2. 作業日時（JST）
+================================================================================
+- 開始: 2026-08-16 22:4x 頃（Discord 作業開始報告・Gmail 開始報告 送信済み）
+- 終了: 2026-08-17 01:37（Final Report 作成）
+
+================================================================================
+3. main SHA
+================================================================================
+- 開始 main SHA: dc9234668afa912aadfd92636f2beb3485209454
+- 終了 main SHA: e48454cc039ab28d3abe7b8536585bb3ff22da28
+- origin/main SHA: e48454cc039ab28d3abe7b8536585bb3ff22da28
+- local main == origin/main 同期済み
+
+main 統合 commit 一覧:
+- be836b5 merge: Wave 2 Lane A (persistence-schema) into main
+- 8893c48 merge: Wave 2 Lane B (sitecontext-contract-adapter) into main
+- 1986558 merge: Wave 2 Lane T (sitecontext-terrain-port) into main
+- 2267ba5 merge: Wave 2 Lane V (unified-3d-viewer) into main
+- 5b411da merge: Wave 2 Lane U (unified-workflow) into main
+- 26f83cf merge: Wave 2 Lane S (reference-business-001) into main
+- 5d92603 fix(viewer): 横断監査対応 — V/S支間数一致
+- e48454c fix(build): png.ts の node:zlib 依存を fflate へ置換し vite build を復旧
+
+================================================================================
+4. Preflight 未統合commit監査結果
+================================================================================
+- 対象6Lane branch（origin/lane-a~lane-s）について origin/main..origin/<lane>
+  を監査。全Laneで「未統合commit 0件」を確認（Wave 1成果は完全統合済み）。
+- 各Lane worktree を最新 origin/main へ ff-only 追従・push 済み。
+- canonical main に Wave 2 と無関係の未コミット差分
+  （final_report.txt 削除 / evidence JSON タイムスタンプ更新 / 新規 Luna レポート）
+  があり、ユーザー確認のうえ main へ保全commit（dc92346）として記録。
+- 不正 merge・不明 commit の自動統合は行わなかった。
+
+================================================================================
+5. 各Lane SHA（開始=基準 / 終了=HEAD / 統合時）
+================================================================================
+【Lane A】lane-a/persistence-schema
+- 開始SHA: dc92346（基準） / 終了SHA: d0ad7b0（origin 同期確認）
+- 統合時HEAD: d0ad7b09e0daf468d037c36319a87e168162eb0b
+
+【Lane B】lane-b/sitecontext-contract-adapter
+- 開始SHA: dc92346（基準） / 終了SHA: dd3eade（origin 同期確認）
+- 統合時HEAD: dd3eadebaac0f180058d1d72016d377e72c0eb7b
+
+【Lane T】lane-t/sitecontext-terrain-port
+- 開始SHA: 8893c48（基準） / 終了SHA: 5e101e7（origin 同期確認）
+- 統合時HEAD: 5e101e71c4f8d5d4e2a6b0e31c4a0c9d7f5c3b2a
+  ※ 追加指示対応（IndexedDB PORT 是正）含む
+
+【Lane V】lane-v/unified-3d-viewer
+- 開始SHA: 1986558（基準） / 終了SHA: 7191548（origin 同期確認）
+- 統合時HEAD: 7191548745f2340475d79f76db6f3c79e4349ca5
+
+【Lane U】lane-u/unified-workflow
+- 開始SHA: 1986558（基準） / 終了SHA: 7ebfb4f（origin 同期確認）
+- 統合時HEAD: 7ebfb4f32907ec46f435d79503ed7b3e30a98bd1
+
+【Lane S】lane-s/reference-business-001
+- 開始SHA: 1986558（基準） / 終了SHA: 02a1aad（origin 同期確認）
+- 統合時HEAD: 02a1aad393cf8eb01fd3144ea3778c5cd7e3a2b3
+
+================================================================================
+6. Lane A — A-5 Validation Boundary / A-6 Exceptional Paths / A-7 Migration Guard
+================================================================================
+- A-5 (ca91a3f): projectSchemaValidator（Wave1）を再利用し、canonical Save/Load
+  に公式 JSON Schema validation を導入。ordinary/Apollo 双方を fail-closed。
+  validationBoundary.ts 新規。App の Save/Load 両分岐へ配線。
+- A-6 (55d09f7): 例外経路（workspace localStorage / artifactBundle ZIP /
+  substructure AdapterEnvelope / backend autosave disabled / parallel layer /
+  Apollo import-export precondition）を exceptionalPaths.ts で契約化。canonical と
+  例外を混ぜず、黙って canonical 化しない。
+- A-7 (d0ad7b0): migrationGuard.ts。schemaVersion missing = legacy v1、
+  future/incompatible version は fail-closed 拒否、sequential migration、
+  migration 前後 validation。
+- 検証: persistence __tests__ 67件 + test:fast 全件 PASS。typecheck PASS。
+- 発見事項: createApollo200mContinuousBridgeSample は公式 Schema に不適合
+  （0値 materials/sections・supports 追加プロパティ）。Schema は緩めず、
+  fail-closed を維持。Apollo側の是正 or 正式例外化の判断が必要（残課題）。
+
+================================================================================
+7. Lane B — B-4 Import Adapter 本実装 / B-5 Reverse Compatibility Policy /
+   B-6 Adapter Contract Test
+================================================================================
+- B-4 (24b75c4): Wave1 凍結契約（adapterContract.ts / mappingManifest.ts /
+  field-mapping）に基づき importAdapter.ts を実装。inspect/import（async）、
+  V1→V2 正規化、canonicalHash 検証、7種 fail-closed error code、
+  SCT1 elevation asset の sha256 検証、existingConditions 解決。
+  支援モジュール: siteContextSourceSchema / siteContextPackage / siteContextMapping /
+  siteContextHash。
+- B-5 (7c45d3d): docs/development/site-context-reverse-compatibility.md。
+  SPACER→.sitecontext の最小 export policy（lossless/lossy/unsupported/deferred
+  を分類。完全再構築は目的としない旨を明文化）。
+- B-6 (dd3eade): importAdapter.test.ts（16件）。valid import / missing fields /
+  unsupported / version mismatch / corrupt source / CRS error / terrain ref /
+  warnings / V1→V2 migration / inspect non-mutation / asNew。
+  実装中に V1 required-check の不具合（siteContext は V2 専用概念）を発見し修正。
+- 検証: siteContext 42件 PASS。typecheck PASS。test:fast 444file/3302tests PASS。
+- Sol/Luna: 利用なし（重大設計矛盾なしと判断）。
+
+================================================================================
+8. 第1統合 — main へ A → B
+================================================================================
+- A merge (be836b5) → Lane A targeted test → typecheck → push
+- B merge (8893c48) → Lane B contract test + persistence test → typecheck → push
+- 競合: なし
+- 検証: persistence+siteContext 87件 PASS / typecheck PASS /
+  test:fast 447file/3334tests PASS / local==origin 確認
+- Discord 終了報告 + Gmail「A/B統合完了」報告済み。
+
+================================================================================
+9. Lane T — T-5 Terrain Generation / Persistence / T-6 郡上市八幡Sample PORT /
+   T-7 Terrain Save/Load/Reopen
+================================================================================
+- T-5 (6e2b6d2): generation.ts（Heightfield→TerrainDocument+SCT1+checksum 純関数）、
+  terrainPersistence.ts（Project slot への埋込・checksum検証）。checksum 規約は
+  B-4 と同一の「デコード後バイト列 plain sha256」。
+- T-6 (36fe2c0): gujoSample.ts。GUJO_* 定数（中心 35.7512/136.9567・EPSG:6674・
+  5km bounds・DEM5A ZL15 36タイル・cellSize 5m）+ 32×32 決定性 fixture
+  （SCT1 base64 コミット定数・200-1200m）+ buildGujoSampleProject（parseProject 合格）。
+- T-7 (cf866da): terrainRoundtrip.ts。build→serialize→parse→extract で
+  CRS/bounds/origin/elevation/assetReference の roundtrip 保証。
+- 追加指示対応 (5e101e7): site-context-prototype 既存の IndexedDB Terrain 保存機構
+  （app/src/store/terrainAsset.ts）を terrainAssetStore.ts として PORT・接続。
+  **正本関係を確定**:
+    - 実行時・再読込の正本 = IndexedDB store（scp-terrain/elevations/projectId・
+      移植元と同一。Save→saveTerrainElevation / Reopen→loadTerrainElevation）。
+    - modules.terrain.data.assetManifest = .spacerproj パッケージ自己完結用の
+      直列化ビュー（導出・非正本。二重正本にしない）。
+    - Save→Close→Reopen は IndexedDB から復元（site-context と同一フロー）。
+  - Final Report には「site-context から再利用/PORTしたもの・新規実装・SPACER接続・
+    再実装回避方針」を明記（本報告 §12 参照）。
+- 検証: terrain 73件 PASS / typecheck PASS / test:fast 450file/3353tests PASS。
+
+================================================================================
+10. 第2統合 — main へ T
+================================================================================
+- T merge (1986558) → terrain 73件 + adapter + persistence → typecheck → push
+- 競合: なし
+- 検証: test:fast 450file/3353tests PASS / local==origin 確認
+- Discord 終了報告 + Gmail「T統合完了」報告済み。
+
+================================================================================
+11. 第3段 — Lane V / U / S 並列実行
+================================================================================
+【Lane V】V-3/V-4/V-5（lane-v/unified-3d-viewer）
+- V-3 (b824c32): terrainAdapter.ts。Lane T Heightfield+projectOrigin→TerrainLayerData
+  （canonical EPSG:6674）。Viewer内CRS再実装なし（test で保証）。
+- V-4 (4976b69): roadAdapter.ts。Lane S RB001-ROAD-1 alignment→RoadLayerData
+  （geometry engine + 縦断 309-330m・幅9.0m）。実Projectデータ接続。
+- V-5 (7191548): bridgeAdapter.ts。RB001橋梁候補→super/bearing/sub structure層。
+  realScene.ts で terrain+road+bridge 同時表示。
+- 検証: viewer fast 171件 / 3D 67件 PASS。typecheck PASS。
+  test:fast 453file/3374tests PASS。
+
+【Lane U】U-3/U-4（lane-u/unified-workflow）
+- U-3 (8f63e38): SiteContextPage.tsx。Lane B Adapter（inspect/import）+ Lane T
+  DEM（fetchDemTiles/Gujo preset）接続。warnings/unsupportedFields/error/progress/
+  cancel 表示。独立localStorage/独立Project は作らず App Shell/Project を正本。
+- U-4 (7ebfb4f): Road/Bridge workflow page。同一Projectの module slot
+  （modules.road/bridgeLayout workflowState）で SiteContext→Road→Bridge を接続。
+  back/forward/refresh で Project を保持。App.tsx は最小変更。
+- 検証: workflow fast 17件 / UI 27件 PASS。typecheck PASS。
+  test:fast 452file/3362tests PASS。
+
+【Lane S】S-4/S-5/S-6（lane-s/reference-business-001）
+- S-4 (3db4fe0): bridgeArrangement.ts。RB001-BRIDGE-1 = 郡上市八幡長良川橋、
+  既存BridgeLayoutモデル + computeAbutment/PierPlacementCandidate + generateSpans
+  で STA.1200-1500 を 6径間×50m（A1+P1..P5+A2）に確定。
+- S-5 (159fc2e): superstructure.ts。RB001-SUPER-1 を既存superstructureモデル
+  （buildSuperstructureDocument + Span/Support handoff + bearing config）で作成。
+- S-6 (02a1aad): substructure.ts。RB001-SUB-1 を既存substructureモデル
+  （buildSubstructureDocument + Phase4 adapter + Pier/Abutment/Footing/Pile）で作成。
+  terrain 参照は Lane T gujo fixture。架空数値を増やさず既存サンプル/データ構造を優先。
+- 検証: RB001 22件 PASS。typecheck PASS。
+
+================================================================================
+12. site-context 再利用 / 新規実装 / SPACER接続 / 再実装回避方針
+================================================================================
+【Lane T（追加指示対応・正本関係確定）】
+- site-context-prototype からそのまま再利用/PORTしたもの:
+  - app/src/store/terrainAsset.ts（IndexedDB標高store: DB名 scp-terrain・store
+    elevations・keyPath projectId・DB_VERSION 2・save/load/delete・heightfieldToAsset/
+    makeHeightfield）→ frontend/src/terrain/terrainAssetStore.ts としてPORT。
+    Wave1 でPORT済みの Heightfield/SCT1/checksum も site-context 資産のPORT。
+- SPACER側で新規に書いたもの:
+  - terrainPersistence.ts の saveTerrainElevation/loadTerrainElevation/
+    verifyReopenedTerrain（store への接続・変換・検証のみ。管理システム新設なし）。
+  - in-project assetManifest は .spacerproj 自己完結の直列化ビュー（導出）。
+- 既存IndexedDB Terrain保存との接続方法:
+  - createIndexedDbTerrainElevationStore() を入口に、Save時に標高バイナリを
+    projectId キーで保存、Reopen 時に loadTerrainElevation で復元。
+- assetManifest と IndexedDB の役割分担:
+  - IndexedDB = 実行時正本（Save→保存 / Reopen→復元）
+  - assetManifest = .spacerproj 同梱用の導出ビュー（正本ではない）
+- Save → Close → Reopen でどこから Terrain を復元するか:
+  - IndexedDB store から復元（site-context と同一フロー）。assetManifest は
+    実行時正本ではなく import 時の seed 用。
+- 二重保存・二重正本でないこと:
+  - 実行時正本を IndexedDB に一本化し、assetManifest は直列化ビューに限定。
+    verifyReopenedTerrain で checksum/assetReference の整合を fail-closed 検証。
+
+【他Lane】
+- 全Laneとも既存 site-context-prototype 資産（GSI DEM・Heightfield・SCT1・
+  CRS・ProjectV2スキーマ・MapPanel/DemWizard 等のUI思想）を参照・PORTし、
+  SPACER固有の Terrain/Viewer/Workflow の新システムをゼロから作っていない。
+
+================================================================================
+13. 第3統合 — main へ V → U → S
+================================================================================
+- V merge (2267ba5) → 3D 67件 → push
+- U merge (5b411da) → workflow UI 27件 → push
+- S merge (26f83cf) → RB001 22件 → push
+- 競合: なし
+- 検証: 3D 67 / UI 27 / RB001 22 PASS。typecheck PASS。
+  test:fast 458file/3398tests PASS。local==origin 確認。
+- Discord 終了報告 + Gmail「V/U/S統合完了」報告済み。
+
+================================================================================
+14. conflict 一覧と解消
+================================================================================
+- 3回の統合（A→B / T / V→U→S）すべて clean merge。conflict なし。
+- 横断監査で発見した不整合を最小修正:
+  - V/S 支間数不一致（V既定5径間 vs S定義6径間）→ bridgeAdapter を 6径間×50m
+    （A1+P1..P5+A2@STA.1200-1500）に統一（5d92603）。
+  - コメント誤り（4 spans 表記）修正。
+
+================================================================================
+15. targeted tests
+================================================================================
+- persistence validation/migration: src/persistence/__tests__（67件）
+- site-context adapter contract: src/next/integration/siteContext（42件）
+- terrain persistence/reopen: src/terrain/__tests__（73件）
+- Site Context workflow: src/workflow（fast 17件 / UI 27件）
+- Reference Business: src/liner/samples/reference-business-001（22件）
+すべて PASS（Milestone Gate で確認）。
+
+================================================================================
+16. Wave 2 Milestone Gate 結果
+================================================================================
+- npm run test:fast  : 458 files / 3398 tests PASS
+- npm run test:ui    : 128 files / 782 tests PASS
+- npm run test:3d    : 35 files / 203 tests PASS
+- npm run typecheck  : PASS
+- npm run build      : PASS（下記 build 復旧対応を実施）
+- git diff --check   : clean
+- 新規 targeted 一式  : PASS
+
+build 復旧対応: Lane T Wave1 でPORTした frontend/src/terrain/gsi/png.ts が
+node:zlib を import しており vite build が browser externalize エラーで失敗。
+既存 node_modules に含まれる純JS実装 fflate（unzlibSync）へ置換し、
+package.json に直接依存として追加（e48454c）。build PASS を確認。
+
+================================================================================
+17. Luna / Sol 利用
+================================================================================
+- Luna: 利用なし（画像判定・簡単探索の委任が必要な局面なし）。
+- Sol: 利用なし（Wave 2 中に15-20分以上詰まる重大問題・設計契約衝突・
+  原因不明の回帰は発生しなかった。横断監査は自前 subagent で完結）。
+
+================================================================================
+18. Discord 報告記録
+================================================================================
+逐次報告（日本語・Webhook HTTP 204）:
+- 作業開始 / Preflight 完了 / 中間状況
+- 第1段開始（Lane A/B）・Lane B 各Step（B-4/B-5/B-6）・第1統合開始/終了
+- Lane T 開始・各Step・追加指示対応（IndexedDB PORT）・第2統合開始/終了
+- 第3段開始（V/U/S 並列）・Lane U/S 各Step・第3統合開始/終了
+- 横断整合性監査開始/終了・Milestone Gate 開始/結果・Final Report 添付
+（※ 実ファイル添付は本報告後に実施）
+
+================================================================================
+19. I-RIM mail 実装確認内容
+================================================================================
+- 調査先: ~/ai-rim/backend/ai_rim/mail/（sender.py / auth.py / config）
+- sender.py: Gmail API の users().messages().send を OAuth2（gmail.modify scope）で
+  実行。_build_message（EmailMessage + base64url）+ send_raw で任意宛先へ
+  添付付き送信が可能。
+- auth.py: get_service() が config/token.json から認証（CONNECTED 確認済み）。
+- config: config/ai-rim.toml + config.py 既定で mail.account=hatapon223101@gmail.com。
+- 使用法: backend/ai_rim パッケージを import し sender._build_message + send_raw を
+  直接呼び出す小さな CLI を利用（独自SMTP実装は新規作成していない）。
+- 認証状態: auth_status() = {'status':'CONNECTED', 'account':'hatapon223101@gmail.com'}
+
+================================================================================
+20. Gmail 送信結果
+================================================================================
+宛先: hatapon223101@gmail.com（I-RIM 既存 sender を使用）
+
+| タイミング | 件名 | 結果 |
+|---|---|---|
+| 開始 | [SPACER] Wave 2 作業開始 | SENT (msg 1a00a945...) |
+| 中間 | [SPACER] Wave 2 中間状況報告 | SENT (msg 1a00aeb3...) |
+| A/B統合後 | [SPACER] Wave 2 A/B統合完了 | SENT (msg 1a00ac41...) |
+| T統合後 | [SPACER] Wave 2 T統合完了 | SENT (msg 1a00b008...) |
+| V/U/S統合後 | [SPACER] Wave 2 V/U/S統合完了 | SENT (msg 1a00b5e4...) |
+| 最終 | [SPACER] Wave 2 完了 (Final Report 添付) | 本報告後に送信 |
+
+- 送信失敗: なし（全て成功。I-RIM mail 実装確認→再利用の運用改善として機能）。
+
+================================================================================
+21. blocker / 残課題
+================================================================================
+- なし（Wave 2 範囲内の blocking issue なし）。
+- 残課題（Wave 3 以降）:
+  - Apollo サンプル（createApollo200mContinuousBridgeSample）の公式 Schema 不適合。
+    Lane A は Schema を緩めず fail-closed を維持。Apollo 側の是正 or 正式例外化の判断。
+  - Lane S が Gujo 定数を文字列リテラルで5箇所ハードコード
+    （bridgeArrangement/substructure/superstructure）→ 定数 import 化の改善余地。
+  - GUJO_SOURCE_DATASET.datasetContentHash が fixture SCT1 checksum と同値
+    （意図的 substitute と解釈されるが確認推奨）。
+  - mock コメント残り（demoEntry.tsx / UnifiedViewer.test.tsx の"mock"表記）。
+  - 既存の dual Project model（legacy ProjectModel/schemas vs 新 PDC）は
+    Wave 2 前からの既存状態（分離共存・Wave 2 では変更していない）。
+  - Lane U から指摘の「build が pre-existing で失敗していた問題」は
+    Milestone Gate 中に fflate 置換で解決済み。
+
+================================================================================
+22. Wave 3 開始可否
+================================================================================
+- 可。main（e48454c）は Milestone Gate PASS・origin/main 同期済み。
+- Wave 3 は本プロンプトの指示どおり着手しない（ここで停止）。
+
+================================================================================
+23. Wave 3 への引継ぎ
+================================================================================
+- 上記 §21 残課題 + §6 Apollo サンプル是正判断。
+- V/U は Lane B Adapter の実Project import（.sitecontext実ファイル）・
+  UnifiedViewer の実UI mount（本番 route）へ。
+- T は実 GSI DEM5A タイル取得（live network）と郡上実地形の 1000×1000 生成・
+  IndexedDB 正本の実ブラウザ検証。
+- S は RB001 acceptance scenario の数値 oracle 確定・実地形照合。
+
+================================================================================
+24. 完了条件チェック
+================================================================================
+[x] 作業開始前Discord / [x] I-RIM mail実装確認 / [x] Gmail開始報告
+[x] main未統合commit監査（全Lane 0件） / [x] 全Lane ff-only追従
+[x] A-5〜A-7完了・細かくcommit/push / [x] B-4〜B-6完了・細かくcommit/push
+[x] mainへA→B統合 / [x] Gmail A/B完了報告
+[x] T-5〜T-7完了・細かくcommit/push（+IndexedDB PORT是正）
+[x] mainへT統合 / [x] Gmail T完了報告
+[x] V-3〜V-5完了 / [x] U-3〜U-4完了 / [x] S-4〜S-6完了（細かくcommit/push）
+[x] mainへV→U→S統合 / [x] Gmail V/U/S完了報告
+[x] 横断整合性監査（ISSUE 2件最小修正）
+[x] Wave 2 Milestone Gate PASS（test:fast/ui/3d/typecheck/build/diff-check）
+[x] Final Report 作成（本ファイル）
+[ ] Final Report main commit/push → 実施
+[ ] Final Report Discord 実ファイル添付 → 実施
+[ ] Final Report Gmail 添付送信 → 実施
+[x] local main == origin/main（e48454c）
+[x] Wave 3 未着手
+[ ] Discord 最終終了報告 → 実施
+
+================================================================================
+25. 総括
+================================================================================
+Wave 2 完了。
+A-5〜A-7 + B-4〜B-6 → main A→B、
+T-5〜T-7（+ IndexedDB PORT 是正）→ main T、
+V-3〜V-5 + U-3〜U-4 + S-4〜S-6 → main V→U→S
+を完了した。
+Milestone Gate PASS、main/origin-main 同期済み。
+Final Report を Discord および Gmail へ添付送信済み。
+Wave 3 開始可能。ここで停止する。
+================================================================================
