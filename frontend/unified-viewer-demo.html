@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SPACER Unified 3D Viewer — Wave 1 demo</title>
+    <style>
+      html, body, #root { height: 100%; margin: 0; }
+      body { font-family: system-ui, sans-serif; color: #223; }
+      .unified-viewer-demo {
+        position: relative;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+      }
+      .unified-viewer-demo .unified-viewer-demo-canvas {
+        flex: 1;
+        min-height: 0;
+      }
+      .unified-viewer {
+        position: relative;
+        width: 100%;
+        height: 100%;
+      }
+      .unified-viewer canvas { display: block; }
+      .unified-viewer-layer-panel {
+        position: absolute;
+        top: 12px;
+        right: 12px;
+        background: rgba(255, 255, 255, 0.94);
+        border: 1px solid #ccd;
+        border-radius: 8px;
+        padding: 10px 12px;
+        font-size: 13px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        z-index: 10;
+      }
+      .unified-viewer-layer-panel-title { font-weight: 700; margin-bottom: 8px; }
+      .unified-viewer-layer-row { display: flex; gap: 6px; align-items: center; padding: 2px 0; }
+      .unified-viewer-layer-panel button {
+        margin-top: 8px;
+        width: 100%;
+        padding: 4px 8px;
+        border: 1px solid #99a;
+        border-radius: 6px;
+        background: #fff;
+        cursor: pointer;
+      }
+      .unified-viewer-demo-status {
+        position: absolute;
+        left: 12px;
+        bottom: 12px;
+        background: rgba(255, 255, 255, 0.92);
+        border: 1px solid #ccd;
+        border-radius: 8px;
+        padding: 6px 10px;
+        font-size: 12px;
+        z-index: 10;
+      }
+      .unified-viewer-error {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #a33;
+        background: rgba(255, 240, 240, 0.9);
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/viewer/unified/demoEntry.tsx"></script>
+  </body>
+</html>

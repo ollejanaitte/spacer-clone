@@ -1,0 +1,238 @@
+SPACER CLONE — Phase W1 Lane V ファイナルレポート
+====================================================
+ファイル名: SPACER_PhaseW1-LaneV_20260816_2024_Unified3DViewer_Wave1.txt
+作成日時: 2026-08-16 20:24 (JST)
+作成者: Lane V 担当エージェント
+
+====================================================
+1. 対象 branch / worktree
+====================================================
+
+- branch:  lane-v/unified-3d-viewer
+- worktree: /home/masaharu/Projects/spacer-clone-lane-v
+- 参照:    /home/masaharu/Projects/site-context-prototype (読み取りのみ・変更なし)
+
+====================================================
+2. 開始 SHA / 終了 SHA
+====================================================
+
+- 開始時 (Wave 0 base):   1840cb66ada4e35035478c0bd3f61a431eac3fbe
+- ff-only merge 後 (HEAD): 31a111362ec39f31f74a40f4dd59e2e002a49035 (origin/main 追従)
+- 終了 (本 Wave 1):      9cc4793c5199f697b0d0f3da01acd58ea217cea7
+- push: 成功 (origin/lane-v/unified-3d-viewer)
+
+====================================================
+3. V-1 監査結果 (概要)
+====================================================
+
+既存3D描画系を「legacy /pro Viewer」「Next (/app) 系統」「参照 site-context 資産」
+の3系統で実ファイル単位に棚卸しし、A〜F分類を確定 (詳細: docs/development/unified-3d-viewer-boundary.md)。
+
+- A 中核再利用: renderCoordinate.domainToThree (座標変換の単一正本),
+  threeUtils.fitCameraToBox / disposeObject, SceneViewer パターン
+- B Layer再利用: CIM layer (18種) の ID 体系, terrainSurface / existingViewerBuilder /
+  roadMesh / superstructureSceneBuilder / substructureSceneBuilder
+- C Adapter経由: viewer/coordinateTransform (legacy用), substructure SolidGenerator 群,
+  apollo solid生成, bridgeProject/integratedScene3d, contracts/coordinateContext
+- D mock/fixture先行: Terrain (Lane T 未確定), CRS (Lane T PORT対象), SCT1
+- E 重複実装候補: legacy SceneBuilder と Next cimSceneBuilder の一本化 (後続)
+- F 後続Waveへ延期: LOD/tile, CIM export (GLB/glTF), 本格UI, IF3/timeHistory 統合, 旧Viewer置換
+
+確定事項:
+- 座標変換の単一正本は frontend/src/next/modules/renderCoordinate.ts の domainToThree
+  ((x, y, z) → (x, z, -y))。CRS変換実装はリポジトリ内に存在せず Lane T PORT 対象。
+- legacy Viewer3D は ProjectModel を直接受け取る構造 (責務分離のギャップ確認)。
+- Next 系統は module document から派生シーンを build する (ProjectModel非依存)。
+- 統一描画I/Fは存在しない → V-2 で Layer Contract を新設。
+
+====================================================
+4. V-2 統合 Layer Contract (概要)
+====================================================
+
+実装: frontend/src/viewer/layers/layerContract.ts (+ renderCoordinate.ts)
+文書: docs/development/unified-3d-viewer-layer-contract.md
+
+- UnifiedViewerModel = { contractVersion, id, worldBasis, renderTransform, layers[], selection }
+- 6種 ViewerLayer: terrain / road / superstructure / bearing / substructure / existingConditions
+- 各 Layer 共通フィールド: id / kind / visible / selectable / bounds /
+  data / metadata / properties / status (loading|ready|empty|error) / source (owner Lane)
+- 座標系: canonical 世界座標 (X=沿, Y=横, Z=標高, unit=m, 右手系) を基準にし、
+  Viewer は単一 renderTransform (既定 = domainToThree 規約) のみを持つ。
+- CRS 変換は Viewer 内に実装しない (WorldBasis に identifier を保持するのみ, Lane T 境界)。
+- ProjectModel を描画 I/F にしない (adapter / render model を挟む) ことを契約で明文化。
+
+====================================================
+5. mock / fixture 最小統合描画結果
+====================================================
+
+実装: frontend/src/viewer/layers/mock/* + buildLayerScene.ts +
+      frontend/src/viewer/unified/{UnifiedViewer,LayerVisibilityPanel,UnifiedViewerDemo}.tsx +
+      frontend/unified-viewer-demo.html (demo page)
+
+- 谷地形上に 5径間 (A1+P1..P3+A2) の橋梁を配置し、
+  地形 / 道路 / 上部工(主桁2+床版+横桁) / 支承(10) / 下部工(柱+キャップ+フーチング) /
+  既設(河川・既設道路・鉄道・建物) を同一 canonical 座標で同時表示。
+- 共通座標・レイヤON/OFF・camera fit / orbit / 選択 (raycast) を確認。
+- Playwright (headless chromium) にて実描画し、スクリーンショット4枚を取得。
+- Codex CLI GPT-5.6 Luna による画像判定: 複数レイヤ同時表示の成立を確認。
+- demo page は vite dev で /unified-viewer-demo.html として表示確認済み。
+  (React preamble の都合で frontend root 配下に置いた。public/ だと plugin-react が
+  preamble を注入できず JSX 実行に失敗するため。)
+
+====================================================
+6. 変更ファイル一覧 (31a1113..9cc4793, 27 files)
+====================================================
+
+- docs/development/README.md (index へ2件追加)
+- docs/development/unified-3d-viewer-boundary.md (V-1 監査)
+- docs/development/unified-3d-viewer-layer-contract.md (V-2 契約)
+- docs/development/evidence/unified-3d-viewer-wave1/*.png (証跡4枚)
+- frontend/scripts/testIndex.mjs (3D test 分類パターン追加)
+- frontend/src/viewer/layers/layerContract.ts
+- frontend/src/viewer/layers/renderCoordinate.ts
+- frontend/src/viewer/layers/buildLayerScene.ts
+- frontend/src/viewer/layers/mock/{mockScene,mockTerrain,mockRoad,mockBridge,mockSubstructure,mockExistingConditions}.ts
+- frontend/src/viewer/layers/__tests__/{layerContract,renderCoordinate,buildLayerScene}.test.ts
+- frontend/src/viewer/layers/mock/__tests__/mockScene.test.ts
+- frontend/src/viewer/unified/{UnifiedViewer,LayerVisibilityPanel,UnifiedViewerDemo,demoEntry}.tsx
+- frontend/src/viewer/unified/__tests__/UnifiedViewer.test.tsx
+- frontend/unified-viewer-demo.html
+
+====================================================
+7. test / typecheck / build 結果
+====================================================
+
+- test:fast:   428 files / 3192 tests PASS (Lane V追加 45件: 契約19+renderCoord7+mock7+buildLayer+viewer 等)
+- test:3d:     32 files / 185 tests PASS (buildLayerScene 9件・UnifiedViewer 5件を3D gateに分類)
+- typecheck:   PASS (tsc -b)
+- build:       PASS (vite build)
+- git diff --check: PASS
+
+====================================================
+8. screenshot / evidence
+====================================================
+
+- docs/development/evidence/unified-3d-viewer-wave1/unified-viewer-wave1-overview.png
+  (全レイヤ表示・地形+橋梁+道路+既設)
+- docs/development/evidence/unified-3d-viewer-wave1/unified-viewer-wave1-terrain-off.png
+  (地形OFF で bridge/road が見える visibility 切替の証拠)
+- docs/development/evidence/unified-3d-viewer-wave1/unified-viewer-wave1-selection.png
+- docs/development/evidence/unified-3d-viewer-wave1/unified-viewer-wave1-rotated.png
+- Luna 判定: 「複数レイヤの同時表示は成立。橋梁・道路・既設要素の表示、視点回転を確認」
+
+====================================================
+9. commit 一覧 (4 commits)
+====================================================
+
+1. bb0b502 docs(viewer): Wave 1 Lane V-1 既存3D Viewer境界監査 (unified-3d-viewer-boundary)
+2. a83aa69 feat(viewer): Wave 1 Lane V-2 統合Layer Contract (viewer-layers)
+3. 0149806 feat(viewer): Wave 1 Lane V-2 補助 mock/fixture 最小統合描画骨格
+4. 9cc4793 fix(viewer): Solレビュー反映 — Layer Contract bounds精度とvisibilityライフサイクル修正
+
+push: 各 commit とも origin/lane-v/unified-3d-viewer へ成功 (HEAD 9cc4793, upstream設定済み)
+
+====================================================
+10. Luna / Sol 利用
+====================================================
+
+- Luna (Codex CLI GPT-5.6 Luna): スクリーンショット画像判定を委任 (1回)。
+  4枚の画像について地形/橋梁/道路/既設の視認と統合表示の成立を判定。
+- Sol (Codex CLI GPT-5.6 Sol): 高度レビューを委任 (限定5項目・広範レビューなし)。
+  指摘2件に対応済み (下記)。テスト・ビルド・ファイル変更なし (読み取りのみ)。
+
+Sol 指摘と対応:
+- [2] bounds が道路方向・yawDeg を無視 → computeRoadLayerBounds / computeBoxListBounds を
+  左右端点・回転後AABBから算出するよう修正 + テスト追加
+- [5] 初期非表示レイヤの geometry を生成しないため後から表示できない → ready レイヤは
+  常に構築し Group.visible のみで切替するよう修正
+  (あわせて buildTerrainMesh の noData セル三角形化除外・UnifiedViewer の grid geometry
+  dispose 漏れを修正)
+
+====================================================
+11. blocker / 残課題
+====================================================
+
+- Terrain 実データ (Heightfield/SCT1/CRS) は Lane T の PORT 未完了 (T-1〜T-8 未着手)。
+  → TerrainLayerData の形状を V 側で先に確定し、Wave 1 は mock で代替。
+- Lane B の site-context Adapter (B-4 実装前) は contract のみ。既設/地形の実流入は未接続。
+- demo page は vite dev 専用 (build 時は /src モジュールが入らない)。本番 mount は Lane U。
+- 追加で自動生成された docs/apollo/step4c_appurtenance_haunch/evidence/*.json は
+  test 実行の副作用による timestamp 変化のみであり、本 Lane の変更対象外として
+  commit に含めず HEAD 内容へ復元済み。
+- 3D 描画自体の座標・積算詳細 (LOD/tile, GLB export, 本格 UI, clipping, measurement,
+  IF3/timeHistory overlay) は V-3 以降。
+
+====================================================
+12. Lane A / B / T / U / S への引渡し事項
+====================================================
+
+Lane T へ:
+- TerrainLayerData の data shape (width/height/cellSize/originX/originY/heights + noDataValue,
+  canonical世界座標) を受入形状として確定した。Lane T は Heightfield/SCT1/CRS をこの
+  形状に変換する adapter を提供するか、V 側 mock adapter の差替え点を合意する。
+- bounds / origin / elevation / canonical→render 境界は V-2 文書 §3 に記載。
+
+Lane B へ:
+- Viewer が必要とする site-context 由来 field: existingConditions entity (type/geometry),
+  coordinateContext / CRS identifier, terrain 参照。受入形式は ExistingConditionsLayerData /
+  TerrainLayerData。B の Adapter 出力をこの形状へ接続する。
+
+Lane U へ:
+- Viewer component 入口: UnifiedViewer / UnifiedViewerDemo。
+- props: UnifiedViewerModel (id / worldBasis / renderTransform / layers / selection)。
+- loading / warning / error I/F: LayerStatus (loading/ready/empty/error) + onRenderError。
+- route/page への mount は U の責務。demo page (frontend/unified-viewer-demo.html) は参照用。
+
+Lane S へ:
+- Reference Business 001 の sample fixture は TerrainLayerData / RoadLayerData /
+  ExistingConditionsLayerData の形状で受入可 (mock と同型)。
+
+Lane A へ:
+- ProjectModel / Schema / migration / canonical Save-Load / validation への変更は行っていない。
+  Viewer は ProjectModel を描画 I/F にしない方針を維持。
+
+====================================================
+13. Gmail 完了報告
+====================================================
+
+宛先: hatapon223101@gmail.com
+件名: [SPACER] Phase W1 Lane V 完了報告 (Unified 3D Viewer Wave 1)
+
+送信可否: 本環境に Gmail/SMTP 送信手段の確認ができなかった。
+(メール送信 CLI / SMTP 設定 / API 資格情報を検出できず。外部送信を無理に試行しない方針)
+
+送信用本文 (送信環境がある場合はこの内容で Final Report TXT を添付して送信):
+
+---
+[SPACER CLONE] Phase W1 Lane V 完了報告
+
+- branch: lane-v/unified-3d-viewer
+- worktree: ~/Projects/spacer-clone-lane-v
+- 開始 SHA: 31a1113 / 終了 SHA: 9cc4793 (push 済み)
+- V-1: 既存3D Viewer境界監査 完了 (A〜F分類, 座標正本確定)
+- V-2: 統合 Layer Contract 確定 (6種 ViewerLayer + canonical座標 + renderCoordinate)
+- mock/fixture 最小統合描画骨格: 地形/道路/上部工/支承/下部工/既設を同時表示,
+  visibility切替・camera fit・選択を確認 (スクリーンショット証跡あり)
+- 検証: test:fast 3192 PASS / test:3d 185 PASS / typecheck PASS / build PASS
+- Luna: 描画画像判定 1回 / Sol: 高度レビュー 1回 (指摘2件反映済み)
+- main への merge なし。V-3 (実Terrain) は未着手。
+- Final Report: SPACER_PhaseW1-LaneV_20260816_2024_Unified3DViewer_Wave1.txt (添付)
+---
+
+====================================================
+14. 最終判定
+====================================================
+
+- V-1 Viewer境界監査: 完了
+- V-2 Layer Contract: 確定 (ProjectModel 非依存・adapter/render model 方式)
+- mock/fixture 最小統合描画: 成立 (複数レイヤ同時表示・共通座標・visibility・camera)
+- Lane A/B/T 所有領域への無断変更: なし
+- Lane T/U/S への I/F 明記: 完了 (上記 §12)
+- 必要 test / viewer 確認: PASS
+- 小step commit/push: 4 commits 全て push 済み
+- Discord 逐次報告: 実施 (作業開始/V-1/V-2/mock描画/commit/push/Luna/Sol/blocker/終了)
+- Final Report: 本ファイル (push 済み, Discord 送信)
+- Gmail: 送信環境なしのため §13 に記録 (Wave 1 失敗扱いとしない)
+- V-3 へ進んでいない / main へ merge していない
+
+→ Wave 1 Lane V 完了。main統合待ち。
