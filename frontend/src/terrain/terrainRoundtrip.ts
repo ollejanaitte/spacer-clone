@@ -16,7 +16,11 @@ import {
   extractTerrainDocument as extractTerrainDocumentFromPersistence,
   persistTerrain,
   verifyTerrainAssetChecksum,
+  saveTerrainElevation,
+  loadTerrainElevation,
+  verifyReopenedTerrain,
 } from "./terrainPersistence";
+import type { TerrainElevationStore } from "./terrainAssetStore";
 
 export interface TerrainRoundtripResult {
   readonly ok: boolean;
@@ -129,6 +133,56 @@ export async function roundtrip(
     documentEqual: cmp.equal,
     differences: cmp.differences,
     assetChecksumVerified: verify.ok,
+    issues: verify.ok ? [] : [verify.reason],
+  };
+}
+
+export interface StoreRoundtripResult {
+  readonly ok: boolean;
+  readonly project: Project;
+  readonly restoredAsset: TerrainAsset | null;
+  readonly checksumVerified: boolean;
+  readonly issues: readonly string[];
+}
+
+/**
+ * Save → Close → Reopen の実行時 roundtrip（IndexedDB store が正本）。
+ *   Save:    saveTerrainElevation で標高バイナリを store へ保存
+ *   Reopen:  loadTerrainElevation で store から復元 → verifyReopenedTerrain で
+ *            project 内 terrainDocument の assetReference / checksum と照合
+ * assetManifest（.spacerproj 同梱用直列化ビュー）は実行時正本ではないため使わない。
+ */
+export async function storeRoundtrip(
+  store: TerrainElevationStore,
+  project: Project,
+  terrainDocument: TerrainDocument,
+  asset: TerrainAsset,
+): Promise<StoreRoundtripResult> {
+  let embedded: Project;
+  try {
+    embedded = buildTerrainProject(project, terrainDocument, asset);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, project, restoredAsset: null, checksumVerified: false, issues: [`build failed: ${message}`] };
+  }
+
+  // Save（実行時正本 = store）
+  const terrainId = terrainDocument.terrainId;
+  try {
+    await saveTerrainElevation(store, project.projectId, terrainId, asset);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    return { ok: false, project: embedded, restoredAsset: null, checksumVerified: false, issues: [`save failed: ${message}`] };
+  }
+
+  // Reopen
+  const restored = await loadTerrainElevation(store, project.projectId, asset.path);
+  const verify = await verifyReopenedTerrain(embedded, restored);
+  return {
+    ok: verify.ok,
+    project: embedded,
+    restoredAsset: restored,
+    checksumVerified: verify.ok,
     issues: verify.ok ? [] : [verify.reason],
   };
 }

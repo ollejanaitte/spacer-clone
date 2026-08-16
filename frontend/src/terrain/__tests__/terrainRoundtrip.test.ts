@@ -8,9 +8,12 @@ import {
   buildTerrainProject,
   extractTerrainDocument,
   roundtrip,
+  storeRoundtrip,
   terrainDocumentsEqual,
 } from "../terrainRoundtrip";
 import { extractTerrainAsset } from "../terrainPersistence";
+import { loadTerrainElevation } from "../terrainPersistence";
+import { createMemoryTerrainElevationStore } from "../terrainAssetStore";
 import {
   buildGujoSampleAsset,
   buildGujoSampleTerrainDocument,
@@ -137,5 +140,33 @@ describe("T-7 Terrain Save / Load / Reopen roundtrip", () => {
     const cmp = terrainDocumentsEqual(doc, other);
     expect(cmp.equal).toBe(false);
     expect(cmp.differences).toContain("terrainId");
+  });
+
+  it("Save → Close → Reopen restores terrain from the IndexedDB (memory) store as the runtime source of truth", async () => {
+    const store = createMemoryTerrainElevationStore();
+    const hf = makeHf();
+    const doc = buildTerrainDocument({
+      terrainId: "terrain-store",
+      heightfield: hf,
+      source: SOURCE,
+      projectOrigin: { x: 123, y: -456, z: 7 },
+      assetPath: "assets/terrain/store.sct1",
+    });
+    const asset = await buildTerrainAsset(hf, "assets/terrain/store.sct1");
+    const project = createEmptyProject("store-roundtrip");
+
+    // Save → Reopen: storeRoundtrip が store を正本として保存し復元・検証する
+    const result = await storeRoundtrip(store, project, doc, asset);
+    expect(result.ok).toBe(true);
+    expect(result.checksumVerified).toBe(true);
+    expect(result.issues).toEqual([]);
+    expect(result.restoredAsset?.path).toBe("assets/terrain/store.sct1");
+    expect(result.restoredAsset?.checksum).toBe(asset.checksum);
+
+    // store が正本であること: 別インスタンス経由でも同じ標高データを復元できる
+    const restored = await loadTerrainElevation(store, project.projectId, asset.path);
+    expect(restored?.base64).toBe(asset.base64);
+    expect(restored?.checksum).toBe(asset.checksum);
+    expect(restored?.size).toBe(asset.size);
   });
 });

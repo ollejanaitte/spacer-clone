@@ -35,13 +35,29 @@ export {
   extractTerrainAssetManifest,
   extractTerrainAsset,
   verifyTerrainAssetChecksum,
+  saveTerrainElevation,
+  loadTerrainElevation,
+  saveTerrainBinary,
+  loadTerrainBinary,
+  verifyReopenedTerrain,
   type TerrainPersistenceError,
 } from "./terrainPersistence";
+export {
+  createIndexedDbTerrainElevationStore,
+  createMemoryTerrainElevationStore,
+  heightfieldToAsset,
+  makeHeightfield,
+  type TerrainBinaryAsset,
+  type TerrainElevationRecord,
+  type TerrainElevationStore,
+} from "./terrainAssetStore";
 export {
   buildTerrainProject,
   terrainDocumentsEqual,
   roundtrip,
+  storeRoundtrip,
   type TerrainRoundtripResult,
+  type StoreRoundtripResult,
 } from "./terrainRoundtrip";
 export {
   GUJO_CENTER_WGS84,

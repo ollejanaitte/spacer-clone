@@ -1,20 +1,37 @@
 // T-5: Terrain Persistence 配線
 //
-// TerrainDocument + SCT1 asset を Project の既存 loose slot へ保存する:
-//   modules.terrain.data.terrainDocument … TerrainDocument（terrainModule 契約）
-//   modules.terrain.data.assetManifest    … プロジェクト内アセット manifest（path → {checksum,size,base64}）
+// site-context-prototype の既存 Terrain 保存・再読込機構（app/src/store/terrainAsset.ts:
+// IndexedDB「scp-terrain / elevations / projectId」）を PORT し、SPACER の
+// canonical slot へ接続する。
 //
-// IndexedDB 等の外部 asset store は存在しないため、アセットは in-project の
-// manifest（canonical slot）として SCT1 base64 + checksum を保持する
-//（source 固有の store は作成しない）。検証は fail-closed。
+// 【正本関係（二重正本にしない）】
+//   - 実行時・再読込の正本は **IndexedDB store（terrainAssetStore.ts・PORT 済み）**。
+//     Save → saveTerrainElevation で標高バイナリを保存 / Close → 何もしない /
+//     Reopen → loadTerrainElevation で IndexedDB から復元（site-context と同一フロー）。
+//   - modules.terrain.data.assetManifest は **.spacerproj パッケージ自己完結用の
+//     導出ビュー（直列化）** であり、実行時正本ではない。外部へ .spacerproj を渡す際の
+//     同梱表現であり、import 時はこの manifest から IndexedDB へ seed する
+//     （二重保存にはしない）。
+//
+//   modules.terrain.data.terrainDocument … TerrainDocument（terrainModule 契約・B-4 接続点）
+//   modules.terrain.data.assetManifest    … パッケージ同梱用の直列化ビュー（正本ではない）
+//   terrainAssetStore（IndexedDB）        … 実行時正本（Save→保存 / Reopen→復元）
+//
+// 再実装回避方針: 新規の Terrain 管理システムは作らず、既存 IndexedDB store を
+// PORT して接続する。検証は fail-closed。
 
 import { createTerrainModuleRecord, validateTerrainData } from "../next/modules/terrainModule";
 import type { TerrainDocument } from "../next/modules/terrainModule";
 import { parseProject } from "../next/project/projectDataCore";
 import type { Project } from "../next/project/schema";
 import type { TerrainAsset, TerrainAssetManifest, TerrainAssetManifestEntry } from "./generation";
-import { base64ToBytes } from "./sct1";
+import { base64ToBytes, base64ToHeightfield } from "./sct1";
 import { sha256BytesHex } from "./canonicalize";
+import {
+  heightfieldToAsset,
+  type TerrainBinaryAsset,
+  type TerrainElevationStore,
+} from "./terrainAssetStore";
 
 export const TERRAIN_ASSET_MANIFEST_KEY = "assetManifest";
 
@@ -143,4 +160,94 @@ export async function verifyTerrainAssetChecksum(
     return { ok: false, reason: `checksum mismatch: manifest ${asset.checksum} != actual ${actual}` };
   }
   return { ok: true, asset };
+}
+
+// ---------------------------------------------------------------------------
+// 実行時正本（IndexedDB store・PORT 済み terrainAssetStore へ接続）
+// ---------------------------------------------------------------------------
+
+/**
+ * Save: TerrainAsset を TerrainBinaryAsset へ変換し、IndexedDB store へ保存する
+ * （site-context terrainAsset.ts の saveTerrainElevation と同一セマンティクス）。
+ * 実行時正本はこの store。
+ */
+export async function saveTerrainElevation(
+  store: TerrainElevationStore,
+  projectId: string,
+  terrainId: string,
+  asset: TerrainAsset,
+): Promise<void> {
+  const hf = base64ToHeightfield(asset.base64);
+  const binary = heightfieldToAsset(hf, asset.checksum);
+  await store.save(projectId, terrainId, binary);
+}
+
+/**
+ * Reopen: IndexedDB store から標高バイナリを復元し TerrainAsset へ変換する
+ * （site-context terrainAsset.ts の loadTerrainElevation と同一セマンティクス）。
+ * 実行時正本はこの store。assetPath は terrainDocument の assetReferences から解決する。
+ */
+export async function loadTerrainElevation(
+  store: TerrainElevationStore,
+  projectId: string,
+  assetPath: string,
+): Promise<TerrainAsset | null> {
+  const record = await store.load(projectId);
+  if (!record) return null;
+  return {
+    path: assetPath,
+    checksum: record.checksum,
+    size: record.size,
+    base64: record.dataBase64,
+  };
+}
+
+/** TerrainBinaryAsset を直接 store へ保存する（PORT 元と同一形状の低レベル I/F）。 */
+export async function saveTerrainBinary(
+  store: TerrainElevationStore,
+  projectId: string,
+  terrainId: string,
+  binary: TerrainBinaryAsset,
+): Promise<void> {
+  await store.save(projectId, terrainId, binary);
+}
+
+/** TerrainBinaryAsset を直接 store から読み出す（PORT 元と同一形状の低レベル I/F）。 */
+export async function loadTerrainBinary(
+  store: TerrainElevationStore,
+  projectId: string,
+): Promise<TerrainBinaryAsset | null> {
+  return store.load(projectId);
+}
+
+/**
+ * Reopen 時の整合検証: IndexedDB store から復元した標高と project 内
+ * terrainDocument の assetReference / checksum を照合する。fail-closed。
+ */
+export async function verifyReopenedTerrain(
+  project: Project,
+  restored: TerrainAsset | null,
+): Promise<{ ok: true; asset: TerrainAsset } | { ok: false; reason: string }> {
+  const doc = extractTerrainDocument(project);
+  if (!doc) {
+    return { ok: false, reason: "terrain document missing" };
+  }
+  if (!restored) {
+    return { ok: false, reason: "elevation not restored from store" };
+  }
+  if (doc.surfaceReference !== restored.path) {
+    return { ok: false, reason: `surfaceReference ${doc.surfaceReference} != restored ${restored.path}` };
+  }
+  if (!doc.assetReferences.includes(restored.path)) {
+    return { ok: false, reason: `assetReferences missing ${restored.path}` };
+  }
+  const bytes = base64ToBytes(restored.base64);
+  if (bytes.length !== restored.size) {
+    return { ok: false, reason: `size mismatch: restored ${restored.size} != decoded ${bytes.length}` };
+  }
+  const actual = await sha256BytesHex(bytes);
+  if (actual !== restored.checksum) {
+    return { ok: false, reason: `checksum mismatch: restored ${restored.checksum} != actual ${actual}` };
+  }
+  return { ok: true, asset: restored };
 }
