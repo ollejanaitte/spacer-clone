@@ -1,19 +1,20 @@
 import { useCallback, useMemo, useRef, useState } from "react";
-import { createMockUnifiedScene } from "../layers/mock/mockScene";
+import { buildRealGujoReferenceScene } from "../adapters/realScene";
 import type { LayerSelection, UnifiedViewerModel } from "../layers/layerContract";
 import { UnifiedViewer, type UnifiedViewerHandle } from "./UnifiedViewer";
 import { LayerVisibilityPanel } from "./LayerVisibilityPanel";
 
 /**
- * Wave 1 demo harness for the unified 3D viewer.
+ * Real-data demo harness for the unified 3D viewer.
  *
- * Assembles the mock unified scene and wires the minimal controls
- * (layer ON/OFF, fit, selection status). Lane U mounts this component in a
- * route/page in a later wave; the standalone demo page
- * (public/unified-viewer-demo.html) exercises it for Wave 1 evidence.
+ * V-5: assembles the full Reference Business 001 scene (real Gujo terrain +
+ * RB001 road + bridge superstructure/bearings/substructure) into the unified
+ * viewer and wires the minimal controls (layer ON/OFF, fit, selection status).
+ * Lane U mounts this component in a route/page in a later wave; the standalone
+ * demo page (public/unified-viewer-demo.html) exercises it.
  */
 export function UnifiedViewerDemo() {
-  const model = useMemo<UnifiedViewerModel>(() => createMockUnifiedScene(), []);
+  const model = useMemo<UnifiedViewerModel>(() => buildRealGujoReferenceScene(), []);
   const viewerRef = useRef<UnifiedViewerHandle>(null);
   const initialVisibility = useMemo(() => {
     const map: Record<string, boolean> = {};
