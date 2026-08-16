@@ -39,10 +39,10 @@ describe("buildLayerScene with real terrain + road + bridge (V-5)", () => {
     // girders (2) + deck (1) + cross beams (>1)
     expect(superGroup.children.length).toBeGreaterThanOrEqual(4);
     const bearingGroup = result.layerGroups["layer-real-bearing"];
-    expect(bearingGroup.children.length).toBe(12);
+    expect(bearingGroup.children.length).toBe(14);
     const subGroup = result.layerGroups["layer-real-substructure"];
-    // 6 supports × (column + cap + foundation)
-    expect(subGroup.children.length).toBe(18);
+    // 7 supports × (column + cap + foundation)
+    expect(subGroup.children.length).toBe(21);
   });
 
   it("positions the bridge on the road corridor above the terrain", () => {

@@ -18,14 +18,14 @@ describe("bridgeAdapter (V-5 real bridge)", () => {
     terrainHeight: (x, y) => terrain.getElevation(x, y).z ?? 0,
   });
 
-  it("derives a 5-span / 6-support bridge inside the STA.1200-1500 candidate", () => {
+  it("derives a 6-span / 7-support bridge covering the STA.1200-1500 candidate", () => {
     const specs = deriveBridgeSupports(road.bridgeCandidate);
-    // 5 spans × nominal 50 m = A1 + P1..P4 + A2 (6 supports), inside the
-    // STA.1200-1500 candidate (east 50 m remains approach road).
-    expect(specs).toHaveLength(6);
+    // 6 spans × nominal 50 m = A1 + P1..P5 + A2 (7 supports), covering the
+    // full STA.1200-1500 candidate (matching Lane S RB001-BRIDGE-1).
+    expect(specs).toHaveLength(7);
     expect(specs[0].supportId).toBe("A1");
     expect(specs[specs.length - 1].supportId).toBe("A2");
-    expect(specs.filter((s) => s.kind === "pier")).toHaveLength(4);
+    expect(specs.filter((s) => s.kind === "pier")).toHaveLength(5);
     expect(specs.filter((s) => s.kind === "abutment")).toHaveLength(2);
     // every support station lies inside the bridge candidate interval
     for (const spec of specs) {
@@ -39,7 +39,7 @@ describe("bridgeAdapter (V-5 real bridge)", () => {
   });
 
   it("places supports on the road centerline (station-aligned points)", () => {
-    expect(bundle.supports).toHaveLength(6);
+    expect(bundle.supports).toHaveLength(7);
     const a1 = bundle.supports[0];
     const a2 = bundle.supports[bundle.supports.length - 1];
     expect(a1.supportId).toBe("A1");
@@ -52,7 +52,7 @@ describe("bridgeAdapter (V-5 real bridge)", () => {
 
   it("sizes piers from the terrain so columns reach the ground", () => {
     const supports = bundle.substructure.supports;
-    expect(supports).toHaveLength(6);
+    expect(supports).toHaveLength(7);
     for (const support of supports) {
       const groundZ = terrain.getElevation(support.column.center.x, support.column.center.y).z;
       if (groundZ === null) continue;
@@ -85,19 +85,19 @@ describe("bridgeAdapter (V-5 real bridge)", () => {
     expect(subBounds.maxY).toBeLessThanOrEqual(tb.maxY + 1e-6);
   });
 
-  it("builds a 5-span continuous superstructure (girders + deck + cross beams)", () => {
+  it("builds a 6-span continuous superstructure (girders + deck + cross beams)", () => {
     const sd = bundle.superstructure;
     expect(sd.girders).toHaveLength(2);
     expect(sd.deck).toBeDefined();
     expect((sd.crossBeams ?? []).length).toBeGreaterThan(1);
     const spanLen = sd.deck?.size.x ?? 0;
-    // deck spans A1..A2 (5 spans × 50 m along the centerline chord ≈ 250 m)
-    expect(spanLen).toBeGreaterThan(230);
-    expect(spanLen).toBeLessThan(270);
+    // deck spans A1..A2 (6 spans × 50 m along the centerline chord ≈ 300 m)
+    expect(spanLen).toBeGreaterThan(280);
+    expect(spanLen).toBeLessThan(320);
   });
 
-  it("places one bearing per girder on each support (2 × 6 = 12)", () => {
-    expect(bundle.bearings.bearings).toHaveLength(12);
+  it("places one bearing per girder on each support (2 × 7 = 14)", () => {
+    expect(bundle.bearings.bearings).toHaveLength(14);
   });
 
   it("aligns the deck with the road centerline azimuth (yaw on the boxes)", () => {

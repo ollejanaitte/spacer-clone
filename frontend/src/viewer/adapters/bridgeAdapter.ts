@@ -4,8 +4,8 @@
  *
  * Builds a realistic continuous bridge at the Reference Business 001 Gujo road
  * crossing. The bridge sits exactly on the RB001 road alignment centerline
- * (STA.1200..1400, 4 spans × nominal 50 m = A1 + P1..P3 + A2, inside the
- * STA.1200-1500 bridge candidate from the road sample). All positions are
+ * (STA.1200..1500, 6 spans × nominal 50 m = A1 + P1..P5 + A2, matching the
+ * STA.1200-1500 bridge candidate and Lane S RB001-BRIDGE-1). All positions are
  * canonical EPSG:6674 survey coordinates obtained from the Liner core geometry
  * engine + the vertical profile; no CRS conversion is re-implemented here.
  *
@@ -66,16 +66,16 @@ const CAP_SIZE_Z = 2.0;
 const FOUNDATION_SIZE_Z = 3.0;
 
 /**
- * Derive the bridge supports for the RB001 bridge candidate: a 5-span
- * continuous girder (A1 + P1..P4 + A2) at nominal 50 m spans, placed inside
- * the STA.1200-1500 candidate (east 50 m = approach road).
+ * Derive the bridge supports for the RB001 bridge candidate: a 6-span
+ * continuous girder (A1 + P1..P5 + A2) at nominal 50 m spans, covering the
+ * full STA.1200-1500 candidate (matching Lane S RB001-BRIDGE-1).
  */
 export function deriveBridgeSupports(
   candidate: { readonly startStation: number; readonly endStation: number; readonly nominalSpanM: number },
   options?: { readonly spanCount?: number },
 ): readonly { readonly station: number; readonly supportId: string; readonly kind: "abutment" | "pier" }[] {
   const nominalSpan = Math.max(candidate.nominalSpanM, 1);
-  const requested = Math.max(1, options?.spanCount ?? 5);
+  const requested = Math.max(1, options?.spanCount ?? 6);
   // keep the last support inside the candidate interval
   const spanCount = Math.min(
     requested,
