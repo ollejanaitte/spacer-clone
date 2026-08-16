@@ -16,6 +16,8 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [vitest-gates.md](vitest-gates.md) | Frontend FAST/UI/3D/SLOW/Electron/FULL test gates |
 | [development-test-rules.md](development-test-rules.md) | AI-agent dev/test operation rules (E2E / schema / time limits / CI) |
 | [issue-backlog.md](issue-backlog.md) | Residual & future issue candidates as GitHub-issue-ready backlog (Phase 5) |
+| [project-persistence-map.md](project-persistence-map.md) | Phase A-00 Project Persistence Pipeline audit map |
+| [phase-a-persistence-automation-plan.md](phase-a-persistence-automation-plan.md) | Phase A (A-01) Schema / Persistence sync automation execution plan |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |
