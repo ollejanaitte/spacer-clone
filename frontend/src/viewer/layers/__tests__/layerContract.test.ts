@@ -5,6 +5,7 @@ import {
   LAYER_CONTRACT_VERSION,
   computeTerrainLayerBounds,
   computeRoadLayerBounds,
+  computeBoxListBounds,
   computeLayerBounds,
   mergeLayerBounds,
   createViewerLayer,
@@ -157,6 +158,42 @@ describe("Layer Contract (V-2)", () => {
     expect(bounds.maxY).toBeCloseTo(4, 6);
     expect(bounds.minY).toBeCloseTo(-4, 6);
     expect(bounds.maxX).toBe(10);
+  });
+
+it("computeRoadLayerBounds accounts for the road direction", () => {
+    const data: Extract<LayerData, { kind: "road" }> = {
+      kind: "road",
+      alignment: [
+        { x: 0, y: 0, z: 10 },
+        { x: 0, y: 10, z: 10 },
+      ],
+      width: 4,
+    };
+    const bounds = computeRoadLayerBounds(data);
+    // Direction is +Y, so the transverse spread must fall on X, not Y.
+    expect(bounds.maxX).toBeCloseTo(2, 6);
+    expect(bounds.minX).toBeCloseTo(-2, 6);
+    expect(bounds.maxY).toBe(10);
+    expect(bounds.minY).toBeCloseTo(-2, 6);
+  });
+
+  it("computeBoxListBounds accounts for yawDeg rotation", () => {
+    const bounds = computeBoxListBounds([
+      {
+        id: "rotated",
+        center: { x: 0, y: 0, z: 0 },
+        size: { x: 2, y: 2, z: 2 },
+        yawDeg: 45,
+      },
+    ]);
+    // A 2x2 box rotated 45° has diagonal extent sqrt(2)*2/2 ≈ 1.414 in X/Y.
+    const halfDiagonal = Math.SQRT2;
+    expect(bounds.maxX).toBeCloseTo(halfDiagonal, 6);
+    expect(bounds.maxY).toBeCloseTo(halfDiagonal, 6);
+    expect(bounds.minX).toBeCloseTo(-halfDiagonal, 6);
+    expect(bounds.minY).toBeCloseTo(-halfDiagonal, 6);
+    expect(bounds.maxZ).toBe(1);
+    expect(bounds.minZ).toBe(-1);
   });
 
   it("computeLayerBounds dispatches by kind", () => {

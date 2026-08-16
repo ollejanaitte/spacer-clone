@@ -84,14 +84,30 @@ describe("buildLayerScene (V-2 skeleton)", () => {
     }
   });
 
-  it("skips layers that are not ready or not visible", () => {
+  it("skips layers that are not ready", () => {
+    const modelWithErrors = {
+      ...model,
+      layers: model.layers.map((l) => ({
+        ...l,
+        status: { state: "error" as const, message: "load failed" },
+      })),
+    };
+    const partial = buildLayerScene(modelWithErrors);
+    for (const layer of modelWithErrors.layers) {
+      expect(partial.layerGroups[layer.id].children.length).toBe(0);
+      expect(partial.layerGroups[layer.id].visible).toBe(false);
+    }
+  });
+
+  it("builds geometry for hidden-but-ready layers so they can be shown later", () => {
     const modelWithHidden = {
       ...model,
       layers: model.layers.map((l) => ({ ...l, visible: false })),
     };
-    const partial = buildLayerScene(modelWithHidden);
+    const resultHidden = buildLayerScene(modelWithHidden);
     for (const layer of modelWithHidden.layers) {
-      expect(partial.layerGroups[layer.id].children.length).toBe(0);
+      expect(resultHidden.layerGroups[layer.id].children.length).toBeGreaterThan(0);
+      expect(resultHidden.layerGroups[layer.id].visible).toBe(false);
     }
   });
 

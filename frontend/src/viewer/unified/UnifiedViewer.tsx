@@ -243,7 +243,9 @@ function fitCameraToBounds(context: ViewerContext, grid: THREE.GridHelper): void
   context.controls.update();
 
   const footprint = Math.max(size.x, size.z) * 1.25;
+  const oldGridGeometry = grid.geometry;
   grid.geometry = new THREE.GridHelper(footprint, 24, 0x9aa7b3, 0xb9c4cd).geometry;
+  oldGridGeometry.dispose();
   grid.position.set(center.x, box.min.y - 0.5, center.z);
 }
 

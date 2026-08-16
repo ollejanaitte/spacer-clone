@@ -45,10 +45,13 @@ export function buildLayerScene(model: UnifiedViewerModel): LayerSceneResult {
     group.userData.layerId = layer.id;
     group.userData.kind = layer.kind;
     layerGroups[layer.id] = group;
-    if (layer.visible && layer.status.state === "ready") {
+    // Build geometry for every ready layer so toggling visibility later
+    // works; initial on/off state is controlled by group.visible only.
+    if (layer.status.state === "ready") {
       const meshes = buildLayerMeshes(layer, model.renderTransform, model.worldBasis.renderOrigin);
       for (const mesh of meshes) group.add(mesh);
     }
+    group.visible = layer.visible && layer.status.state === "ready";
     root.add(group);
   }
 
@@ -155,6 +158,13 @@ function buildTerrainMesh(
       const b = a + 1;
       const c = a + data.width;
       const d = c + 1;
+      // Skip cells that contain NO_DATA so missing elevations never render.
+      if (
+        data.noDataValue !== undefined &&
+        [a, b, c, d].some((i) => data.heights[i] === data.noDataValue)
+      ) {
+        continue;
+      }
       indices.push(a, b, c, b, d, c);
     }
   }

@@ -329,7 +329,7 @@ export function computeTerrainLayerBounds(data: TerrainLayerData): LayerBounds {
   };
 }
 
-/** Derive the canonical-world bounds of a road alignment. */
+/** Derive the canonical-world bounds of a road alignment (accounts for direction). */
 export function computeRoadLayerBounds(data: RoadLayerData): LayerBounds {
   let minX = Infinity;
   let minY = Infinity;
@@ -339,13 +339,30 @@ export function computeRoadLayerBounds(data: RoadLayerData): LayerBounds {
   let maxZ = -Infinity;
   const leftHalf = data.halfWidth?.left ?? data.width / 2;
   const rightHalf = data.halfWidth?.right ?? data.width / 2;
-  for (const p of data.alignment) {
+  const visit = (p: Point3D) => {
     minX = Math.min(minX, p.x);
     maxX = Math.max(maxX, p.x);
-    minY = Math.min(minY, p.y - leftHalf);
-    maxY = Math.max(maxY, p.y + rightHalf);
+    minY = Math.min(minY, p.y);
+    maxY = Math.max(maxY, p.y);
     minZ = Math.min(minZ, p.z);
     maxZ = Math.max(maxZ, p.z);
+  };
+  for (let i = 0; i < data.alignment.length; i += 1) {
+    const p = data.alignment[i];
+    let dirX = 1;
+    let dirY = 0;
+    if (i > 0) {
+      const prev = data.alignment[i - 1];
+      const dx = p.x - prev.x;
+      const dy = p.y - prev.y;
+      const len = Math.hypot(dx, dy) || 1;
+      dirX = dx / len;
+      dirY = dy / len;
+    }
+    const perpX = -dirY;
+    const perpY = dirX;
+    visit({ x: p.x + perpX * leftHalf, y: p.y + perpY * leftHalf, z: p.z });
+    visit({ x: p.x - perpX * rightHalf, y: p.y - perpY * rightHalf, z: p.z });
   }
   if (minX === Infinity) {
     return { minX: 0, minY: 0, minZ: 0, maxX: 0, maxY: 0, maxZ: 0 };
@@ -353,7 +370,7 @@ export function computeRoadLayerBounds(data: RoadLayerData): LayerBounds {
   return { minX, minY, minZ, maxX, maxY, maxZ };
 }
 
-/** Derive bounds of a set of oriented boxes (superstructure / bearings). */
+/** Derive bounds of a set of oriented boxes (accounts for yawDeg rotation). */
 export function computeBoxListBounds(boxes: readonly OrientedBox3D[]): LayerBounds {
   let minX = Infinity;
   let minY = Infinity;
@@ -361,16 +378,31 @@ export function computeBoxListBounds(boxes: readonly OrientedBox3D[]): LayerBoun
   let maxX = -Infinity;
   let maxY = -Infinity;
   let maxZ = -Infinity;
+  const visit = (p: Point3D) => {
+    minX = Math.min(minX, p.x);
+    maxX = Math.max(maxX, p.x);
+    minY = Math.min(minY, p.y);
+    maxY = Math.max(maxY, p.y);
+    minZ = Math.min(minZ, p.z);
+    maxZ = Math.max(maxZ, p.z);
+  };
   for (const box of boxes) {
     const hx = box.size.x / 2;
     const hy = box.size.y / 2;
     const hz = box.size.z / 2;
-    minX = Math.min(minX, box.center.x - hx);
-    maxX = Math.max(maxX, box.center.x + hx);
-    minY = Math.min(minY, box.center.y - hy);
-    maxY = Math.max(maxY, box.center.y + hy);
-    minZ = Math.min(minZ, box.center.z - hz);
-    maxZ = Math.max(maxZ, box.center.z + hz);
+    const yaw = box.yawDeg ? (box.yawDeg * Math.PI) / 180 : 0;
+    const cos = Math.cos(yaw);
+    const sin = Math.sin(yaw);
+    for (const sx of [-1, 1]) {
+      for (const sy of [-1, 1]) {
+        const lx = sx * hx;
+        const ly = sy * hy;
+        const rx = lx * cos - ly * sin;
+        const ry = lx * sin + ly * cos;
+        visit({ x: box.center.x + rx, y: box.center.y + ry, z: box.center.z - hz });
+        visit({ x: box.center.x + rx, y: box.center.y + ry, z: box.center.z + hz });
+      }
+    }
   }
   if (minX === Infinity) {
     return { minX: 0, minY: 0, minZ: 0, maxX: 0, maxY: 0, maxZ: 0 };
