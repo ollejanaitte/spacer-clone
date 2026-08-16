@@ -11,6 +11,7 @@ export interface SiteContextEntryPageProps {
   readonly isEmptyProject: boolean;
   readonly onBackToApp: () => void;
   readonly onNavigateStep: (step: CanonicalWorkflowStep) => void;
+  readonly onOpenWorkflow?: () => void;
 }
 
 const SOURCES = [
@@ -41,6 +42,7 @@ export function SiteContextEntryPage({
   isEmptyProject,
   onBackToApp,
   onNavigateStep,
+  onOpenWorkflow,
 }: SiteContextEntryPageProps) {
   const text = ja.workflow;
 
@@ -96,6 +98,18 @@ export function SiteContextEntryPage({
         <CanonicalWorkflowNav currentStepId="siteContext" onNavigateStep={handleNavigateStep} />
 
         <section className={styles.sourcePanel} aria-label={text.siteContext.sourceGridLabel}>
+          {!isEmptyProject && onOpenWorkflow && (
+            <div className={styles.startRow}>
+              <button
+                type="button"
+                className={styles.primaryButton}
+                onClick={onOpenWorkflow}
+                data-testid="site-context-start-workflow"
+              >
+                {text.siteContext.startWorkflow}
+              </button>
+            </div>
+          )}
           <h2 className={styles.sourceTitle}>{text.siteContext.sourceGridLabel}</h2>
           <div className={styles.sourceGrid}>
             {SOURCES.map((source) => {
