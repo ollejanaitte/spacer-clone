@@ -130,6 +130,7 @@ export const createDefaultProject = (): ProjectModel => {
     ],
     analysisSettings: {
       analysisType: "linear_static",
+      solver: "scipy_sparse",
       includeShearDeformation: false,
       largeDisplacement: false,
       tolerance: 1e-9,
