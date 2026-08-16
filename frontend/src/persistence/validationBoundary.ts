@@ -1,6 +1,6 @@
 import type { ProjectModel } from "../types";
-import { migrateProject } from "../projectMigration";
 import { validateProjectAgainstSchema } from "./projectSchemaValidator";
+import { migrateProjectSafely, type MigrationValidateFn } from "./migrationGuard";
 import { serializeApolloPhase1Unit2ForPersistence } from "../apollo/unit2Draft";
 import { serializeProjectForPersistence } from "../liner/adapters/linerProjectDraft";
 
@@ -39,10 +39,20 @@ export type LoadBoundaryResult =
   | { readonly ok: true; readonly project: ProjectModel }
   | {
       readonly ok: false;
-      readonly reason: "invalid-json" | "schema-invalid";
+      readonly reason:
+        | "invalid-json"
+        | "schema-invalid"
+        | "future-version"
+        | "incompatible-version"
+        | "migration-step-missing";
       readonly diagnostics: readonly string[];
       readonly violations: readonly BoundaryViolation[];
     };
+
+const schemaValidationFn: MigrationValidateFn = (project) => {
+  const result = validateProjectAgainstSchema(project);
+  return { valid: result.valid, errors: result.errors };
+};
 
 function schemaViolations(project: unknown): { violations: BoundaryViolation[]; diagnostics: string[] } {
   const result = validateProjectAgainstSchema(project);
@@ -99,21 +109,29 @@ export function validateCanonicalProjectForSave(project: ProjectModel): SaveBoun
 
 /**
  * LOAD 境界: JSON.parse 済み raw persisted 表現に対し
- * migrateProject → 公式 Schema validation → (呼び出し側で hydration) の順序を保証する。
- * 不適合なら {ok:false} を返し、hydration してはならないことを表明する。
+ * migrateProjectSafely (A-07 migration guard) → 公式 Schema validation → (呼び出し側で hydration)
+ * の順序を保証する。不適合なら {ok:false} を返し、hydration してはならないことを表明する。
+ * future / incompatible schemaVersion は fail-closed で拒否する。
  */
 export function validateLoadedProjectBeforeHydrate(raw: unknown): LoadBoundaryResult {
-  const migrated = migrateProject(raw);
-  const { violations, diagnostics } = schemaViolations(migrated);
-  if (violations.length > 0) {
+  const migration = migrateProjectSafely(raw, { onValidate: schemaValidationFn });
+  if (!migration.ok) {
+    const reason =
+      migration.reason === "schema-invalid"
+        ? "schema-invalid"
+        : migration.reason === "future-version"
+          ? "future-version"
+          : migration.reason === "incompatible-version"
+            ? "incompatible-version"
+            : "migration-step-missing";
     return {
       ok: false,
-      reason: "schema-invalid",
-      diagnostics,
-      violations,
+      reason,
+      diagnostics: migration.diagnostics,
+      violations: migration.violations,
     };
   }
-  return { ok: true, project: migrated };
+  return { ok: true, project: migration.project };
 }
 
 /**
