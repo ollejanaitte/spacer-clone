@@ -25,7 +25,7 @@ import {
   type WorldBasis,
 } from "../layers/layerContract";
 import { DEFAULT_RENDER_COORDINATE_TRANSFORM } from "../layers/renderCoordinate";
-import { heightfieldToTerrainLayer, projectOriginFromTerrainDocument } from "./terrainAdapter";
+import { heightfieldToTerrainLayer, heightfieldLayerBounds, projectOriginFromTerrainDocument } from "./terrainAdapter";
 import { roadAlignmentToLayer, elevationAt } from "./roadAdapter";
 import {
   bridgeCandidateToLayers,
@@ -104,6 +104,13 @@ function buildTerrainLayer(terrain: RealGujoSceneInput["terrain"]): ViewerLayer 
       horizontalCrs: "EPSG:6674",
       renderOrigin: origin ?? null,
     },
+    properties: {
+      kind: "terrain",
+      crs: "EPSG:6674",
+      cellSizeMeters: heightfield.cellSize,
+      gridCells: `${heightfield.width} × ${heightfield.height}`,
+      elevationRangeMeters: `${Math.round(heightfieldLayerBounds(heightfield).minZ)}–${Math.round(heightfieldLayerBounds(heightfield).maxZ)}`,
+    },
   });
 }
 
@@ -117,6 +124,13 @@ function buildRoadLayer(road: Rb001RoadSample | null | undefined): ViewerLayer |
       label: road.name,
       roadId: road.id,
       horizontalCrs: "EPSG:6674",
+    },
+    properties: {
+      kind: "road",
+      crs: "EPSG:6674",
+      alignmentId: road.id,
+      startStationMeters: road.bridgeCandidate?.startStation ?? 0,
+      endStationMeters: road.bridgeCandidate?.endStation ?? 0,
     },
   });
 }
@@ -146,6 +160,13 @@ function buildBridgeLayers(
       data: built.superstructure,
       source: REAL_SOURCE,
       metadata: { label: "Superstructure (RB001 bridge)", bridgeId: built.bridgeId },
+      properties: {
+        kind: "superstructure",
+        bridgeId: built.bridgeId,
+        spans: built.supports.length - 1,
+        girderCount: 2,
+        deckWidthMeters: resolved.candidate?.nominalSpanM ?? 50,
+      },
     }),
   );
   layers.push(
@@ -154,6 +175,11 @@ function buildBridgeLayers(
       data: built.bearings,
       source: REAL_SOURCE,
       metadata: { label: "Bearings (RB001 bridge)", bridgeId: built.bridgeId },
+      properties: {
+        kind: "bearing",
+        bridgeId: built.bridgeId,
+        bearingCount: built.bearings.bearings.length,
+      },
     }),
   );
   layers.push(
@@ -162,6 +188,11 @@ function buildBridgeLayers(
       data: built.substructure,
       source: REAL_SOURCE,
       metadata: { label: "Substructure (RB001 bridge)", bridgeId: built.bridgeId },
+      properties: {
+        kind: "substructure",
+        bridgeId: built.bridgeId,
+        supportCount: built.substructure.supports.length,
+      },
     }),
   );
   return layers;
