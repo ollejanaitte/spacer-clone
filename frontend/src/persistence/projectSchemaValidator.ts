@@ -18,7 +18,7 @@ export type ProjectSchemaValidationResult = {
 
 export function validateProjectAgainstSchema(project: unknown): ProjectSchemaValidationResult {
   const validator = getProjectSchemaValidator();
-  const valid = validator(project);
+  const valid = validator(project) as boolean;
   return {
     valid,
     errors: valid
