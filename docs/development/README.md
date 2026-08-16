@@ -19,6 +19,7 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [project-persistence-map.md](project-persistence-map.md) | Phase A-00 Project Persistence Pipeline audit map |
 | [phase-a-persistence-automation-plan.md](phase-a-persistence-automation-plan.md) | Phase A (A-01) Schema / Persistence sync automation execution plan |
 | [parallel-lanes-wave0-readiness.md](parallel-lanes-wave0-readiness.md) | Wave 0 parallel lane branch/worktree readiness |
+| [unified-3d-viewer-boundary.md](unified-3d-viewer-boundary.md) | Wave 1 Lane V-1 existing 3D viewer boundary audit |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |
