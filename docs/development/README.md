@@ -19,6 +19,9 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [project-persistence-map.md](project-persistence-map.md) | Phase A-00 Project Persistence Pipeline audit map |
 | [phase-a-persistence-automation-plan.md](phase-a-persistence-automation-plan.md) | Phase A (A-01) Schema / Persistence sync automation execution plan |
 | [parallel-lanes-wave0-readiness.md](parallel-lanes-wave0-readiness.md) | Wave 0 parallel lane branch/worktree readiness |
+| [site-context-spacer-data-contract.md](site-context-spacer-data-contract.md) | Wave 1 Lane B-1 site-context × SPACER data contract re-verification |
+| [site-context-spacer-field-mapping.md](site-context-spacer-field-mapping.md) | Wave 1 Lane B-2 site-context → SPACER field mapping freeze |
+| [site-context-spacer-adapter-interface.md](site-context-spacer-adapter-interface.md) | Wave 1 Lane B-3 `.sitecontext` → SPACER import adapter interface |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |

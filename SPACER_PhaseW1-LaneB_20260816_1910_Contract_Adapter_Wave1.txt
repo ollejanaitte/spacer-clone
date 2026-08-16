@@ -1,0 +1,245 @@
+SPACER CLONE — Wave 1 Lane B Final Report
+ファイル名: SPACER_PhaseW1-LaneB_20260816_1910_Contract_Adapter_Wave1.txt
+作成日時: 2026-08-16 19:10 JST
+
+================================================================
+1. 概要
+================================================================
+Lane B Wave 1（.sitecontext → SPACER Import Adapter の契約確定）完了。
+B-1 データ契約再確認 / B-2 Field Mapping Freeze / B-3 Adapter Interface 確定 を実施。
+B-4（本Adapter実装）へは進まず、次の担当AIが追加設計なしで実装へ入れる状態とした。
+
+================================================================
+2. branch / worktree
+================================================================
+branch  : lane-b/sitecontext-contract-adapter
+worktree: ~/Projects/spacer-clone-lane-b
+参照repo: ~/Projects/site-context-prototype（読み取り参照のみ・変更なし）
+
+================================================================
+3. 開始SHA / 終了SHA
+================================================================
+開始SHA（追従後 = origin/main）: 31a111362ec39f31f74a40f4dd59e2e002a49035
+終了SHA（HEAD = origin/lane-b と同期）: ba3010a87e172b24ef39616e05835bdb21433ed2
+push同期: HEAD..origin/lane-b = 0（同期済み）
+
+================================================================
+4. B-1 実施内容（データ契約再確認）
+================================================================
+成果物: docs/development/site-context-spacer-data-contract.md
+site-context側実コード（ProjectV2/SiteContext/CoordinateContext/Terrain/SCT1/
+SourceDataset/SelectionArea/ExportEnvelope/RoadConnector）とSPACER側実コード
+（PDC schema / terrain module / existingConditions / .spacerproj package）を
+横断確認し、項目別に「site-context正本 / SPACER格納先 / canonical・exceptional /
+単位 / CRS / null / migration要否 / Adapter変換 or そのまま」を整理。
+
+主要結論:
+- coordinateContexts/EPSG/JGD2011: CRS変換は行わない（座標書き換え禁止）。JGD2011平面直角
+  6669-6687・geographic 4326/6668/4269/4612・local を保持。東京測地系30161-30179はunsupported。
+- Heightfield/SCT1: バイナリをそのまま保持しbase64→packageアセット化。masked variantは拒否。
+- RoadConnector: SPACER road/alignmentとは未接続（Phase 4以降）。Adapterはterrain/sourceDatasets供給のみ。
+- bridge/substructure接続点: terrainDocument.surfaceReference / metadata.existingConditions を
+  設定することで bridgeLayout/substructure の参照解決が成立。
+- V2 persistenceは未統合・実動UIはV1のため、AdapterはV1入力をV2正規化してから取り込む。
+
+================================================================
+5. B-2 実施内容（Field Mapping Freeze）
+================================================================
+成果物: docs/development/site-context-spacer-field-mapping.md
+表形式で固定（source path / source type / destination path / destination type /
+required / transform / unit / CRS / lossless/lossy / unsupported / notes / owner Lane）:
+- project identity / metadata（schemaVersion/dataVersion/businessNumber/designStage等）
+- coordinateContexts / EPSG / JGD2011 / project origin
+- selectionArea
+- terrain resource（terrainDocument mirror + full payload保持）
+- Heightfield / SCT1（SCT1ヘッダ+grid保持）
+- sourceDatasets（license制御・location保持）
+- existingConditions（V1 ref→asset解決・個体化変換）
+- viewer用metadata（searchLocation/imagery/vectorLayers/presentation）
+- asset references / checksum
+- export/import version
+
+未対応は削除せず明示:
+- deferred: meshResource / meshRef existing / layerMappings / settings
+- unsupported: 東京測地系30161-30179 / schemaVersion 3以降
+- OPEN: bounds導出2系統差分 / 軸規約変換（Lane T確定までterrainDocument mirror保留）
+
+================================================================
+6. B-3 実施内容（Adapter Interface確定）
+================================================================
+成果物:
+- docs/development/site-context-spacer-adapter-interface.md
+- frontend/src/next/integration/siteContext/adapterContract.ts（型・I/F骨格）
+- frontend/src/next/integration/siteContext/__tests__/adapterContract.test.ts（契約test skeleton）
+
+入力: .sitecontext（ExportEnvelope形式 / PackageManifestV1互換 / ProjectV2相当）+ import options + source metadata
+出力: SiteContextImportResult（成功: projectId + report / 失敗: errorCode + message）
+report: warnings / unsupportedFields / conversion diagnostics / CRS import result /
+        terrain import result / version information
+
+失敗条件（fail-closed・7種）:
+  SC-ERR-UNSUPPORTED-CRS / SC-ERR-CORRUPT-SOURCE / SC-ERR-MISSING-REQUIRED /
+  SC-ERR-INCOMPATIBLE-VERSION / SC-ERR-INVALID-TERRAIN-REF /
+  SC-ERR-SCHEMA-FAILED / SC-ERR-TARGET-INVALID
+inspect/import は async（V1→V2正規化とcanonicalHashが非同期のため）。
+
+================================================================
+7. 作成 / 更新文書
+================================================================
+新規作成:
+- docs/development/site-context-spacer-data-contract.md（B-1）
+- docs/development/site-context-spacer-field-mapping.md（B-2）
+- docs/development/site-context-spacer-adapter-interface.md（B-3）
+- frontend/src/next/integration/siteContext/adapterContract.ts（B-3 I/F型）
+- frontend/src/next/integration/siteContext/__tests__/adapterContract.test.ts（B-3契約test）
+更新:
+- docs/development/README.md（インデックス3件追記）
+
+================================================================
+8. 変更ファイル一覧
+================================================================
+docs/development/README.md
+docs/development/site-context-spacer-data-contract.md
+docs/development/site-context-spacer-field-mapping.md
+docs/development/site-context-spacer-adapter-interface.md
+frontend/src/next/integration/siteContext/adapterContract.ts
+frontend/src/next/integration/siteContext/__tests__/adapterContract.test.ts
+
+================================================================
+9. test / typecheck / build 結果
+================================================================
+- 契約テスト（integration/siteContext）: 2 files / 26 tests PASS（adapterContract + contract）
+- test:fast: 424 files PASS / 2 files FAIL（既存env問題: BridgeDefinition golden test が
+  worktreeに .venv 不在で失敗。main repoの.venvへsymlinkしてもREPO_ROOT解決の問題で失敗。
+  本作業の変更とは無関係）
+- typecheck（tsc -b）: PASS
+- build（vite production）: PASS（chunk size warningのみ・既存）
+- git diff --check: 問題なし
+
+================================================================
+10. commit一覧
+================================================================
+8a78c7c docs(sitecontext): Wave 1 Lane B-1 data contract re-verification
+54dbd92 docs(sitecontext): Wave 1 Lane B-2 field mapping freeze
+9c9d5da feat(sitecontext): Wave 1 Lane B-3 adapter interface + contract test skeleton
+ba3010a fix(sitecontext): apply Sol review to contract/mapping/adapter interface
+
+================================================================
+11. push結果
+================================================================
+lane-b/sitecontext-contract-adapter へ4コミットpush完了。origin/lane-bと同期。
+mainへはmergeしていない。
+
+================================================================
+12. Luna利用
+================================================================
+今回の作業では不要と判断し利用しなかった（調査は自前で完了可能な規模だった）。
+
+================================================================
+13. Sol利用
+================================================================
+1回実施（codex exec・gpt-5.6-sol）。指摘5件を反映:
+1. inspect/import の同期I/F → async化（V1→V2 migration / canonicalHash が非同期のため）
+2. envelope checksum は canonicalHash（canonicalize+sha256）であり単純sha256でない → 文書修正
+3. V1 existingConditions は {id, assetRef} 参照 → asset JSON の checksum 検証＋解決を明記
+4. 軸規約の誤ラベル（x=easting/y=northing を x-along/y-transverse と宣言）→ terrainDocument
+   mirror を Lane T 確定まで保留・raw payload + metadata のみ保持に変更
+5. layerMappings / settings が mapping・未対応一覧に無い → metadata へ保持（deferred）で対応
+反映後: 契約テスト26件・typecheck・build 再PASS。
+（初回はCLI v0.131.0がgpt-5.6-sol非対応で失敗。codex update後 v0.147.0 で成功。）
+
+================================================================
+14. blocker / 残課題
+================================================================
+blocker: なし（Wave 1の範囲では）
+残課題（B-4 / 他Laneへ引渡し）:
+- terrain.bounds 導出式の2系統差分をB-4で1系統へ固定（field-mapping §4 OPEN）
+- 軸規約変換（easting/northing → x-along/y-transverse）は Lane T の確定待ち
+- SPACER getProjectTerrainGrid は referenceMountain stub（Lane T が実アセット読込へ置換）
+- V2 persistence（save/load）は site-context 側で未統合。B-4 は V1→V2 正規化経由で対応
+
+================================================================
+15. Lane A への変更要求
+================================================================
+現状では PDC schema 変更は不要（metadata / terrain module payload は
+Record<string,unknown> で受容可）。以下の新規field（既存loose slotへ収まる）について
+Lane A の確認を依頼:
+- metadata.siteContextCoordinateContexts（array・required）: CRS正本保持
+- metadata.siteContextProjectCoordinateContextId（string・required）: primary CRS識別
+- metadata.siteContextSourceDatasets（array・optional）: provenance保持
+- metadata.existingConditions（object・optional）: ExistingConditionsDocument格納先（既存流用）
+- modules.terrain.data.siteContext（object・required）: full payload保持
+- modules.terrain.data.selectionArea（object・optional）: selection保持
+※ Lane A 所有ファイル（types.ts / project.schema.json / projectMigration.ts /
+   defaultProject.ts / canonical serializer等）は無断変更していない。
+
+================================================================
+16. Lane T / V / U / S への引渡し事項
+================================================================
+Lane T:
+- terrain/CRS受入I/F: modules.terrain.data.terrainDocument（TerrainDocument契約）。
+  coordinateContext（projectOrigin・axisConvention）はLane Tの変換確定までmirror保留。
+- sourceDatasetの扱い: metadata.siteContextSourceDatasets から参照
+- Heightfield/SCT1格納先: package assets/canonical/terrain/<id>.sct1（base64復号後sha256検証）
+- Lane Aへのfield追加要求: 上記15参照
+
+Lane V:
+- Viewerが読む公開I/F: readTerrainDocument（terrainDocument） / readExistingConditions
+  （metadata.existingConditions） / modules.terrain.data.siteContext
+  （searchLocation/imagery/vectorLayers/presentation）
+
+Lane U:
+- Site Context import UIから呼ぶAdapter I/F: inspect(input) / import(input)（async）
+- warning/error返却形式: SiteContextImportReport.warnings / unsupportedFields /
+  { ok:false, errorCode, message }（fail-closed）
+
+Lane S:
+- Reference Business 001 で使うsite-context由来field: metadata.siteContext* キー +
+  modules.terrain.data.*
+- 郡上市八幡sampleの必要metadata: coordinateContexts（EPSG 6677 第7系・JGD2011・origin）/
+  selectionArea（5km×5km・東経136.9567°・北緯35.7512°）/ terrain（DEM5A ZL15
+  約1000×1000セル・SCT1）/ sourceDatasets（gsiMeta・datasetId=dem5a_png 等）
+
+================================================================
+17. Wave 2へ進める / まだ進めない
+================================================================
+Wave 2へ進める。B-4 Import Adapter本実装は、本報告の契約文書（B-1/B-2/B-3）+ I/F型 +
+契約test skeleton を根拠に追加設計なしで着手可能。ただし以下はB-4開始前に決定が必要:
+- terrain.bounds 導出式の1系統固定（Lane B自身 or Lane Tと調整）
+- 軸規約変換の確定（Lane T連携）
+- Lane A の field 確認（§15）
+
+================================================================
+18. Gmail完了報告
+================================================================
+Gmail/SMTP送信手段が本環境に無いため送信していない。
+- 送信不可理由: 環境にGmail/SMTP送信手段がなく、また secrets（credentials.json等）への
+  アクセスは禁止のため送信API利用不可。
+- 宛先: hatapon223101@gmail.com
+- 件名: [SPACER] Wave 1 Lane B 完了報告（Contract / Adapter）
+- 送信用本文:
+  「SPACER CLONE Wave 1 Lane B（.sitecontext → SPACER Import Adapter契約確定）が完了しました。
+  契約文書3件・Adapter I/F型・契約テストを lane-b/sitecontext-contract-adapter にpush済みです。
+  詳細は本Final Report（添付）を参照ください。」
+
+================================================================
+19. 完了条件チェック
+================================================================
+[x] B-1完了
+[x] B-2 Field Mapping Freeze完了
+[x] B-3 Adapter Interface確定
+[x] Lane A所有領域へ無断変更なし
+[x] unsupported/deferred field明記
+[x] Lane T/V/U/SへのI/F明記
+[x] 必要なtargeted test / validation PASS（契約テスト26件・typecheck・build）
+[x] 小stepごとのcommit/push完了（4コミット）
+[x] Discord逐次報告完了
+[x] Final Report作成・push・Discord送信（本ファイル）
+[x] Gmail完了報告（送信手段なしのため§18に記録）
+[x] B-4へ進まず停止
+[x] mainへmergeしない
+
+================================================================
+20. 総括
+================================================================
+Wave 1 Lane B 完了。main統合待ち。
