@@ -359,6 +359,28 @@ A-02 Schema Drift Guard
 - **STOP 条件**: なし (最終確認フェーズ)。
 - **次フェーズへの引継ぎ条件**: Phase A Completion Gate の判定へ進める。
 
+### A-09 Persistence Completion Gate (Wave 3 追加)
+
+- **目的**: Wave 1/2 で成立した Persistence 安全柵を、日常 Gate で機械検知できる
+  Completion 状態として確定し、Acceptance を文書化する。
+- **前提**: A-02〜A-08 の全 Persistence test が `test:fast` (FAST 分類) に含まれる。
+- **変更ファイル**: `frontend/src/apollo/sampleProjects.ts` (Apollo sample を公式 Schema へ是正)、
+  `frontend/src/persistence/__tests__/validationBoundary.test.ts` (Apollo sample roundtrip test 追加)。
+- **Acceptance**:
+  - 正常: serialize → save validation → JSON → migrate → load validation → hydrate が成立 (A-04 roundtrip)。
+  - legacy: schemaVersion 欠落 → v1 扱い → sequential migration → validation → hydrate (A-07 migrationGuard)。
+  - invalid: fail-closed (A-05 validationBoundary)。
+  - future version: fail-closed 拒否 (A-07 migrationGuard)。
+  - exceptional paths: 契約通り別経路 (A-06 exceptionalPaths)。
+  - Save/Close/Reopen: canonical data 消失なし (A-04 roundtrip + A-07 migration)。
+  - Apollo: `createApollo200mContinuousBridgeSample` を公式 Schema へ是正済み。
+    - materials/sections の 0 値 → 実数値 (elasticModulus=2.5e7 等)。
+    - supports の追加プロパティ `id`/`label` を除去 (Schema は緩めない)。
+    - Schema を広げる逃げをしない。暗黙例外を作らない。
+- **Completion Gate**: 本 Acceptance を満たす test 一式 (persistence 全 test) が
+  `npm run test:fast` で PASS。`npm run typecheck` PASS。
+- **STOP 条件**: Apollo sample が公式 Schema に不適合のまま PASS としないこと。
+
 ---
 
 ## 8. Phase A 全体 Completion Gate
