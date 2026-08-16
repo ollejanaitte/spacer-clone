@@ -142,8 +142,12 @@ import {
 } from "./apollo/unit2Draft";
 import { SiteContextEntryPage } from "./workflow/SiteContextEntryPage";
 import { SiteContextPage } from "./workflow/SiteContextPage";
+import { RoadWorkflowPage } from "./workflow/RoadWorkflowPage";
+import { BridgeWorkflowPage } from "./workflow/BridgeWorkflowPage";
 import {
   BRIDGE_WORKFLOW_ROUTE_PATH,
+  isBridgeWorkflowRoute,
+  isRoadWorkflowRoute,
   isSiteContextRoute,
   ROAD_WORKFLOW_ROUTE_PATH,
   SITE_CONTEXT_ROUTE_PATH,
@@ -435,7 +439,7 @@ export function App() {
 
   useEffect(() => {
     if (
-      (currentPathname === ROAD_WORKFLOW_ROUTE_PATH || currentPathname === BRIDGE_WORKFLOW_ROUTE_PATH) &&
+      (isRoadWorkflowRoute(currentPathname) || isBridgeWorkflowRoute(currentPathname)) &&
       workflowProject === null
     ) {
       setWorkflowProject(createEmptyWorkflowProject(project.project.name || "ワークフローProject"));
@@ -1466,6 +1470,32 @@ export function App() {
         onBackToApp={() => navigatePro("/pro")}
         onNavigateStep={handleWorkflowNavigateStep}
         onOpenRoadWorkflow={openRoadWorkflow}
+      />
+    );
+  }
+
+  if (isRoadWorkflowRoute(currentPathname)) {
+    return (
+      <RoadWorkflowPage
+        project={workflowProject}
+        onProjectChange={setWorkflowProject}
+        onBackToApp={() => navigatePro("/pro")}
+        onNavigateStep={handleWorkflowNavigateStep}
+        onOpenSiteContext={() => navigatePro(SITE_CONTEXT_ROUTE_PATH)}
+        onOpenBridgeWorkflow={openBridgeWorkflow}
+      />
+    );
+  }
+
+  if (isBridgeWorkflowRoute(currentPathname)) {
+    return (
+      <BridgeWorkflowPage
+        project={workflowProject}
+        onProjectChange={setWorkflowProject}
+        onBackToApp={() => navigatePro("/pro")}
+        onNavigateStep={handleWorkflowNavigateStep}
+        onOpenRoadWorkflow={() => navigatePro(ROAD_WORKFLOW_ROUTE_PATH)}
+        onOpenAnalysis={() => navigatePro("/pro")}
       />
     );
   }
