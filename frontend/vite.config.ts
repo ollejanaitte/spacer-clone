@@ -2,6 +2,11 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import { fileURLToPath, URL } from "node:url";
 
+// E2E 専用ポートで backend を分離するための proxy 先。
+// 既定は開発用 `http://127.0.0.1:8000`。Playwright E2E では
+// `SPACER_BACKEND_ORIGIN` で E2E 専用 backend を指す。
+const backendOrigin = process.env.SPACER_BACKEND_ORIGIN ?? "http://127.0.0.1:8000";
+
 export default defineConfig(({ mode }) => ({
   base: "./",
   define: {
@@ -32,8 +37,8 @@ export default defineConfig(({ mode }) => ({
   server: {
     port: 5173,
     proxy: {
-      "/api": "http://127.0.0.1:8000",
-      "/health": "http://127.0.0.1:8000",
+      "/api": backendOrigin,
+      "/health": backendOrigin,
     },
   },
 }));

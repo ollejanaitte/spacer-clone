@@ -3,6 +3,7 @@ from __future__ import annotations
 import copy
 import json
 import math
+import os
 import re
 from pathlib import Path
 from typing import Any, Callable
@@ -65,8 +66,11 @@ from backend.engine.if3_persistence import (
 
 APP_VERSION = "0.3.0-preview"
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PROJECT_STORAGE_DIR = REPO_ROOT / "backend" / "data" / "projects"
-BRIDGE_STORAGE_DIR = REPO_ROOT / "backend" / "data" / "bridges"
+# E2E実行時は `SPACER_BACKEND_DATA_DIR` でデータ置き場を分離できる（既定: リポジトリ内）。
+# port 8000 競合の解消には直接は関係しないが、E2E専用DB/state分離に使う。
+BACKEND_DATA_DIR = Path(os.environ.get("SPACER_BACKEND_DATA_DIR") or (REPO_ROOT / "backend" / "data"))
+PROJECT_STORAGE_DIR = BACKEND_DATA_DIR / "projects"
+BRIDGE_STORAGE_DIR = BACKEND_DATA_DIR / "bridges"
 AUTOSAVE_FILE_NAME = "autosave.json"
 
 app = FastAPI(title="spacer-clone MVP API", version=APP_VERSION)
