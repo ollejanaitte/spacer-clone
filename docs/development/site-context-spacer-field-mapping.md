@@ -38,6 +38,8 @@ B-4 Import Adapter 実装が追加設計なしで実装へ入れるための単�
 | `project.createdAt` | string | `createdAt` | ISO string | required | そのまま | — | — | lossless | — | format検証 | A |
 | `project.updatedAt` | string | `updatedAt` | ISO string | required | そのまま | — | — | lossless | — | format検証 | A |
 | `project.externalIdentifiers` | Record | `metadata.siteContextExternalIdentifiers` | Record | optional | そのまま | — | — | lossless | — | — | A |
+| `layerMappings` | array | `metadata.siteContextLayerMappings` | array | optional | そのまま | — | — | lossless | — | **deferred**（§4） | B |
+| `settings` | object | `metadata.siteContextSettings` | object | optional | そのまま | — | — | lossless | — | **deferred**（§4） | B |
 
 ### 3.2 coordinateContexts / EPSG / JGD2011
 
@@ -79,7 +81,7 @@ B-4 Import Adapter 実装が追加設計なしで実装へ入れるための単�
 | `siteContext.terrain[].terrainId` | string | `terrainDocument.terrainId` | string | required(terrainあり時) | そのまま | — | — | lossless | — | — | T |
 | `siteContext.terrain[].name` | string | `terrainDocument.source.sourceName` | string | optional | そのまま | — | — | lossless | — | — | T |
 | `siteContext.terrain[].sourceDatasetIds` | string[] | `terrainDocument.source.sourceType`へ変換 + `metadata.siteContextSourceDatasets`参照 | enum | optional | sourceType変換（dem/survey/cad/...） | — | — | lossy | — | SPACER enum: csv/xyz/landxml/dem/geotiff/pointcloud | T |
-| `siteContext.terrain[].coordinateContextId` | string | `terrainDocument.coordinateContext.coordinateSystem:"project"` | string | required | CRS整合検証（=projectCoordinateContextId） | — | 保持 | lossless | CRS不一致 | I-14 | T |
+| `siteContext.terrain[].coordinateContextId` | string | `terrainDocument.coordinateContext.coordinateSystem:"project"` | string | required | CRS整合検証（=projectCoordinateContextId） | — | 保持 | lossless | CRS不一致 | I-14。**軸規約変換は保留**（§4 OPEN） | T |
 | `siteContext.terrain[].bounds` | `{minX,minY,maxX,maxY}` | `terrainDocument.bounds`（+minElevation/maxElevation） | object | required | bounds導出式を**固定**（B-4で1系統へ） | m | 保持 | lossy(式依存) | — | 既知差分あり（§6.3） | T |
 | `siteContext.terrain[].grid` | GridSpec | SCT1ヘッダ + `modules.terrain.data.siteContext` | — | required | SCT1内で保持 | m | 保持 | lossless | — | width/height/cellSize/origin | T |
 | `siteContext.terrain[].noDataValue` | number | SCT1ヘッダ | number | required | そのまま（既定-9999） | m | — | lossless | — | — | T |
@@ -121,7 +123,7 @@ B-4 Import Adapter 実装が追加設計なしで実装へ入れるための単�
 
 | source path | source type | destination path | destination type | required | transform | unit | CRS | lossless | unsupported | notes | owner |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `existingConditions` | array | `metadata.existingConditions` | ExistingConditionsDocument | optional | **変換**（個体化） | m | 保持 | lossy | meshRef個体 | V2: 不typed / V1: ref+asset | B |
+| `existingConditions` | array | `metadata.existingConditions` | ExistingConditionsDocument | optional | **変換（個体化）** | m | 保持 | lossy | meshRef個体 | **V1は`{id, assetRef}`参照のため、asset JSONをchecksum検証後解決してから個体化。欠落時は失敗（fail-closed）** / V2: 不typed（inline個体 or 参照の両方を受容） | B |
 | `existingConditions[].id` | string | `.entities[].entityId` | string | required | そのまま | — | — | lossless | — | — | B |
 | `existingConditions[].type` | enum | `.entities[].type` | enum | required | そのまま（12種一致） | — | — | lossless | — | road/river/railway/existingBridge/building/seawall/pond/underground/pipe/tunnel/utility/other | B |
 | `existingConditions[].label` | string | `.entities[].label` | string | required | そのまま | — | — | lossless | — | — | B |
@@ -147,9 +149,16 @@ B-4 Import Adapter 実装が追加設計なしで実装へ入れるための単�
 
 | source path | source type | destination path | destination type | required | transform | unit | CRS | lossless | unsupported | notes | owner |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| `terrain[].elevationResource`（assetRef） | assetRef | package `assets/canonical/terrain/<id>.sct1` | file | required(terrainあり時) | base64→バイナリ→package収録 | — | — | lossy(参照化) | 欠落=失敗 | checksum照合（sha256） | B |
-| `existingConditions` ref.assetRef | assetRef | `metadata.existingConditions`（entity内蔵） | — | optional | 個体JSONは entity内蔵化 | — | — | lossy | meshRef | — | B |
-| checksum | sha256 | package files `checksum` | sha256 | required | 再計算+照合 | — | — | — | 不一致=失敗 | fail-closed | B |
+| `terrain[].elevationResource`（assetRef） | assetRef | package `assets/canonical/terrain/<id>.sct1` | file | required(terrainあり時) | base64→バイナリ→package収録 | — | — | lossy(参照化) | 欠落=失敗 | **base64復号後バイトのsha256を検証** | B |
+| `existingConditions` ref.assetRef | assetRef | `metadata.existingConditions`（entity内蔵） | — | optional | **個体JSONをchecksum検証後、参照解決してから個体化** | — | — | lossy | 欠落=失敗 | V1: `{id, assetRef}` 形式（§3.7） | B |
+| envelope `files[].checksum` | `canonicalHash`文字列 | —（照合のみ） | string | required | **site-context の `canonicalHash`（canonicalize+sha256）で照合** | — | — | — | 不一致=失敗 | 実体バイトsha256とは別。既存Exporterの実装に合わせる | B |
+| package files `checksum` | sha256 | `.spacerproj` files `checksum` | sha256 | required | 再計算（`computeSha256Hex`） | — | — | — | 不一致=失敗 | SPACER側のpackage形式はsha256 | B |
+
+> **checksum の2系統に注意**（Sol 指摘反映）:
+> `.sitecontext` の ExportEnvelope `files[].checksum` は **`canonicalHash`**（`canonicalize`+sha256・site-context側実装）で
+> 記録されている（`app/src/store/packageExport.ts:28,48`）。単純な sha256 と異なるため、Envelope 検証は
+> site-context の `canonicalHash` をそのまま使う。一方、base64 復号後の SCT1 バイトと `.spacerproj` 内部は
+> 通常の sha256 で検証する。
 
 ### 3.10 export/import version
 
@@ -171,6 +180,9 @@ B-4 Import Adapter 実装が追加設計なしで実装へ入れるための単�
 | 東京測地系 30161-30179 | **unsupported** | EPSG分類器が throw | Lane T のCRS拡張時に対応 |
 | `schemaVersion=3` 以降 | **unsupported** | 現行契約外 | site-context側 freeze 更新時 |
 | `terrain.bounds` 導出の2系統差分 | **未決定（OPEN）** | doc 03章と09章で半セル分の差 | B-4 で1系統へ固定し本表へ追記 |
+| 軸規約（x=easting/y=northing → x-along/y-transverse） | **未決定（OPEN）** | terrain module `axisConvention` は固定（terrainModule.ts:28）。投影座標を「沿-横」と誤宣言すると下流が誤解釈 | **Lane T** で変換確定まで terrainDocument mirror を保留し、raw payload + metadata のみ保持 |
+| `layerMappings`（トップレベル） | **deferred** | ProjectV2 の layer 概念は SPACER に存在しない | `metadata.siteContextLayerMappings` へ保持し、将来UIで利用 |
+| `settings`（トップレベル） | **deferred** | ProjectV2 のアプリ設定は SPACER の UI state と別概念 | `metadata.siteContextSettings` へ保持 |
 
 ## 5. Lane A への変更要求（新規field候補）
 

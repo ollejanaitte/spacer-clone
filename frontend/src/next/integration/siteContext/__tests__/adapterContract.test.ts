@@ -173,13 +173,15 @@ describe("siteContext adapter contract (Wave 1 Lane B-3)", () => {
     expect(report.unsupportedFields).toEqual([]);
   });
 
-  it("declares the adapter surface for downstream lanes (T/V/U/S)", () => {
+  it("declares the adapter surface for downstream lanes (T/V/U/S)", async () => {
     const adapter: SiteContextImportAdapter = {
-      inspect: () => ({ ok: false, errorCode: "SC-ERR-MISSING-REQUIRED", message: "not implemented (B-4)" }),
-      import: () => ({ ok: false, errorCode: "SC-ERR-MISSING-REQUIRED", message: "not implemented (B-4)" }),
+      inspect: async () => ({ ok: false, errorCode: "SC-ERR-MISSING-REQUIRED", message: "not implemented (B-4)" }),
+      import: async () => ({ ok: false, errorCode: "SC-ERR-MISSING-REQUIRED", message: "not implemented (B-4)" }),
     };
     expect(typeof adapter.inspect).toBe("function");
     expect(typeof adapter.import).toBe("function");
+    const inspection = await adapter.inspect({ package: {} as never, options: {} });
+    expect(inspection.ok).toBe(false);
   });
 
   it("keeps the terrain module slot available for imported terrainDocument", () => {

@@ -182,10 +182,14 @@ export const SITE_CONTEXT_WARNING_CODE_PREFIX = "SC-WARN-" as const;
  * boundary shape is frozen before implementation.
  */
 export interface SiteContextImportAdapter {
-  /** Pre-import validation; never mutates the project store. */
-  readonly inspect: (input: SiteContextImportInput) => SiteContextInspectResult;
+  /**
+   * Pre-import validation; never mutates the project store.
+   * Async because V1->V2 normalization (migrateProjectV1ToV2) and
+   * canonicalHash verification are async on the source side.
+   */
+  readonly inspect: (input: SiteContextImportInput) => Promise<SiteContextInspectResult>;
   /** Apply the import into the Project Data Core store. */
-  readonly import: (input: SiteContextImportInput) => SiteContextImportResult;
+  readonly import: (input: SiteContextImportInput) => Promise<SiteContextImportResult>;
 }
 
 export type SiteContextInspectResult =

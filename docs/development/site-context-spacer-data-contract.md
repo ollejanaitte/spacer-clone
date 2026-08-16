@@ -65,7 +65,7 @@ site-context 側は読み取り参照のみ。SPACER 側の正本は変更しな
 | EPSG分類 | `epsgClassifier.ts`（geographic: 4326/6668/4269/4612・projected: 6669-6687） | terrain coordinateContext `coordinateSystem:"project"` | canonical / **CRS変換は行わない**（変換はLane T） |
 | JGD2011 平面直角 | EPSG 6669-6687（GRS80・横メルカトル） | `metadata.siteContextCoordinateContexts` にそのまま | canonical / 変換不要・照合のみ |
 | 東京測地系 | 30161-30179（08章はsourceのみ許容） | （未対応） | **unsupported** / EPSG分類器がthrow（`CRS-UNKNOWN-EPSG`） |
-| 軸規約 | x=easting, y=northing, z=up | ドメイン x-along/y-transverse/z-up（R3-00） | Adapterで `coordinateContext.axisConvention` 宣言のみ・**座標自体は書き換えない** |
+| 軸規約 | x=easting, y=northing, z=up | ドメイン x-along/y-transverse/z-up（R3-00） | **注意（Sol指摘）** / site-context座標を「x-along/y-transverse/z-up」と**宣言だけ**して座標を書き換えないのは誤ラベル。**terrainDocument mirror は軸規約変換の確定（Lane T）まで保留**し、正本は `metadata.siteContextCoordinateContexts` + raw payload のみ |
 
 ### 3.3 project origin
 
@@ -123,7 +123,7 @@ site-context 側は読み取り参照のみ。SPACER 側の正本は変更しな
 | 項目 | site-context正本 | SPACER格納先 | 判定 |
 |---|---|---|---|
 | existingConditions | `existingConditions[]`（V2: 不typed / V1: `existingConditionRef[]`） | `metadata.existingConditions`（existingConditionsAdapter互換） | canonical / **変換**（ExistingCondition → ExistingConditionsDocument） |
-| 参照形式 | V1: `{id, assetRef}`（個体は `assets/canonical/existing/<id>.json`） | SPACER `ExistingConditionsDocument`（entity内蔵） | **変換** / meshRef等の個体アセット参照は **deferred** |
+| 参照形式 | V1: `{id, assetRef}`（個体は `assets/canonical/existing/<id>.json`） | SPACER `ExistingConditionsDocument`（entity内蔵） | **変換（Sol指摘反映）** / **V1はasset JSONをchecksum検証後解決してから個体化**・欠落時は失敗 / meshRef等の個体アセット参照は **deferred** |
 
 ### 3.10 road / alignment への接続点
 
@@ -173,16 +173,20 @@ site-context 側は読み取り参照のみ。SPACER 側の正本は変更しな
 
 ### 3.16 checksum
 
-- site-context: sha256（`assetReference.checksum`）・`datasetContentHash`・`canonicalHash`（recipeHash/revisionHash）
-- SPACER: sha256（package files）
-- **規則:** Adapterは package 側 sha256 を再計算し、site-context 側 `assetReference.checksum` と照合。
-  不一致は **import失敗（fail-closed）**。
+- site-context: **`canonicalHash`**（`canonicalize`+sha256・`packages/core/src/util/canonicalize.ts`）が
+  ExportEnvelope の `files[].checksum` に記録される（`app/src/store/packageExport.ts:28,48`）。単純sha256ではない。
+  また `assetReference.checksum`（sha256）・`datasetContentHash`・`recipeHash`/`revisionHash`（canonicalHash）が存在。
+- SPACER: sha256（package files・`computeSha256Hex`）
+- **規則（Sol指摘反映）:** 
+  - Envelope `files[].checksum` の照合は **site-context の `canonicalHash`** をそのまま使う。
+  - base64 復号後の SCT1 バイトと `.spacerproj` 内部は **通常の sha256** で検証する。
+  - 不一致は **import失敗（fail-closed）**。
 
 ## 4. canonical / exceptional 区分 まとめ
 
 | 区分 | 内容 |
 |---|---|
-| **canonical（そのまま保持）** | coordinateContexts / projectCoordinateContextId / selectionArea / terrain（full payload）/ sourceDatasets / searchLocation / activeTerrainId / determinism / imagery / vectorLayers / existingConditions(変換後) / SCT1バイナリ |
+| **canonical（そのまま保持）** | coordinateContexts / projectCoordinateContextId / selectionArea / terrain（full payload）/ sourceDatasets / searchLocation / activeTerrainId / determinism / imagery / vectorLayers / existingConditions(変換後) / SCT1バイナリ / layerMappings / settings |
 | **exceptional（warning化）** | unknown CRS由来のsource / `status:"stale"` terrain / `selectionAreaId:"migrated-unbound"` / `location.mode:"transient"` / `license.redistributeOk≠allowed` |
 | **deferred（SPACERに受け口なし）** | `meshResource` / meshRef existing個体 / 東京測地系30161-30179 / 新旧bounds導出差分の決定（B-4） |
 | **unsupported（import失敗）** | EPSG分類器判定不能（`CRS-UNKNOWN-EPSG`）/ project CRSがgeographic / 参照先source欠落 / checksum不一致 |
@@ -198,6 +202,13 @@ site-context 側は読み取り参照のみ。SPACER 側の正本は変更しな
 4. SPACER `getProjectTerrainGrid`（bridgeLayoutPlacement.ts:99）は現状 referenceMountain を
    返す **stub**。本Adapterの `terrainDocument.surfaceReference` 設定後は Lane T が
    実アセット読込へ置換する。
+5. **ExportEnvelope の checksum は `canonicalHash`**（`canonicalize`+sha256）であり単純sha256でない
+   （Sol指摘反映・§3.16参照）。
+6. **V1 existingConditions は `{id, assetRef}` 参照**。個体化には asset JSON の
+   checksum 検証＋解決が必要（Sol指摘反映・§3.9参照）。
+7. **軸規約の誤ラベル注意**（Sol指摘反映）: site-context の x=easting/y=northing を
+   SPACER の x-along/y-transverse/z-up と宣言するのは下流に誤解釈を与える。**Lane T で
+   変換確定まで terrainDocument への mirror は保留**し、正本は raw payload + metadata のみ。
 
 ## 6. 次工程
 

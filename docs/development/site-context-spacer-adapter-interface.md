@@ -63,6 +63,8 @@ interface SiteContextImportOptions {
 
 ## 4. 出力（Output）
 
+> `inspect` / `import` は **async**（V1→V2正規化 `migrateProjectV1ToV2` と `canonicalHash` が非同期のため。Sol指摘反映）。
+
 ```ts
 type SiteContextImportResult =
   | { ok: true; projectId: string; report: SiteContextImportReport }
@@ -135,7 +137,7 @@ interface SiteContextVersionInfo {
 | `SC-ERR-CORRUPT-SOURCE` | zip展開失敗 / project.json 不正JSON / checksum・size不一致 / manifest不正 |
 | `SC-ERR-MISSING-REQUIRED` | coordinateContexts / projectCoordinateContextId / siteContext 欠落 |
 | `SC-ERR-INCOMPATIBLE-VERSION` | schemaVersion ∉ {1,2} / envelope.version ≠ 1 / format ≠ sitecontext-package |
-| `SC-ERR-INVALID-TERRAIN-REF` | elevationResource 参照アセット欠落 / sourceDatasetId 参照欠落（MIG-SOURCE-MISSING相当） |
+| `SC-ERR-INVALID-TERRAIN-REF` | elevationResource 参照アセット欠落 / sourceDatasetId 参照欠落（MIG-SOURCE-MISSING相当）/ **V1 existingConditions の asset JSON 参照欠落** |
 | `SC-ERR-SCHEMA-FAILED` | V1→V2 正規化失敗（MIG-* 系） / ProjectV2 invariant 違反（I-01〜I-04） |
 | `SC-ERR-TARGET-INVALID` | 生成した PDC Project が `parseProject` 検証NG |
 
@@ -155,7 +157,9 @@ interface SiteContextVersionInfo {
       - modules.terrain.data.siteContext（full payload）
       - modules.terrain.data.selectionArea
       - modules.terrain.data.terrainDocument（activeのみ正規化）
-  → アセット収録（SCT1 → assets/canonical/terrain/*・checksum照合）
+  → アセット収録（SCT1 → assets/canonical/terrain/*・**base64復号後バイトのsha256検証**）
+  → Envelope `files[].checksum` は **site-context `canonicalHash`** で照合（単純sha256ではない。Sol指摘反映）
+  → **V1 existingConditions は `{id, assetRef}` 参照を asset JSON から checksum検証後解決**して個体化
   → license制御（redistributeOk で source 収録判定）
   → parseProject で最終検証 → report 生成
 ```
