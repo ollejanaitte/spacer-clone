@@ -9,11 +9,36 @@ export {
   deserializeHeightfieldBinary,
   heightfieldToBase64,
   base64ToHeightfield,
+  bytesToBase64,
+  base64ToBytes,
   SCT1_MAGIC,
   SCT1_HEADER_SIZE,
 } from "./sct1";
 
-export { canonicalize, sha256Hex, canonicalHash } from "./canonicalize";
+export {
+  gridBoundsFromHeightfield,
+  elevationRangeFromHeightfield,
+  buildTerrainAsset,
+  buildTerrainDocument,
+  buildTerrainAssetManifest,
+  generateTerrain,
+  type TerrainAsset,
+  type TerrainAssetManifest,
+  type TerrainAssetManifestEntry,
+  type TerrainGenerationInput,
+  type TerrainGenerationResult,
+} from "./generation";
+export {
+  TERRAIN_ASSET_MANIFEST_KEY,
+  persistTerrain,
+  extractTerrainDocument,
+  extractTerrainAssetManifest,
+  extractTerrainAsset,
+  verifyTerrainAssetChecksum,
+  type TerrainPersistenceError,
+} from "./terrainPersistence";
+
+export { canonicalize, sha256Hex, sha256BytesHex, canonicalHash } from "./canonicalize";
 
 export { JGD2011_ZONES, ZONE_BY_EPSG, latLonToPlane, planeToLatLon, type Zone } from "./coordinate/transform";
 export {
