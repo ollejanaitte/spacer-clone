@@ -1,0 +1,183 @@
+====================================================================
+SPACER CLONE — Phase Wave 1 Lane S ファイナルレポート
+Reference Business 001 (Wave 1: S-1 / S-2 / S-3)
+====================================================================
+作成日時: 2026-08-16 20:13 JST
+====================================================================
+
+【1. branch / worktree】
+- branch:    lane-s/reference-business-001
+- worktree:  ~/Projects/spacer-clone-lane-s
+- upstream:  origin/lane-s/reference-business-001 (push 成功)
+- 参照repo:  ~/Projects/site-context-prototype (読み取りのみ・変更なし)
+
+【2. 開始SHA / 終了SHA】
+- 開始SHA:   1840cb66ada4e35035478c0bd3f61a431eac3fbe
+  (Wave 0 readiness 記載の Lane S 開始 SHA)
+- fetch後:   origin/main 31a111362ec39f31f74a40f4dd59e2e002a49035
+  → 未コミット差分なし・fast-forward可能 を確認し `git merge --ff-only origin/main` で追従
+- 終了SHA:   51dc4fa6c13c864f8f251a0e4e0ddb4df387be7b
+- main統合:  しない (Wave 1 終了時点)
+
+【3. S-1 Reference Business 001 仕様確定】
+- 成果物: docs/development/reference-business-001-spec.md
+- 内容: 目的 / ユーザー想定 / 対象地域 (郡上市八幡) / terrain / road / bridge /
+  superstructure / bearings / substructure / analysis / integrated 3D / CIM /
+  Save-Load-Reopen / expected outputs / acceptance scenario / Completion Gate /
+  各Laneから受け取る成果物 の16項目を DECIDED として確定。
+- 最終完成像: 13ステップの受入シナリオ (sample選択→load→terrain→road→bridge→
+  super→sub→analysis→integrated 3D→Save→Close→Reopen→同一状態復元)。
+- Wave 1 では橋梁詳細設計値は作り込まず、最終完成像と受入条件のみ固定。
+
+【4. S-2 郡上市八幡 Baseline 確定】
+- 成果物: docs/development/reference-business-001-gujo-baseline.md
+- 確定内容:
+  - 対象地点: 岐阜県郡上市八幡 (検索文字列: 郡上市八幡 / 岐阜県郡上市八幡町)
+  - 中心: 35.7512N / 136.9567E (WGS84)・X=86,522.4 / Y=-27,181.2 (EPSG:6674, pyproj実測)
+  - CRS: JGD2011 平面直角 第7系 (EPSG:6674)・T.P.・m
+  - GSI DEM: dem5a_png (DEM5A・航空レーザ5m・ZL15)・フォールバック 5B→10B
+  - 取得範囲: 約5km×5km rect・bounds (WGS84) lon 136.929-136.9844 / lat 35.7287-35.7737
+  - bounds (EPSG:6674): X 83,996-89,050 / Y -29,697 to -24,665
+  - タイル: ZL15 x 28847-28852 × y 12892-12897 の36枚 (全HTTP 200 実測)
+  - cellSize 5m・約1000×1000セル・標高帯 200-1200m
+  - source metadata / selection area / terrain bounds / origin / elevation / 再現方法を固定
+- 方針: 既存 site-context-prototype の郡上市八幡サンプルを優先。ゼロから別地形は作らない。
+  terrain production 実装は変更しない (Lane T のPORT成果を利用)。
+- 記録事項: site-context transform.ts の EPSG:6674 zone 表記揺れ (zone:6/lon0:136.0) を確認対象として記録。
+
+【5. S-3 道路線形 Sample 準備】
+- 成果物:
+  - frontend/src/liner/samples/reference-business-001/roadAlignment.ts
+  - frontend/src/liner/samples/reference-business-001/__tests__/roadAlignment.test.ts
+  - docs/development/reference-business-001-road-sample.md
+- 内容 (RB001-ROAD-1・郡上市八幡 山岳道路 / 長良川横断):
+  - 概略延長: 約2,450m (S1 900 + C1 100 + A1 250 + C2 100 + S2 1100)
+  - 平面線形: straight/clothoid/arc の複合 (コアgeometryエンジンでchaining・C0/C1連続)
+  - 縦断線形: G1 (-2%) → P1 (parabolic) → G2 (+1.5%)・標高帯 309-330m (盆地床)
+  - 横断: 2車線+路肩・9.0m幅 (XS-RB001)
+  - 橋梁候補区間: STA.1200〜1500 (長良川横断部)・想定支間50m級 (S-4で確定)
+  - 起終点: (85,000.0, -26,900.0) から東へ (EPSG:6674・bounds内)
+- 方針: 既存の道路線形エンジン / sample形式 (RoadReferenceSample 互換 + bridgeCandidate) を利用。
+  道路設計機能を Lane S 内で再実装していない。
+
+【6. sample / fixture 構成】
+- Reference Business 001 (本番相当・Acceptance用): 本 Wave で仕様・Baseline・Road Sampleを確定
+  - docs: reference-business-001-spec / gujo-baseline / road-sample / acceptance-scenario /
+    tutorial-samples / lane-handoffs
+  - fixture: frontend/src/liner/samples/reference-business-001/roadAlignment.ts
+- Tutorial Sample (軽量・学習用): 要件のみ整理 (実装は今後)
+- 区別を reference-business-001-tutorial-samples.md に文書化
+
+【7. acceptance scenario】
+- docs/development/reference-business-001-acceptance-scenario.md
+- 13ステップ (sample選択→load→terrain→road→bridge→super→sub→analysis→integrated 3D→
+  Save→Close→Reopen→同一状態復元) と、各ステップの受入条件・判定方法を固定。
+- 数値 oracle の枠組みは既存 Phase10 oracle 方式に準拠し、数値は S-4 以降で確定。
+
+【8. 変更ファイル】
+- 新規:
+  - docs/development/reference-business-001-spec.md
+  - docs/development/reference-business-001-gujo-baseline.md
+  - docs/development/reference-business-001-road-sample.md
+  - docs/development/reference-business-001-acceptance-scenario.md
+  - docs/development/reference-business-001-tutorial-samples.md
+  - docs/development/reference-business-001-lane-handoffs.md
+  - frontend/src/liner/samples/reference-business-001/roadAlignment.ts
+  - frontend/src/liner/samples/reference-business-001/__tests__/roadAlignment.test.ts
+- 更新:
+  - docs/development/README.md (Lane S 文書を index 登録)
+- production code / Schema / ProjectModel 変更: なし
+- site-context-prototype: 変更なし
+
+【9. test / validation / typecheck / build 結果】
+- targeted vitest (FAST分類): src/liner/samples/reference-business-001/__tests__/roadAlignment.test.ts
+  → 7 passed (C0/C1連続性・全長2450m・bounds内・橋梁候補区間・縦断・横断・shape)
+- npm run test:fast: 424 files passed / 3155 tests passed
+  ※ 2 suite FAIL は `BridgeDefinition regression tests require the project Python
+    environment (.venv)` による既存環境条件 (Python venv未導入) であり、テスト失敗ではない。
+    本変更 (sample/docs) とは無関係。
+- npm run typecheck: PASS
+- npm run build: PASS (dist 生成)
+- git diff --check: PASS
+- frontend source hygiene check: PASS (reference-business-001 配下)
+- frontend Japanese strings check: 報告のみ (既存 mountain-viaduct-500 と同様の
+  sample 内 inline label。既定方針と同一運用)
+
+【10. screenshot / evidence】
+- 画面スクリーンショット: 本 Wave は文書・fixture 中心のため取得なし。
+- テスト証跡: 上記 vitest / typecheck / build の実行ログを本報告の根拠とする。
+
+【11. commit 一覧】
+- d187b51 docs: S-1 Reference Business 001 仕様を確定
+- 1f77726 docs: S-2 郡上市八幡 Baseline を確定
+- 32a2987 feat: S-3 道路線形 Sample (RB001-ROAD-1) と検証テストを追加
+- 51dc4fa docs: acceptance scenario・Tutorial Sample区別・Lane要求を文書化し index へ登録
+- (開始時) 31a1113: Wave 0 ファイナルレポート (ff-only merge で取り込み)
+
+【12. push 結果】
+- git push origin lane-s/reference-business-001 → 成功 (1840cb6..51dc4fa)
+- main への merge: していない
+
+【13. Luna 利用】
+- Codex CLI GPT-5.6 Luna (簡単作業委任): 今回の Wave 1 では委任なし
+  (調査・文書化・fixture整備を Lane S 側で直接実施。委任に値する簡単な単独探索は
+  作業量が少なく必要と判断しなかった)
+
+【14. Sol 利用】
+- Codex CLI GPT-5.6 Sol (高度レビュー / 原因調査): 今回の Wave 1 では委任なし
+  (Wave 1 範囲は文書・fixture中心で、重大な欠落・実業務フロー代表性・他Lane Gate矛盾・
+  terrain/road/bridge接続前提の重大問題・acceptance scenario不足に該当する問題は
+  Lane S 側の検証で検出されなかった)
+
+【15. blocker / 残課題】
+- Blocker (Wave 1 内では解消不要・後続依存):
+  - Lane T: 郡上市八幡 terrain 実データ (DEM5A→Heightfield→SCT1) の提供
+  - Lane B: site-context → SPACER mapping の提供
+  - Lane V: 統合3D Layer Contract の提供
+  - Lane U: 「Reference Business 001 を開く」入口の提供
+  - Lane A: .spacerproj / project.json roundtrip の正式化
+- 残課題:
+  - S-4 橋梁配置 / 支間割 以降 (本 Wave では着手しない)
+  - site-context transform.ts の EPSG:6674 zone 表記揺れの Lane T PORT 時確認
+  - 橋梁詳細設計値・数値 oracle の確定 (S-4以降)
+  - Road sample の LinerDomainDraftVNext / CanonicalRoadData 正規化 (既存 ensureRoadData 経由)
+
+【16. Lane A/B/T/V/U への要求・引渡し事項】
+- docs/development/reference-business-001-lane-handoffs.md に明記。
+- Lane A: sample Project 保存 field / fixture Persistence 要件 / Schema drift green
+- Lane B: 郡上市八幡 import / sample metadata / Adapter Contract
+- Lane T: terrain baseline fixture (EPSG:6674・bounds・DEM5A・5m) / CRS正本表記 / reproducibility
+- Lane V: Layer Contract / camera preset (全景・橋梁区間・路面追従・谷俯瞰) / integrated view
+- Lane U: 「Reference Business 001 を開く」入口 / sample から workflow 開始する導線
+
+【17. S-4 へ進める / まだ進めない】
+- 判定: **S-4 へ進める (条件付き)**。
+  - Lane S 側の Wave 1 成果 (仕様・Baseline・Road Sample・受入シナリオ) は確定済み。
+  - S-4 (橋梁配置/支間割) は Lane S 内で継続可能。
+  - ただし terrain 実データ (Lane T)・統合3D (Lane V)・入口 (Lane U) の成果が
+    揃うまでは、橋梁配置の「実地形への最終照合」と「統合表示の確認」は実行できない。
+  - 統合担当は上記 Lane 成果の状況を確認してから S-4 以降へ進めることを推奨。
+
+【18. Gmail 完了報告 (送信可否)】
+- 宛先: hatapon223101@gmail.com
+- 件名: [SPACER CLONE] Lane S Wave 1 完了報告 (Reference Business 001)
+- 送信手段: この環境には Gmail/SMTP 送信手段 (msmtp/sendmail/mutt/設定済みSMTP) が無く、
+  SMTP 認証情報も未設定のため**送信不可**。
+- 送信用本文:
+  ----------
+  【SPACER CLONE Lane S Wave 1 完了報告】
+  branch: lane-s/reference-business-001
+  終了SHA: 51dc4fa6c13c864f8f251a0e4e0ddb4df387be7b
+  S-1 Reference Business 001仕様確定 / S-2 郡上市八幡Baseline確定 / S-3 道路線形Sample準備 完了。
+  Final Report TXT を添付。
+  Wave 1 Lane S 完了。main統合待ち。
+  ----------
+- Final Report TXT: 本ファイル (SPACER_PhaseW1-LaneS_20260816_2013_ReferenceBusiness001_Wave1.txt)
+
+【19. Discord 進捗報告】
+- 作業開始報告 / S-1・S-2・S-3 完了報告 / commit・push 報告 を Webhook へ送信済み (HTTP 204)。
+- Final Report 送信は本報告完了時に実施。
+
+====================================================================
+判定: Wave 1 Lane S 完了。main統合待ち。
+====================================================================
