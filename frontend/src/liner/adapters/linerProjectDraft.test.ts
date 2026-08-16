@@ -29,7 +29,6 @@ import {
   readLinerDomainDraftFromProject,
 } from "./linerProjectDraft";
 import { validateGeneratedLinerProject } from "../headless/validateGeneratedLinerProject";
-import { validateGeneratedLinerProject } from "../headless/validateGeneratedLinerProject";
 import { convertImporterToPhase35Draft } from "../importer/export/ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../importer/__tests__/fixtures/sampleProject";
 import {
@@ -302,14 +301,22 @@ describe("liner project draft persistence", () => {
     // viewer path adds it via createViewerReviewBaseProject before validation.
     const baseWithSolver = {
       ...base,
-      analysisSettings: { ...base.analysisSettings, solver: "scipy_sparse" },
+      analysisSettings: { ...base.analysisSettings, solver: "scipy_sparse" as const },
     };
     const withLiner = withProjectLinerDraft(baseWithSolver, draft);
     const withApollo = {
       ...withLiner,
       apolloPhase1Unit2: {
-        schemaVersion: "2.0.0",
-        metadata: { projectId: "unit2-e2e", name: "e2e", description: "e2e" },
+        schemaVersion: "2.0.0" as const,
+        metadata: {
+          projectId: "unit2-e2e",
+          name: "e2e",
+          description: "e2e",
+          createdAt: base.project.createdAt,
+          updatedAt: base.project.updatedAt,
+          provisionalStatus: "unverified" as const,
+          localDraftStatus: "saved" as const,
+        },
         nodes: [],
         materialReferences: [],
         members: [],
