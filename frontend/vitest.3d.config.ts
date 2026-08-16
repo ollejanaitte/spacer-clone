@@ -8,6 +8,7 @@ export default defineConfig({
   plugins: [react()],
   test: {
     testTimeout: 40000,
+    setupFiles: ["src/test/ui.setup.ts"],
     include: scan().threeD,
   },
 });
