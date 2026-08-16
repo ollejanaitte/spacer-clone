@@ -6,6 +6,7 @@ import { ja } from "./i18n/ja";
 import { LobbyApp } from "./lobby/routes";
 import { NextApp } from "./next/NextApp";
 import { isNextAppPath } from "./next/routes";
+import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
 import "./styles/tokens.css";
 import "./styles.css";
 
@@ -15,7 +16,15 @@ function getCurrentLocation(): string {
 }
 
 function Root() {
-  const [currentLocation, setCurrentLocation] = useState(() => getCurrentLocation());
+  const [currentLocation, setCurrentLocation] = useState(() => {
+    // レガシー deep-link (/th/run, /compare 等) は App 内部の redirectLegacyRoutes()
+    // が到達不可能なため、ルーティング判定前にここで正規パス (/pro/*) へ置換する。
+    // replaceState は history エントリを増やさない。
+    if (typeof window !== "undefined") {
+      redirectLegacyRoutes();
+    }
+    return getCurrentLocation();
+  });
 
   const handleNavigate = useCallback((path: string) => {
     window.history.pushState({}, "", path);
