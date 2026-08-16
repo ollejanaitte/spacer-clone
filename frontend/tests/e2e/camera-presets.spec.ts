@@ -1,14 +1,12 @@
 import { expect, test } from "@playwright/test";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 test.describe("camera presets visual", () => {
   test.use({ viewport: { width: 1280, height: 800 } });
   test("capture all camera presets", async ({ page }) => {
-    await page.goto("/pro");
-    await expect(page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" })).toBeVisible({ timeout: 60000 });
-    await page.locator("[data-testid=open-liner-list]").click();
-    await page.locator("[data-testid=create-liner]").click();
-    await expect(page.locator("[data-testid=liner-launcher-page]")).toBeVisible();
-    await page.locator("[data-testid=liner-launcher-sample]").click();
+    await openProAndWait(page);
+    await openLinerList(page);
+    await openLinerLauncher(page, "sample");
     await expect(page).toHaveURL("/pro/liner/setup");
     await page.locator("[data-testid=open-liner-preview]").click();
     await page.locator("[data-testid=open-liner-main3d]").click();

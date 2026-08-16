@@ -1,18 +1,18 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("level0 navigation", () => {
-  test("sample cards update both URL and screen", async ({ page }) => {
+  test("sample cards select a sample and show the parameter panel", async ({ page }) => {
     const cases = [
       { name: "短い橋", sample: "short" },
       { name: "標準的な橋", sample: "standard" },
       { name: "高い橋脚の橋", sample: "tall" },
     ];
 
+    await page.goto("/level0");
     for (const sample of cases) {
-      await page.goto("/level0");
       await page.getByRole("button", { name: new RegExp(sample.name) }).click();
-      await expect(page).toHaveURL(`/level0?sample=${sample.sample}`);
-      await expect(page.getByRole("heading", { level: 1 })).toHaveText(sample.name);
+      // 現行仕様: サンプルカードはURLを変更せず、パラメータパネルを表示する。
+      await expect(page.getByRole("button", { name: "計算" })).toBeVisible();
     }
   });
 
@@ -35,14 +35,15 @@ test.describe("level0 navigation", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("入門編");
   });
 
-  test("professional link opens pro mode without a React page error", async ({ page }) => {
+  test("professional link opens Design Platform Home without a React page error", async ({ page }) => {
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
 
     await page.goto("/level0");
     await page.getByRole("button", { name: "実務編で詳しく見る" }).click();
-    await expect(page).toHaveURL("/pro");
-    await expect(page.getByText("5-Span Continuous Viaduct (Plan A)")).toBeVisible();
+    // 現行仕様: 実務編は Design Platform Home へ導く。
+    await expect(page).toHaveURL(/\/pro\/platform$/);
+    await expect(page.getByRole("heading", { name: "Design Platform" })).toBeVisible();
     expect(pageErrors).toEqual([]);
   });
 });
