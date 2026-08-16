@@ -35,6 +35,20 @@ export const MAIN3D_PATH = "/pro/liner/main3d";
 /** Lane U Wave 1: Site Context (site conditions / geographic info) entry page. */
 export const SITE_CONTEXT_ROUTE_PATH = "/pro/site-context";
 
+/** Lane U Wave 2: Road workflow step (dedicated placement screen). */
+export const ROAD_WORKFLOW_ROUTE_PATH = "/pro/workflow/road";
+
+/** Lane U Wave 2: Bridge workflow step (placement / span arrangement screen). */
+export const BRIDGE_WORKFLOW_ROUTE_PATH = "/pro/workflow/bridge";
+
 export function isSiteContextRoute(pathname: string): boolean {
   return pathname === SITE_CONTEXT_ROUTE_PATH;
+}
+
+export function isRoadWorkflowRoute(pathname: string): boolean {
+  return pathname === ROAD_WORKFLOW_ROUTE_PATH;
+}
+
+export function isBridgeWorkflowRoute(pathname: string): boolean {
+  return pathname === BRIDGE_WORKFLOW_ROUTE_PATH;
 }

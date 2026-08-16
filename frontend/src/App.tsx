@@ -141,7 +141,20 @@ import {
   serializeApolloPhase1Unit2ForPersistence,
 } from "./apollo/unit2Draft";
 import { SiteContextEntryPage } from "./workflow/SiteContextEntryPage";
-import { isSiteContextRoute, SITE_CONTEXT_ROUTE_PATH } from "./workflow/routes";
+import { SiteContextPage } from "./workflow/SiteContextPage";
+import { RoadWorkflowPage } from "./workflow/RoadWorkflowPage";
+import { BridgeWorkflowPage } from "./workflow/BridgeWorkflowPage";
+import {
+  BRIDGE_WORKFLOW_ROUTE_PATH,
+  isBridgeWorkflowRoute,
+  isRoadWorkflowRoute,
+  isSiteContextRoute,
+  ROAD_WORKFLOW_ROUTE_PATH,
+  SITE_CONTEXT_ROUTE_PATH,
+} from "./workflow/routes";
+import { createEmptyProject as createEmptyWorkflowProject } from "./next/project/projectDataCore";
+import type { Project as PdcProject } from "./next/project/schema";
+import type { CanonicalWorkflowStep } from "./workflow/canonicalWorkflow";
 import { buildApolloVisualizationModel } from "./apollo/visualization";
 import type { ViewerDisplayModel } from "./viewer/types";
 
@@ -173,6 +186,7 @@ export function App() {
     typeof window !== "undefined" ? window.location.pathname : "/pro";
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createEmptyProject());
+  const [workflowProject, setWorkflowProject] = useState<PdcProject | null>(null);
   const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
   const [selectedSection, setSelectedSection] = useState<SectionKey>("nodes");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -387,6 +401,50 @@ export function App() {
     window.history.pushState({}, "", "/");
     window.dispatchEvent(new PopStateEvent("popstate"));
   }, []);
+
+  const createWorkflowProject = useCallback(() => {
+    setWorkflowProject(createEmptyWorkflowProject(project.project.name || "ワークフローProject"));
+  }, [project.project.name]);
+
+  const openRoadWorkflow = useCallback(() => {
+    if (workflowProject === null) {
+      createWorkflowProject();
+    }
+    navigatePro(ROAD_WORKFLOW_ROUTE_PATH);
+  }, [workflowProject, createWorkflowProject, navigatePro]);
+
+  const openBridgeWorkflow = useCallback(() => {
+    if (workflowProject === null) {
+      createWorkflowProject();
+    }
+    navigatePro(BRIDGE_WORKFLOW_ROUTE_PATH);
+  }, [workflowProject, createWorkflowProject, navigatePro]);
+
+  const handleWorkflowNavigateStep = useCallback(
+    (step: CanonicalWorkflowStep) => {
+      if (step.id === "road") {
+        openRoadWorkflow();
+        return;
+      }
+      if (step.id === "bridgePlacement") {
+        openBridgeWorkflow();
+        return;
+      }
+      if (step.route !== null) {
+        navigatePro(step.route);
+      }
+    },
+    [openRoadWorkflow, openBridgeWorkflow, navigatePro],
+  );
+
+  useEffect(() => {
+    if (
+      (isRoadWorkflowRoute(currentPathname) || isBridgeWorkflowRoute(currentPathname)) &&
+      workflowProject === null
+    ) {
+      setWorkflowProject(createEmptyWorkflowProject(project.project.name || "ワークフローProject"));
+    }
+  }, [currentPathname, workflowProject, project.project.name]);
 
   const createLinerModel = useCallback(() => {
     const draft = createDefaultLinerDraft();
@@ -1389,17 +1447,55 @@ export function App() {
   }
 
   if (isSiteContextRoute(currentPathname)) {
+    if (workflowProject === null) {
+      return (
+        <SiteContextEntryPage
+          projectName={project.project.name}
+          projectId={project.project.id}
+          isEmptyProject={isEmptyProject}
+          onBackToApp={() => navigatePro("/pro")}
+          onNavigateStep={(step) => {
+            if (step.route !== null) {
+              navigatePro(step.route);
+            }
+          }}
+          onOpenWorkflow={createWorkflowProject}
+        />
+      );
+    }
     return (
-      <SiteContextEntryPage
-        projectName={project.project.name}
-        projectId={project.project.id}
-        isEmptyProject={isEmptyProject}
+      <SiteContextPage
+        project={workflowProject}
+        onProjectChange={setWorkflowProject}
         onBackToApp={() => navigatePro("/pro")}
-        onNavigateStep={(step) => {
-          if (step.route !== null) {
-            navigatePro(step.route);
-          }
-        }}
+        onNavigateStep={handleWorkflowNavigateStep}
+        onOpenRoadWorkflow={openRoadWorkflow}
+      />
+    );
+  }
+
+  if (isRoadWorkflowRoute(currentPathname)) {
+    return (
+      <RoadWorkflowPage
+        project={workflowProject}
+        onProjectChange={setWorkflowProject}
+        onBackToApp={() => navigatePro("/pro")}
+        onNavigateStep={handleWorkflowNavigateStep}
+        onOpenSiteContext={() => navigatePro(SITE_CONTEXT_ROUTE_PATH)}
+        onOpenBridgeWorkflow={openBridgeWorkflow}
+      />
+    );
+  }
+
+  if (isBridgeWorkflowRoute(currentPathname)) {
+    return (
+      <BridgeWorkflowPage
+        project={workflowProject}
+        onProjectChange={setWorkflowProject}
+        onBackToApp={() => navigatePro("/pro")}
+        onNavigateStep={handleWorkflowNavigateStep}
+        onOpenRoadWorkflow={() => navigatePro(ROAD_WORKFLOW_ROUTE_PATH)}
+        onOpenAnalysis={() => navigatePro("/pro")}
       />
     );
   }
