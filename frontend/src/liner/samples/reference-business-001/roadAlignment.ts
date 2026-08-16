@@ -117,7 +117,7 @@ export function buildRb001Vertical(): VerticalElement[] {
   return [
     { type: "grade", id: "G1", startPhysicalDistance: 0, startElevation: 330.0, grade: -0.02, length: 1000 },
     { type: "parabolic", id: "P1", startPhysicalDistance: 1000, startElevation: 310.0, gradeIn: -0.02, gradeOut: 0.015, length: 200 },
-    { type: "grade", id: "G2", startPhysicalDistance: 1200, startElevation: 309.0, grade: 0.015, length: 1250 },
+    { type: "grade", id: "G2", startPhysicalDistance: 1200, startElevation: 309.5, grade: 0.015, length: 1250 },
   ];
 }
 

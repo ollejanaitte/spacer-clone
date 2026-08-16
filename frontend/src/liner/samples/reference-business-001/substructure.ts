@@ -34,6 +34,7 @@ import {
   buildRb001HorizontalAlignment,
   REF_BUSINESS_001_ROAD_ID,
 } from "./roadAlignment";
+import { GUJO_COORDINATE_CONTEXT_ID, GUJO_SAMPLE_ASSET_PATH } from "../../../terrain/gujoSample";
 
 export const RB001_SUB_ID = "RB001-SUB-1";
 
@@ -55,7 +56,7 @@ function buildSupportHandoffFromLayout(layout: ReturnType<typeof buildRb001Bridg
     skewAngleRad: s.skewAngleRad ?? 0,
     terrainElevation: s.placement?.terrainElevation ?? null,
     roadReferenceId: REF_BUSINESS_001_ROAD_ID,
-    coordinateContextId: "ctx-gujo-jgd2011-6674",
+    coordinateContextId: GUJO_COORDINATE_CONTEXT_ID,
   }));
   return {
     handoffId: `SH-SUP-${RB001_BRIDGE_ID}`,
@@ -193,8 +194,8 @@ export function buildRb001Substructure(): SubstructureDocument {
     pileConfigurations: buildPileConfigurations(),
     terrainReferences: {
       moduleId: "terrain",
-      surfaceReference: "assets/terrain/gujo-hachiman-sample.sct1",
-      coordinateContextId: "ctx-gujo-jgd2011-6674",
+      surfaceReference: GUJO_SAMPLE_ASSET_PATH,
+      coordinateContextId: GUJO_COORDINATE_CONTEXT_ID,
     },
     existingReferences: { moduleId: "existingConditions", documentReferenceId: "existing-gujo-hachiman" },
   });

@@ -52,10 +52,11 @@ describe("roadAdapter (V-4 real road)", () => {
     const bridgeZ = points.slice(bridgeStartIndex, bridgeEndIndex + 1).map((p) => p.z);
     expect(Math.min(...bridgeZ)).toBeGreaterThanOrEqual(309 - 1e-6);
     // Vertical profile: G1 descent to 310@1000, parabolic 1000-1200 ending at
-    // 309.5, then G2 climb (+1.5%) from 1200 -> 313.5@1500.
+    // 309.5 (C0連続: G2 startElevation=309.5), then G2 climb (+1.5%)
+    // from 1200 -> 314.0@1500.
     expect(elevationAt(1200, road.vertical)).toBeGreaterThanOrEqual(309);
     expect(elevationAt(1200, road.vertical)).toBeLessThanOrEqual(310);
-    expect(elevationAt(1500, road.vertical)).toBeCloseTo(313.5, 3);
+    expect(elevationAt(1500, road.vertical)).toBeCloseTo(314, 3);
   });
 
   it("keeps the road within the full Gujo terrain bounds (same coordinate system)", () => {

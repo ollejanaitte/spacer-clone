@@ -28,6 +28,7 @@ import {
   REF_BUSINESS_001_ROAD_ID,
 } from "./roadAlignment";
 import { buildBearingConfiguration } from "../../../next/modules/superstructure/superstructureComponents";
+import { GUJO_COORDINATE_CONTEXT_ID } from "../../../terrain/gujoSample";
 
 export const RB001_SUPER_ID = "RB001-SUPER-1";
 
@@ -149,7 +150,7 @@ function buildSupportHandoffFromLayout(layout: ReturnType<typeof buildRb001Bridg
     skewAngleRad: s.skewAngleRad ?? 0,
     terrainElevation: s.placement?.terrainElevation ?? null,
     roadReferenceId: REF_BUSINESS_001_ROAD_ID,
-    coordinateContextId: "ctx-gujo-jgd2011-6674",
+    coordinateContextId: GUJO_COORDINATE_CONTEXT_ID,
   }));
   return {
     handoffId: `SH-SUP-${RB001_BRIDGE_ID}`,
