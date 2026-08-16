@@ -24,6 +24,19 @@ if (!OUT) {
   throw new Error("P10_SB_OUTPUT is required (verify_oracle_evidence.py sets it)");
 }
 
+type SampleKind = Parameters<typeof generateSample>[0];
+
+interface SupportSpec {
+  kind: SampleKind;
+  station: number;
+}
+
+interface SubstructureFixture {
+  supports: string[];
+  geometrySource?: string;
+  [supportId: string]: string | string[] | SupportSpec | undefined;
+}
+
 describe("Phase10 SB-04 quantity derivation (REF-MOUNTAIN-1)", () => {
   function build(supportId: string, kind: Parameters<typeof generateSample>[0], station: number) {
     const s = generateSample(kind, supportId, station);
@@ -46,10 +59,10 @@ describe("Phase10 SB-04 quantity derivation (REF-MOUNTAIN-1)", () => {
     return built.document;
   }
   it("derives and freezes quantities from fixture_constants.json", () => {
-    const fx = JSON.parse(readFileSync(FIXTURE, "utf-8"));
+    const fx = JSON.parse(readFileSync(FIXTURE, "utf-8")) as { substructure: SubstructureFixture };
     const sub = fx.substructure;
     const docs = sub.supports.map((sid: string) => {
-      const spec = sub[sid];
+      const spec = sub[sid] as SupportSpec;
       return build(sid, spec.kind, spec.station);
     });
     const qs = docs.map((d) => computeSubstructureQuantity(d));
