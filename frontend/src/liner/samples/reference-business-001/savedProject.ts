@@ -20,7 +20,7 @@
 import { createEmptyProject, parseProject, serializeProject, deserializeProject } from "../../../next/project/projectDataCore";
 import type { Project } from "../../../next/project/schema";
 import { persistTerrain, extractTerrainDocument } from "../../../terrain/terrainPersistence";
-import { buildGujoSampleTerrainDocument, buildGujoSampleAsset } from "../../../terrain/gujoSample";
+import { buildGujoSampleTerrainDocument, buildGujoSampleAsset, GUJO_COORDINATE_CONTEXT, GUJO_COORDINATE_CONTEXT_ID, GUJO_SOURCE_DATASET } from "../../../terrain/gujoSample";
 import { writeRoadWorkflowState, writeBridgeWorkflowState } from "../../../workflow/workflowState";
 import { buildRb001RoadWorkflowState, computeSpanArrangement, RB001_BRIDGE_WORKFLOW_NAME } from "../../../workflow/roadBridgeSamples";
 import { buildRb001Superstructure } from "./superstructure";
@@ -52,8 +52,17 @@ export interface Rb001CompleteProjectResult {
 export function buildRb001CompleteProject(): Rb001CompleteProjectResult {
   let project = createEmptyProject(RB001_COMPLETE_PROJECT_NAME);
 
-  // terrain (Lane T asset + document)
+  // terrain (Lane T asset + document) + siteContext metadata (Lane B スロット)
   project = persistTerrain(project, buildGujoSampleTerrainDocument(), buildGujoSampleAsset());
+  project = {
+    ...project,
+    metadata: {
+      ...project.metadata,
+      siteContextCoordinateContexts: [GUJO_COORDINATE_CONTEXT],
+      siteContextProjectCoordinateContextId: GUJO_COORDINATE_CONTEXT_ID,
+      siteContextSourceDatasets: [GUJO_SOURCE_DATASET],
+    },
+  };
 
   // road (S-3 workflowState)
   project = writeRoadWorkflowState(project, buildRb001RoadWorkflowState("2026-08-16T00:00:00.000Z"));
