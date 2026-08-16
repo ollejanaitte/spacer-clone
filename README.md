@@ -161,6 +161,19 @@ npm run test:e2e
 npm run build
 ```
 
+Frontend test gates (see [docs/development/vitest-gates.md](docs/development/vitest-gates.md)):
+
+```bash
+npm run test:fast      # pure logic (node)          ~35 s
+npm run test:ui        # React / DOM (jsdom)        ~46 s
+npm run test:3d        # Three.js / Canvas          ~6 s
+npm run test:slow      # heavy integration E2E      ~64 s
+npm run test:electron  # desktop/electron           <1 s
+npm run test:full      # FAST+UI+3D+SLOW+Electron+regression+parity (final gate)
+```
+
+Use `test:fast` + `typecheck` for routine pure-logic changes; run `test:full` only at milestone completion.
+
 Electron:
 
 ```bash

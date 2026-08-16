@@ -50,6 +50,14 @@ Every pull request must satisfy these acceptance criteria unless the PR explicit
 - WebGL initialization failure must not make the whole app a blank screen.
 - A minimal 2D fallback view must display nodes, members, support outline, nodal load outline, selection highlight, and Fit to model when Three.js cannot initialize.
 
+### Frontend Test Gates
+
+- Frontend Vitest gates follow [vitest-gates.md](vitest-gates.md): FAST / UI / 3D / SLOW / Electron / FULL.
+- Routine pure-logic changes: `npm run test:fast` + `npm run typecheck`.
+- UI changes: `npm run test:fast` + `npm run test:ui` + `npm run typecheck` + `npm run build`.
+- 3D / Canvas / Electron changes: targeted gate plus `test:fast` and `typecheck`/`build` as needed.
+- Milestone completion runs `npm run test:full` once (final gate), not repeatedly during normal work.
+
 ### Desktop/Electron
 
 - Electron build passes when Electron packaging exists, or at minimum Electron main process tests pass.

@@ -74,3 +74,20 @@
 - force push（`git push -f`）
 - 未承認merge
 - 他worktreeへの編集
+
+## Frontend Test Gates (AIエージェント標準Gate)
+
+フロントエンドの検証は [docs/development/vitest-gates.md](docs/development/vitest-gates.md) に従う。
+作業ディレクトリは `frontend/`。
+
+| 変更 | 実行Gate |
+| --- | --- |
+| 純ロジック | `npm run test:fast` + `npm run typecheck` |
+| UIコンポーネント | `npm run test:fast` + `npm run test:ui` + `npm run typecheck` + `npm run build` |
+| 3D / Canvas / Viewer | `npm run test:fast` + `npm run test:3d`（必要に応じて electron/e2e） |
+| Electron | `npm run test:fast` + `npm run test:electron` + `npm run typecheck` + `npm run build` |
+| マイルストーン完了 | `npm run test:full`（最終Gate・原則1回）+ `npm run typecheck` + `npm run build` |
+
+- 全件Vitest (`test:full`) は最終Gate。作業途中で何度も回さない。
+- `test:fast` は通常修正の代表的な高速Gate（約35秒）。
+- SLOW / 3D テストは削除・skipしない。専用Gateと `test:full` で必ず実行する。
