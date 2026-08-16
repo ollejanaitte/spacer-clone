@@ -27,6 +27,8 @@ const THREE_D_PATTERNS = [
   /^src\/viewer\/Viewer3D.*\.test\.tsx$/,
   /^src\/viewer\/threeUtils.*\.test\.ts$/,
   /^src\/viewer\/SceneBuilder\.apolloVisualization\.test\.ts$/,
+  /^src\/viewer\/layers\/__tests__\/buildLayerScene.*\.test\.ts$/,
+  /^src\/viewer\/unified\/__tests__\/.*\.test\.tsx$/,
   /^src\/substructure\/__tests__\/threeFactory\.test\.ts$/,
   /^src\/substructure\/__tests__\/substructureViewer3D\.test\.tsx$/,
   /^src\/apollo\/__tests__\/(bridgeStructureVisualization|continuousGirderVisualization|visualizationBuilder|visualizationBoundsBracing)\.test\.ts$/,
