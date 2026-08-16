@@ -6,6 +6,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { selectApolloStep } from "./helpers/app";
 
 const OUT_ROOT = path.resolve(__dirname, "../../../docs/apollo/step5_japanese/jp3");
 const EVIDENCE = path.join(OUT_ROOT, "evidence/jp3a");
@@ -214,13 +215,21 @@ async function collectFromPage(page: Page, screen: string, shotName: string): Pr
 }
 
 async function openApolloBasics(page: Page) {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("apollo_phase1_onboarding_dismissed", "true");
+    window.localStorage.setItem("apollo_phase1_sample_guide_dismissed", "true");
+  });
   await page.goto("/pro/apollo");
   await page.getByTestId("apollo-start-screen").getByRole("button", { name: "新規作成" }).click();
   await expect(page.getByTestId("apollo-basics-screen")).toBeVisible({ timeout: 30_000 });
 }
 
 async function applySample(page: Page) {
-  await page.getByTestId("apollo-sample-apply-generate").click();
+  const applyGenerate = page.getByTestId("apollo-sample-apply-generate");
+  await expect(applyGenerate).toBeEnabled({ timeout: 30_000 });
+  await expect(applyGenerate).toBeVisible({ timeout: 30_000 });
+  await applyGenerate.click();
+  await selectApolloStep(page, "WF-02");
   await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE", {
     timeout: 30_000,
   });
@@ -228,6 +237,7 @@ async function applySample(page: Page) {
 
 test.describe("Apollo Step 5-JP3-A live DOM residual English audit", () => {
   test("harvest residual English inventory across major surfaces", async ({ page }) => {
+    test.setTimeout(180_000);
     ensureDirs();
     const all: ScanHit[] = [];
 
@@ -239,6 +249,9 @@ test.describe("Apollo Step 5-JP3-A live DOM residual English audit", () => {
 
     // Guided slides
     for (const id of ["G01", "G05", "G09", "G12", "G15"] as const) {
+      const toggle = page.getByTestId("apollo-guided-show-all-toggle");
+      await toggle.scrollIntoViewIfNeeded().catch(() => undefined);
+      await toggle.click({ force: true });
       await page.getByTestId(`apollo-guided-jump-${id}`).click();
       await expect(page.getByTestId(`apollo-guided-slide-${id}`)).toBeVisible();
       all.push(...(await collectFromPage(page, `guided-${id}`, `03-guided-${id}`)));

@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { selectApolloStep } from "./helpers/app";
 
 /**
  * Apollo Step 5-R residual corrections GUI/E2E (R4).
@@ -23,6 +24,7 @@ async function openBasics(page: Page) {
 
 async function applyGenerateCompleteSample(page: Page) {
   await page.getByTestId("apollo-sample-apply-generate").click();
+  await selectApolloStep(page, "WF-02");
   await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE", {
     timeout: 30_000,
   });
@@ -131,6 +133,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
 
   test("E2E-S5R-007 G09 lists attachment depths", async ({ page }) => {
     await openBasics(page);
+    await page.getByTestId("apollo-guided-show-all-toggle").click();
     await page.getByTestId("apollo-guided-jump-G09").click();
     await expect(page.getByTestId("apollo-guided-slide-G09")).toBeVisible();
     await expect(page.getByTestId("apollo-guided-primary-fields")).toContainText(
@@ -167,10 +170,12 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
   test("E2E-S5R-010 Persistence via workspace save", async ({ page }) => {
     await openBasics(page);
     await applyGenerateCompleteSample(page);
-    await page.getByRole("button", { name: "一覧編集モード" }).click();
-    await expect(page.getByTestId("apollo-list-mode")).toBeVisible();
-    await page.getByTestId("apollo-workspace-save").click();
-    await expect(page.getByTestId("apollo-workspace-select").locator("option")).not.toHaveCount(0);
+    // Save via the header 保存 button downloads project.json.
+    const [download] = await Promise.all([
+      page.waitForEvent("download", { timeout: 15_000 }),
+      page.getByTestId("apollo-save-project").click(),
+    ]);
+    expect(download.suggestedFilename()).toBe("project.json");
   });
 
   test("E2E-S5R-011 Mobile / a11y modal + G09", async ({ page }) => {
@@ -182,6 +187,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await expect(page.getByRole("dialog", { name: "サンプルを再適用しますか？" })).toBeVisible();
     await expect(page.getByRole("dialog")).toHaveAttribute("aria-modal", "true");
     await page.getByTestId("apollo-sample-reapply-cancel").click();
+    await page.getByTestId("apollo-guided-show-all-toggle").click();
     await page.getByTestId("apollo-guided-jump-G09").click();
     await expect(page.getByTestId("apollo-guided-slide-G09")).toBeVisible();
     await shot(page, "mobile/e2e-s5r-011-mobile.png");
@@ -202,6 +208,7 @@ test.describe("Apollo Step 5-R residual corrections E2E", () => {
     await openBasics(page);
     await applyGenerateCompleteSample(page);
     await expect(page.getByTestId("apollo-pavement-presence-PROVIDED")).toBeChecked();
+    await page.getByTestId("apollo-guided-show-all-toggle").click();
     await page.getByTestId("apollo-guided-jump-G15").click();
     await expect(page.getByTestId("apollo-guided-g15-pending")).toBeVisible();
     const serious = consoleErrors.filter(

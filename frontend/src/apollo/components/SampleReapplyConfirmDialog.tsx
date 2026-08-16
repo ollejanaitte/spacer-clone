@@ -21,7 +21,9 @@ export function SampleReapplyConfirmDialog({ open, detection, onChoice }: Props)
 
   useEffect(() => {
     if (!open) return;
-    cancelRef.current?.focus();
+    // GuardDialogPortal mounts children asynchronously (container is set in its
+    // own effect after this component's render). Focus via callback ref instead
+    // so the cancel button is focused once it actually lands in the portal DOM.
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
         event.preventDefault();
@@ -116,7 +118,10 @@ export function SampleReapplyConfirmDialog({ open, detection, onChoice }: Props)
         </details>
         <div className="apollo-guard-actions">
           <button
-            ref={cancelRef}
+            ref={(node) => {
+              cancelRef.current = node;
+              if (node && open) node.focus();
+            }}
             type="button"
             data-testid="apollo-sample-reapply-cancel"
             onClick={() => onChoice("cancel")}

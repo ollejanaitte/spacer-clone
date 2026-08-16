@@ -27,3 +27,13 @@ export async function openLinerLauncher(page: Page, mode: "gui" | "sample"): Pro
   await expect(page.getByTestId("liner-launcher-page")).toBeVisible();
   await page.getByTestId(`liner-launcher-${mode}`).click();
 }
+
+/**
+ * Apollo workflow control screen はマスター・ディテール型で、詳細カード
+ * (`apollo-wf-step-*) はナビゲーターで選択中の1工程のみ描画される。
+ * 工程カードを検証する前にナビゲーターから選択する。
+ */
+export async function selectApolloStep(page: Page, stepId: string): Promise<void> {
+  await page.getByTestId(`apollo-wf-nav-${stepId}`).click();
+  await expect(page.getByTestId(`apollo-wf-step-${stepId}`)).toBeVisible();
+}

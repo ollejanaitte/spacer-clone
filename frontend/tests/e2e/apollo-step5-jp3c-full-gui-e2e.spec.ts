@@ -4,6 +4,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { selectApolloStep } from "./helpers/app";
 
 const OUT = path.resolve(__dirname, "../../../docs/apollo/step5_japanese/jp3");
 const EVIDENCE = path.join(OUT, "evidence/jp3c");
@@ -30,6 +31,7 @@ async function openBasics(page: Page) {
 
 async function applySample(page: Page) {
   await page.getByTestId("apollo-sample-apply-generate").click();
+  await selectApolloStep(page, "WF-02");
   await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE", {
     timeout: 30_000,
   });
@@ -193,6 +195,7 @@ test.describe("Apollo Step 5-JP3-C full Japanese GUI/E2E", () => {
       "G14",
       "G15",
     ] as const) {
+      await page.getByTestId("apollo-guided-show-all-toggle").click();
       await page.getByTestId(`apollo-guided-jump-${id}`).click();
       await expect(page.getByTestId(`apollo-guided-slide-${id}`)).toBeVisible();
     }

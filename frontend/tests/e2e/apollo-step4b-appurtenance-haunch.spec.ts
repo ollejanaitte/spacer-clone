@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { selectApolloStep } from "./helpers/app";
 
 /**
  * Apollo Step 4-B WF-03 / WF-05 E2E.
@@ -24,10 +25,9 @@ async function fillSampleAndGenerate(page: import("@playwright/test").Page) {
     .getByTestId("apollo-bridge-structure-panel")
     .getByRole("button", { name: "動作確認用サンプル値を入力" })
     .click();
-  await page
-    .getByTestId("apollo-bridge-structure-panel")
-    .getByRole("button", { name: "構造を生成" })
-    .click();
+  await page.getByTestId("apollo-generate-structure").click();
+  // マスター・ディテール型UIでは詳細カードは選択中の工程のみ描画される。
+  await selectApolloStep(page, "WF-02");
   await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE");
 }
 
@@ -46,7 +46,7 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     fs.mkdirSync(EVIDENCE_DIR, { recursive: true });
   });
 
-  test("E2E-S4B-001: legacy sample migration shows NOT_PROVIDED (no auto entities)", async ({
+  test("E2E-S4B-001: sample apply sets curb/railing PROVIDED and median/barrier explicit-none", async ({
     page,
   }) => {
     await openWorkflowScreen(page);
@@ -55,23 +55,20 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await expect(page.getByTestId("apollo-appurtenance-panel")).toBeVisible();
     await expect(page.getByTestId("apollo-haunch-panel")).toBeVisible();
 
-    for (const slot of [
-      "LEFT_CURB",
-      "RIGHT_CURB",
-      "LEFT_WALL_RAILING",
-      "RIGHT_WALL_RAILING",
-      "MEDIAN",
-      "OPTIONAL_BARRIER",
-    ]) {
+    // Legacy migration (no auto entities): MEDIAN / OPTIONAL_BARRIER stay
+    // explicit-none; curb/railing slots are provided by the sample preset.
+    for (const slot of ["MEDIAN", "OPTIONAL_BARRIER"]) {
       await expect(page.getByTestId(`apollo-appurtenance-presence-${slot}`)).toHaveValue(
-        "NOT_PROVIDED",
+        "EXPLICIT_NONE",
       );
     }
+    for (const slot of ["LEFT_CURB", "RIGHT_CURB", "LEFT_WALL_RAILING", "RIGHT_WALL_RAILING"]) {
+      await expect(page.getByTestId(`apollo-appurtenance-presence-${slot}`)).toHaveValue("PROVIDED");
+    }
 
+    await selectApolloStep(page, "WF-03");
     const wf03 = page.getByTestId("apollo-wf-step-WF-03");
-    await expect(wf03).toHaveAttribute("data-status", /AVAILABLE|INCOMPLETE|READY|RECOMMENDED/);
-    await expect(wf03).not.toHaveAttribute("data-status", "COMPLETE");
-
+    await expect(wf03).toHaveAttribute("data-status", "COMPLETE");
     await page.screenshot({
       path: path.join(EVIDENCE_DIR, "e2e-s4b-001-not-provided.png"),
       fullPage: true,
@@ -88,11 +85,13 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
 
     await page.getByTestId("apollo-appurtenance-regenerate").click();
 
+    await selectApolloStep(page, "WF-03");
     await expect(page.getByTestId("apollo-wf-step-WF-03")).toHaveAttribute("data-status", "COMPLETE");
+    await expect(page.getByTestId("apollo-wf-step-WF-03")).toContainText("正式認可なし");
+    await selectApolloStep(page, "WF-05");
     await expect(page.getByTestId("apollo-wf-step-WF-05")).toHaveAttribute("data-status", "COMPLETE");
-    await expect(page.getByTestId("apollo-wf-step-WF-03")).toContainText("NOT_AUTHORIZED");
-    await expect(page.getByTestId("apollo-wf-step-WF-05")).toContainText("NOT_AUTHORIZED");
-    await expect(page.getByTestId("apollo-haunch-context")).toContainText("BSSD haunches: 0");
+    await expect(page.getByTestId("apollo-wf-step-WF-05")).toContainText("正式認可なし");
+    await expect(page.getByTestId("apollo-haunch-context")).toContainText("ハンチ投影件数: 0");
 
     await page.screenshot({
       path: path.join(EVIDENCE_DIR, "e2e-s4b-002-explicit-none-complete.png"),
@@ -127,9 +126,10 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await page.getByTestId("apollo-appurtenance-height-RIGHT_CURB").press("Enter");
 
     await page.getByTestId("apollo-appurtenance-regenerate").click();
+    await selectApolloStep(page, "WF-03");
     await expect(page.getByTestId("apollo-wf-step-WF-03")).toHaveAttribute("data-status", "COMPLETE");
-    await expect(page.getByTestId("apollo-appurtenance-local-crs-warning")).toContainText("Step 4-E");
-    await expect(page.getByTestId("apollo-appurtenance-dev-banner")).toContainText("NOT_GRANTED");
+    await expect(page.getByTestId("apollo-appurtenance-local-crs-warning")).toContainText("将来工程待ち");
+    await expect(page.getByTestId("apollo-appurtenance-dev-banner")).toContainText("正式認可なし");
 
     await page.screenshot({
       path: path.join(EVIDENCE_DIR, "e2e-s4b-003-appurtenance-provided.png"),
@@ -151,9 +151,10 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await page.getByTestId("apollo-haunch-apply-all-button").click();
     await page.getByTestId("apollo-haunch-regenerate").click();
 
+    await selectApolloStep(page, "WF-05");
     await expect(page.getByTestId("apollo-wf-step-WF-05")).toHaveAttribute("data-status", "COMPLETE");
-    await expect(page.getByTestId("apollo-haunch-context")).toContainText("BSSD haunches: 4");
-    await expect(page.getByTestId("apollo-wf-step-WF-05")).toContainText("NOT_AUTHORIZED");
+    await expect(page.getByTestId("apollo-haunch-context")).toContainText("ハンチ投影件数: 4");
+    await expect(page.getByTestId("apollo-wf-step-WF-05")).toContainText("正式認可なし");
 
     await page.screenshot({
       path: path.join(EVIDENCE_DIR, "e2e-s4b-004-haunch-provided.png"),
@@ -180,6 +181,7 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await page.getByTestId("apollo-appurtenance-height-LEFT_CURB").fill("0.25");
     await page.getByTestId("apollo-appurtenance-height-LEFT_CURB").press("Enter");
 
+    await selectApolloStep(page, "WF-03");
     await expect(page.getByTestId("apollo-wf-step-WF-03")).toHaveAttribute("data-status", "BLOCKED");
     await expect(page.getByTestId("apollo-appurtenance-diagnostics-LEFT_CURB")).toContainText(
       "測点範囲",
@@ -198,6 +200,7 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await setAllAppurtenancesNone(page);
     await setAllHaunchesNone(page);
     await page.getByTestId("apollo-appurtenance-regenerate").click();
+    await selectApolloStep(page, "WF-03");
     await expect(page.getByTestId("apollo-wf-step-WF-03")).toHaveAttribute("data-status", "COMPLETE");
 
     await page.getByTestId("apollo-appurtenance-presence-MEDIAN").selectOption("NOT_PROVIDED");
@@ -215,9 +218,10 @@ test.describe("Apollo Step 4-B appurtenance / haunch", () => {
     await openWorkflowScreen(page);
     await expect(page.getByTestId("apollo-appurtenance-panel")).toBeVisible();
     await expect(page.getByTestId("apollo-haunch-panel")).toBeVisible();
+    await selectApolloStep(page, "WF-06");
     await expect(page.getByTestId("apollo-wf-step-WF-06")).toHaveAttribute("data-status", "BLOCKED");
-    await expect(page.getByTestId("apollo-appurtenance-local-crs-warning")).toContainText("Step 4-E");
-    await expect(page.getByTestId("apollo-haunch-datum")).toContainText("Step 4-C");
+    await expect(page.getByTestId("apollo-appurtenance-local-crs-warning")).toContainText("将来工程待ち");
+    await expect(page.getByTestId("apollo-haunch-datum")).toContainText("3Dソリッド・数量・自重の接続状態");
     await expect(page.getByTestId("apollo-wf-authorization-summary")).toContainText("正式認可なし");
 
     await page.screenshot({

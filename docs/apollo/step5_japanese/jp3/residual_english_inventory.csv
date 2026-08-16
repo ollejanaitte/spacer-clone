@@ -1,6 +1,5 @@
 screen,selector,text,visibility,layer,allowlisted,reason,screenshot
-basics-empty,p,"推奨工程: WF-02 / 完了 0/15",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
-basics-empty,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
+basics-empty,p,"推奨工程: WF-01 / 完了 0/15",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
 basics-empty,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
 basics-empty,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
 basics-empty,li,"WF_PREREQUISITE_INCOMPLETE: 先行工程が未完了のため、この工程は未着手です。",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
@@ -11,8 +10,7 @@ basics-empty,li,"数値計算の公開停止: true",visible,L3,true,technical-de
 basics-empty,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
 basics-empty,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
 basics-empty,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/01-basics-empty.png
-basics-sample,p,"推奨工程: WF-08 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
-basics-sample,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
+basics-sample,p,"推奨工程: WF-01 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
 basics-sample,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
 basics-sample,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
 basics-sample,li,"WF_NOT_AUTHORIZED: 開発上の完了です。正式認可は未付与です。",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
@@ -25,8 +23,7 @@ basics-sample,li,"数値計算の公開停止: true",visible,L3,true,technical-d
 basics-sample,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
 basics-sample,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
 basics-sample,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/02-basics-sample.png
-guided-G01,p,"推奨工程: WF-08 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
-guided-G01,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
+guided-G01,p,"推奨工程: WF-01 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
 guided-G01,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
 guided-G01,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
 guided-G01,li,"WF_NOT_AUTHORIZED: 開発上の完了です。正式認可は未付与です。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
@@ -39,8 +36,7 @@ guided-G01,li,"数値計算の公開停止: true",visible,L3,true,technical-deta
 guided-G01,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
 guided-G01,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
 guided-G01,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/03-guided-G01.png
-guided-G05,p,"推奨工程: WF-08 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
-guided-G05,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
+guided-G05,p,"推奨工程: WF-01 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
 guided-G05,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
 guided-G05,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
 guided-G05,li,"WF_NOT_AUTHORIZED: 開発上の完了です。正式認可は未付与です。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
@@ -53,8 +49,7 @@ guided-G05,li,"数値計算の公開停止: true",visible,L3,true,technical-deta
 guided-G05,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
 guided-G05,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
 guided-G05,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/03-guided-G05.png
-guided-G09,p,"推奨工程: WF-08 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
-guided-G09,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
+guided-G09,p,"推奨工程: WF-01 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
 guided-G09,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
 guided-G09,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
 guided-G09,li,"WF_NOT_AUTHORIZED: 開発上の完了です。正式認可は未付与です。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
@@ -67,8 +62,7 @@ guided-G09,li,"数値計算の公開停止: true",visible,L3,true,technical-deta
 guided-G09,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
 guided-G09,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
 guided-G09,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/03-guided-G09.png
-guided-G12,p,"推奨工程: WF-08 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
-guided-G12,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
+guided-G12,p,"推奨工程: WF-01 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
 guided-G12,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
 guided-G12,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
 guided-G12,li,"WF_NOT_AUTHORIZED: 開発上の完了です。正式認可は未付与です。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
@@ -81,8 +75,7 @@ guided-G12,li,"数値計算の公開停止: true",visible,L3,true,technical-deta
 guided-G12,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
 guided-G12,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
 guided-G12,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/03-guided-G12.png
-guided-G15,p,"推奨工程: WF-08 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
-guided-G15,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
+guided-G15,p,"推奨工程: WF-01 / 完了 10/15",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
 guided-G15,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
 guided-G15,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
 guided-G15,li,"WF_NOT_AUTHORIZED: 開発上の完了です。正式認可は未付与です。",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
@@ -96,14 +89,11 @@ guided-G15,li,"計算結果出力の停止: true",visible,L3,true,technical-deta
 guided-G15,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
 guided-G15,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/03-guided-G15.png
 reapply-dialog,p,"推奨工程: WF-02 / 完了 0/15",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
-reapply-dialog,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"WF_RESULT_STALE: 入力が変更され、生成結果が古くなっています。再生成してください。",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"WF_CHECKSUM_MISMATCH: 入力照合値と生成状態が一致しません。",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"WF_STEP_4_G_REINTEGRATION_PENDING: 付属物は「あり」です。3D・数量・荷重は接続済みです。計算書／図面／ZIP再統合は将来工程待ちです。",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
-reapply-dialog,li,"pavement_markings: 1",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
-reapply-dialog,[data-testid="apollo-sample-reapply-diff-pavement.thickness"],"pavement.thickness: 0.11 → 0.08 (changed)",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,[data-testid="apollo-output-user-checklist"],"User review checklist A. 入力 B. 3D C. 断面諸量 D. 解析結果 E. 候補需要値 F. 数量 G. 計算書 H. 標準断面 I. 平面図 J. 側面図 K. 配置図 L. 支承/補剛材 M. 部材表 N. SVG／DXF／PDF出力 O. ZIP P. 保存/再読込 Q. 要再計算 R. 数値の外部照合（人間） S. 正式承認（人間）",visible,L1,false,residual:User|review|checklist,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,[data-testid="apollo-flag-matrix"],"通常利用では不要な内部状態です。調査が必要な場合のみ確認してください。スキーマ版: 2.0.0非数値入力モード: true数値計算の公開停止: true計算結果出力の停止: true構造計算実行の停止: true構造計算は現在利用できません計算結果出力は現在利用できません新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"非数値入力モード: true",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
@@ -111,8 +101,9 @@ reapply-dialog,li,"数値計算の公開停止: true",visible,L3,true,technical-
 reapply-dialog,li,"計算結果出力の停止: true",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,li,"構造計算実行の停止: true",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 reapply-dialog,[data-testid="apollo-interaction-message"],"新しい橋梁データを作成しました: Apollo非数値下書き",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
+reapply-dialog,li,"pavement_markings: 1",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
+reapply-dialog,[data-testid="apollo-sample-reapply-diff-pavement.thickness"],"pavement.thickness: 0.11 → 0.08 (changed)",visible,L3,true,technical-details,evidence/jp3a/05-reapply-dialog.png
 mobile-basics,p,"推奨工程: WF-02 / 完了 0/15",visible,L3,true,technical-details,evidence/jp3a/06-mobile-basics.png
-mobile-basics,li,"WF_CAPABILITY_PLANNED: この工程は将来工程（未実装）です。現在は利用できません。",visible,L3,true,technical-details,evidence/jp3a/06-mobile-basics.png
 mobile-basics,li,"WF_LOCAL_CRS_WARNING: 座標系は橋梁ローカル座標系です（道路線形連携は未実装）。道路線形の接続がないため、横断配置は互換モードで運用してください。",visible,L3,true,technical-details,evidence/jp3a/06-mobile-basics.png
 mobile-basics,li,"WF_INPUT_MISSING: まだ入力がありません。この工程を開始してください。",visible,L3,true,technical-details,evidence/jp3a/06-mobile-basics.png
 mobile-basics,li,"WF_RESULT_STALE: 入力が変更され、生成結果が古くなっています。再生成してください。",visible,L3,true,technical-details,evidence/jp3a/06-mobile-basics.png

@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import * as fs from "node:fs";
 import * as path from "node:path";
+import { selectApolloStep } from "./helpers/app";
 
 /**
  * Apollo Step 4-C WF-03/WF-05 integration E2E (GUI smoke).
@@ -23,10 +24,8 @@ async function fillSampleAndGenerate(page: import("@playwright/test").Page) {
     .getByTestId("apollo-bridge-structure-panel")
     .getByRole("button", { name: "動作確認用サンプル値を入力" })
     .click();
-  await page
-    .getByTestId("apollo-bridge-structure-panel")
-    .getByRole("button", { name: "構造を生成" })
-    .click();
+  await page.getByTestId("apollo-generate-structure").click();
+  await selectApolloStep(page, "WF-02");
   await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE");
 }
 
@@ -50,8 +49,11 @@ test.describe("Apollo Step 4-C integration E2E", () => {
     await expect(page.getByTestId("apollo-load-confirmation-panel")).toBeVisible();
     await expect(page.getByTestId("apollo-quantity-model-panel")).toBeVisible();
     await expect(page.getByTestId("apollo-app-haunch-analysis-panel")).toBeVisible();
+    await selectApolloStep(page, "WF-03");
     await expect(page.getByTestId("apollo-wf-step-WF-03")).toHaveAttribute("data-status", "COMPLETE");
+    await selectApolloStep(page, "WF-05");
     await expect(page.getByTestId("apollo-wf-step-WF-05")).toHaveAttribute("data-status", "COMPLETE");
+    await selectApolloStep(page, "WF-06");
     await expect(page.getByTestId("apollo-wf-step-WF-06")).toHaveAttribute("data-status", "BLOCKED");
 
     await page.screenshot({
