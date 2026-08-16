@@ -2,11 +2,11 @@ SPACER CLONE Phase 3 完了報告
 最小 GitHub Actions CI 導入
 ========================================
 
-作業日時   : 2026-08-16 15:12 (JST) 完了
-作業時間   : 約 8 分
+作業日時   : 2026-08-16 15:25 (JST) 完了
+作業時間   : 約 20 分
 
 開始時 main SHA : ea6c2ec7b53eee80ff941821525f2b3d91b38a8b
-終了時 main SHA : 22e75d2 (ファイナルレポート反映後)
+終了時 main SHA : 03df32d (最終)
 
 追加した workflow ファイル
   .github/workflows/ci.yml
@@ -15,32 +15,42 @@ CI 実行内容
   - trigger: push(main) / pull_request
   - runner : ubuntu-latest
   - Node   : 22 (npm cache 有効)
-  - working-directory: frontend
+  - working-directory: frontend (Python venv stepのみ repo root)
   - steps  :
       1. actions/checkout@v4
       2. actions/setup-node@v4 (node 22, npm cache)
-      3. npm ci
-      4. npm run test:fast
-      5. npm run typecheck
-      6. npm run build
+      3. Setup Python venv (repo root .venv) — BridgeDefinition regression用
+      4. npm ci
+      5. npm run test:fast
+      6. npm run typecheck
+      7. npm run build
+
+※ test:fast が BridgeDefinition regression で project Python venv
+  (/.venv + numpy 等) を要求するため、CI定義に最小限の Python セットアップを追加。
+  production / test コードの変更はなし。
 
 GitHub Actions 起動結果
-  - run 31930823906 起動確認済み (in_progress)
-  - 起動後しばらくで結果確認予定
+  - run 31931062039 : PASS (test job 3m0s)
+      test:fast / typecheck / build 全て成功
+  - 途中の run 31930823906 / 31930854773 / 31930935662 は
+      Python venv 未設定・配置ミスで FAIL したが、03df32d で解消
 
 PASS / FAIL / 結果待ち
-  - 結果待ち (起動確認済み)
-  - 直近の Phase 2 Gate 実績より:
-      test:fast  425 files / 3164 tests PASS
-      typecheck  PASS (0 error)
-      build      PASS (15.90s)
+  - PASS (最終 run 31931062039)
+
+コミット履歴 (今回分)
+  - 22e75d2  ci: 最小GitHub Actions CIを導入 (npm ci/test:fast/typecheck/build)
+  - 884b76b  docs: Phase 3 最小GitHub Actions CI導入 完了レポート
+  - 48154ad  ci: BridgeDefinition regression向けにPython venvセットアップを追加
+  - 03df32d  ci: Python venvをrepo rootに作成するよう修正 (working-directory指定)
 
 残課題
-  - CI の完走結果確認 (必要なら GitHub 上で確認)
   - 本CIは最小構成のため、E2E / 全tests のCI追加は今回対象外
+  - Node 20 deprecation annotation (actions/checkout@v4 / setup-node@v4 が
+    runnerのNode 24で動作) は情報のみで現状問題なし
   - 開始前からの無関係未コミット差分 (final_report.txt削除,
     R1-04.5_Luna report) は保全し今回対象外
 
 ローカル確認
-  - 直近 Phase 2 にて上記 Gate はすべて PASS 済み
+  - Phase 2 にて test:fast / typecheck / build は PASS 実績あり
   - workflow YAML 構文は簡易検証済み (YAML OK)
