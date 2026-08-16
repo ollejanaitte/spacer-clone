@@ -22,6 +22,7 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [site-context-spacer-data-contract.md](site-context-spacer-data-contract.md) | Wave 1 Lane B-1 site-context × SPACER data contract re-verification |
 | [site-context-spacer-field-mapping.md](site-context-spacer-field-mapping.md) | Wave 1 Lane B-2 site-context → SPACER field mapping freeze |
 | [site-context-spacer-adapter-interface.md](site-context-spacer-adapter-interface.md) | Wave 1 Lane B-3 `.sitecontext` → SPACER import adapter interface |
+| [site-context-reverse-compatibility.md](site-context-reverse-compatibility.md) | Wave 2 Lane B-5 SPACER → `.sitecontext` reverse compatibility policy |
 | [site-context-terrain-port-map.md](site-context-terrain-port-map.md) | Wave 1 Lane T terrain asset PORT map (site-context → SPACER) |
 | [unified-3d-viewer-boundary.md](unified-3d-viewer-boundary.md) | Wave 1 Lane V-1 existing 3D viewer boundary audit |
 | [unified-3d-viewer-layer-contract.md](unified-3d-viewer-layer-contract.md) | Wave 1 Lane V-2 unified viewer layer contract |
