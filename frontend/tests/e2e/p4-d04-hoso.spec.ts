@@ -1,6 +1,7 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 const OUT_DIR = "/tmp/p4-d04-hoso";
 const GEOMETRY_EXTENSION_KEY = "spacer.liner/domain-draft-vnext-geometry";
@@ -30,16 +31,9 @@ function readGeometryDomainDraft(saved: SavedProject): Record<string, unknown> |
 }
 
 async function openLinerSetup(page: Page) {
-  await page.goto("/pro");
-  await expect(page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" })).toBeVisible({
-    timeout: 60000,
-  });
-
-  await page.locator("[data-testid=open-liner-list]").click();
-  await expect(page).toHaveURL("/pro/liner");
-  await page.locator("[data-testid=create-liner]").click();
-  await expect(page.locator("[data-testid=liner-launcher-page]")).toBeVisible();
-  await page.locator("[data-testid=liner-launcher-gui]").click();
+  await openProAndWait(page);
+  await openLinerList(page);
+  await openLinerLauncher(page, "gui");
   await expect(page).toHaveURL("/pro/liner/setup");
   await expect(page.locator("[data-testid=liner-edit-page]")).toBeVisible();
 

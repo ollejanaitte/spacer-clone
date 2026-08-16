@@ -1,7 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 // Phase C1 (M3-06) 統合 E2E（シナリオ A-H）
 // 数値設計は根拠未 ADOPTED のため HOLD 判定を正直に検証する。
 
@@ -25,13 +25,10 @@ async function generateCombo(page: import("@playwright/test").Page) {
 test.describe("Phase C1 M3-06 integration scenarios", () => {
   test("Scenario A: LINER -> bearing -> design -> HOLD -> 2D/3D", async ({ page }) => {
     // LINER
-    await page.goto("/pro");
-    await expect(
-      page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" }),
-    ).toBeVisible({ timeout: 60000 });
-    await page.locator("[data-testid=open-liner-list]").click();
-    await page.locator("[data-testid=create-liner]").click();
-    await page.locator("[data-testid=liner-launcher-gui]").click();
+    await openProAndWait(page);
+    await openLinerList(page);
+    await openLinerLauncher(page, "gui");
+    await expect(page).toHaveURL("/pro/liner/setup");
     await page.locator("[data-testid=liner-setup-tab-review]").click();
     await page.locator("[data-testid=add-bridge-pier]").click();
     await page.locator("[data-testid=bridge-pier-station-P1]").fill("30");

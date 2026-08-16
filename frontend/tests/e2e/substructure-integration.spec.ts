@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 // Phase C1 (M2-10A) 下部工 統合 E2E
 // Scenario A: サンプル単柱橋脚 → station/offset → 2D → 3D → 寸法 → selection
@@ -84,14 +85,10 @@ test.describe("Phase C1 M2-10A substructure integration", () => {
   });
 
   test("Scenario D: LINER support -> sample auto-generation with supportId sync", async ({ page }) => {
-    await page.goto("/pro");
-    await expect(
-      page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" }),
-    ).toBeVisible({ timeout: 60000 });
-
-    await page.locator("[data-testid=open-liner-list]").click();
-    await page.locator("[data-testid=create-liner]").click();
-    await page.locator("[data-testid=liner-launcher-gui]").click();
+    await openProAndWait(page);
+    await openLinerList(page);
+    await openLinerLauncher(page, "gui");
+    await expect(page).toHaveURL("/pro/liner/setup");
     await page.locator("[data-testid=liner-setup-tab-review]").click();
     await page.locator("[data-testid=add-bridge-pier]").click();
     await page.locator("[data-testid=bridge-pier-station-P1]").fill("30");

@@ -1,10 +1,8 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openProAndWait } from "./helpers/app";
 
 async function openFormalDrawingWorkspace(page: Page) {
-  await page.goto("/pro");
-  await expect(page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" })).toBeVisible({
-    timeout: 60000,
-  });
+  await openProAndWait(page);
 
   await page.getByRole("button", { name: "線形座標計算" }).click();
 

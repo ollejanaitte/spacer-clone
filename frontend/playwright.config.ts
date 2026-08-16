@@ -35,6 +35,7 @@ const frontendLog = path.join(logDir, "frontend.log");
 export default defineConfig({
   testDir: "./tests/e2e",
   fullyParallel: false,
+  workers: 1,
   use: {
     baseURL: frontendOrigin,
     trace: "retain-on-failure",

@@ -1,14 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import { mkdirSync, writeFileSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { openProAndWait } from "./helpers/app";
 
 const OUT_DIR = "/tmp/phase5-japanese-drawing-remediation";
 
 async function openLinerEdit(page: Page) {
-  await page.goto("/pro");
-  await expect(page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" })).toBeVisible({
-    timeout: 60000,
-  });
+  await openProAndWait(page);
   await page.getByRole("button", { name: "線形座標計算" }).click();
 
   const launcher = page.locator("[data-testid=liner-launcher-page]");

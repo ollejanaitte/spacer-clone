@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { readFileSync } from "node:fs";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 // Phase C1 (A-06) 正常系 E2E — 橋脚モデル → Adapter → TEST Engine → Result → UI → Save/Load 再表示
 
@@ -8,15 +9,12 @@ test.describe("Phase C1 A-06 adapter normal-path round trip", () => {
     page,
   }) => {
     // 1. App 起動
-    await page.goto("/pro");
-    await expect(
-      page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" }),
-    ).toBeVisible({ timeout: 60000 });
+    await openProAndWait(page);
 
     // 2. LINER / 下部工画面へ到達
-    await page.locator("[data-testid=open-liner-list]").click();
-    await page.locator("[data-testid=create-liner]").click();
-    await page.locator("[data-testid=liner-launcher-gui]").click();
+    await openLinerList(page);
+    await openLinerLauncher(page, "gui");
+    await expect(page).toHaveURL("/pro/liner/setup");
     await page.locator("[data-testid=liner-setup-tab-review]").click();
     await page.locator("[data-testid=add-bridge-pier]").click();
     await page.locator("[data-testid=bridge-pier-station-P1]").fill("30");

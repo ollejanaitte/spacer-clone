@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 /**
  * MAIN3D P08 E2E: mountain sample -> main 3D viewer.
@@ -7,16 +8,9 @@ import { expect, test } from "@playwright/test";
  * → モデル切替 / レイヤーON/OFF / カメラ / サポート選択 を検証する。
  */
 async function openMain3D(page: import("@playwright/test").Page) {
-  await page.goto("/pro");
-  await expect(
-    page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" }),
-  ).toBeVisible({ timeout: 60000 });
-
-  await page.locator("[data-testid=open-liner-list]").click();
-  await expect(page).toHaveURL("/pro/liner");
-  await page.locator("[data-testid=create-liner]").click();
-  await expect(page.locator("[data-testid=liner-launcher-page]")).toBeVisible();
-  await page.locator("[data-testid=liner-launcher-sample]").click();
+  await openProAndWait(page);
+  await openLinerList(page);
+  await openLinerLauncher(page, "sample");
   await expect(page).toHaveURL("/pro/liner/setup");
   await expect(page.locator("[data-testid=liner-edit-page]")).toBeVisible();
 

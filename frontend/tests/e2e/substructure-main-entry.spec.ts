@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 // Phase C1 (M2-09D) Main/LINER → 下部工計画 メインエントリ E2E
 // シナリオ: app起動 → LINER → review → 下部工入口 → SubstructurePlanningPage
@@ -7,17 +8,11 @@ import { expect, test } from "@playwright/test";
 test.describe("Phase C1 M2-09D substructure main entry", () => {
   test("reaches substructure page from LINER and exercises the full flow", async ({ page }) => {
     // 1. app起動
-    await page.goto("/pro");
-    await expect(
-      page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" }),
-    ).toBeVisible({ timeout: 60000 });
+    await openProAndWait(page);
 
     // 2. LINERへ移動
-    await page.locator("[data-testid=open-liner-list]").click();
-    await expect(page).toHaveURL("/pro/liner");
-    await page.locator("[data-testid=create-liner]").click();
-    await expect(page.locator("[data-testid=liner-launcher-page]")).toBeVisible();
-    await page.locator("[data-testid=liner-launcher-gui]").click();
+    await openLinerList(page);
+    await openLinerLauncher(page, "gui");
     await expect(page).toHaveURL("/pro/liner/setup");
     await expect(page.locator("[data-testid=liner-edit-page]")).toBeVisible();
 

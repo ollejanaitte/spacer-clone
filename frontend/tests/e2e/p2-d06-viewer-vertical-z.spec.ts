@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { openLinerList, openLinerLauncher, openProAndWait } from "./helpers/app";
 
 const OUT_DIR = "/tmp/p2-d06-viewer-vertical-z";
 const GEOMETRY_EXTENSION_KEY = "spacer.liner/domain-draft-vnext-geometry";
@@ -29,14 +30,9 @@ function readGeometryDomainDraft(saved: SavedProject): Record<string, unknown> |
 }
 
 async function setupGradedLinerDraft(page: import("@playwright/test").Page) {
-  await page.goto("/pro");
-  await expect(page.getByRole("heading", { name: "5-Span Continuous Viaduct (Plan A)" })).toBeVisible({
-    timeout: 60000,
-  });
-
-  await page.locator("[data-testid=open-liner-list]").click();
-  await page.locator("[data-testid=create-liner]").click();
-  await page.locator("[data-testid=liner-launcher-gui]").click();
+  await openProAndWait(page);
+  await openLinerList(page);
+  await openLinerLauncher(page, "gui");
   await expect(page.locator("[data-testid=liner-edit-page]")).toBeVisible();
 
   await page.locator("[data-testid=liner-alignment-id]").fill(ALIGNMENT_ID);
