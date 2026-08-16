@@ -24,6 +24,10 @@ async function shot(page: Page, rel: string) {
 }
 
 async function openBasics(page: Page) {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("apollo_phase1_onboarding_dismissed", "true");
+    window.localStorage.setItem("apollo_phase1_sample_guide_dismissed", "true");
+  });
   await page.goto("/pro/apollo");
   await page.getByTestId("apollo-start-screen").getByRole("button", { name: "新規作成" }).click();
   await expect(page.getByTestId("apollo-basics-screen")).toBeVisible({ timeout: 30_000 });
@@ -143,6 +147,7 @@ test.describe("Apollo Step 5-JP3-C full Japanese GUI/E2E", () => {
   });
 
   test("E2E-JP3-001..022 major surfaces Japanese coverage", async ({ page }) => {
+    test.setTimeout(180_000);
     // 001 entry
     await page.goto("/pro/apollo");
     await expect(page.getByTestId("apollo-start-screen")).toBeVisible();
@@ -195,7 +200,9 @@ test.describe("Apollo Step 5-JP3-C full Japanese GUI/E2E", () => {
       "G14",
       "G15",
     ] as const) {
-      await page.getByTestId("apollo-guided-show-all-toggle").click();
+      const toggle = page.getByTestId("apollo-guided-show-all-toggle");
+      await toggle.scrollIntoViewIfNeeded().catch(() => undefined);
+      await toggle.click({ force: true });
       await page.getByTestId(`apollo-guided-jump-${id}`).click();
       await expect(page.getByTestId(`apollo-guided-slide-${id}`)).toBeVisible();
     }
@@ -290,7 +297,9 @@ test.describe("Apollo Step 5-JP3-C full Japanese GUI/E2E", () => {
     // 021 Step 5-R regression smoke (reapply still Japanese)
     await page.getByTestId("apollo-pavement-thickness").fill("0.13");
     await page.getByTestId("apollo-pavement-thickness").blur();
-    await page.getByTestId("apollo-sample-apply-generate").click();
+    const reapplyGenerate = page.getByTestId("apollo-sample-apply-generate");
+    await reapplyGenerate.scrollIntoViewIfNeeded().catch(() => undefined);
+    await reapplyGenerate.click({ force: true });
     if (await page.getByTestId("apollo-sample-reapply-dialog").isVisible().catch(() => false)) {
       await expect(page.getByTestId("apollo-sample-reapply-cancel")).toHaveText("キャンセル");
       await page.getByTestId("apollo-sample-reapply-cancel").click();

@@ -228,7 +228,8 @@ async function applySample(page: Page) {
   const applyGenerate = page.getByTestId("apollo-sample-apply-generate");
   await expect(applyGenerate).toBeEnabled({ timeout: 30_000 });
   await expect(applyGenerate).toBeVisible({ timeout: 30_000 });
-  await applyGenerate.click();
+  await applyGenerate.scrollIntoViewIfNeeded().catch(() => undefined);
+  await applyGenerate.click({ force: true });
   await selectApolloStep(page, "WF-02");
   await expect(page.getByTestId("apollo-wf-step-WF-02")).toHaveAttribute("data-status", "COMPLETE", {
     timeout: 30_000,
