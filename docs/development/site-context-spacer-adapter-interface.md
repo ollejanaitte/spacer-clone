@@ -1,9 +1,9 @@
-# `.sitecontext` → SPACER Project Adapter Interface（Wave 1 Lane B-3）
+# `.sitecontext` → SPACER Project Adapter Interface（Wave 1 Lane B-3 / Wave 3 B-07 Freeze）
 
 > **Authority:** INTEGRATION CONTRACT（P0）
-> **Status:** RECOMMENDED
-> **Owner:** Lane B（Wave 1）
-> **Baseline:** site-context `9e499c0` / spacer-clone `31a1113`
+> **Status:** FROZEN（Wave 3 Lane B-07 で凍結確定）
+> **Owner:** Lane B（Wave 1 / Wave 3）
+> **Baseline:** site-context `9e499c0` / spacer-clone `31a1113` / Wave 3 凍結基準 `05d300e`
 > **上位契約:** [統合契約](../integration/site-context-unification/README.md) / [データ契約再確認](site-context-spacer-data-contract.md) / [Field Mapping Freeze](site-context-spacer-field-mapping.md)
 
 ## 1. 目的
@@ -226,3 +226,23 @@ importSiteContext(pkg, options): SiteContextImportResult; // 本import
   CRS保持のみ。実際の座標変換・DEM取得・Heightfield生成は Lane T。
 - **Lane V / U / S**: 本Adapterの `SiteContextImportReport` が返す warning/unsupported を
   それぞれのUI / sample で利用。
+
+## 10. B-07 Adapter Freeze（Wave 3）
+
+- **契約凍結確定**（FROZEN）。本契約の変更は意図的である必要があり、
+  変更時は `adapterFreeze.test.ts` の期待値と本ドキュメントを同じ変更単位で更新する。
+- 凍結対象:
+  - Adapter contract version: `SITE_CONTEXT_ADAPTER_CONTRACT_VERSION = "1.0.0"`
+  - source package format/version/profile: `sitecontext-package` / `1` / `sitecontext-v2`
+  - source schema versions: `["1", "2"]`（V1→V2 正規化） / target PDC `"1.0.0"` / package format `"1"`
+  - error code 一覧: `SC_IMPORT_ERROR_CODES` 7件（fail-closed）
+  - warning code prefix: `SC-WARN-`
+  - mapping manifest 8概念・必須3概念（coordinateContexts / projectCoordinateContextId / siteContext）
+  - public I/F: `createSiteContextImportAdapter()` / `siteContextImportAdapter` / `mapSiteContextPackageToProject`
+- 実 `.sitecontext` package/fixture による contract verification:
+  - `importAdapter.test.ts`（16件・B-6）が V2 import / V1→V2 正規化 / checksum / SCT1 sha256 /
+    existingConditions / CRS / fail-closed error を検証済み。
+  - `adapterFreeze.test.ts`（B-07 追加・9件）が accidental field drift を検知。
+  - Lane U の合成パッケージ（`frontend/src/workflow/samplePackage.ts`）も import 経路で利用。
+- 逆方向（SPACER → `.sitecontext`）は [site-context-reverse-compatibility.md](site-context-reverse-compatibility.md) の
+  lossless / lossy / unsupported / deferred 分類に従う（B-5 確定）。
