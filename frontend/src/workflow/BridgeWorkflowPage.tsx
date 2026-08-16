@@ -6,6 +6,7 @@ import { CanonicalWorkflowNav } from "./CanonicalWorkflowNav";
 import type { Project } from "../next/project/schema";
 import { readBridgeWorkflowState, readRoadWorkflowState, writeBridgeWorkflowState, type BridgeWorkflowState } from "./workflowState";
 import { computeSpanArrangement, totalSpanLength, RB001_BRIDGE_WORKFLOW_NAME } from "./roadBridgeSamples";
+import { ProjectStatusPanel } from "./ProjectStatusPanel";
 import styles from "./BridgeWorkflowPage.module.css";
 
 export interface BridgeWorkflowPageProps {
@@ -105,6 +106,7 @@ export function BridgeWorkflowPage({
 
       <section className={styles.body}>
         <CanonicalWorkflowNav currentStepId="bridgePlacement" onNavigateStep={handleNavigateStep} />
+        <ProjectStatusPanel project={project} />
 
         <div className={styles.panels}>
           <section className={styles.panel} data-testid="bridge-workflow-context">
