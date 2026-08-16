@@ -91,3 +91,12 @@
 - 全件Vitest (`test:full`) は最終Gate。作業途中で何度も回さない。
 - `test:fast` は通常修正の代表的な高速Gate（約35秒）。
 - SLOW / 3D テストは削除・skipしない。専用Gateと `test:full` で必ず実行する。
+
+## 開発・テスト運用ルール
+
+- 検証Gate・E2E運用・FAIL分類・schema/persistence・UI変更・時間制限・CI現況の
+  正式ルールは [docs/development/development-test-rules.md](docs/development/development-test-rules.md) を参照。
+- 本リポジトリのGitワークフロー（worktree / feature branch / PR / merge）は
+  このAGENTS.mdの「Standard Git Workflow」節に従う。
+  ただしAI-RIM実行時の依頼内容が明示的にmain直接作業を指示する場合は、
+  依頼内容の指示を優先する。

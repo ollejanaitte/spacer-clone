@@ -14,6 +14,7 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [documentation-validation.md](documentation-validation.md) | Repeatable docs quality checks |
 | [quality-gates.md](quality-gates.md) | PR acceptance reference |
 | [vitest-gates.md](vitest-gates.md) | Frontend FAST/UI/3D/SLOW/Electron/FULL test gates |
+| [development-test-rules.md](development-test-rules.md) | AI-agent dev/test operation rules (E2E / schema / time limits / CI) |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |
