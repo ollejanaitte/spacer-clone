@@ -37,6 +37,29 @@ export {
   verifyTerrainAssetChecksum,
   type TerrainPersistenceError,
 } from "./terrainPersistence";
+export {
+  GUJO_CENTER_WGS84,
+  GUJO_EPSG,
+  GUJO_CENTER_EPSG6674,
+  GUJO_BOUNDS_WGS84,
+  GUJO_BOUNDS_EPSG6674,
+  GUJO_DEM5A,
+  GUJO_FIXTURE_TIMESTAMP,
+  GUJO_COORDINATE_CONTEXT_ID,
+  GUJO_COORDINATE_CONTEXT,
+  GUJO_SOURCE_DATASET,
+  GUJO_SAMPLE_TERRAIN_ID,
+  GUJO_SAMPLE_ASSET_PATH,
+  GUJO_FIXTURE_GRID,
+  GUJO_SAMPLE_ASSET_SIZE,
+  GUJO_SAMPLE_ASSET_CHECKSUM,
+  GUJO_SAMPLE_SCT1_BASE64,
+  buildGujoSampleHeightfield,
+  loadGujoSampleHeightfield,
+  buildGujoSampleTerrainDocument,
+  buildGujoSampleAsset,
+  buildGujoSampleProject,
+} from "./gujoSample";
 
 export { canonicalize, sha256Hex, sha256BytesHex, canonicalHash } from "./canonicalize";
 
