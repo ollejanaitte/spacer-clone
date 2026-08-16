@@ -1,0 +1,158 @@
+==================================================
+SPACER CLONE
+Wave 0「並列Lane用 branch / worktree 構築・開始前準備」
+ファイナルレポート
+==================================================
+
+1. 作業日時 (JST)
+--------------------------------------------------
+- 開始: 2026-08-16 (JST)
+- 完了: 2026-08-16 18:06 (JST)
+
+2. 作業時間
+--------------------------------------------------
+- 2026-08-16 当日に一気通貫で実施 (約1時間程度)
+
+3. 開始時 main SHA
+--------------------------------------------------
+1840cb66ada4e35035478c0bd3f61a431eac3fbe
+
+4. 終了時 main SHA
+--------------------------------------------------
+6503a26 (docs: SPACER Wave 0 readiness文書 commit)
+- local main / origin/main 一致を確認
+
+5. Phase A-01 確認結果
+--------------------------------------------------
+- Persistence Contract / canonical chain / exceptional paths / 既知不整合7項目 /
+  A-02〜A-08実装順序 / Completion Gate (G1〜G14) / blocking issue なし を確認済み。
+- 判定: 「Phase A 一気通貫実装へ進める」(Phase A-01完了)。
+
+6. 6 Lane branch 一覧
+--------------------------------------------------
+- lane-a/persistence-schema
+- lane-b/sitecontext-contract-adapter
+- lane-t/sitecontext-terrain-port
+- lane-v/unified-3d-viewer
+- lane-u/unified-workflow
+- lane-s/reference-business-001
+
+7. 6 Lane worktree 一覧
+--------------------------------------------------
+- ~/Projects/spacer-clone-lane-a
+- ~/Projects/spacer-clone-lane-b
+- ~/Projects/spacer-clone-lane-t
+- ~/Projects/spacer-clone-lane-v
+- ~/Projects/spacer-clone-lane-u
+- ~/Projects/spacer-clone-lane-s
+
+8. 各Lane開始SHA
+--------------------------------------------------
+6 Lane すべて 1840cb66ada4e35035478c0bd3f61a431eac3fbe で同一開始。
+
+9. 各branch push結果
+--------------------------------------------------
+全6 branchを origin へ push 成功、upstream 設定済み。
+- origin/lane-a/persistence-schema
+- origin/lane-b/sitecontext-contract-adapter
+- origin/lane-t/sitecontext-terrain-port
+- origin/lane-v/unified-3d-viewer
+- origin/lane-u/unified-workflow
+- origin/lane-s/reference-business-001
+
+10. 各worktree status
+--------------------------------------------------
+全6 worktree で current branch = 意図したLane branch、
+HEAD = 1840cb66、status クリーンを確認。
+
+11. Wave 1 各Lane範囲
+--------------------------------------------------
+Lane A: A-2 Schema Drift Guard / A-3 Default Project Conformance / A-4 Generic Persistence Roundtrip
+Lane B: B-1 SPACER/site-contextデータ契約再確認 / B-2 Field Mapping Freeze / B-3 Adapter Interface確定
+Lane T: T-1 PORT対象資産確定 / T-2 CRS/Coordinate Core PORT / T-3 GSI DEM PORT / T-4 Heightfield/SCT1 PORT
+         (国土地理院地形取得はゼロから作らず site-context-prototype の既存資産を選択PORTする方針)
+Lane V: V-1 SPACER既存3D Viewer境界監査 / V-2 統合Layer Contract / mock・fixtureによる最小描画骨格
+Lane U: U-1 Canonical Workflow確定 / U-2 App Shell入口設計・最小実装
+Lane S: S-1 Reference Business 001仕様確定 / S-2 郡上市八幡Baseline / S-3 道路線形Sample準備
+
+12. Conflict Ownership
+--------------------------------------------------
+Lane A: types.ts / project.schema.json / projectMigration.ts / defaultProject.ts /
+        canonical serializer・hydrate / canonical Save・Load / canonical validation /
+        Persistence Guard / Phase A Gate
+Lane B: integration mapping / site-context Adapter / Adapter Contract Test / import/export boundary
+Lane T: CRS・coordinate primitive / GSI DEM importer / Heightfield・SCT1 PORT / Terrain generation / terrain asset
+Lane V: unified 3D viewer / viewer layer / viewer regression / viewer coordinate接続
+Lane U: App Shell integration / workflow page / navigation・route / UI state
+Lane S: sample / fixture / Reference Business 001 / Tutorial Sample / Acceptance scenario
+
+13. Shared High-Conflict Files
+--------------------------------------------------
+frontend/src/App.tsx / frontend/src/main.tsx / package.json / Vitest config /
+CI workflow / docs index
+→ 各Laneで極力触らない方針。
+
+14. Lane間I/F
+--------------------------------------------------
+A→B/T/V/U/S: canonical Project/Persistence Contract, validation boundary, migration rule, Schema Guard
+B→T/V/U/S: field mapping, Adapter interface, site-context→SPACER変換契約
+T→V/U/S: Terrain interface, CRS/canonical coordinate, 郡上市八幡Terrain fixture
+V→U/S: Viewer layer interface, Viewer entry
+U→S: canonical workflow, user-visible entry
+S→F: Tutorial Sample, Reference Business 001, Acceptance scenario
+
+15. STOP条件
+--------------------------------------------------
+- ProjectModel/Schema変更が必要だがLane Aとの調整未完
+- Adapter Contract未確定
+- Terrain interface未確定
+- 他Lane所有ファイルの大規模変更が必要
+- 同じ問題に15〜20分以上詰まる
+- merge conflictが単純競合ではなく設計競合を示す
+- test failureの責任Laneが判別できない
+→ 1 Laneが止まっても他Laneまで止めない運用。
+
+16. Wave 1 Completion Gate
+--------------------------------------------------
+- Phase A-01完了確認 / 最新main確定 / 6 Lane branch作成済み / 6 Lane worktree作成済み /
+  6 Lane branch GitHub push済み / 6 Lane同一開始SHA / Conflict Ownership確定 /
+  Shared High-Conflict Files確定 / Lane間I/F確定 / STOP条件確定 / 各Lane Wave 1範囲確定 /
+  site-context PORT方針確認 / Reference Business 001基準確認 / mainにproduction変更なし /
+  次の6本のLane別実行プロンプトを流せる状態
+→ すべて満たす。
+
+17. 変更ファイル
+--------------------------------------------------
+- docs/development/parallel-lanes-wave0-readiness.md (新規)
+- docs/development/README.md (更新: readiness文書へのリンク追加)
+
+18. main commit 一覧
+--------------------------------------------------
+- 6503a26 docs: SPACER Wave 0 並列Lane用branch/worktree構築 readiness文書を作成し README へリンク
+
+19. origin/main push結果
+--------------------------------------------------
+- 成功 (1840cb6..6503a26  main -> main)
+
+20. 開始前無関係差分の保全
+--------------------------------------------------
+- final_report.txt の削除 (作業開始前から存在)
+- docs/rebuild/reports/R1-04.5_GPT-5.6-Luna_Vision_Delegation_検証結果.txt (未追跡)
+いずれも本作業では触れていない。保全を確認。
+
+21. Luna利用結果
+--------------------------------------------------
+- 今回は簡易確認を直接実施し、Lunaへの委任は不要と判断した (利用なし)。
+
+22. Sol利用結果
+--------------------------------------------------
+- 詰まりが発生しなかったため委任なし (利用なし)。
+
+23. blocking issue
+--------------------------------------------------
+- なし
+
+24. Wave 1進入判定
+--------------------------------------------------
+Wave 1 並列実行へ進める
+==================================================
