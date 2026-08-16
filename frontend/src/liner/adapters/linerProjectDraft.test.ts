@@ -28,6 +28,8 @@ import {
   hydrateProjectLinerFromPersistence,
   readLinerDomainDraftFromProject,
 } from "./linerProjectDraft";
+import { validateGeneratedLinerProject } from "../headless/validateGeneratedLinerProject";
+import { validateGeneratedLinerProject } from "../headless/validateGeneratedLinerProject";
 import { convertImporterToPhase35Draft } from "../importer/export/ImporterToPhase35Adapter";
 import { createSampleImporterProject } from "../importer/__tests__/fixtures/sampleProject";
 import {
@@ -291,6 +293,41 @@ describe("liner project draft persistence", () => {
     expect(hydrated.project.liner?.roadDesignDocument).toBeUndefined();
     expect(hydrated.project.liner?.domainDraft).toBeDefined();
     expect(linerDraftFromProject(hydrated.project)).toEqual(draft);
+  });
+
+  it("serialized persisted project passes LINER frame schema validation (roadDesignDocument / apolloPhase1Unit2)", () => {
+    const draft = addLinerOffset(createDefaultLinerDraft());
+    const base = createDefaultProject();
+    // The LINER frame validator requires analysisSettings.solver; the
+    // viewer path adds it via createViewerReviewBaseProject before validation.
+    const baseWithSolver = {
+      ...base,
+      analysisSettings: { ...base.analysisSettings, solver: "scipy_sparse" },
+    };
+    const withLiner = withProjectLinerDraft(baseWithSolver, draft);
+    const withApollo = {
+      ...withLiner,
+      apolloPhase1Unit2: {
+        schemaVersion: "2.0.0",
+        metadata: { projectId: "unit2-e2e", name: "e2e", description: "e2e" },
+        nodes: [],
+        materialReferences: [],
+        members: [],
+        supports: [],
+        audit: [],
+      },
+    };
+    const serialized = serializeProjectForPersistence(withApollo);
+    expect(serialized.ok).toBe(true);
+    if (!serialized.ok) {
+      return;
+    }
+    // Embedded roadDesignDocument must be the persistence write-target.
+    expect(serialized.project.liner?.roadDesignDocument).toBeDefined();
+    expect(serialized.project.liner?.domainDraft).toBeUndefined();
+    // Persisted payload (with roadDesignDocument + apolloPhase1Unit2) must pass
+    // the LINER frame schema validator used by the mapping-review viewer path.
+    expect(validateGeneratedLinerProject(serialized.project)).toEqual([]);
   });
 
   it("reads legacy domainDraft projects via read-old path", () => {

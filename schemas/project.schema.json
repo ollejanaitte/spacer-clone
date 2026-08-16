@@ -215,6 +215,26 @@
     },
     "substructure": {
       "$ref": "#/$defs/projectSubstructure"
+    },
+    "apolloPhase1Unit2": {
+      "type": "object",
+      "description": "Apollo Phase 1-NN unit 2 non-numeric draft payload (ProjectModel.apolloPhase1Unit2).",
+      "additionalProperties": true
+    },
+    "apolloBsdd": {
+      "type": "object",
+      "description": "AP-DX-01 bridge superstructure design document sidecar (ProjectModel.apolloBsdd, schema 0.1.0).",
+      "additionalProperties": true
+    },
+    "apolloBridgeStructureInput": {
+      "type": "object",
+      "description": "Persisted bridge structure input for Visible Vertical Slice 01 (ProjectModel.apolloBridgeStructureInput).",
+      "additionalProperties": true
+    },
+    "apolloBridgeProjectSuperstructure": {
+      "type": "object",
+      "description": "Phase 3-4 shared superstructure facts sidecar (ProjectModel.apolloBridgeProjectSuperstructure).",
+      "additionalProperties": true
     }
   },
   "$defs": {
@@ -1189,6 +1209,10 @@
         "domainDraft": {
           "$ref": "#/$defs/linerDomainDraftVNext",
           "description": "Typed Phase3.5 domain draft. Required when saving vNext (see projectLinerMetadataVNext)."
+        },
+        "roadDesignDocument": {
+          "type": "object",
+          "description": "Embedded RoadDesignDocument — sole persistence write-target for road design data (schema: contracts/v0.1/road-design-document.schema.json)."
         }
       }
     },
