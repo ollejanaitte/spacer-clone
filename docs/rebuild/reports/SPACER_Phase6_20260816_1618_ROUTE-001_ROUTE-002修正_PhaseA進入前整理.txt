@@ -1,0 +1,97 @@
+================================================================
+SPACER CLONE Phase 6 ファイナルレポート
+ROUTE-001 / ROUTE-002 修正・Phase A 進入前整理
+================================================================
+
+1. 作業日時（日本時間）
+   2026-08-16 (JST) 開始 16:11 / 完了 16:18
+
+2. 作業時間
+   約7分
+
+3. 開始時 main SHA
+   d9cca2f4bc76ee2b1668c6f99e580a601174fb3c
+
+4. 終了時 main SHA
+   1531cec74cf0a5db70ca7bb705b59ed35654eba7
+
+5. ROUTE-001 の原因
+   main.tsx の Root() は currentLocation (pathname+search) が /pro 配下でない限り
+   LobbyApp を描画する。redirectLegacyRoutes() は App コンポーネント内部
+   (frontend/src/App.tsx) にしか存在せず、/th/run 等のレガシー deep-link 直行時は
+   App 自体がマウントされないため redirect が実行されず、lobby が表示されていた
+   (docs/scoping/risks_and_unknowns.md 記載の「到達不可能」と一致)。
+
+6. ROUTE-001 の修正内容
+   frontend/src/main.tsx の Root() の routing state (currentLocation) 初期化前に
+   redirectLegacyRoutes() を実行し、history.replaceState 後に正規パス (/pro/*) を
+   読み取ってルーティング判定するよう最小変更。history エントリは増やさない。
+   App 内部の既存呼び出しは idempotent なため残置。routing ライブラリや App 全体の
+   大規模変更はなし。
+
+7. ROUTE-001 の検証結果
+   - th-analysis-revamp.spec.ts (5件): ALL PASS
+     - shows the revised six-stage flow ...: PASS (/th/run 直行で wizard dialog 表示)
+     - HTTP 301 redirect: PASS
+     - input check read-only: PASS
+     - chart / 3D animation: PASS
+   - /th/run 直行ケースは上記 test1 / test3 で回帰確認済み
+
+8. ROUTE-002 の判定
+   A. ROUTE-001 と同一根本原因
+   修正前の th-analysis-revamp 2件 FAIL (test1: 六段階フロー / test3: 入力チェック)
+   は、いずれも /th/run 直行時に wizard が描画されず timeout する同一症状で、
+   ROUTE-001 の修正のみで両方 PASS した。
+
+9. ROUTE-002 を同時解消したか / 残したか
+   同時解消した。追加変更なし (作業範囲を広げない)。issue-backlog 上は
+   ROUTE-001 への統合扱いとして記録。
+
+10. 実行したテスト一覧と結果
+   - Playwright E2E tests/e2e/th-analysis-revamp.spec.ts: 5/5 PASS
+   - npm run test:fast (frontend): 425 files / 3164 tests PASS
+   - npm run typecheck (frontend tsc -b): PASS
+   - npm run build (vite production build): PASS (約14秒)
+   全120件E2Eは回していない (手順に従い対象のみ)。
+
+11. 変更ファイル一覧
+   - frontend/src/main.tsx          (ROUTE-001 修正本体)
+   - docs/development/issue-backlog.md (ROUTE-001/002 の結果反映)
+
+12. commit一覧
+   - ffcb4b9  fix(routing): /th/run 直行時に lobby 表示される ROUTE-001 を修正
+   - 1531cec  docs: Phase 6 の ROUTE-001 修正結果と ROUTE-002 同一原因判定を issue-backlog へ反映
+
+13. push結果
+   両 commit とも origin/main へ push 済み。local main = origin/main = 1531cec。
+
+14. Phase 5 backlog確認結果
+   - docs/development/issue-backlog.md の存在、ROUTE-001 / ROUTE-002 記載、
+     Phase 5 が文書化のみで完了 (d9cca2f) であることを確認。
+   - ROUTE-001: 完了 (修正結果を追記)
+   - ROUTE-002: 完了 (ROUTE-001 へ統合。判定結果を追記)
+   - 未確定事項リストから ROUTE-002 統合可否の行を削除。最小更新のみで大改変なし。
+
+15. 開始前から存在した無関係差分の扱い
+   以下の既存差分は今回対象外として保全 (削除・reset・checkout・stash・上書きなし):
+   - D final_report.txt (削除状態)
+   - ?? docs/rebuild/reports/R1-04.5_GPT-5.6-Luna_Vision_Delegation_検証結果.txt (未追跡)
+   なお、E2E 実行でタイムスタンプだけが変わった evidence JSON 2件
+   (docs/apollo/step4c_appurtenance_haunch/evidence/*.json) は開始時 clean のため
+   変更前状態へ復元した。
+
+16. 残課題
+   - ROUTE-001 / ROUTE-002 は解消。
+   - Phase 5 backlog に残る他課題 (E2E-001 timeout / E2E-002 onboarding 等) は
+     今回のスコープ外のため未着手。
+   - level0-navigation.spec.ts の既知FAILは今回対象外。
+
+17. Phase A開始判定
+   Phase A へ進める
+   (routing 系 production bug は ROUTE-001/002 とも解消・回帰確認済み。main は
+   今回分の2 commit のみを積んだ安全な状態。Phase A「Schema / Persistence 同期
+   自動化」へ進入可)
+
+================================================================
+以上
+================================================================
