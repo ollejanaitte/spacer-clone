@@ -9,8 +9,10 @@ import { SiteContextPage } from "../../workflow/SiteContextPage";
  *
  * 既存の Site Context 資産（workflow/SiteContextPage）を「ほぼそのまま」導入し、
  * /app 側の Project Data Core（ProjectManager）へ接続する。
- * - Project Data Core 保存Adapter: onProjectChange で overwriteProject により
- *   正規 Save/Load 経路（project.json + backup）へ反映する。
+ * - Project Data Core 保存Adapter: onProjectChange で現在の /app Project の
+ *   識別情報・他Moduleを保持したまま Site Context データ（terrain module /
+ *   siteContext metadata）のみをマージし、overwriteProject で正規 Save/Load
+ *   経路（project.json + backup）へ反映する（importで別Project化しない）。
  * - 戻る: 業務Projectトップへ戻る。
  * - 遷移: canonical workflow step → /app module route へマップする。
  */
@@ -38,20 +40,50 @@ function mapWorkflowStepToRoute(projectId: string, step: CanonicalWorkflowStep):
   }
 }
 
+const SITE_CONTEXT_METADATA_PREFIX = "siteContext";
+
+/** import で生成される Project から Site Context 関連データのみ抽出して
+ *  現在の /app Project へマージする（他Module・Project ID を破壊しない）。 */
+function mergeSiteContextIntoProject(
+  current: import("../project/schema").Project,
+  imported: import("../project/schema").Project,
+): import("../project/schema").Project {
+  const nextMetadata: Record<string, unknown> = { ...current.metadata };
+  for (const [key, value] of Object.entries(imported.metadata ?? {})) {
+    if (key.startsWith(SITE_CONTEXT_METADATA_PREFIX) || key === "existingConditions") {
+      nextMetadata[key] = value;
+    }
+  }
+  return {
+    ...current,
+    metadata: nextMetadata,
+    modules: {
+      ...current.modules,
+      terrain: imported.modules.terrain,
+    },
+    updatedAt: new Date().toISOString(),
+  };
+}
+
 export function SiteContextModuleShellPage({ projectId }: { projectId: string }) {
   const [project, setProject] = useState(() => getProjectManager().getProject(projectId));
 
   const handleProjectChange = useCallback(
     (next: import("../project/schema").Project) => {
-      setProject(next);
       const manager = getProjectManager();
-      void manager.overwriteProject(next).then((saved) => {
+      const current = manager.getProject(projectId);
+      if (current === undefined) {
+        return;
+      }
+      const merged = mergeSiteContextIntoProject(current, next);
+      setProject(merged);
+      void manager.overwriteProject(merged).then((saved) => {
         if (saved) {
           void manager.flushPendingSaves();
         }
       });
     },
-    [],
+    [projectId],
   );
 
   const handleNavigateStep = useCallback(
