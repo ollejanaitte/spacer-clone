@@ -1,0 +1,217 @@
+================================================================================
+SPACER CLONE — Final Cleanup + Electron/UI Visual Acceptance Final Report
+================================================================================
+ファイル名: SPACER_Final_20260817_1623_Cleanup_Electron_UI_Acceptance.txt
+
+1. 作業日時 (JST)
+   - 開始: 2026-08-17 14:00
+   - 完了: 2026-08-17 16:23
+   - Job ID: 20260817-135906-1a00e16663037019
+
+2. 開始時 main / origin/main SHA
+   - 7e1d2244099880eebc2b98177392b15591e08925 (local main == origin/main 実測)
+
+3. 終了時 main / origin/main SHA
+   - 819ad333856cd324b6fef3c4d8aa840086f5a180 (local main == origin/main 確認)
+
+4. branch / worktree 監査結果 (Phase 1)
+   - 対象: ~/Projects/spacer-clone (正規作業場所, branch=main)
+   - Lane branch (local): A/B/F/G/S/T/U/V の8本
+   - Lane branch (remote): origin/lane-{a,b,f,g,s,t,u,v} の8本
+   - Lane worktree: ~/Projects/spacer-clone-lane-{a,b,f,g,s,t,u,v} の8本
+   - 全 Lane branch とも origin/main..origin/<lane> = 0 (完全統合) を確認
+
+5. 削除 worktree 一覧 (正規 git worktree remove + prune)
+   - lane-a / lane-b / lane-f / lane-g / lane-s / lane-t / lane-u / lane-v
+   - lane-v は untracked .venv (273MB) が残り remove が失敗したため、git metadata
+     prune 後に残存ディレクトリを確認し、.venv および agent log をバックアップ
+     (/tmp/opencode/evidence-backup/) した上で整理。
+   - 削除前後で git worktree list を確認。
+
+6. 削除 branch 一覧
+   - local: lane-a/persistence-schema, lane-b/sitecontext-contract-adapter,
+     lane-f/integration-e2e, lane-g/sitecontext-unification,
+     lane-s/reference-business-001, lane-t/sitecontext-terrain-port,
+     lane-u/unified-workflow, lane-v/unified-3d-viewer
+   - remote: origin/lane-{a,b,f,g,s,t,u,v} (git push origin --delete)
+   - いずれも完全統合 (ahead 0) を再確認してから削除。lane-g のみ local が
+     origin/lane-g に対し4件 ahead だったが、その4commit は全て origin/main に
+     含まれることを commit 単位で確認 (rev-list / merge-base --is-ancestor)。
+
+7. 保持 branch と理由
+   - /tmp/opencode 配下の Phase 6-11 用 worktree / branch は本対象外。
+     Phase 6-11 の成果が未統合 commit を含む可能性があるため自動削除せず保持。
+     (本作業のスコープは Lane branch/worktree の整理のみ)
+   - 既存無関係差分 (下記15) は削除せず保全。
+
+8. 未統合 commit 監査
+   - Lane (local/remote): 全 0 件
+   - 不明な未コミット成果: 0 件
+   - 各 Lane worktree の未コミット差分は既存無関係 evidence 差分のみ (下記15)
+
+9. Final Report / evidence 等の未回収成果
+   - SPACER_PhaseW1-Lane*.txt は main へ commit 済み (lane worktree と md5 一致)
+   - SPACER_PhaseW2/W3/PhaseF/PhaseG report は main へ commit 済み
+
+10. Phase 1 Gate
+    - main == origin/main: PASS
+    - Lane 未統合 commit 0: PASS
+    - 不明な未コミット成果 0: PASS
+    - worktree 正規構成: PASS (Lane worktree 0 / /tmp/opencode は対象外保持)
+    - git diff --check: PASS
+    - npm run test:fast: PASS (3500)
+    - npm run typecheck: PASS
+    - npm run build: PASS
+
+11. Electron 実起動 (Phase 2)
+    - 使用コマンド: リポジトリ既存の正規起動経路
+      - backend: .venv/bin/python -m uvicorn backend.app.main:app (port 8200,
+        SPACER_BACKEND_ORIGIN を既定 :8000 から切替。:8000 は親 AI-RIM web が使用中)
+      - frontend: npm run dev (vite, 127.0.0.1:5173)
+      - electron: npm run electron:compile → node_modules/.bin/electron
+        ../desktop/electron/dist/main.js (GPU_MODE=compat-gpu-blocklist 既定、
+        SPACER_AUTOMATION=1 でスプラッシュ省略、--remote-debugging-port=9222 で
+        CDP 計測、--no-sandbox)
+    - electron:compile: PASS
+    - Electron window 実起動: PASS (1280x820)
+    - canonical /app 到達: PASS (http://127.0.0.1:5173/app)
+    - blank screen / fatal error: なし
+    - console / uncaught exception: fatal なし (dev 時 CSP warning のみ)
+    - window resize: PASS (1600x1000, 1100x700 で canvas 連動、hScroll なし)
+    - 起動 → 終了 → 再起動: PASS (2回実施, 最後の位置へ自動復元)
+
+12. 主要 UI Visual Acceptance 一覧
+    1. /app ホーム
+    2. 業務一覧
+    3. 新規業務
+    4. 既存業務 (新規作成した VisualAcceptance検証業務)
+    5. Site Context (地形・現況)
+    6. Road
+    7. Bridge Layout
+    8. Superstructure
+    9. Substructure
+    10. Analysis (FEM / 構造解析)
+    11. CIM / 統合3D
+    12. Reference Business 001 読み込み → 開く
+    13. Save (Auto Save)
+    14. Close
+    15. Reopen
+    16. 再読込後の Terrain / 主要データ / 3D 再現
+
+    確認項目: レイアウト崩れなし / 日本語表示正常 / 横スクロールなし /
+    blank なし / modal 正常 / Toolbar・Sidebar 干渉なし / 操作不能ボタンなし /
+    loading 停止なし / canvas width/height 0 なし / 3D 黒・白・切れなし /
+    layer visibility 正常 / resize 崩れなし / fatal console error なし
+
+13. screenshot / evidence 一覧
+    docs/development/spacer-final-evidence/ 配下 34 ファイル
+    - 02_business_list.png / 03_new_project.png / 04_created_project.png
+    - 05_project_home.png / 06_site_context.png / 07_road.png
+    - 08_bridge_layout.png / 09_superstructure.png / 10_substructure.png
+    - 11_analysis.png / 12_cim_integrated_3d.png
+    - 13_reference_business_001_loaded.png / 14_rb001_project_home.png
+    - 15_rb001_terrain.png / 16_rb001_road.png / 17_rb001_bridge_layout.png
+    - 18_rb001_cim_3d.png / 20_rb001_after_save.png
+    - 21_rb001_closed_business_list.png / 22_rb001_reopened_home.png
+    - 26_rb001_cim_iso_window.png
+    - 27_rb001_reloaded_after_fix.png / 28_rb001_cim_after_fix.png
+    - 29_rb001_cim_after_fix_fit_all.png / 30_rb001_cim_fit_road_after_fix.png
+    - 31_rb001_cim_resized_1600x1000.png / 32_rb001_cim_resized_1100x700.png
+    - 33_rb001_cim_after_restart_fix.png / 34_final_save_close_reopen_cim.png
+    - canvas_rb001_cim.png / canvas_iso_x11.png / canvas_rb001_after_fix.png
+    - canvas_after_fix_fit_all.png / canvas_after_fix_fit_road.png
+
+14. Visual issue 一覧
+    - 発見: RB001 の Road Module が Validation NG (invalid vertical element ×3)、
+      サンプル点 0、CIM 統合3D の Entity数が 1 (地形のみ) で道路面が非表示。
+    - 初回 Electron 起動時は --disable-gpu を付与していたため WebGL context 作成
+      エラーで canvas が mount しなかった。これはアプリ不具合ではなく起動引数起因
+      と確認し、既定 GPU_MODE=compat-gpu-blocklist で起動して解消。
+      (--disable-gpu での検証は以後行わない)
+
+15. 修正内容 / commit 一覧 (Phase 2 発見 → 最小修正)
+    - 原因: RB001 fixture が canonical roadData の verticalAlignment を
+      core 形式 (startPhysicalDistance) で格納。消費側 (buildRoadIntermediate /
+      verticalDraftAlignmentToElements) は draft 形式 (startStation) を期待し、
+      縦断要素を全て「invalid」と判定。G-6 acceptance test は要素数のみ検証して
+      いたため素通り。
+    - 修正: frontend/src/liner/samples/reference-business-001/roadAlignment.ts
+      buildRb001RoadDomainDraft で verticalElementsToDraft() により draft 形式へ
+      変換 (Reference Mountain 経路と同一方針)。acceptance.test.ts へ縦断形式 +
+      Road Intermediate + CIM road surface の回帰アサーションを追加。
+    - commit:
+      - 2dcd7d0 fix(rb001): store canonical verticalAlignment in draft format so
+        Road/CIM surface builds
+      - e8ad1dd docs(acceptance): capture Electron UI + CIM 3D Visual Acceptance evidence
+      - 6db5f8d docs(acceptance): add resize + restart evidence for RB001 CIM 3D after fix
+      - 819ad33 docs(acceptance): final RB001 Save/Close/Reopen evidence after fix
+    - 修正後の実測: Road Module Validation OK / サンプル 99 点 (0→99) /
+      CIM Entity数 2 (地形+道路) / Luna 目視: 灰色の道路面リボン描画を確認。
+
+16. test 結果 (Final Gate)
+    - targeted: RB001 acceptance 13 PASS + roadCimSurface / road modules 88 PASS
+    - npm run test:fast: PASS (3501)
+    - npm run electron:test: PASS (26)
+    - npm run typecheck: PASS
+    - npm run build: PASS
+    - npm run electron:compile: PASS
+    - git diff --check: PASS
+
+17. console error 結果
+    - fatal console error / uncaught exception: なし
+    - 観測されたもの: Electron dev 時の CSP warning (packaged では出ない既定) のみ
+
+18. RB001 Save / Close / Reopen 結果
+    - Save (Auto Save): PASS (project.json 保存, schemaVersion 1.0.0, 全8モジュール,
+      terrain assetManifest 保持, 保存済み表示)
+    - Close: PASS (業務一覧へ戻る)
+    - Reopen (再起動相当): PASS (Business一覧 → RB001 を開く → Road Validation OK /
+      CIM Entity数 2 / canvas 復元)
+    - 修正後 fixture で再シードした RB001 は project.json 上も draft 形式
+      (startStation) で永続化されていることを確認。
+
+19. 最終判定
+    - Single App: PASS (/app が canonical production App)
+    - Single Project: PASS (PDC Project が canonical)
+    - Main/Worktree Cleanup: PASS
+    - Electron Launch: PASS (compile / build / 実起動 / /app 到達 / resize / restart)
+    - UI Visual Acceptance: PASS
+    - 3D Visual Acceptance: PASS (統合3D canvas に地形+道路面描画, Luna 目視含む)
+    - Save/Close/Reopen: PASS
+    - Final Completion: PASS
+
+20. RB001 Analysis Readiness: BLOCKED-INPUT
+    - 理由: trusted な RB001 固有 girder section 値がないため。
+    - Road input adapter は DONE (G-6) だが、上部工断面の解析実行は NOT_RUN を維持。
+    - 架空値・別橋梁値 (Apollo golden AG1 等) の流用は行っていない。
+
+21. blocker / 残課題
+    - RB001 girder section の trusted source 獲得 (解析 RUN に必要)
+    - /pro legacy surface の /app への段階的機能移行 (分析/FEM/LINER)
+    - DEM fetch / DemWizard の production 接続 (必要時)
+
+22. Discord 報告記録
+    - 作業開始前 / Phase 1 開始・終了 / Phase 2 開始・重要ステップ (Electron起動,
+      Visual Acceptance, 不具合発見/修正完了) / Final Gate 開始 / 途中進捗 /
+      最終完了報告 を逐次送信 (まとめ報告のみでなく経過報告を実施)
+
+23. Gmail 送信結果
+    - 「開始」: 送信済み
+    - 「Phase 1 完了」: 送信済み
+    - 「中間進捗 (Phase 2 進行中)」: 送信済み
+    - 「Visual Acceptance 完了」: 送信済み (Phase 2 完了報告)
+    - 「最終完了 (Final Report 添付)」: 別途送信
+
+24. local main == origin/main: 一致 (819ad33)
+
+25. 未コミット / 未統合成果の有無
+    - 本作業に起因する未コミット成果: なし (修正・evidence は全て commit/push 済み)
+    - 既存無関係差分 (Lane G 以前から存在、本作業前から保全):
+      docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity}.json
+      (入力/生成タイムスタンプ更新のみ。削除せず main 上に保全。バックアップ:
+      /tmp/opencode/evidence-backup/)
+
+================================================================================
+最終 SHA 確定: 819ad333856cd324b6fef3c4d8aa840086f5a180 (main == origin/main)
+SPACER CLONE — Final Cleanup + Electron/UI Visual Acceptance Completion
+================================================================================
