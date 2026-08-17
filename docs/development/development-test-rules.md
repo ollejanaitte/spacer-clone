@@ -104,12 +104,54 @@ UI の以下を変更した場合、**同じ作業単位で**関連 E2E も確�
 
 ## H. CI 現況
 
-現行最小 CI（`.github/workflows/ci.yml`）：
+現行 CI（`.github/workflows/ci.yml`、F-5 更新済み）：
 
 - `npm ci`
 - `npm run test:fast`
 - `npm run typecheck`
 - `npm run build`
+- `npx playwright install --with-deps chromium`
+- `npm run test:e2e:smoke`（E2E 専用 port / data dir は playwright.config で分離）
 
-- E2E / `test:full` は現時点では CI 必須 Gate に**含めない**。
-- CI 拡張は今後別 Phase で検討する（本作業では行わない）。
+重い E2E tier（critical / full）は `.github/workflows/milestone-e2e.yml`
+（manual / 毎週 schedule）専用。**全件 required CI にはしない**。
+
+## I. 開発ルールの機械的適用 (F-6)
+
+「人が覚えて守るルール」は以下で機械検知する。
+
+| ルール | 機械検知 | Gate |
+|---|---|---|
+| ProjectModel / Schema drift | `schemaDriftGuard.test.ts`（A-02、allowlist 契約） | test:fast |
+| PDC module slot drift | `siteContext/__tests__/contract.test.ts`（PDC_MODULE_SLOTS ↔ PROJECT_MODULE_KEYS） | test:fast |
+| future schemaVersion fail-closed | `migrateProject` + `unifiedRoundtrip.test.ts` / `filesystemProjectPersistence` | test:fast |
+| Default Project Schema Conformance | `defaultProjectConformance.test.ts`（legacy） | test:fast |
+| Persistence Roundtrip | `genericProjectRoundtrip.test.ts` + `unifiedRoundtrip.test.ts` | test:fast |
+| E2E fixture ルール（UI初期状態を fixture にしない） | `developmentRulesPolicy.test.ts`（/app/business/new 直接 goto 検出） | test:fast |
+| 禁止テストパターン（skip / fixme） | `developmentRulesPolicy.test.ts`（fail-closed） | test:fast |
+| waitForTimeout 乱用 | `developmentRulesPolicy.test.ts`（allowlist 必須） | test:fast |
+| E2E tier 二重分類 | `playwright.tiers.ts` `validateTierDisjoint()` | playwright 起動時 |
+
+policy script（独立実行可能）:
+
+```bash
+npm --prefix frontend run test:policy
+node scripts/check_development_rules.mjs
+```
+
+waitForTimeout の allowlist（3D/animation settle 用途のみ）は
+`frontend/src/test/developmentRulesPolicy.test.ts` と
+`scripts/check_development_rules.mjs` に理由付きで明示されている。
+新規利用は allowlist 追加 + 理由必須。
+
+## J. テスト責務 (F-6)
+
+| Gate | 責務 |
+|---|---|
+| `test:fast` | 純ロジック・domain・store・policy check・drift guard |
+| `test:ui` | React / DOM / UI ロジック |
+| `test:3d` | Three.js / Canvas / Viewer |
+| `test:e2e:smoke` | 起動 / 基本導線 / fixture lifecycle（数分以内） |
+| `test:e2e:critical` | 主要業務機能の回帰（PR / milestone） |
+| `test:e2e:full` | 高コスト Acceptance（milestone / schedule） |
+| `test:full` | マイルストーン最終 Gate（原則1回） |
