@@ -68,7 +68,7 @@ describe("LobbyHome", () => {
     const { container } = renderComponent(<LobbyHome onNavigate={onNavigate} />);
     const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     buttons[2].click();
-    expect(onNavigate).toHaveBeenCalledWith("/pro/platform");
+    expect(onNavigate).toHaveBeenCalledWith("/app/business");
   });
 
   test("does not display forbidden terms", () => {

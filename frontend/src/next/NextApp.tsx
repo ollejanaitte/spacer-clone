@@ -75,7 +75,11 @@ function resolveRoute(pathname: string): NextRoute {
 }
 
 export function NextApp() {
-  const [pathname, setPathname] = useState(() => window.location.pathname);
+  // G-5: packaged Electron (file://index.html) では location.pathname が
+  // /app に一致しないため、canonical home (/app) として扱う。
+  const [pathname, setPathname] = useState(() =>
+    window.location.protocol === "file:" ? NEXT_HOME_PATH : window.location.pathname,
+  );
   const [restoreState, setRestoreState] = useState<"restoring" | "ready">(() =>
     getProjectManager().isPersistenceInitialized() ? "ready" : "restoring",
   );

@@ -3,49 +3,25 @@ import { expect, test } from "@playwright/test";
 /**
  * P6: Design Platform Electron startup-path E2E.
  *
- * Mirrors the real user path: Electron loads http://127.0.0.1:5173/ (pathname "/"),
- * user clicks 実務編, reaches Design Platform Home, creates a business, opens the
- * workspace, and launches each tool binding.
+ * G-5: production App は1つ (/app NextApp / canonical PDC Project System)。
+ * Electron は /app を canonical entry とし、Lobby の「実務編」は
+ * /app/business (canonical 業務一覧) へ導く。
+ * /pro/platform (legacy DesignPlatform) は legacy/reference surface。
  */
 test.describe("design platform electron startup path", () => {
-  test("top -> 実務編 -> Design Platform Home -> business -> workspace", async ({ page }) => {
+  test("top -> 実務編 -> /app business list (canonical single app)", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("h1").first()).toBeVisible();
 
-    // 実務編 must lead to Design Platform Home (not the legacy FEM shell).
+    // 実務編 must lead to the canonical /app business list (not the legacy FEM shell).
     await page.locator("button:has-text('実務編')").first().click();
-    await expect(page).toHaveURL(/\/pro\/platform$/);
-    await expect(page.getByRole("heading", { name: "Design Platform" })).toBeVisible();
+    await expect(page).toHaveURL(/\/app\/business$/);
+    await expect(page.getByTestId("business-list-page")).toBeVisible();
 
-    // 業務から設計 -> business list
-    await page.locator("[data-testid=platform-entry-business]").click();
-    await expect(page).toHaveURL(/\/pro\/platform\/businesses$/);
-    await expect(
-      page.locator("[data-testid=business-list], [data-testid=business-list-empty]").first(),
-    ).toBeVisible();
-
-    // New business -> workspace
-    await page.locator("[data-testid=business-new]").click();
-    await page.locator("[data-testid=business-number-input]").fill("E2E-001");
-    await page.locator("[data-testid=business-name-input]").fill("起動経路E2E");
-    await page.locator("[data-testid=business-stage-select]").selectOption("road_design");
-    await page.locator("[data-testid=business-create-submit]").click();
-    await expect(page.locator("[data-testid=workspace-save]")).toBeVisible();
-    await expect(page).toHaveURL(/\/pro\/platform\/businesses\/[^/]+$/);
-
-    // Workspace tabs present.
-    for (const section of [
-      "overview",
-      "road",
-      "superstructure",
-      "substructure",
-      "analysis",
-      "main3d",
-      "deliverables",
-      "data",
-    ]) {
-      await expect(page.locator(`[data-testid=workspace-tab-${section}]`)).toBeVisible();
-    }
+    // canonical 業務一覧から新規作成フローへ進める
+    await page.locator("[data-testid=new-project-button]").click();
+    await expect(page).toHaveURL(/\/app\/business\/new$/);
+    await expect(page.getByTestId("new-project-page")).toBeVisible();
   });
 
   test("workspace tool bindings navigate to the existing tools", async ({ page }) => {
