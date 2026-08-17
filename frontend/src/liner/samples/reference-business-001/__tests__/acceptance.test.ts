@@ -106,8 +106,8 @@ describe("S-12 Reference Business 001 Wave 3 Acceptance", () => {
     if (!loaded.ok) return;
     expect(loaded.draft.alignment.id).toBe("RB001-ROAD-1");
     expect(loaded.draft.alignment.elements.length).toBeGreaterThan(0);
-    expect(loaded.draft.verticalAlignment.elements.length).toBeGreaterThan(0);
-    expect(loaded.draft.crossSections.length).toBeGreaterThan(0);
+    expect(loaded.draft.verticalAlignment?.elements.length ?? 0).toBeGreaterThan(0);
+    expect(loaded.draft.crossSections?.length ?? 0).toBeGreaterThan(0);
   });
 
   it("[Integrated 3D] unified viewer scene assembles all layers in EPSG:6674", () => {
