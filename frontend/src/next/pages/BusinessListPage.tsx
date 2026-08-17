@@ -5,12 +5,14 @@ import { designStageDisplayName, getBusinessNumber } from "../project/businessMe
 import { DeleteConfirm, useDeleteConfirm } from "../components/DeleteConfirm";
 import { exportProjectToPackage } from "../persistence/package/projectPackageExporter";
 import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
+import { loadReferenceBusinessSample } from "../samples/referenceBusiness001Loader";
 
 export function BusinessListPage() {
   const [projects, setProjects] = useState<Project[]>(() => [...getProjectManager().listProjects()]);
   const [query, setQuery] = useState("");
   const [message, setMessage] = useState<string | null>(null);
   const [exportingId, setExportingId] = useState<string | null>(null);
+  const [sampleLoading, setSampleLoading] = useState(false);
   const deleteConfirm = useDeleteConfirm();
 
   const filtered = useMemo(() => {
@@ -26,6 +28,22 @@ export function BusinessListPage() {
 
   function refresh() {
     setProjects([...getProjectManager().listProjects()]);
+  }
+
+  async function handleLoadReferenceBusiness() {
+    setSampleLoading(true);
+    setMessage(null);
+    try {
+      const result = await loadReferenceBusinessSample();
+      if (result.ok) {
+        setMessage(`Reference Business 001 を読み込みました: ${result.name}`);
+        refresh();
+      } else {
+        setMessage(result.reason);
+      }
+    } finally {
+      setSampleLoading(false);
+    }
   }
 
   function handleDuplicate(project: Project) {
@@ -79,6 +97,15 @@ export function BusinessListPage() {
           onClick={() => navigateTo("/app/business/load")}
         >
           業務データ読込
+        </button>
+        <button
+          type="button"
+          className="next-action-secondary"
+          data-testid="load-reference-business-button"
+          onClick={() => void handleLoadReferenceBusiness()}
+          disabled={sampleLoading}
+        >
+          {sampleLoading ? "読み込み中..." : "Reference Business 001 を読み込む"}
         </button>
       </div>
 

@@ -59,6 +59,7 @@ export const CRITICAL_SPECS = [
 
 export const FULL_SPECS = [
   // Reference Business / expensive acceptance
+  "reference-business-001-full.spec.ts",
   "apollo-step4a-workflow.spec.ts",
   "apollo-step4b-appurtenance-haunch.spec.ts",
   "apollo-step4c-integration.spec.ts",
