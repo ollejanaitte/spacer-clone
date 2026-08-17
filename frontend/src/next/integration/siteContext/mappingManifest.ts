@@ -65,9 +65,9 @@ export const SITE_CONTEXT_UNIFICATION_MANIFEST: SiteContextUnificationContract =
     {
       sourceConcept: "elevationResource",
       targetSlot: "terrain",
-      targetLocation: "modules.terrain.data.terrainDocument.surfaceReference",
+      targetLocation: "modules.terrain.data.assetManifest",
       required: false,
-      notes: "Elevation binary resource is referenced (surfaceReference/assetReferences), not embedded; assets move with the package.",
+      notes: "G-2: elevation binary resource is embedded into assetManifest (base64 + checksum + size) so Save → Close → Reopen restores the terrain from the project itself; surfaceReference/assetReferences reference this manifest.",
     },
     {
       sourceConcept: "existingConditions",

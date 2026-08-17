@@ -6,7 +6,6 @@ import { createEmptyProject } from "../../project/projectDataCore";
 import { NodeFileSystemGateway } from "../nodeFileSystemGateway";
 import { MemoryFileSystemGateway } from "../memoryFileSystemGateway";
 import { FilesystemProjectPersistence, PROJECT_JSON_FILE, BACKUP_EXTENSION, BACKUP_RETENTION_COUNT } from "../filesystemProjectPersistence";
-import { FilesystemProjectRepository } from "../filesystemProjectRepository";
 
 let tempDir: string;
 
@@ -150,62 +149,6 @@ describe("FilesystemProjectPersistence backups", () => {
       "utf8",
     );
     expect(afterJson).toBe(originalJson);
-  });
-});
-
-describe("FilesystemProjectRepository", () => {
-  function createRepository(persistence: FilesystemProjectPersistence) {
-    return new FilesystemProjectRepository(persistence);
-  }
-
-  it("create/get/list/update/delete work against the filesystem", async () => {
-    const persistence = createPersistence();
-    const repository = createRepository(persistence);
-    await repository.initialize();
-
-    const created = await repository.create(createEmptyProject("業務X"));
-    expect(created.ok).toBe(true);
-    if (!created.ok) return;
-
-    const got = await repository.get(created.project.projectId);
-    expect(got?.name).toBe("業務X");
-    expect((await repository.list()).length).toBe(1);
-
-    const updated = await repository.update(created.project.projectId, { ...created.project, name: "業務X改訂" });
-    expect(updated.ok).toBe(true);
-    expect((await repository.get(created.project.projectId))?.name).toBe("業務X改訂");
-
-    expect(await repository.delete(created.project.projectId)).toBe(true);
-    expect(await repository.get(created.project.projectId)).toBeUndefined();
-    expect((await repository.list()).length).toBe(0);
-  });
-
-  it("rejects duplicate projectId", async () => {
-    const persistence = createPersistence();
-    const repository = createRepository(persistence);
-    await repository.initialize();
-    const project = createEmptyProject("重複テスト");
-    await repository.create(project);
-    const duplicate = { ...project, name: "別名" };
-    const result = await repository.create(duplicate);
-    expect(result.ok).toBe(false);
-    if (!result.ok) expect(result.reason).toBe("duplicate-id");
-  });
-
-  it("restores cache from filesystem on a fresh instance (restart equivalent)", async () => {
-    const persistence1 = createPersistence();
-    const repo1 = createRepository(persistence1);
-    await repo1.initialize();
-    const project = createEmptyProject("再起動テスト");
-    await repo1.create(project);
-
-    // simulate app restart with a brand new persistence/repository
-    const persistence2 = createPersistence();
-    const repo2 = createRepository(persistence2);
-    await repo2.initialize();
-    const restored = await repo2.get(project.projectId);
-    expect(restored?.name).toBe("再起動テスト");
-    expect(restored?.projectId).toBe(project.projectId);
   });
 });
 

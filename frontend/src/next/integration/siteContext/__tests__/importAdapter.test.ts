@@ -408,6 +408,25 @@ describe("siteContext import adapter contract (Wave 2 Lane B-6)", () => {
     expect(result.errorCode).toBe("SC-ERR-MISSING-REQUIRED");
   });
 
+  it("seeds the elevation assetManifest on import (G-2 terrain runtime seed)", async () => {
+    const pkg = await makeV2Package({
+      projectId: UUID,
+      withAsset: true,
+      terrain: [{ terrainId: "t-1", name: "Gujo DEM", status: "ready" }],
+    });
+    const project = await mapSiteContextPackageToProject(toInput(pkg));
+    const terrainModule = project.modules.terrain as Record<string, unknown>;
+    const data = terrainModule.data as Record<string, unknown>;
+    const assetManifest = data.assetManifest as Record<string, unknown> | undefined;
+    expect(assetManifest).toBeTruthy();
+    const entry = Object.values(assetManifest ?? {})[0] as Record<string, unknown> | undefined;
+    expect(typeof entry?.base64).toBe("string");
+    expect((entry?.base64 as string | undefined)?.length).toBeGreaterThan(0);
+    expect(typeof entry?.checksum).toBe("string");
+    expect(typeof entry?.size).toBe("number");
+    expect(data.terrainDocument).toBeTruthy();
+  });
+
   it("reports unsupported / deferred fields instead of failing when mapping is otherwise valid", async () => {
     const pkg = await makeV2Package({
       projectId: UUID,

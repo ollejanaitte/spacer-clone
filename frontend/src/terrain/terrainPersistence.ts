@@ -1,24 +1,23 @@
 // T-5: Terrain Persistence 配線
 //
-// site-context-prototype の既存 Terrain 保存・再読込機構（app/src/store/terrainAsset.ts:
-// IndexedDB「scp-terrain / elevations / projectId」）を PORT し、SPACER の
-// canonical slot へ接続する。
-//
-// 【正本関係（二重正本にしない）】
-//   - 実行時・再読込の正本は **IndexedDB store（terrainAssetStore.ts・PORT 済み）**。
-//     Save → saveTerrainElevation で標高バイナリを保存 / Close → 何もしない /
-//     Reopen → loadTerrainElevation で IndexedDB から復元（site-context と同一フロー）。
-//   - modules.terrain.data.assetManifest は **.spacerproj パッケージ自己完結用の
-//     導出ビュー（直列化）** であり、実行時正本ではない。外部へ .spacerproj を渡す際の
-//     同梱表現であり、import 時はこの manifest から IndexedDB へ seed する
-//     （二重保存にはしない）。
+// 【正本関係（二重正本にしない・G-2 最終確定）】
+//   - 実行時・直列化・再読込の正本は **modules.terrain.data.assetManifest
+//     （SCT1 バイト列 base64 + checksum + size）** とする。
+//     Save → persistTerrain で assetManifest へ標高を埋め込み / project.json
+//     （.spacerproj 単一ファイル）として永続化 / Close → 何もしない /
+//     Reopen → project.json の assetManifest から標高を復元（checksum 照合・fail-closed）。
+//     ブラウザ / Electron どちらでも同一経路で復元でき、外部へ .spacerproj を
+//     渡しても自己完結する（パッケージ同梱表現と実行時正本が同一）。
+//   - site-context-prototype の IndexedDB store（app/src/store/terrainAsset.ts:
+//     scp-terrain / elevations）は T-5 で PORT 済みだが、production では
+//     Save/Reopen 経路に配線されていない実測だった。G-2 で IndexedDB を
+//     実行時正本とする主張は正式に retire し、テスト専用シームとしてのみ残す。
 //
 //   modules.terrain.data.terrainDocument … TerrainDocument（terrainModule 契約・B-4 接続点）
-//   modules.terrain.data.assetManifest    … パッケージ同梱用の直列化ビュー（正本ではない）
-//   terrainAssetStore（IndexedDB）        … 実行時正本（Save→保存 / Reopen→復元）
+//   modules.terrain.data.assetManifest    … 実行時正本（base64 + checksum + size）
+//   terrainAssetStore（IndexedDB）        … テスト専用シーム（retire 済み・production 未配線）
 //
-// 再実装回避方針: 新規の Terrain 管理システムは作らず、既存 IndexedDB store を
-// PORT して接続する。検証は fail-closed。
+// 検証は fail-closed。新規の Terrain 管理システムは作らない。
 
 import { createTerrainModuleRecord, validateTerrainData } from "../next/modules/terrainModule";
 import type { TerrainDocument } from "../next/modules/terrainModule";
@@ -163,13 +162,16 @@ export async function verifyTerrainAssetChecksum(
 }
 
 // ---------------------------------------------------------------------------
-// 実行時正本（IndexedDB store・PORT 済み terrainAssetStore へ接続）
+// テスト専用シーム（IndexedDB store・PORT 済み terrainAssetStore へ接続）
+// G-2 で IndexedDB を実行時正本とする主張を正式 retire。production の
+// Save/Reopen 経路では使用しない（assetManifest = 実行時正本）。
+// 以下の関数は site-context 互換のテスト・検証用としてのみ残す。
 // ---------------------------------------------------------------------------
 
 /**
  * Save: TerrainAsset を TerrainBinaryAsset へ変換し、IndexedDB store へ保存する
  * （site-context terrainAsset.ts の saveTerrainElevation と同一セマンティクス）。
- * 実行時正本はこの store。
+ * テスト専用シーム。production 経路は assetManifest を使用する。
  */
 export async function saveTerrainElevation(
   store: TerrainElevationStore,
@@ -185,7 +187,7 @@ export async function saveTerrainElevation(
 /**
  * Reopen: IndexedDB store から標高バイナリを復元し TerrainAsset へ変換する
  * （site-context terrainAsset.ts の loadTerrainElevation と同一セマンティクス）。
- * 実行時正本はこの store。assetPath は terrainDocument の assetReferences から解決する。
+ * テスト専用シーム。assetPath は terrainDocument の assetReferences から解決する。
  */
 export async function loadTerrainElevation(
   store: TerrainElevationStore,

@@ -29,6 +29,23 @@ import { extractTerrainDocument, loadTerrainElevation } from "../../../terrain/t
 import { buildGujoSampleAsset, GUJO_SAMPLE_TERRAIN_ID } from "../../../terrain/gujoSample";
 import { readSuperstructureDocument } from "../../modules/superstructureModuleAdapter";
 import { readSubstructureDocument } from "../../modules/substructureModuleAdapter";
+import { persistTerrain, extractTerrainDocument as extractTerrainDocForTest } from "../../../terrain/terrainPersistence";
+import { createEmptyTerrainDocument } from "../../modules/terrainModule";
+
+// G-2: RB001 Project へ Gujo asset を assetManifest として埋め込む（canonical seed）。
+function persistTerrainForTest(
+  project: Project,
+  asset: { path: string; checksum: string; size: number; base64: string },
+): Project {
+  const doc = {
+    ...createEmptyTerrainDocument(),
+    terrainId: GUJO_SAMPLE_TERRAIN_ID,
+    source: { sourceType: "dem" as const, sourceName: "Gujo", importedAt: null },
+    surfaceReference: asset.path,
+    assetReferences: [asset.path],
+  };
+  return persistTerrain(project, doc, asset);
+}
 
 describe("F-2 normal roundtrip", () => {
   it("save → JSON → load/migrate/validate/hydrate reproduces the project", () => {
@@ -239,6 +256,26 @@ describe("F-2 Site Context import → Save → Reopen", () => {
     expect(reopened.project.metadata?.siteContextProjectCoordinateContextId).toBe(
       imported.metadata?.siteContextProjectCoordinateContextId,
     );
+  });
+});
+
+describe("G-2 Terrain runtime seed roundtrip", () => {
+  it("elevation を埋め込んだ Project は Save → Close → Reopen で terrain を維持する", async () => {
+    const { project } = buildRb001CompleteProject();
+    const asset = buildGujoSampleAsset();
+    const embedded = persistTerrainForTest(project, asset);
+    const saved = saveUnifiedProject(embedded);
+    expect(saved.ok).toBe(true);
+    if (!saved.ok) return;
+    const reopened = await reopenUnifiedProject(saved.json);
+    expect(reopened.ok).toBe(true);
+    if (!reopened.ok) return;
+    const terrainModule = reopened.project.modules.terrain as { data?: Record<string, unknown> };
+    const manifest = terrainModule?.data?.["assetManifest"] as Record<string, unknown> | undefined;
+    expect(manifest).toBeTruthy();
+    const entry = Object.values(manifest ?? {})[0] as Record<string, unknown> | undefined;
+    expect(entry?.base64).toBe(asset.base64);
+    expect(entry?.checksum).toBe(asset.checksum);
   });
 });
 
