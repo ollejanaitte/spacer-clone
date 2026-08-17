@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { navigateTo, NEXT_BUSINESS_LIST_PATH, NEXT_HOME_PATH, editProjectPath, modulePath } from "../routes";
-import { readModuleFromProject } from "../modules/adapter";
+import { readModuleFromProject, moduleHasData } from "../modules/adapter";
 import { MODULE_STATUS_LABELS } from "../modules/contract";
 import { buildIntegrated3DScene } from "../modules/cim/cimSceneBuilder";
 import { defaultCimLayerState, type CimLayerId } from "../modules/cim/integrated3dScene";
@@ -115,6 +115,9 @@ export function ProjectTopPage({ projectId }: { projectId: string }) {
             {PROJECT_TOP_MODULES.map((entry) => {
               const moduleData = readModuleFromProject(project, entry.moduleId as import("../project/schema").ProjectModuleKey);
               const status = moduleData.state.status;
+              const statusLabel = status === "notStarted" && moduleHasData(moduleData)
+                ? "データあり"
+                : MODULE_STATUS_LABELS[status];
               return (
                 <li key={entry.moduleId} className="next-section-item" data-testid={`module-entry-${entry.moduleId}`}>
                   <button
@@ -127,7 +130,7 @@ export function ProjectTopPage({ projectId }: { projectId: string }) {
                   </button>
                   <div className="next-section-status">
                     <span className="next-badge next-badge-module" data-testid={`module-status-${entry.moduleId}`}>
-                      {MODULE_STATUS_LABELS[status]}
+                      {statusLabel}
                     </span>
                   </div>
                 </li>

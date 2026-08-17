@@ -1,6 +1,7 @@
 import type { ProjectManager } from "../../project/projectManager";
 import type { BridgeLayoutDocument, BridgeLayoutIssue } from "./bridgeLayoutTypes";
-import { readRoadInputs } from "../roadModuleAdapter";
+import { loadRoadEditorDraft } from "../road/roadEditorDraft";
+import { readRoadData, readRoadInputs } from "../roadModuleAdapter";
 import { readTerrainDocument } from "../terrainModuleAdapter";
 import { readExistingConditions } from "../existingConditionsAdapter";
 
@@ -38,9 +39,15 @@ export function resolveBridgeLayoutReferences(
     existingResolved: false,
   };
 
+  // Canonical roadData (single source of truth) first, then the legacy
+// roadInput path used by older seeds / fixtures.
+  const canonicalRoad = readRoadData(manager, projectId);
+  const canonicalDraft = canonicalRoad ? loadRoadEditorDraft(canonicalRoad) : undefined;
   const roadInputs = readRoadInputs(manager, projectId);
   const horizontal = roadInputs?.horizontal as { readonly id?: string } | undefined;
-  const roadAlignmentId = horizontal?.id ?? null;
+  const roadAlignmentId = canonicalDraft?.ok
+    ? canonicalDraft.draft.alignment.id
+    : (horizontal?.id ?? null);
   if (document.roadReference.alignmentId === null) {
     issues.push({ path: "bridgeLayoutDocument.roadReference.alignmentId", message: "road reference is empty" });
   } else if (roadAlignmentId === null) {
@@ -71,10 +78,6 @@ export function resolveBridgeLayoutReferences(
     resolved.existingResolved = true;
   } else if (!existingDoc) {
     issues.push({ path: "bridgeLayoutDocument.existingConditionsReference", message: "existing conditions document is missing; reference is dangling" });
-  } else if (document.existingConditionsReference.documentReferenceId !== null
-    && document.existingConditionsReference.documentReferenceId !== existingDoc.schemaVersion
-    && existingDoc.schemaVersion !== null) {
-    issues.push({ path: "bridgeLayoutDocument.existingConditionsReference.documentReferenceId", message: "existing conditions reference mismatch" });
   } else {
     resolved.existingResolved = true;
   }

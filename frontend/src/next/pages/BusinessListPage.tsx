@@ -80,7 +80,7 @@ export function BusinessListPage() {
   }
 
   return (
-    <section className="next-page" data-testid="business-list-page">
+    <section className="next-page next-page-wide" data-testid="business-list-page">
       <h1 className="next-page-title">業務一覧</h1>
       <button
         type="button"

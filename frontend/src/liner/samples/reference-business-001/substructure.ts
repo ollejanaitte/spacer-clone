@@ -15,7 +15,9 @@
 
 import { buildSubstructureDocument } from "../../../next/modules/substructure/substructureDocumentDomain";
 import { buildSupportPlacementFromHandoff } from "../../../next/modules/substructure/substructurePhase4Adapter";
+import { buildSubstructurePlacement, applySubstructurePlacement } from "../../../next/modules/substructure/substructurePlacement";
 import { validateSubstructureDocument } from "../../../next/modules/substructure/substructureValidation";
+import { buildLinerIntermediateFromRoad } from "../../../next/modules/superstructure/superstructureGeometry";
 import type {
   SubstructureDocument,
   SupportReferences,
@@ -32,6 +34,7 @@ import {
 } from "./bridgeArrangement";
 import {
   buildRb001HorizontalAlignment,
+  buildReferenceBusiness001RoadSample,
   REF_BUSINESS_001_ROAD_ID,
 } from "./roadAlignment";
 import { GUJO_COORDINATE_CONTEXT_ID, GUJO_SAMPLE_ASSET_PATH } from "../../../terrain/gujoSample";
@@ -209,6 +212,21 @@ export function buildRb001Substructure(): SubstructureDocument {
     bearingSeatReferences: [],
     bearingReactionReferences: null,
   };
+
+  // LINER placement snapshots so CIM/3D solids can be derived (WP-D).
+  const sample = buildReferenceBusiness001RoadSample();
+  const intermediate = buildLinerIntermediateFromRoad({
+    horizontal: sample.horizontal,
+    vertical: sample.vertical,
+    crossSections: sample.crossSections,
+  });
+  if (intermediate) {
+    const placed = buildSubstructurePlacement(document, intermediate);
+    if (placed.ok) {
+      return applySubstructurePlacement(document, placed);
+    }
+  }
+
   return document;
 }
 

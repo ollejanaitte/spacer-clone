@@ -23,6 +23,8 @@ import type { SubstructureDocument } from "../modules/substructure/substructureT
 import { validateSubstructureData } from "../modules/substructure/substructureValidation";
 import { serializeAnalysisDocumentForPersistence } from "../modules/analysis/analysisPersistence";
 import type { AnalysisDocument } from "../modules/analysis/analysisDocumentTypes";
+import type { BridgeLayoutDocument } from "../modules/bridgeLayout/bridgeLayoutTypes";
+import { validateBridgeLayoutData } from "../modules/bridgeLayout/bridgeLayoutValidation";
 
 export type WriteModuleDocumentResult =
   | { ok: true; project: Project }
@@ -114,4 +116,27 @@ export function writeAnalysisModuleToProject(
     data,
   };
   return { ok: true, project: writeModuleRecord(project, "analysis", record) };
+}
+
+/**
+ * Write the bridge layout document into the project module slot (fail-closed).
+ * BridgeLayoutDocument is plain persisted DTO (no transient derived arrays).
+ */
+export function writeBridgeLayoutModuleToProject(
+  project: Project,
+  document: BridgeLayoutDocument,
+): WriteModuleDocumentResult {
+  const data: Record<string, unknown> = {
+    ...createInitialModuleData().data,
+    bridgeLayoutDocument: document,
+  };
+  const issues = validateBridgeLayoutData(data);
+  if (issues.length > 0) {
+    return { ok: false, issues };
+  }
+  const record: ModuleDataRecord = {
+    ...createInitialModuleData(),
+    data,
+  };
+  return { ok: true, project: writeModuleRecord(project, "bridgeLayout", record) };
 }

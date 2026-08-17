@@ -15,6 +15,8 @@ import { readSuperstructureDocument } from "../superstructureModuleAdapter";
 import { buildSubstructureDocument } from "./substructureDocumentDomain";
 import { buildSupportPlacementFromHandoff } from "./substructurePhase4Adapter";
 import { buildBearingReactionFromHandoff } from "./substructurePhase5Adapter";
+import { buildSubstructurePlacement, applySubstructurePlacement } from "./substructurePlacement";
+import { buildLinerIntermediateFromRoad } from "../superstructure/superstructureGeometry";
 import { writeSubstructureDocument } from "../substructureModuleAdapter";
 import type { SubstructureDocument } from "./substructureTypes";
 
@@ -85,9 +87,20 @@ export function generateSubstructureFromLayout(
     bearingSeatReferences: [],
   };
 
-  const write = writeSubstructureDocument(manager, projectId, document);
+  // Attach real LINER placement snapshots (WP-D) so the CIM scene can derive
+  // abutment / pier / footing solids. Missing snapshots would otherwise make
+  // the 3D solids generation fail (NO_SNAPSHOT).
+  const placementInput = buildLinerIntermediateFromRoad({
+    horizontal: road.horizontal,
+    vertical: road.vertical,
+    crossSections: road.crossSections,
+  });
+  const placed = placementInput ? buildSubstructurePlacement(document, placementInput) : { ok: false as const, diagnostics: [] };
+  const finalDocument = placed.ok ? applySubstructurePlacement(document, placed) : document;
+
+  const write = writeSubstructureDocument(manager, projectId, finalDocument);
   if (!write.ok) {
     return { ok: false, issues: [{ path: "substructure", message: "SubstructureDocument を保存できませんでした（validation NG）" }] };
   }
-  return { ok: true, document };
+  return { ok: true, document: finalDocument };
 }

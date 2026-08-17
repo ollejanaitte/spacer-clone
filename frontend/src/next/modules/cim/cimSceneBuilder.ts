@@ -293,11 +293,17 @@ export function buildIntegrated3DScene(
   superLayer.add(superCim.superstructureGroup);
   bearingLayer.add(superCim.bearingGroup);
   metadata.push(...superCim.metadata);
+  if (!superCim.ok) {
+    issues.push(...superCim.issues);
+  }
 
   const subCim = buildSubstructureCimLayer(manager, projectId);
   subLayer.add(subCim.substructureGroup);
   foundationLayer.add(subCim.foundationGroup);
   metadata.push(...subCim.metadata);
+  if (!subCim.ok) {
+    issues.push(...subCim.issues);
+  }
 
   layers.superstructure = superLayer;
   layers.substructure = subLayer;

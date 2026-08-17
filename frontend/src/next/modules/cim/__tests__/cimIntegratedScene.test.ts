@@ -16,6 +16,8 @@ import { createEmptyTerrainDocument } from "../../terrainModule";
 import { writeExistingConditions } from "../../existingConditionsAdapter";
 import { generateSubstructureFromLayout } from "../../substructure/substructureGenerator";
 import { writeSubstructureDocument } from "../../substructureModuleAdapter";
+import { buildSubstructurePlacement, applySubstructurePlacement } from "../../substructure/substructurePlacement";
+import { buildLinerIntermediateFromRoad } from "../../superstructure/superstructureGeometry";
 import { commitRoadEditorDraft } from "../../road/roadEditorDraft";
 import { createDefaultLinerDraft } from "../../../../liner/adapters/linerUiAdapter";
 import { createReferenceMountain } from "../../terrain/referenceMountain";
@@ -106,6 +108,21 @@ function seedSubstructure(projectId: string) {
   const generated = generateSubstructureFromLayout(manager, projectId);
   expect(generated.ok, JSON.stringify(generated.ok ? [] : generated.issues)).toBe(true);
   if (!generated.ok) return;
+  // Attach real LINER placement snapshots so the CIM solids can be derived.
+  const mountain = createReferenceMountain();
+  const intermediate = buildLinerIntermediateFromRoad({
+    horizontal: mountain.roadHorizontal,
+    vertical: mountain.roadVertical,
+    crossSections: [mountain.roadCrossSection],
+  });
+  if (intermediate) {
+    const placed = buildSubstructurePlacement(generated.document, intermediate);
+    if (placed.ok) {
+      const write = writeSubstructureDocument(manager, projectId, applySubstructurePlacement(generated.document, placed));
+      expect(write.ok).toBe(true);
+      return;
+    }
+  }
   const write = writeSubstructureDocument(manager, projectId, generated.document);
   expect(write.ok).toBe(true);
 }

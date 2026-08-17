@@ -36,6 +36,7 @@ import {
   writeSuperstructureModuleToProject,
   writeSubstructureModuleToProject,
   writeAnalysisModuleToProject,
+  writeBridgeLayoutModuleToProject,
 } from "../../../next/persistence/unifiedModuleWriter";
 
 export const RB001_COMPLETE_PROJECT_NAME = "RB001 郡上市八幡 長良川橋 完成Project" as const;
@@ -69,6 +70,10 @@ export function buildRb001CompleteProject(): Rb001CompleteProjectResult {
       siteContextCoordinateContexts: [GUJO_COORDINATE_CONTEXT],
       siteContextProjectCoordinateContextId: GUJO_COORDINATE_CONTEXT_ID,
       siteContextSourceDatasets: [GUJO_SOURCE_DATASET],
+      existingConditions: {
+        schemaVersion: "0.1.0",
+        entities: [],
+      },
     },
   };
 
@@ -90,6 +95,11 @@ export function buildRb001CompleteProject(): Rb001CompleteProjectResult {
 
   // bridge layout (S-4 document) + workflowState
   const layout = buildRb001BridgeLayout();
+  const layoutWrite = writeBridgeLayoutModuleToProject(project, layout);
+  if (!layoutWrite.ok) {
+    throw new Error(`RB001-BRIDGE-LAYOUT-PERSIST-FAILED: ${layoutWrite.issues.map((i) => `${i.path}: ${i.message}`).join("; ")}`);
+  }
+  project = layoutWrite.project;
   project = writeBridgeWorkflowState(project, {
     bridgeId: RB001_BRIDGE_ID,
     name: RB001_BRIDGE_NAME,

@@ -71,3 +71,13 @@ export function writeModuleToManager(
 }
 
 export type { ModuleValidationIssue };
+
+/** True when the module record carries at least one non-empty data payload. */
+export function moduleHasData(moduleData: ModuleDataRecord): boolean {
+  return Object.keys(moduleData.data).some((key) => {
+    const value = moduleData.data[key];
+    if (value == null) return false;
+    if (typeof value === "object") return Object.keys(value).length > 0;
+    return true;
+  });
+}
