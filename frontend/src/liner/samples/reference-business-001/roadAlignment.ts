@@ -16,6 +16,7 @@ import type { LinearAlignment } from "../../core/types";
 import type { VerticalElement } from "../../core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../schema/types";
 import { evaluateElementEndState, totalAlignmentLength } from "../../core/geometry/horizontal";
+import { verticalElementsToDraft } from "../../../next/modules/road/verticalDraftBridge";
 import type { LinerDomainDraftVNext, AlignmentBundleDraft } from "../../schema/types";
 
 export const REF_BUSINESS_001_ROAD_ID = "RB001-ROAD-1";
@@ -192,7 +193,7 @@ export function buildRb001RoadDomainDraft(): LinerDomainDraftVNext {
     stationDefinition: sample.stationDefinition as unknown as AlignmentBundleDraft["stationDefinition"],
     verticalAlignment: {
       id: "VA-RB001",
-      elements: sample.vertical as unknown as AlignmentBundleDraft["verticalAlignment"]["elements"],
+      elements: verticalElementsToDraft(sample.vertical),
     },
     crossSections: sample.crossSections as unknown as AlignmentBundleDraft["crossSections"],
     crossSlopeIntervals: sample.crossSlopeIntervals as unknown as AlignmentBundleDraft["crossSlopeIntervals"],

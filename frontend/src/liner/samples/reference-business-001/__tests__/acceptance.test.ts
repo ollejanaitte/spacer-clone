@@ -12,6 +12,9 @@ import { buildRealGujoReferenceScene } from "../../../../viewer/adapters/realSce
 import { readModuleFromProject } from "../../../../next/modules/adapter";
 import { finalizeCanonicalRoadData } from "../../../../next/modules/road/roadDataSchema";
 import { loadRoadEditorDraft } from "../../../../next/modules/road/roadEditorDraft";
+import { buildRoadIntermediate } from "../../../../next/modules/road/intermediateResult";
+import { verticalDraftAlignmentToElements } from "../../../../next/modules/road/verticalDraftBridge";
+import { buildRoadCimSurface } from "../../../../next/modules/cim/roadCimSurface";
 
 /**
  * S-12 Sample Acceptance — Reference Business 001 最終業務 Acceptance。
@@ -108,6 +111,43 @@ describe("S-12 Reference Business 001 Wave 3 Acceptance", () => {
     expect(loaded.draft.alignment.elements.length).toBeGreaterThan(0);
     expect(loaded.draft.verticalAlignment?.elements.length ?? 0).toBeGreaterThan(0);
     expect(loaded.draft.crossSections?.length ?? 0).toBeGreaterThan(0);
+  });
+
+  it("[G-6] canonical roadData verticalAlignment uses draft format (startStation) so the CIM road surface builds", () => {
+    // RB001 の canonical roadData は editor draft 形式 (startStation) で格納し、
+    // Road Module / CIM 統合3D の buildRoadIntermediate が縦断要素を
+    // 有効 (startPhysicalDistance 有効値) として評価できることを保証する。
+    // 従来 fixture は core 形式 (startPhysicalDistance) で格納しており、
+    // Road Module Validation NG / CIM 道路面非表示 (Entity数 1) の原因だった。
+    const { project } = buildRb001CompleteProject();
+    const raw = readModuleFromProject(project, "road")?.data?.roadData;
+    const roadData = finalizeCanonicalRoadData(raw);
+    expect(roadData).toBeDefined();
+    if (!roadData) return;
+
+    const bundle = roadData.domainDraft.alignments[0];
+    expect(bundle.verticalAlignment.elements.length).toBeGreaterThan(0);
+    for (const element of bundle.verticalAlignment.elements) {
+      expect(element).toHaveProperty("startStation");
+      expect(typeof element.startStation).toBe("number");
+    }
+
+    const loaded = loadRoadEditorDraft(roadData);
+    expect(loaded.ok).toBe(true);
+    if (!loaded.ok) return;
+    const intermediate = buildRoadIntermediate({
+      horizontal: loaded.draft.alignment,
+      vertical: verticalDraftAlignmentToElements(loaded.draft.verticalAlignment),
+      crossSections: loaded.draft.crossSections ?? [],
+      widthChangePoints: loaded.draft.widthChangePoints ?? [],
+      crossSlopeIntervals: loaded.draft.crossSlopeIntervals ?? [],
+      stationDefinition: loaded.draft.stationDefinition,
+    }, { sampleInterval: 25 });
+    expect(intermediate.issues).toEqual([]);
+    expect(intermediate.samplePoints.length).toBeGreaterThan(1);
+    const surface = buildRoadCimSurface(loaded.draft, { sampleInterval: 25 });
+    expect(surface.vertices.length).toBeGreaterThan(0);
+    expect(surface.stationCount).toBeGreaterThan(1);
   });
 
   it("[Integrated 3D] unified viewer scene assembles all layers in EPSG:6674", () => {
