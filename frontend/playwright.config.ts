@@ -34,6 +34,10 @@ const frontendLog = path.join(logDir, "frontend.log");
 
 export default defineConfig({
   testDir: "./tests/e2e",
+  // G-3: retire 済み legacy LINER save/load spec (A-05 fail-closed save ゲート
+  // 導入前の保存契約を検証する stale spec)。判定は
+  // docs/development/lane-g-migration-support-matrix.md。default 実行から除外。
+  testIgnore: /retired\/legacy-liner-save-load\//,
   fullyParallel: false,
   workers: 1,
   use: {

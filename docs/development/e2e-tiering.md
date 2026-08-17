@@ -51,11 +51,17 @@ npm run test:e2e:tiers     # smoke + critical (通常マージ前Gate)
 - `bridgeDefinition`, `phase4-user-acceptance`, `phase5-*`
 - `p2-d06`, `p3-d07`, `substructure-design-result`
 - Reference Business 001 (F-7で追加)
-- **KNOWN_BROKEN_PREEXISTING** (Lane F 起因ではない既知の stale spec):
-  `p1-d05`, `p3-f03`, `p4-d01`, `p4-d02`, `p4-d03`, `p4-d04`, `p4-d08`
-  - Wave 3 baseline (19dfdfb) 時点で既に失敗する legacy LINER save/load 系。
-    saveボタン導線変更後未同期の pre-existing 問題。Lane F では修正しない
-    (F-4/F-8 の責務外)。将来の legacy LINER 整備で同期すべき。
+- **legacy LINER stale spec 7件は G-3 で retire** (`p1-d05`, `p3-f03`,
+  `p4-d01`, `p4-d02`, `p4-d03`, `p4-d04`, `p4-d08`):
+  - 根拠: A-05 fail-closed save ゲートが空FEM+LINER-only モデルの保存を
+    意図的に拒否する現行仕様に変更されたため、ゲート導入前の保存契約を
+    検証する spec は現行仕様と衝突する stale spec である。
+  - 対応: `frontend/tests/e2e/retired/legacy-liner-save-load/` へ移動、
+    `playwright.tiers.ts` の `FULL_SPECS` から除去、
+    `playwright.config.ts` の `testIgnore` で既定実行から除外。
+  - 同等カバレッジは jsdom `App.linerSaveLoad.test.tsx` と unit
+    `liner/adapters/linerProjectDraft.test.ts` で維持。
+  - 判定詳細: `docs/development/lane-g-migration-support-matrix.md`
 
 ## tier 検証
 
