@@ -102,8 +102,10 @@ export function loadUnifiedProject(json: string): UnifiedLoadResult {
  * - No terrain document → terrainVerified = true (nothing to verify).
  * - Terrain present + assetManifest → checksum/surfaceReference/assetReferences
  *   verification via verifyTerrainAssetChecksum (fail-closed).
- * - When a runtime elevation store is provided, the reopened terrain is
- *   cross-checked against the store (IndexedDB runtime source of truth).
+ * - When a runtime elevation store is provided (test-only seam; G-2 retired
+ *   IndexedDB as runtime source of truth), the reopened terrain is additionally
+ *   cross-checked against the store. Production never passes a store — the
+ *   project assetManifest is the single source of truth.
  */
 export async function reopenUnifiedProject(
   json: string,

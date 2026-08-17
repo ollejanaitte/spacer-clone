@@ -146,11 +146,14 @@ export interface StoreRoundtripResult {
 }
 
 /**
- * Save → Close → Reopen の実行時 roundtrip（IndexedDB store が正本）。
+ * Save → Close → Reopen の実行時 roundtrip（テスト専用シーム）。
+ * G-2 で IndexedDB を実行時正本とする主張を retire し、production の正本は
+ * project 内 assetManifest（base64 SCT1）に一本化した。この storeRoundtrip は
+ * テスト用メモリ store で旧互換フローを検証するためにのみ残す。
  *   Save:    saveTerrainElevation で標高バイナリを store へ保存
  *   Reopen:  loadTerrainElevation で store から復元 → verifyReopenedTerrain で
  *            project 内 terrainDocument の assetReference / checksum と照合
- * assetManifest（.spacerproj 同梱用直列化ビュー）は実行時正本ではないため使わない。
+ * production の正規経路は assetManifest（unifiedRoundtrip.ts）を使用する。
  */
 export async function storeRoundtrip(
   store: TerrainElevationStore,
@@ -166,7 +169,7 @@ export async function storeRoundtrip(
     return { ok: false, project, restoredAsset: null, checksumVerified: false, issues: [`build failed: ${message}`] };
   }
 
-  // Save（実行時正本 = store）
+  // Save（テスト専用シーム = store）
   const terrainId = terrainDocument.terrainId;
   try {
     await saveTerrainElevation(store, project.projectId, terrainId, asset);

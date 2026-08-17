@@ -23,6 +23,7 @@ import { SiteContextPackageError, isRecord, parseJsonFileContent, resolveAssetBy
 import type { SiteContextPackageFile } from "./adapterContract";
 import { isSct1Bytes, parseSct1Header, sct1ElevationRange } from "./siteContextHash";
 import { classifyEpsg, isTokyoDatumEpsg, type NormalizedProjectSource, type ProjectV2Source, type SourceCoordinateContextV2, type SourceSiteTerrain } from "./siteContextSourceSchema";
+import type { TerrainAssetManifestEntry } from "../../../terrain/generation";
 
 /**
  * `.sitecontext` → SPACER Project Data Core mapping (B-4).
@@ -222,6 +223,8 @@ function deriveSourceType(terrain: SourceSiteTerrain, normalized: ProjectV2Sourc
 
 export interface TerrainMappingResult {
   readonly terrainDocument: TerrainDocument | undefined;
+  /** 実行時正本 seed（G-2）: active terrain の elevation base64 を assetManifest へ埋め込む。 */
+  readonly terrainAsset: TerrainAssetManifestEntry | undefined;
   readonly terrainImport: SiteContextTerrainImportResult;
   readonly warnings: readonly SiteContextWarning[];
   readonly unsupportedFields: readonly SiteContextUnsupportedField[];
@@ -282,9 +285,23 @@ export function mapTerrain(
   }
 
   let terrainDocument: TerrainDocument | undefined;
+  let terrainAsset: TerrainAssetManifestEntry | undefined;
   if (active) {
     const resolved = resolveAssetBytes(packageFiles, active.elevationResource, { encoding: "base64" });
     const bytes = resolved.bytes;
+    // G-2: active elevation の base64 を manifest entry として返す。package 内
+    // elevation は base64 文字列で同梱される（field-mapping §3.9）。binary 形式の
+    // package では base64 へ再エンコードして正本 seed を成立させる。
+    const base64 =
+      typeof resolved.file.content === "string"
+        ? resolved.file.content
+        : bytesToBase64(bytes);
+    terrainAsset = {
+      path: active.elevationResource.path,
+      checksum: active.elevationResource.checksum,
+      size: active.elevationResource.size,
+      base64,
+    };
     const gridBounds = deriveGridBounds(active.grid);
     const sourceBounds = active.bounds;
     if (
@@ -348,6 +365,7 @@ export function mapTerrain(
 
   return {
     terrainDocument,
+    terrainAsset,
     terrainImport: {
       terrainCount: terrains.length,
       importedTerrainIds: terrainDocument ? [terrainDocument.terrainId] : [],
@@ -622,6 +640,14 @@ export function buildMappingOutcome(input: MappingInput): MappingOutcome {
   if (terrain.terrainDocument !== undefined) {
     terrainRecord.data.terrainDocument = structuredClone(terrain.terrainDocument);
   }
+  // G-2: elevation の実行時正本 seed。package 内 elevation バイナリを
+  // assetManifest（base64 + checksum + size）として project へ埋め込み、
+  // Save → Close → Reopen で地形が復元されることを保証する。
+  if (terrain.terrainAsset !== undefined) {
+    terrainRecord.data.assetManifest = {
+      [terrain.terrainAsset.path]: structuredClone(terrain.terrainAsset),
+    };
+  }
 
   const project: Project = {
     ...base,
@@ -719,4 +745,14 @@ export function buildSkeletonReport(
 export function derivePrimaryContextOrigin(normalized: NormalizedProjectSource): SourceCoordinateContextV2["origin"] | undefined {
   const ctx = normalized.coordinateContexts.find((c) => c.id === normalized.projectCoordinateContextId);
   return ctx ? { ...ctx.origin } : undefined;
+}
+
+/** bytes → base64（node / browser 共通・純実装）。 */
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  const chunkSize = 0x8000;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary);
 }
