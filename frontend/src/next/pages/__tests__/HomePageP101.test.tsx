@@ -25,17 +25,16 @@ afterEach(() => {
 });
 
 describe("P1-01 旧/新導線整理", () => {
-  it("HomePageはPDF準拠の2系統表示とし、開発者向け情報を折りたたみに退避する", async () => {
+  it("HomePageは正規フロー1本（業務一覧へ）のみとし、レガシー第二入口を露出しない", async () => {
     const root = await render(<HomePage />);
     expect(document.querySelector('[data-testid="home-title"]')?.textContent).toContain("橋梁設計統合システム");
     expect(document.querySelector('[data-testid="home-business-entry"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="home-quick-entry"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="home-quick-entry"]')).toBeNull();
     expect(document.querySelector('[data-testid="home-go-business"]')?.textContent).toContain("業務一覧へ");
-    expect(document.querySelector('[data-testid="home-go-quick"]')?.textContent).toContain("レガシーモード");
+    expect(document.querySelector('[data-testid="home-go-quick"]')).toBeNull();
     expect(document.querySelector('[data-testid="home-dev-info"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="home-dev-info"]')?.textContent).toContain("production正");
-    expect(document.querySelector('[data-testid="home-legacy-reference"]')?.textContent).toContain("legacy /pro");
-    expect(document.querySelector('[data-testid="home-dev-info"]')?.textContent).toContain("参照");
+    expect(document.querySelector('[data-testid="home-legacy-reference"]')).toBeNull();
     root.unmount();
   });
 });

@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Project } from "../project/schema";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
-import { navigateTo, NEXT_BUSINESS_LIST_PATH, LEGACY_SYSTEM_PATH } from "../routes";
+import { navigateTo, NEXT_BUSINESS_LIST_PATH } from "../routes";
 
 export type RecentDataItem =
   | { kind: "project"; project: Project }
@@ -42,33 +42,12 @@ export function HomePage() {
             業務一覧へ ➥
           </button>
         </article>
-
-        <article className="next-home-card" data-testid="home-quick-entry">
-          <h2 className="next-home-card-title">クイック検討</h2>
-          <p className="next-hint">モデル作成、骨組み解析、時刻歴応答解析などピンポイントで検討する場合はこちら。</p>
-          <button
-            type="button"
-            className="next-home-secondary"
-            data-testid="home-go-quick"
-            onClick={() => window.location.assign(LEGACY_SYSTEM_PATH)}
-          >
-            レガシーモード ➥
-          </button>
-        </article>
       </div>
 
       <details className="next-dev-info" data-testid="home-dev-info">
         <summary>開発者向け情報</summary>
         <p className="next-hint">
           本環境（/app）がproduction正です。canonicalデータの書込みはすべて /app 経由で行います。
-          <button
-            type="button"
-            className="next-link-button"
-            data-testid="home-legacy-reference"
-            onClick={() => window.location.assign(LEGACY_SYSTEM_PATH)}
-          >
-            legacy /pro（資産確認・参照用）
-          </button>
         </p>
       </details>
 

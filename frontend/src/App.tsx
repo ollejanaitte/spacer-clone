@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { PanelLeftClose, PanelLeftOpen } from "lucide-react";
 import { ApiClientError, apiClient, resolveApiUrl, type If3AnalysisSidecar } from "./api/client";
 import { buildRunAnalysisIf3Metadata } from "./if3";
@@ -84,22 +84,6 @@ import {
 } from "./liner/uiPreparation";
 import { SubstructurePlanningHost } from "./substructure/planning/SubstructurePlanningHost";
 import {
-  DESIGN_PLATFORM_BUSINESS_LIST_PATH,
-  DESIGN_PLATFORM_HOME_PATH,
-  isBusinessListPath,
-  isBusinessWorkspacePath,
-  isDesignPlatformHome,
-  parseBusinessWorkspacePath,
-  resolveBusinessWorkspacePath,
-} from "./platform/routes";
-import { DesignPlatformHome } from "./platform/pages/DesignPlatformHome";
-import { BusinessListPage } from "./platform/pages/BusinessListPage";
-import { BusinessWorkspace } from "./platform/workspace/BusinessWorkspace";
-import { createToolBindings } from "./platform/tools/toolBindings";
-import { createLocalStorageBusinessRegistry } from "./platform/business/businessRegistry";
-import { createBusinessProjectPersistence } from "./platform/storage/businessProjectPersistence";
-import { createSampleBusiness } from "./platform/sample/sampleBusiness";
-import {
   linerPiersToSupportHandoff,
   resolveHandoffAlignmentId,
 } from "./substructure/planning/linerHandoff";
@@ -140,26 +124,6 @@ import {
   hydrateApolloPhase1Unit2FromPersistence,
   serializeApolloPhase1Unit2ForPersistence,
 } from "./apollo/unit2Draft";
-import { SiteContextEntryPage } from "./workflow/SiteContextEntryPage";
-import { SiteContextPage } from "./workflow/SiteContextPage";
-import { RoadWorkflowPage } from "./workflow/RoadWorkflowPage";
-import { BridgeWorkflowPage } from "./workflow/BridgeWorkflowPage";
-import {
-  BRIDGE_WORKFLOW_ROUTE_PATH,
-  isBridgeWorkflowRoute,
-  isRoadWorkflowRoute,
-  isSiteContextRoute,
-  ROAD_WORKFLOW_ROUTE_PATH,
-  SITE_CONTEXT_ROUTE_PATH,
-} from "./workflow/routes";
-import { createEmptyProject as createEmptyWorkflowProject } from "./next/project/projectDataCore";
-import type { Project as PdcProject } from "./next/project/schema";
-import {
-  workflowProjectIdFor,
-  persistWorkflowProject,
-  restoreWorkflowProject,
-} from "./workflow/workflowProjectPersistence";
-import type { CanonicalWorkflowStep } from "./workflow/canonicalWorkflow";
 import { buildApolloVisualizationModel } from "./apollo/visualization";
 import type { ViewerDisplayModel } from "./viewer/types";
 
@@ -191,7 +155,6 @@ export function App() {
     typeof window !== "undefined" ? window.location.pathname : "/pro";
   const [appVersion, setAppVersion] = useState<string>("0.0.0");
   const [project, setProject] = useState<ProjectModel>(() => createEmptyProject());
-  const [workflowProject, setWorkflowProject] = useState<PdcProject | null>(null);
   const [suspendedDeckProject] = useState<ProjectModel>(() => createSuspendedDeckProject());
   const [selectedSection, setSelectedSection] = useState<SectionKey>("nodes");
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
@@ -200,7 +163,6 @@ export function App() {
   const [bottomTab, setBottomTab] = useState<BottomTab>("results");
   const [validation, setValidation] = useState<ValidationResponse | null>(null);
   const [validationNotice, setValidationNotice] = useState<ValidationNotice | null>(null);
-  const [workspaceSaveFeedback, setWorkspaceSaveFeedback] = useState<string | null>(null);
   const [result, setResult] = useState<AnalysisResult | null>(null);
   const [if3Result, setIf3Result] = useState<FrameAnalysisResultResource | null>(null);
   const [persistedResultRef, setPersistedResultRef] = useState<DocumentReference | null>(null);
@@ -406,81 +368,6 @@ export function App() {
     window.history.pushState({}, "", "/");
     window.dispatchEvent(new PopStateEvent("popstate"));
   }, []);
-
-  const createWorkflowProject = useCallback(() => {
-    // F-2: workflow Project は legacy 業務 Project id から deterministic な
-    // projectId を導出し、正規 Save/Load 経路で復元可能にする。
-    const base = createEmptyWorkflowProject(project.project.name || "ワークフローProject");
-    const withStableId: PdcProject = {
-      ...base,
-      projectId: workflowProjectIdFor(project.project.id),
-    };
-    setWorkflowProject(withStableId);
-    void persistWorkflowProject(withStableId);
-  }, [project.project.name, project.project.id]);
-
-  const openRoadWorkflow = useCallback(() => {
-    if (workflowProject === null) {
-      createWorkflowProject();
-    }
-    navigatePro(ROAD_WORKFLOW_ROUTE_PATH);
-  }, [workflowProject, createWorkflowProject, navigatePro]);
-
-  const openBridgeWorkflow = useCallback(() => {
-    if (workflowProject === null) {
-      createWorkflowProject();
-    }
-    navigatePro(BRIDGE_WORKFLOW_ROUTE_PATH);
-  }, [workflowProject, createWorkflowProject, navigatePro]);
-
-  const handleWorkflowNavigateStep = useCallback(
-    (step: CanonicalWorkflowStep) => {
-      if (step.id === "road") {
-        openRoadWorkflow();
-        return;
-      }
-      if (step.id === "bridgePlacement") {
-        openBridgeWorkflow();
-        return;
-      }
-      if (step.route !== null) {
-        navigatePro(step.route);
-      }
-    },
-    [openRoadWorkflow, openBridgeWorkflow, navigatePro],
-  );
-
-  useEffect(() => {
-    if (
-      (isRoadWorkflowRoute(currentPathname) || isBridgeWorkflowRoute(currentPathname)) &&
-      workflowProject === null
-    ) {
-      const id = workflowProjectIdFor(project.project.id);
-      let cancelled = false;
-      void (async () => {
-        const restored = await restoreWorkflowProject(id);
-        if (cancelled) return;
-        setWorkflowProject(
-          restored ?? {
-            ...createEmptyWorkflowProject(project.project.name || "ワークフローProject"),
-            projectId: id,
-          },
-        );
-      })();
-      return () => {
-        cancelled = true;
-      };
-    }
-  }, [currentPathname, workflowProject, project.project.name, project.project.id]);
-
-  // F-2: workflow Project が変化したら正規 Save 経路へ反映 (auto-save)。
-  const workflowProjectRef = useRef<PdcProject | null>(null);
-  workflowProjectRef.current = workflowProject;
-  useEffect(() => {
-    const current = workflowProjectRef.current;
-    if (current === null) return;
-    void persistWorkflowProject(current);
-  }, [workflowProject]);
 
   const createLinerModel = useCallback(() => {
     const draft = createDefaultLinerDraft();
@@ -1036,80 +923,6 @@ export function App() {
     log("3D viewer initialization failed; fell back to 2D simplified view.");
   }, []);
 
-  if (isDesignPlatformHome(pathnameForRouting)) {
-    return (
-      <DesignPlatformHome
-        onNavigate={navigatePro}
-        onOpenQuickAnalysis={() => navigatePro("/pro")}
-      />
-    );
-  }
-
-  if (isBusinessWorkspacePath(pathnameForRouting)) {
-    const parsed = parseBusinessWorkspacePath(pathnameForRouting);
-    if (parsed !== null) {
-      const registry = createLocalStorageBusinessRegistry();
-      const business = registry.find(parsed.businessId);
-      if (business !== undefined) {
-        const persistence = createBusinessProjectPersistence();
-        const lastSavedAt = persistence.lastSavedAt(business.businessId);
-        const saveFeedback =
-          workspaceSaveFeedback !== null
-            ? workspaceSaveFeedback
-            : lastSavedAt !== null
-              ? ja.designPlatform.workspace.savedAt.replace(
-                  "{time}",
-                  new Date(lastSavedAt).toLocaleTimeString("ja-JP"),
-                )
-              : null;
-        return (
-          <BusinessWorkspace
-            business={business}
-            saveFeedback={saveFeedback}
-            onSave={() => {
-              const result = persistence.save(business);
-              if (result.ok) {
-                registry.touch(business.businessId);
-                setWorkspaceSaveFeedback(
-                  ja.designPlatform.workspace.savedAt.replace(
-                    "{time}",
-                    new Date(result.lastSavedAt).toLocaleTimeString("ja-JP"),
-                  ),
-                );
-              } else {
-                setWorkspaceSaveFeedback(ja.designPlatform.workspace.saveFailed);
-              }
-            }}
-            onBack={() => navigatePro(DESIGN_PLATFORM_BUSINESS_LIST_PATH)}
-            onLaunchTool={(section) => {
-              const binding = createToolBindings().resolveBinding(section);
-              if (binding !== null && binding.available) {
-                navigatePro(binding.route);
-              }
-            }}
-          />
-        );
-      }
-    }
-  }
-
-  if (isBusinessListPath(pathnameForRouting)) {
-    return (
-      <BusinessListPage
-        registry={createLocalStorageBusinessRegistry()}
-        onOpen={(businessId) => {
-          navigatePro(resolveBusinessWorkspacePath(businessId));
-        }}
-        onBack={() => navigatePro(DESIGN_PLATFORM_HOME_PATH)}
-        onCreateSample={() => {
-          const registry = createLocalStorageBusinessRegistry();
-          const created = createSampleBusiness(registry);
-          navigatePro(resolveBusinessWorkspacePath(created.businessId));
-        }}
-      />
-    );
-  }
-
   if (isApolloRoute(pathnameForRouting) && apolloPhase1Enabled) {
     return (
       <ApolloRouteHost
@@ -1482,60 +1295,6 @@ export function App() {
     );
   }
 
-  if (isSiteContextRoute(currentPathname)) {
-    if (workflowProject === null) {
-      return (
-        <SiteContextEntryPage
-          projectName={project.project.name}
-          projectId={project.project.id}
-          isEmptyProject={isEmptyProject}
-          onBackToApp={() => navigatePro("/pro")}
-          onNavigateStep={(step) => {
-            if (step.route !== null) {
-              navigatePro(step.route);
-            }
-          }}
-          onOpenWorkflow={createWorkflowProject}
-        />
-      );
-    }
-    return (
-      <SiteContextPage
-        project={workflowProject}
-        onProjectChange={setWorkflowProject}
-        onBackToApp={() => navigatePro("/pro")}
-        onNavigateStep={handleWorkflowNavigateStep}
-        onOpenRoadWorkflow={openRoadWorkflow}
-      />
-    );
-  }
-
-  if (isRoadWorkflowRoute(currentPathname)) {
-    return (
-      <RoadWorkflowPage
-        project={workflowProject}
-        onProjectChange={setWorkflowProject}
-        onBackToApp={() => navigatePro("/pro")}
-        onNavigateStep={handleWorkflowNavigateStep}
-        onOpenSiteContext={() => navigatePro(SITE_CONTEXT_ROUTE_PATH)}
-        onOpenBridgeWorkflow={openBridgeWorkflow}
-      />
-    );
-  }
-
-  if (isBridgeWorkflowRoute(currentPathname)) {
-    return (
-      <BridgeWorkflowPage
-        project={workflowProject}
-        onProjectChange={setWorkflowProject}
-        onBackToApp={() => navigatePro("/pro")}
-        onNavigateStep={handleWorkflowNavigateStep}
-        onOpenRoadWorkflow={() => navigatePro(ROAD_WORKFLOW_ROUTE_PATH)}
-        onOpenAnalysis={() => navigatePro("/pro")}
-      />
-    );
-  }
-
   if (isSubstructureRoute(currentPathname)) {
     const handoffSupports = linerDraft ? linerPiersToSupportHandoff(linerDraft.piers ?? []) : [];
     const handoffAlignmentId = linerDraft
@@ -1635,7 +1394,6 @@ export function App() {
             ? "Apollo Phase 1-NN shell"
             : "Apollo Phase 1-NN shell is installed but disabled until Apollo mode or VITE_APOLLO_PHASE1_NN_ENABLED=true is enabled."
         }
-        onOpenSiteContext={() => navigatePro(SITE_CONTEXT_ROUTE_PATH)}
       />
       <div className="time-history-wizard-entry" aria-label={ja.appShell.timeHistoryEntryAriaLabel}>
         <StatusBadge

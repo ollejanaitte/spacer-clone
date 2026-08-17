@@ -65,16 +65,16 @@ describe("next/routes", () => {
 });
 
 describe("NextApp Shell", () => {
-  it("ホーム（/app）で業務から設計とクイック解析の2系統を表示する", async () => {
+  it("ホーム（/app）で正規フロー1本（業務一覧へ）のみを表示し、レガシー第二入口を持たない", async () => {
     window.history.pushState({}, "", NEXT_HOME_PATH);
     const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="next-app"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="next-brand"]')?.textContent).toContain("橋梁設計統合システム");
     expect(document.querySelector('[data-testid="home-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="home-business-entry"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="home-quick-entry"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="home-quick-entry"]')).toBeNull();
     expect(document.querySelector('[data-testid="home-go-business"]')?.textContent).toContain("業務一覧へ");
-    expect(document.querySelector('[data-testid="home-go-quick"]')?.textContent).toContain("レガシーモード");
+    expect(document.querySelector('[data-testid="home-go-quick"]')).toBeNull();
     expect(document.querySelector('[data-testid="home-recent-empty"]')).toBeTruthy();
     cleanup(root);
   });
