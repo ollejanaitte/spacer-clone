@@ -150,9 +150,9 @@ export function validateSuperstructureDocument(document: SuperstructureDocument)
   }
 
   // materialConfiguration (Phase 7-01C §3.1): declared values must be finite
-  // and consistent (E/G/nu). Unset (null) uses the frozen default steel.
+  // and consistent (E/G/nu). Unset (null/undefined) uses the frozen default steel.
   const mat = document.materialConfiguration;
-  if (mat !== null) {
+  if (mat != null) {
     checkOptionalFinite(mat as unknown as Record<string, unknown>, "elasticModulusKN_M2", "superstructureDocument.materialConfiguration", issues);
     checkOptionalFinite(mat as unknown as Record<string, unknown>, "shearModulusKN_M2", "superstructureDocument.materialConfiguration", issues);
     checkOptionalFinite(mat as unknown as Record<string, unknown>, "poissonRatio", "superstructureDocument.materialConfiguration", issues);
@@ -193,7 +193,7 @@ export function validateSuperstructureDocument(document: SuperstructureDocument)
   }
 
   // crossBeamConfiguration
-  if (document.crossBeamConfiguration !== null) {
+  if (document.crossBeamConfiguration != null) {
     const cb = document.crossBeamConfiguration;
     if (!(isFiniteNumber(cb.crossBeamSpacingM) && cb.crossBeamSpacingM > 0)) {
       issues.push({ path: "superstructureDocument.crossBeamConfiguration.crossBeamSpacingM", message: "crossBeamSpacingM must be > 0" });
@@ -215,7 +215,7 @@ export function validateSuperstructureDocument(document: SuperstructureDocument)
   }
 
   // crossFrameConfiguration
-  if (document.crossFrameConfiguration !== null) {
+  if (document.crossFrameConfiguration != null) {
     const cf = document.crossFrameConfiguration;
     if (!(isFiniteNumber(cf.crossFrameSpacingM) && cf.crossFrameSpacingM > 0)) {
       issues.push({ path: "superstructureDocument.crossFrameConfiguration.crossFrameSpacingM", message: "crossFrameSpacingM must be > 0" });
