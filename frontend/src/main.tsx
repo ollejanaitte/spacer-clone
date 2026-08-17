@@ -1,19 +1,22 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom/client";
-import { App } from "./App";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ja } from "./i18n/ja";
 import { NextApp } from "./next/NextApp";
-import { isNextAppPath } from "./next/routes";
-import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
+import { isNextAppPath, NEXT_HOME_PATH } from "./next/routes";
 import "./styles/tokens.css";
 import "./styles.css";
 
+/**
+ * 通常製品の Root Shell は /app (NextApp) の1本のみ。
+ *
+ * - packaged Electron (file://index.html) は pathname が /app に一致しないため
+ *   canonical home (/app) として扱う。
+ * - /app 以外の深いリンク (/pro, /, /learn, /level0, 旧deep-link 等) は
+ *   canonical /app へ正規化し、別App Shell (App / Lobby) へ振り分けない。
+ */
 function getCurrentLocation(): string {
   if (typeof window === "undefined") return "/app";
-  // G-5: packaged Electron は file://index.html をロードする (pathname が
-  // /app にも /pro にも一致しない)。この場合 production App の canonical
-  // entry (/app) へ向ける。dev (http) では pathname をそのまま使う。
   if (window.location.protocol === "file:") {
     return "/app";
   }
@@ -21,28 +24,10 @@ function getCurrentLocation(): string {
 }
 
 function Root() {
-  const [currentLocation, setCurrentLocation] = useState(() => {
-    // レガシー deep-link (/th/run, /compare 等) は App 内部の redirectLegacyRoutes()
-    // が到達不可能なため、ルーティング判定前にここで正規パス (/pro/*) へ置換する。
+  const currentLocation = getCurrentLocation();
+  if (!isNextAppPath(currentLocation)) {
     // replaceState は history エントリを増やさない。
-    if (typeof window !== "undefined") {
-      redirectLegacyRoutes();
-    }
-    return getCurrentLocation();
-  });
-
-  // Listen for popstate (back/forward)
-  React.useEffect(() => {
-    const onPopState = () => setCurrentLocation(getCurrentLocation());
-    window.addEventListener("popstate", onPopState);
-    return () => window.removeEventListener("popstate", onPopState);
-  }, []);
-
-  if (isNextAppPath(currentLocation)) {
-    return <NextApp />;
-  }
-  if (currentLocation === "/pro" || currentLocation.startsWith("/pro/")) {
-    return <App />;
+    window.history.replaceState({}, "", NEXT_HOME_PATH);
   }
   return <NextApp />;
 }
