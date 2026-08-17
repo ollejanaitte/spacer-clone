@@ -117,17 +117,30 @@ islands. This is an audit; no new feature development is performed.
      (area=0) → `analysisValidation.ts:224-244` rejects it → `validation.ok=false`.
   5. No load cases (`buildAnalysisLoads` never called in `buildAnalysisModel`;
      `loadCases`/`loadCombinations` empty).
+  6. **Road draft format gap (F-7 confirmed):** the production analysis page
+     (`AnalysisModuleShellPage` → `buildDerivedAnalysisDocument` in
+     `analysisCimLayer.ts:60-90`) requires `readRoadData` in the
+     `roadEditorDraft` format, but RB001's `modules.road` stores only a
+     `workflowState` (no full `roadEditorDraft`). The analysis page therefore
+     fails at "解析Documentを生成できませんでした（上部工/Bridge Layoutの構成を確認してください）"
+     before reaching the solver. Independent of the section gap.
 - **Existing trusted section data:** the repo contains golden-derived section
-  candidates (`frontend/src/apollo/design/autoDesign.ts:27-36`):
-  depth 2.7 m (G-GEO-0008), upper-flange width 0.62 m (G-GEO-0020),
-  web thickness 0.014 m (G-GEO-0022), declared flange thickness 0.03 m,
-  sourced from `docs/apollo/step10/reference_bridge_001/phase4/golden/*`.
-  These are **existing repo data**, not new structural inventions.
-- **Classification:** MUST FIX IN F (F-7) — connect the existing golden-derived
-  section data into RB001's `girderSectionModel` so a real solver run is
-  possible, OR declare a blocker if the input is still insufficient. **Never
-  fabricate analysis results.** Wave-3 fail-closed NOT_RUN behavior is ACCEPTED
-  for Wave 3 but is the explicit F-7 acceptance gap.
+  candidates (`frontend/src/apollo/design/autoDesign.ts:27-36`): depth 2.7 m
+  (G-GEO-0008), upper-flange width 0.62 m (G-GEO-0020), web thickness 0.014 m
+  (G-GEO-0022), plus full plate dimensions in
+  `docs/apollo/step10/reference_bridge_001/phase4/golden/*` (G-DES-*:
+  uflg 620×22…, web …, lflg 680×…). **These belong to the Apollo Reference
+  Bridge 001 (AG1: 3 spans, ~134 m, girder spacing 4.5 m), which is a
+  DIFFERENT structure from RB001 (6 spans × 50 m, girder spacing 8 m).**
+  Connecting them to RB001 would be importing another bridge's design values —
+  fabrication-by-attribution, not a legitimate data connection.
+- **F-7 conclusion:** RB001 analysis requires (a) a full `roadEditorDraft`
+  road model and (b) RB001-specific girder section / plate dimensions. Neither
+  exists as trusted repo data. Per Lane F rules: no fabricated values, no
+  fake Full-E2E PASS. Analysis stays honestly NOT_RUN (fail-closed). This is a
+  documented blocker with the exact missing inputs listed above.
+- **Classification:** BLOCKER (analysis RUN) — RB001-specific section + road
+  draft data missing. Wave-3 fail-closed NOT_RUN is the honest state.
 
 ### 9. Duplicated runtime state / dual Project model
 
