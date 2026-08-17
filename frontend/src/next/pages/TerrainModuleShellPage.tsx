@@ -104,21 +104,24 @@ export function TerrainModuleShellPage({ projectId, moduleId }: { projectId: str
         ← Projectトップへ
       </button>
 
-      <dl className="next-integrity-meta" data-testid="terrain-module-meta">
-        <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
-        <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
-        <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
-        <div><dt>schemaVersion</dt><dd>{TERRAIN_SCHEMA_VERSION}</dd></div>
-        <div><dt>dataVersion</dt><dd>{TERRAIN_DATA_VERSION}</dd></div>
-        <div>
-          <dt>status</dt>
-          <dd data-testid="terrain-module-status">{MODULE_STATUS_LABELS[status]}</dd>
-        </div>
-        <div>
-          <dt>Terrain正本</dt>
-          <dd data-testid="terrain-module-doc">{hasDoc ? "あり" : "なし"}</dd>
-        </div>
-      </dl>
+      <details className="next-dev-info" data-testid="terrain-module-dev-info">
+        <summary>詳細・デバッグ情報</summary>
+        <dl className="next-integrity-meta" data-testid="terrain-module-meta">
+          <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
+          <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
+          <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
+          <div><dt>schemaVersion</dt><dd>{TERRAIN_SCHEMA_VERSION}</dd></div>
+          <div><dt>dataVersion</dt><dd>{TERRAIN_DATA_VERSION}</dd></div>
+          <div>
+            <dt>status</dt>
+            <dd data-testid="terrain-module-status">{MODULE_STATUS_LABELS[status]}</dd>
+          </div>
+          <div>
+            <dt>Terrain正本</dt>
+            <dd data-testid="terrain-module-doc">{hasDoc ? "あり" : "なし"}</dd>
+          </div>
+        </dl>
+      </details>
 
       <div className="next-form">
         <label className="next-field">

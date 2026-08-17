@@ -34,22 +34,25 @@ afterEach(() => {
   resetProjectManagerForTest();
 });
 
-describe("Phase 3 Terrain UI", () => {
-  it("renders terrain module page with reference mountain viewer toggle", async () => {
+describe("Phase 3 Site Context UI（既存SiteContext資産を/appへ正式統合）", () => {
+  it("renders the Site Context page with existing assets (import / DEM / preview)", async () => {
     const manager = getProjectManager();
-    manager.importProject(createEmptyProject("地形UI業務"));
+    manager.importProject(createEmptyProject("現況地理業務"));
     const project = manager.listProjects()[0];
     window.history.pushState({}, "", modulePath(project.projectId, "terrain"));
     const root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="terrain-module-page"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="terrain-show-sample"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="terrain-module-status"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="site-context-module-page"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="site-context-page"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="site-context-import-panel"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="site-context-dem-panel"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="site-context-terrain-preview"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="site-context-back"]')).toBeTruthy();
     cleanup(root);
   });
 
   it("shows no legacy route", async () => {
     const manager = getProjectManager();
-    manager.importProject(createEmptyProject("地形UI業務"));
+    manager.importProject(createEmptyProject("現況地理業務"));
     const project = manager.listProjects()[0];
     window.history.pushState({}, "", modulePath(project.projectId, "terrain"));
     const root = await render(<NextApp />);
@@ -57,33 +60,29 @@ describe("Phase 3 Terrain UI", () => {
     cleanup(root);
   });
 
-  it("toggles the large reference mountain viewer block", async () => {
+  it("back button returns to the project top", async () => {
     const manager = getProjectManager();
-    manager.importProject(createEmptyProject("地形UI業務"));
+    manager.importProject(createEmptyProject("現況地理業務"));
     const project = manager.listProjects()[0];
     window.history.pushState({}, "", modulePath(project.projectId, "terrain"));
     const root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="terrain-viewer-block"]')).toBeNull();
-    const toggle = document.querySelector('[data-testid="terrain-show-sample"]') as HTMLButtonElement;
-    act(() => toggle.click());
-    expect(document.querySelector('[data-testid="terrain-viewer-block"]')).toBeTruthy();
-    act(() => toggle.click());
-    expect(document.querySelector('[data-testid="terrain-viewer-block"]')).toBeNull();
+    act(() => {
+      (document.querySelector('[data-testid="site-context-back"]') as HTMLButtonElement).click();
+    });
+    expect(document.querySelector('[data-testid="project-top-page"]')).toBeTruthy();
     cleanup(root);
   });
 
-  it("toggles the integrated terrain+road+existing viewer block", async () => {
+  it("next-road button navigates to the road module", async () => {
     const manager = getProjectManager();
-    manager.importProject(createEmptyProject("地形UI業務"));
+    manager.importProject(createEmptyProject("現況地理業務"));
     const project = manager.listProjects()[0];
     window.history.pushState({}, "", modulePath(project.projectId, "terrain"));
     const root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="integrated-viewer-block"]')).toBeNull();
-    const toggle = document.querySelector('[data-testid="terrain-show-integrated"]') as HTMLButtonElement;
-    act(() => toggle.click());
-    expect(document.querySelector('[data-testid="integrated-viewer-block"]')).toBeTruthy();
-    act(() => toggle.click());
-    expect(document.querySelector('[data-testid="integrated-viewer-block"]')).toBeNull();
+    act(() => {
+      (document.querySelector('[data-testid="site-context-next-road"]') as HTMLButtonElement).click();
+    });
+    expect(document.querySelector('[data-testid="road-module-page"]')).toBeTruthy();
     cleanup(root);
   });
 });

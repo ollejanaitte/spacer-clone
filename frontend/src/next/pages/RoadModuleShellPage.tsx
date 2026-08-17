@@ -150,19 +150,22 @@ export function RoadModuleShellPage({ projectId, moduleId }: { projectId: string
         ← Projectトップへ
       </button>
 
-      <dl className="next-integrity-meta" data-testid="road-module-meta">
-        <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
-        <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
-        <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
-        <div>
-          <dt>status</dt>
-          <dd data-testid="road-module-status">{MODULE_STATUS_LABELS[status]}</dd>
-        </div>
-        <div>
-          <dt>Validation</dt>
-          <dd data-testid="road-module-validation">{intermediate.ok ? "OK" : "NG"}</dd>
-        </div>
-      </dl>
+      <details className="next-dev-info" data-testid="road-module-dev-info">
+        <summary>詳細・デバッグ情報</summary>
+        <dl className="next-integrity-meta" data-testid="road-module-meta">
+          <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
+          <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
+          <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
+          <div>
+            <dt>status</dt>
+            <dd data-testid="road-module-status">{MODULE_STATUS_LABELS[status]}</dd>
+          </div>
+          <div>
+            <dt>Validation</dt>
+            <dd data-testid="road-module-validation">{intermediate.ok ? "OK" : "NG"}</dd>
+          </div>
+        </dl>
+      </details>
 
       <div className="next-form">
         <label className="next-field">

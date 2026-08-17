@@ -197,27 +197,30 @@ export function CimModuleShellPage({ projectId, moduleId }: { projectId: string;
         ← Projectトップへ
       </button>
 
-      <dl className="next-integrity-meta" data-testid="cim-module-meta">
-        <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
-        <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
-        <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
-        <div>
-          <dt>status</dt>
-          <dd data-testid="module-shell-status">{MODULE_STATUS_LABELS[status]}</dd>
-        </div>
-        <div>
-          <dt>Validation</dt>
-          <dd data-testid="cim-module-validation">{scene.ok ? "OK" : "NG"}</dd>
-        </div>
-        <div>
-          <dt>Entity数</dt>
-          <dd data-testid="cim-module-entities">{metaCount}</dd>
-        </div>
-        <div>
-          <dt>解析結果</dt>
-          <dd data-testid="cim-result-status">{analysisResultStatus}</dd>
-        </div>
-      </dl>
+      <details className="next-dev-info" data-testid="cim-module-dev-info">
+        <summary>詳細・デバッグ情報</summary>
+        <dl className="next-integrity-meta" data-testid="cim-module-meta">
+          <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
+          <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
+          <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
+          <div>
+            <dt>status</dt>
+            <dd data-testid="module-shell-status">{MODULE_STATUS_LABELS[status]}</dd>
+          </div>
+          <div>
+            <dt>Validation</dt>
+            <dd data-testid="cim-module-validation">{scene.ok ? "OK" : "NG"}</dd>
+          </div>
+          <div>
+            <dt>Entity数</dt>
+            <dd data-testid="cim-module-entities">{metaCount}</dd>
+          </div>
+          <div>
+            <dt>解析結果</dt>
+            <dd data-testid="cim-result-status">{analysisResultStatus}</dd>
+          </div>
+        </dl>
+      </details>
 
       {scene.issues.length > 0 && (
         <ul className="next-integrity-reasons" data-testid="cim-issues">

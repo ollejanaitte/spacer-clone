@@ -4,7 +4,7 @@ import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
 import { DeleteConfirm, useDeleteConfirm } from "../components/DeleteConfirm";
 import { exportProjectToPackage } from "../persistence/package/projectPackageExporter";
-import { navigateTo, NEXT_PROJECT_HOME_PATH } from "../routes";
+import { navigateTo, NEXT_PROJECT_HOME_PATH, NEXT_HOME_PATH } from "../routes";
 import { loadReferenceBusinessSample } from "../samples/referenceBusiness001Loader";
 
 export function BusinessListPage() {
@@ -82,6 +82,14 @@ export function BusinessListPage() {
   return (
     <section className="next-page" data-testid="business-list-page">
       <h1 className="next-page-title">業務一覧</h1>
+      <button
+        type="button"
+        className="next-link-button"
+        data-testid="business-back-home"
+        onClick={() => navigateTo(NEXT_HOME_PATH)}
+      >
+        ☚ 戻る
+      </button>
       <div className="next-actions">
         <button
           type="button"
@@ -96,7 +104,7 @@ export function BusinessListPage() {
           data-testid="load-business-button"
           onClick={() => navigateTo("/app/business/load")}
         >
-          業務データ読込
+          ⇩ 業務データ読込
         </button>
         <button
           type="button"
@@ -105,7 +113,7 @@ export function BusinessListPage() {
           onClick={() => void handleLoadReferenceBusiness()}
           disabled={sampleLoading}
         >
-          {sampleLoading ? "読み込み中..." : "Reference Business 001 を読み込む"}
+          {sampleLoading ? "読み込み中..." : "☛ サンプル業務読み込み（Reference Business 001）"}
         </button>
       </div>
 
@@ -143,11 +151,11 @@ export function BusinessListPage() {
             <thead>
               <tr>
                 <th>No</th>
-                <th>システム内部Project ID</th>
                 <th>業務件番</th>
                 <th>業務名</th>
                 <th>設計段階</th>
                 <th>更新日時</th>
+                <th>システム内部プロジェクトID</th>
                 <th>操作</th>
               </tr>
             </thead>
@@ -155,20 +163,20 @@ export function BusinessListPage() {
               {filtered.map((project, index) => (
                 <tr key={project.projectId} data-testid="business-row">
                   <td>{index + 1}</td>
-                  <td className="next-table-id" data-testid="business-internal-id">{project.projectId}</td>
                   <td data-testid="business-number">{getBusinessNumber(project)}</td>
                   <td data-testid="business-name">{project.name}</td>
                   <td data-testid="business-stage">{designStageDisplayName(project)}</td>
                   <td data-testid="business-updated">{project.updatedAt}</td>
+                  <td className="next-table-id" data-testid="business-internal-id">{project.projectId}</td>
                   <td className="next-table-actions">
                     <button type="button" data-testid="business-open" onClick={() => navigateTo(`${NEXT_PROJECT_HOME_PATH}/${project.projectId}`)}>
                       業務を開く
                     </button>
                     <button type="button" data-testid="business-edit" onClick={() => navigateTo(`/app/business/${project.projectId}/edit`)}>
-                      業務編集
+                      業務編集✐
                     </button>
                     <button type="button" data-testid="business-export" onClick={() => void handleExport(project)} disabled={exportingId === project.projectId}>
-                      {exportingId === project.projectId ? "書き出し中..." : "業務データ書き出し"}
+                      {exportingId === project.projectId ? "書き出し中..." : "外部へ書き出し"}
                     </button>
                     <button type="button" data-testid="business-duplicate" onClick={() => handleDuplicate(project)}>
                       複製

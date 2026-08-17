@@ -35,15 +35,15 @@ afterEach(() => {
 });
 
 describe("Project top module entries (Phase 1-06)", () => {
-  it("renders 8 module entries with status from the registry", async () => {
+  it("renders 7 PDF-spec module entries with status from the registry", async () => {
     const manager = getProjectManager();
     manager.importProject(createEmptyProject("モジュール業務"));
     const project = manager.listProjects()[0];
     window.history.pushState({}, "", `/app/projects/${project.projectId}`);
     const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="project-modules"]')).toBeTruthy();
-    expect(document.querySelectorAll('[data-testid^="module-entry-"]').length).toBe(8);
-    for (const id of ["road", "terrain", "bridgeLayout", "substructure", "superstructure", "analysis", "cim", "deliverables"]) {
+    expect(document.querySelectorAll('[data-testid^="module-entry-"]').length).toBe(7);
+    for (const id of ["road", "terrain", "bridgeLayout", "substructure", "superstructure", "analysis", "cim"]) {
       expect(document.querySelector(`[data-testid="module-entry-${id}"]`)).toBeTruthy();
       expect(document.querySelector(`[data-testid="module-status-${id}"]`)?.textContent).toBe("未着手");
     }

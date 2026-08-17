@@ -53,15 +53,18 @@ export function ModuleShellPage({ projectId, moduleId }: { projectId: string; mo
         ← Projectトップへ
       </button>
 
-      <dl className="next-integrity-meta" data-testid="module-shell-meta">
-        <div><dt>moduleId</dt><dd>{definition.moduleId}</dd></div>
-        <div><dt>moduleVersion</dt><dd>{definition.moduleVersion}</dd></div>
-        <div><dt>dataVersion</dt><dd>{definition.dataVersion}</dd></div>
-        <div>
-          <dt>status</dt>
-          <dd data-testid="module-shell-status">{MODULE_STATUS_LABELS[status]}</dd>
-        </div>
-      </dl>
+      <details className="next-dev-info" data-testid="module-shell-dev-info">
+        <summary>詳細・デバッグ情報</summary>
+        <dl className="next-integrity-meta" data-testid="module-shell-meta">
+          <div><dt>moduleId</dt><dd>{definition.moduleId}</dd></div>
+          <div><dt>moduleVersion</dt><dd>{definition.moduleVersion}</dd></div>
+          <div><dt>dataVersion</dt><dd>{definition.dataVersion}</dd></div>
+          <div>
+            <dt>status</dt>
+            <dd data-testid="module-shell-status">{MODULE_STATUS_LABELS[status]}</dd>
+          </div>
+        </dl>
+      </details>
 
       <div className="next-empty" data-testid="module-shell-placeholder">
         <p>{definition.displayName} モジュールの本体は Phase 2 以降で実装します。</p>

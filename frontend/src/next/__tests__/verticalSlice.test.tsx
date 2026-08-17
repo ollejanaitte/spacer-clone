@@ -85,7 +85,7 @@ describe("R1-03 vertical slice: home -> business -> create -> open -> project to
     cleanup(root);
   });
 
-  it("業務を開くでProjectトップへ遷移し、8モジュールが表示される", async () => {
+  it("業務を開くでProjectトップへ遷移し、PDF準拠7モジュールが表示される", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "縦断開く業務",
@@ -99,7 +99,7 @@ describe("R1-03 vertical slice: home -> business -> create -> open -> project to
     click("business-open");
     expect(document.querySelector('[data-testid="project-top-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="project-top-name"]')?.textContent).toBe("縦断開く業務");
-    expect(document.querySelectorAll('[data-testid="project-modules"] li').length).toBe(8);
+    expect(document.querySelectorAll('[data-testid="project-modules"] li').length).toBe(7);
     cleanup(root);
   });
 

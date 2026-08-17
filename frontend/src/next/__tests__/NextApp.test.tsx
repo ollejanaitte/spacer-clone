@@ -69,12 +69,12 @@ describe("NextApp Shell", () => {
     window.history.pushState({}, "", NEXT_HOME_PATH);
     const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="next-app"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="next-brand"]')?.textContent).toContain("Project System");
+    expect(document.querySelector('[data-testid="next-brand"]')?.textContent).toContain("橋梁設計統合システム");
     expect(document.querySelector('[data-testid="home-page"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="home-business-entry"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="home-quick-entry"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="home-go-business"]')?.textContent).toContain("業務一覧へ");
-    expect(document.querySelector('[data-testid="home-go-quick"]')?.textContent).toContain("新規解析");
+    expect(document.querySelector('[data-testid="home-go-quick"]')?.textContent).toContain("レガシーモード");
     expect(document.querySelector('[data-testid="home-recent-empty"]')).toBeTruthy();
     cleanup(root);
   });

@@ -286,12 +286,14 @@ export function DeliverablesModuleShellPage({ projectId, moduleId }: { projectId
         ← Projectトップへ
       </button>
 
-      <dl className="next-integrity-meta" data-testid="deliverables-meta">
-        <div><dt>moduleId</dt><dd>{definition.moduleId}</dd></div>
-        <div><dt>status</dt><dd data-testid="deliverables-status">{MODULE_STATUS_LABELS[status]}</dd></div>
-      </dl>
-
-      <p className="next-hint">成果品は各moduleのcanonical正本から決定論的に再生成します（複製保存なし・dual-write禁止）。</p>
+      <details className="next-dev-info" data-testid="deliverables-module-dev-info">
+        <summary>詳細・デバッグ情報</summary>
+        <dl className="next-integrity-meta" data-testid="deliverables-meta">
+          <div><dt>moduleId</dt><dd>{definition.moduleId}</dd></div>
+          <div><dt>status</dt><dd data-testid="deliverables-status">{MODULE_STATUS_LABELS[status]}</dd></div>
+        </dl>
+        <p className="next-hint">成果品は各moduleのcanonical正本から決定論的に再生成します（複製保存なし・dual-write禁止）。</p>
+      </details>
 
       <table className="next-table" data-testid="deliverables-table">
         <thead>

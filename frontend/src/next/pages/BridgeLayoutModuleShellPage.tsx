@@ -336,27 +336,30 @@ export function BridgeLayoutModuleShellPage({ projectId, moduleId }: { projectId
         ← Projectトップへ
       </button>
 
-      <dl className="next-integrity-meta" data-testid="bridge-layout-module-meta">
-        <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
-        <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
-        <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
-        <div>
-          <dt>status</dt>
-          <dd data-testid="bridge-layout-module-status">{MODULE_STATUS_LABELS[status]}</dd>
-        </div>
-        <div>
-          <dt>Bridge Layout正本</dt>
-          <dd data-testid="bridge-layout-doc">{hasDoc ? "あり" : "なし"}</dd>
-        </div>
-        <div>
-          <dt>橋脚本数</dt>
-          <dd data-testid="bridge-pier-count">{pierRows.length}</dd>
-        </div>
-        <div>
-          <dt>支間数</dt>
-          <dd data-testid="bridge-span-count">{previewView.spans.length}</dd>
-        </div>
-      </dl>
+      <details className="next-dev-info" data-testid="bridge-layout-module-dev-info">
+        <summary>詳細・デバッグ情報</summary>
+        <dl className="next-integrity-meta" data-testid="bridge-layout-module-meta">
+          <div><dt>moduleId</dt><dd>{moduleId}</dd></div>
+          <div><dt>displayName</dt><dd>{definition?.displayName}</dd></div>
+          <div><dt>moduleVersion</dt><dd>{definition?.moduleVersion}</dd></div>
+          <div>
+            <dt>status</dt>
+            <dd data-testid="bridge-layout-module-status">{MODULE_STATUS_LABELS[status]}</dd>
+          </div>
+          <div>
+            <dt>Bridge Layout正本</dt>
+            <dd data-testid="bridge-layout-doc">{hasDoc ? "あり" : "なし"}</dd>
+          </div>
+          <div>
+            <dt>橋脚本数</dt>
+            <dd data-testid="bridge-pier-count">{pierRows.length}</dd>
+          </div>
+          <div>
+            <dt>支間数</dt>
+            <dd data-testid="bridge-span-count">{previewView.spans.length}</dd>
+          </div>
+        </dl>
+      </details>
 
       <div className="next-form">
         <label className="next-field">

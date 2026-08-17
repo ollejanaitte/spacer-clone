@@ -231,7 +231,7 @@ describe("BusinessListPage duplicate / delete", () => {
 });
 
 describe("ProjectTopPage", () => {
-  it("業務情報と8モジュールの入口を表示する", async () => {
+  it("業務情報とPDF準拠7モジュールの入口を表示する", async () => {
     const manager = getProjectManager();
     const created = manager.createProject({
       name: "トップ表示業務",
@@ -246,7 +246,7 @@ describe("ProjectTopPage", () => {
     expect(document.querySelector('[data-testid="project-top-stage"]')?.textContent).toBe("耐震照査");
     expect(document.querySelector('[data-testid="project-top-internal-id"]')?.textContent).toBe(created.project.projectId);
     const sections = document.querySelectorAll('[data-testid="project-modules"] li');
-    expect(sections.length).toBe(8);
+    expect(sections.length).toBe(7);
     cleanup(root);
   });
 });

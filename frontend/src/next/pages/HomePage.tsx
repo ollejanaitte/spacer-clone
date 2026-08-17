@@ -25,42 +25,42 @@ export function HomePage() {
 
   return (
     <section className="next-page" data-testid="home-page">
-      <h1 className="next-page-title">新統合システム</h1>
-      <p className="next-hint">
-        Projectを最上位とした設計業務プラットフォーム。すべての設計機能を1つのProject Data Coreへ接続します。
-      </p>
+      <h1 className="next-page-title" data-testid="home-title">
+        橋梁設計統合システム
+      </h1>
 
       <div className="next-home-grid" data-testid="home-entry-grid">
         <article className="next-home-card" data-testid="home-business-entry">
-          <h2 className="next-home-card-title">業務から設計</h2>
-          <p className="next-hint">道路・橋梁設計業務をProjectとして一元管理する。</p>
+          <h2 className="next-home-card-title">計画・設計～成果品作成一括</h2>
+          <p className="next-hint">現況データから設計、計算書の作成まで一括で行います。</p>
           <button
             type="button"
             className="next-home-primary"
             data-testid="home-go-business"
             onClick={() => navigateTo(NEXT_BUSINESS_LIST_PATH)}
           >
-            業務一覧へ
+            業務一覧へ ➥
           </button>
         </article>
 
         <article className="next-home-card" data-testid="home-quick-entry">
-          <h2 className="next-home-card-title">クイック解析</h2>
-          <p className="next-hint">Projectを作成せずに単体解析を行う入口。</p>
+          <h2 className="next-home-card-title">クイック検討</h2>
+          <p className="next-hint">モデル作成、骨組み解析、時刻歴応答解析などピンポイントで検討する場合はこちら。</p>
           <button
             type="button"
             className="next-home-secondary"
             data-testid="home-go-quick"
             onClick={() => navigateTo(NEXT_QUICK_PATH)}
           >
-            新規解析
+            レガシーモード ➥
           </button>
         </article>
       </div>
 
-      <div className="next-home-note" data-testid="home-production-note">
-        <p className="next-ok-text">本環境（/app）がproduction正です。canonicalデータの書込みはすべて /app 経由で行います。</p>
+      <details className="next-dev-info" data-testid="home-dev-info">
+        <summary>開発者向け情報</summary>
         <p className="next-hint">
+          本環境（/app）がproduction正です。canonicalデータの書込みはすべて /app 経由で行います。
           <button
             type="button"
             className="next-link-button"
@@ -69,9 +69,8 @@ export function HomePage() {
           >
             legacy /pro（資産確認・参照用）
           </button>
-          <span> は既存資産の確認・参照にのみ利用します。</span>
         </p>
-      </div>
+      </details>
 
       <div className="next-home-recent" data-testid="home-recent">
         <h2 className="next-home-section-title">最近使用したデータ</h2>

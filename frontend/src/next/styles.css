@@ -631,6 +631,80 @@
   margin-top: 8px;
 }
 
+/* 業務プロジェクト トップ（PDF準拠: 左=設計機能 / 右=統合3Dビュー） */
+.next-project-top-layout {
+  display: grid;
+  grid-template-columns: minmax(320px, 420px) 1fr;
+  gap: 16px;
+  align-items: start;
+  width: 100%;
+  margin: 8px 0 20px;
+}
+
+.next-project-modules-panel,
+.next-project-3d-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+
+.next-project-3d-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.next-project-3d-head .next-home-section-title {
+  margin: 0;
+}
+
+.next-project-3d-viewer {
+  margin-top: 10px;
+}
+
+.next-project-head-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.next-project-head-row .next-project-head-name {
+  margin: 0;
+}
+
+/* Site Context（既存資産）を /app 業務Project導線へ埋め込む */
+.next-page-embedded-workflow {
+  width: 100%;
+}
+
+.next-page-embedded-workflow .page {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 開発者向け情報（PDF準拠UIでは主画面から退避し、折りたたみで詳細表示） */
+.next-dev-info {
+  margin: 4px 0 24px;
+  padding: 10px 14px;
+  border: 1px dashed #cbd5e1;
+  border-radius: 8px;
+  background: #f8fafc;
+  font-size: 13px;
+}
+
+.next-dev-info summary {
+  cursor: pointer;
+  font-weight: 600;
+  color: #475569;
+}
+
+.next-dev-info p {
+  margin: 8px 0 0;
+}
+
 .next-home-section-title {
   font-size: 16px;
   margin: 0 0 12px;

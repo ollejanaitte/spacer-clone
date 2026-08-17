@@ -22,7 +22,7 @@ import { EditProjectPage } from "./pages/EditProjectPage";
 import { LoadBusinessPage } from "./pages/LoadBusinessPage";
 import { ModuleShellPage } from "./pages/ModuleShellPage";
 import { RoadModuleShellPage } from "./pages/RoadModuleShellPage";
-import { TerrainModuleShellPage } from "./pages/TerrainModuleShellPage";
+import { SiteContextModuleShellPage } from "./pages/SiteContextModuleShellPage";
 import { BridgeLayoutModuleShellPage } from "./pages/BridgeLayoutModuleShellPage";
 import { SuperstructureModuleShellPage } from "./pages/SuperstructureModuleShellPage";
 import { SubstructureModuleShellPage } from "./pages/SubstructureModuleShellPage";
@@ -137,7 +137,7 @@ export function NextApp() {
           route.moduleId === "road" ? (
             <RoadModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "terrain" ? (
-            <TerrainModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
+            <SiteContextModuleShellPage projectId={route.projectId} />
           ) :           route.moduleId === "bridgeLayout" ? (
             <BridgeLayoutModuleShellPage projectId={route.projectId} moduleId={route.moduleId} />
           ) : route.moduleId === "superstructure" ? (
@@ -166,7 +166,7 @@ export function NextApp() {
     <div className="next-app" data-testid="next-app">
       <header className="next-header">
         <div className="next-brand" data-testid="next-brand">
-          新統合システム <span className="next-brand-sub">Project System</span>
+          橋梁設計統合システム <span className="next-brand-sub">統合システム</span>
         </div>
         <SaveStatusIndicator />
         <nav className="next-nav">
