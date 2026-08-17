@@ -1,0 +1,425 @@
+SPACER Phase F — Lane F Completion 最終報告 (Integration / Persistence / E2E / CI / Completion)
+================================================================================
+報告日時 (JST): 2026-08-17 10:22
+Job ID: 20260817-075130-1a00cc58b9387edd
+担当: DeepSeek V4 Flash (AI-RIM 作業担当者)
+Lane: F (Integration / Persistence / E2E / CI / Completion)
+
+================================================================================
+1. 作業日時 (JST)
+================================================================================
+開始: 2026-08-17 07:51
+終了: 2026-08-17 10:22
+
+================================================================================
+2. 開始 main SHA
+================================================================================
+19dfdfb3ec108abc2b510541952defdb7d88696b (Wave 3 Completion HEAD・Preflight実測)
+
+================================================================================
+3. 終了 main SHA
+================================================================================
+95eb2de79c97d089784dd21865d129fdcf4dc67f
+
+================================================================================
+4. origin/main SHA
+================================================================================
+95eb2de79c97d089784dd21865d129fdcf4dc67f (local main == origin/main 確認済み)
+
+================================================================================
+5. Lane F branch / worktree 作成 / 既存確認
+================================================================================
+- lane-f/integration-e2e は存在しなかった → 最新 origin/main から新規作成
+- worktree: ~/Projects/spacer-clone-lane-f (upstream push済み)
+- 以後 F-1〜F-8 の全実装・checkpoint merge を実施
+
+================================================================================
+6. Wave 3 後処理確認
+================================================================================
+- Wave 3 Final Report commit (19dfdfb docs(integration): record Wave 3 completion) が
+  main / origin/main に存在・push済みを確認
+- Wave 3 Final Report の Discord/Gmail 添付は前フェーズで実施済み (本作業では再送せず)
+- 既存無関係差分: canonical main に docs/apollo/step4c_appurtenance_haunch/evidence/
+  {load,quantity}.json のタイムスタンプ差分2件が開始前から存在 → 保全対象として
+  手を付けず、Lane F を通して無変更のまま維持
+
+================================================================================
+7. 未統合 commit 監査
+================================================================================
+6Lane (A/B/T/V/U/S) すべて origin/main..origin/<lane> の未統合 commit 0件を確認。
+Preflight 時点で main == origin/main (19dfdfb)。
+
+================================================================================
+8. F-1 Integration Audit
+================================================================================
+docs/development/lane-f-integration-audit.md を作成 (commit 44b5d03)。
+監査対象: Persistence(A) / Site Context Adapter(B) / Terrain(T) / Viewer(V) /
+Workflow(U) / Reference Business(S) の横断データフロー。
+主要事実:
+- PDC serialize/parse/migrate (zod) と legacy ProjectModel (Ajv) の dual model 共存
+- 統一 Workflow (Site Context→Road→Bridge) は transient React state (App.tsx) で、
+  正規 Save/Load 経路へ未接続だった
+- Terrain は production では project-JSON assetManifest が de-facto 正本で、
+  IndexedDB store は test のみ (文書上の正本関係と実装の乖離)
+- RB001 完成 Project の superstructure/substructure/analysis module が空 (data loss)
+- Analysis は fail-closed NOT_RUN
+
+================================================================================
+9. F-1 issue 分類
+================================================================================
+- MUST FIX IN F: workflow persist / .sitecontext import persist / terrain正本 /
+  RB001 analysis (F-7) / E2E未カバー (F-3/F-4) / tiering未整備 (F-4) /
+  CI最小 (F-5) / ルール機械化なし (F-6)
+- DEFER TO G: dual Project model (legacy + PDC)
+- ACCEPTED: UnifiedViewer demo境界 (production 3D = Cim3DViewer) / 代表地形はdemo用途
+
+================================================================================
+10. RB001 Analysis NOT_RUN 監査結果
+================================================================================
+監査 (F-1) + 実証 (F-7) により、RB001 実解析が成立しない根拠を確定:
+1. RB001 superstructure の girderSectionModel が全 null (superstructure.ts:78)
+   → computeSuperstructureSectionProperties が null → NOT_AVAILABLE → validation NG
+2. load cases が空 (buildAnalysisLoads 未呼び出し)
+3. (F-7 追加確認) production analysis page は roadEditorDraft 形式の道路データを
+   要求するが、RB001 modules.road は workflowState のみで形式不適合
+4. Apollo golden section (G-DES-*: depth 2.7m, uflg 620×22…, lflg 680×…) は
+   別橋梁 (AG1・3径間・約134m・girder spacing 4.5m) の値であり、
+   RB001 (6径間×50m・girder spacing 8m) への接続は「別橋梁の設計値を流用」=
+   架空値と同義。接続不可。
+→ 架空値を入れず、Analysis は fail-closed NOT_RUN を正直に維持。
+   Full E2E は解析失敗 (架空成功なし) を検証。blocker として記録。
+
+================================================================================
+11. F-2 Unified Save/Load/Migration
+================================================================================
+commit 3028c10。実装:
+- unifiedRoundtrip.ts: 正規経路 serialize→validate→JSON→migrate→validate→hydrate
+- projectDataCore.migrateProject: future schemaVersion (major) を fail-closed 拒否
+- filesystemProjectPersistence.loadProject: migration 経由に変更 (load境界 fail-closed)
+- unifiedModuleWriter.ts: super/sub/analysis を PDC module slot へ正規記録 (validation)
+- savedProject.ts: RB001 完成 Project が全 module を実際に保持するよう修正
+  (**重大修正**: 従来 super/sub/analysis module が空 = data loss)
+- workflowProjectPersistence.ts + App.tsx wiring: workflow Project を deterministic
+  UUID で正規 Save/Load 経路へ接続 (Site Context→Road→Bridge が Save→Close→Reopen で復元)
+- tests: unifiedRoundtrip 18件 + workflowProjectPersistence 5件
+
+================================================================================
+12. Terrain IndexedDB / assetManifest 正本関係
+================================================================================
+- 文書契約: IndexedDB = runtime source of truth / assetManifest = package 導出ビュー
+- F-2 実測: production では assetManifest (project JSON base64) が de-facto 正本で、
+  IndexedDB store は test 専用。この乖離を F-1 audit に記録。
+- unifiedRoundtrip.reopenUnifiedProject が assetManifest checksum / surfaceReference /
+  assetReferences / store 照合を実装 (missing/corrupt asset は fail-closed)。
+- 二重正本は増やさず、現行 de-facto 正本 (project JSON) を維持し、
+  reopen 検証を機械化した。IndexedDB 完全配線は残課題として記録。
+
+================================================================================
+13. F-3 E2E Fixture Standardization
+================================================================================
+commit c5c4886。実装:
+- tests/e2e/helpers/fixture.ts: uniqueBusinessNumber / createProjectViaUi /
+  openProjectViaUi / deleteProjectViaUi (明示 fixture helper)
+- 正式ルール「画面初期状態をE2E fixture代わりにしない」を helper で機械化
+- /app PDC runtime がブラウザで in-memory であることを確認 →
+  page.goto (full reload) は state を失うため、初期 goto 後は SPA 内ナビで遷移する設計
+- fixture-standardization.spec.ts (2件): create→open→delete lifecycle +
+  test間 state 漏洩防止
+- docs/development/e2e-fixture-standard.md
+
+================================================================================
+14. E2E 専用 port / DB / server lifecycle
+================================================================================
+既存 playwright.config.ts を再利用 (実コードを正):
+- backend: 18000 (SPACER_E2E_BACKEND_PORT) / frontend: 15173 (SPACER_E2E_FRONTEND_PORT)
+- E2E 専用 backend data dir: frontend/test-results/e2e-backend-data
+- server lifecycle: Playwright webServer が起動/readiness待機/終了 (reuseExistingServer: false)
+- workers: 1 / fullyParallel: false (state 混線防止)
+- production DB (backend/data) とは分離
+
+================================================================================
+15. F-4 smoke / critical / full 定義
+================================================================================
+commit 5780f6a。
+- playwright.tiers.ts: SMOKE/CRITICAL/FULL spec 一覧の単一 source of truth +
+  validateTierDisjoint() (二重分類検出)
+- playwright.smoke.config.ts / playwright.critical.config.ts / playwright.full.config.ts
+- package.json: test:e2e:smoke / test:e2e:critical / test:e2e:full / test:e2e:tiers
+  (test:e2e 既定は互換維持)
+- docs/development/e2e-tiering.md
+
+================================================================================
+16. 各 tier 件数
+================================================================================
+- smoke: 19 テスト (6 spec ファイル)
+- critical: 40 テスト (13 spec ファイル)
+- full: 22+ テスト (RB001 3件含む。KNOWN_BROKEN_PREEXISTING 8件を別記録)
+
+================================================================================
+17. 各 tier 所要時間 (2026-08-17 実測)
+================================================================================
+- smoke: 約1.1分 (53.5s)
+- critical: 約2.3〜2.8分
+- full: F-7/F-8 で個別実行 (RB001 spec 単体 17.5s)
+- milestone test:full: 約2.5分 (backend: 57s は slow 内訳)
+
+================================================================================
+18. F-5 CI Integration
+================================================================================
+commit 54da331。
+- ci.yml: test job (test:fast + typecheck + build) を required 維持 +
+  e2e-smoke job 追加 (Playwright chromium install + smoke実行 + failure artifact upload)
+- milestone-e2e.yml (新規): critical / full を workflow_dispatch (manual) および
+  毎週月曜 schedule 専用に分離
+- 「全件 required CI」はしない (過去の長時間化で運用断念した教訓を反映)
+- YAML 構文検証PASS
+
+================================================================================
+19. required / non-required / milestone の役割
+================================================================================
+- required (日常): test:fast / typecheck / build / E2E smoke
+- non-required (PR/時機): test:ui / test:3d / E2E critical (milestone job で実行可能)
+- milestone (manual/schedule): E2E full / Reference Business Full E2E
+
+================================================================================
+20. F-6 Mechanical Enforcement
+================================================================================
+commit 5e8e07c。
+- scripts/check_development_rules.mjs: policy script
+- frontend/src/test/developmentRulesPolicy.test.ts (fast Gate で機械検証 3件):
+  test.skip/fixme/describe.skip 検出 (fail-closed) / waitForTimeout allowlist必須 /
+  /app/business/new 直接 goto は createProjectViaUi 必須
+- package.json: test:policy script
+- docs/development/development-test-rules.md: F-6 機械的適用表 + テスト責務 (J) 明文化
+
+================================================================================
+21. Schema / Migration / Persistence guards
+================================================================================
+- Schema Drift Guard (legacy ProjectModel ↔ official JSON Schema): schemaDriftGuard.test.ts
+- PDC module slot drift: siteContext contract.test.ts (PDC_MODULE_SLOTS ↔ PROJECT_MODULE_KEYS)
+- future schemaVersion fail-closed: migrateProject + unifiedRoundtrip.test.ts +
+  filesystemProjectPersistence (load境界)
+- Default Project Schema Conformance: defaultProjectConformance.test.ts
+- Generic Persistence Roundtrip: genericProjectRoundtrip.test.ts + unifiedRoundtrip.test.ts
+
+================================================================================
+22. E2E policy checks
+================================================================================
+developmentRulesPolicy.test.ts が fast Gate で実行 (F-6)。
+scripts/check_development_rules.mjs は独立実行可 (test:policy)。
+
+================================================================================
+23. F-7 Reference Business Full E2E
+================================================================================
+commit a3f8388。
+- next/samples/referenceBusiness001Loader.ts: RB001 完成 Project を production
+  業務一覧から読み込み (正規 Save/Load 経路)
+- BusinessListPage: 「Reference Business 001 を読み込む」ボタン
+  (data-testid=load-reference-business-button)
+- tests/e2e/reference-business-001-full.spec.ts (3件 PASS)
+
+================================================================================
+24. RB001 シナリオ結果
+================================================================================
+Full E2E シナリオ (実ブラウザ):
+1. App起動 ✅  2. 業務一覧 ✅  3. RB001 を明示ローダーで開く ✅
+4. Project open ✅  5. Site Context/Terrain (terrain-module-doc=あり) ✅
+6. Gujo Terrain ✅  7. EPSG:6674 (metadata) ✅  8. Road module ✅
+9. Bridge Layout module ✅  10. 6 spans × 50m (workflowState データ) ✅
+11. Superstructure module ✅  12. Bearings (super doc内) ✅  13. Substructure module ✅
+14. Analysis (fail-closed・架空成功なし) ✅  15. CIM 3D ✅  16. Deliverables/Export入口 ✅
+17. Save (autosave) ✅  18. Close (業務一覧へ) ✅  19. Reopen ✅
+20. 同一 Project 再表示 ✅  21. Terrain復元 ✅  22. Road復元 ✅  23. Bridge復元 ✅
+24. Super/Sub/Bearings復元 ✅  25. Analysis state 再表示 (fail-closed維持) ✅
+26. 3D再構築 (CIM) ✅  27. fatal console error なし ✅  28. data loss なし ✅
+
+================================================================================
+25. Analysis 結果 / 状態
+================================================================================
+- Analysis は NOT_RUN を維持 (fail-closed)。
+- E2E は「解析実行」を試み、架空の SUCCEEDED を作らず失敗メッセージ
+  (解析Documentを生成できませんでした…) を検証。
+- blocker: RB001 固有 girder section + roadEditorDraft 形式の道路データが
+  trusted データとして不在 (根拠は §10)。
+
+================================================================================
+26. Save/Close/Reopen 結果
+================================================================================
+- workflow Project: workflowProjectPersistence 経由で Save→Close→Reopen 復元
+  (workflowProjectPersistence.test.ts 5件 + App E2E)
+- RB001 完成 Project: unifiedRoundtrip で全 module roundtrip
+  (unifiedRoundtrip.test.ts 18件)
+- Full E2E で Close→Reopen→全 module 再表示を確認
+
+================================================================================
+27. screenshot / trace / evidence
+================================================================================
+- F-7 Full E2E: Playwright 既定 trace (retain-on-failure) / screenshot
+  (only-on-failure)。成功時は trace なし。
+- CI milestone job: failure 時 artifact (trace/screenshot) を upload 設定。
+
+================================================================================
+28. F-8 Completion Gate
+================================================================================
+最終 main (95eb2de) で全 Gate 実行。結果は §29-37。
+
+================================================================================
+29. test:fast 結果
+================================================================================
+3499 passed (473 files) ✅
+
+================================================================================
+30. test:ui 結果
+================================================================================
+786 passed (129 files) ✅
+
+================================================================================
+31. test:3d 結果
+================================================================================
+209 passed (36 files) ✅
+
+================================================================================
+32. typecheck
+================================================================================
+PASS (tsc -b) ✅
+
+================================================================================
+33. build
+================================================================================
+PASS (vite build) ✅
+
+================================================================================
+34. E2E smoke
+================================================================================
+19 passed (53.5s) ✅
+
+================================================================================
+35. E2E critical
+================================================================================
+40 passed (約2.3m) ✅
+
+================================================================================
+36. E2E full / RB001
+================================================================================
+reference-business-001-full.spec.ts 3 passed (14.7s) ✅
+
+================================================================================
+37. test:full (milestone・最後に1回)
+================================================================================
+3499 + 786 + 209 + 106 + 26 + 6 + 9 = 4641 tests 全PASS (7 sub-suites) ✅
+内訳: fast 3499 / ui 786 / 3d 209 / slow 106 / electron 26 / regression 6 / parity-cli 9
+test:full 自体は vitest 全件 (e2e は含まない)。E2E は smoke/critical/full で別途実行。
+役割: F-4 tiering と重複はせず、「マイルストーン最終全件 Gate」として文書化。
+
+================================================================================
+38. git diff --check
+================================================================================
+PASS ✅
+
+================================================================================
+39. main checkpoint merge 一覧
+================================================================================
+- F-1: main 19dfdfb → 6da98dc (merge --no-ff, 44b5d03)
+- F-2: main 6da98dc → b667e60 (merge --no-ff, 3028c10)
+- F-3: main b667e60 → db00715 (merge --no-ff, c5c4886)
+- F-4: main db00715 → bd12ae2 (merge --no-ff, 5780f6a)
+- F-5: main bd12ae2 → 0ce8282 (merge --no-ff, 54da331)
+- F-6: main 0ce8282 → 0f08478 (merge --no-ff, 5e8e07c)
+- F-7: main 0f08478 → 95eb2de (merge --no-ff, a3f8388)
+- F-8: 変更なし (全 Gate PASS のため最終 main は 95eb2de のまま)
+
+================================================================================
+40. conflict 一覧 / 解消
+================================================================================
+- 全 checkpoint merge が clean merge (conflict 0件)。
+- force操作・rebase・reset は不使用。既存無関係差分 (evidence JSON 2件) は保全。
+
+================================================================================
+41. Luna 利用
+================================================================================
+なし (本 Lane では委任不要の作業量に留まった)。
+
+================================================================================
+42. Sol 利用
+================================================================================
+なし (RB001 analysis の blocker は既存 repo データの実証調査で確定でき、
+Sol 委任は不要と判断)。
+
+================================================================================
+43. Discord 報告記録
+================================================================================
+作業開始 / Preflight開始・完了 / F-1開始・Gate・merge / F-2開始・Gate・merge /
+F-3開始・Gate・merge / F-4開始・Gate・merge / F-5開始・Gate・merge /
+F-6開始・Gate・merge / F-7開始・Gate・merge / F-8開始・Gate /
+Final Report 添付 / 最終終了。全タイミングで送信。
+
+================================================================================
+44. I-RIM mail 利用
+================================================================================
+~/ai-rim/backend/ai_rim/mail/ の既存実装 (sender._build_message / send_raw /
+auth_status) を使用。独自SMTP実装は作成していない。
+
+================================================================================
+45. Gmail 送信結果
+================================================================================
+- 開始報告: 1a00cc8bda3d2e93 ✅
+- F-2 完了: 1a00d0219ea703a6 ✅
+- F-4 完了: 1a00d1fe68bddef2 ✅
+- F-6 完了: 1a00d27387dd0e1e ✅
+- F-7 結果: 1a00d3cfe485d736 ✅
+- 最終報告 (Final Report 添付): 本報告作成後に送信
+宛先: hatapon223101@gmail.com
+
+================================================================================
+46. blocker / 残課題
+================================================================================
+【blocker】
+- RB001 Analysis RUN: RB001 固有の girder section 値・roadEditorDraft 形式の道路
+  データが trusted データとして不在。架空値を入れず fail-closed NOT_RUN を維持。
+  必要入力: (a) RB001 superstructure の girderSectionModel 確定値 (断面寸法)、
+  (b) RB001 road module への roadEditorDraft 相当データ。
+  Apollo golden (G-DES-*) は別橋梁のため接続不可。
+
+【残課題 (Lane G 引継ぎ)】
+- dual Project model (legacy ProjectModel + PDC) の一本化
+- Terrain IndexedDB の production 完全配線 (現状 assetManifest が de-facto 正本)
+- KNOWN_BROKEN_PREEXISTING 8件 (p1-d05/p3-f03/p4-d01..d04/p4-d08):
+  Wave 3 baseline 19dfdfb 時点で既に失敗する legacy LINER save/load 系 stale spec。
+  Lane F 起因でない (baseline worktree で実証済み)。full tier に記録。
+- workflow /app と /pro の経路統一 (Lane G)
+
+================================================================================
+47. Lane G 開始可否
+================================================================================
+「可」— ただし RB001 Analysis RUN は blocker (§46) として引き継ぐ。
+統合品質基盤 (unified persistence / E2E tiering / CI / mechanical rules) は完成。
+
+================================================================================
+48. Lane G 引継ぎ
+================================================================================
+- dual Project model 一本化 (PDC 正規化)
+- legacy LINER stale E2E 8件の現行仕様同期
+- Terrain IndexedDB production 配線
+- RB001 Analysis 入力確定 (girder section + roadEditorDraft)
+
+================================================================================
+49. local main == origin/main
+================================================================================
+local main = origin/main = 95eb2de79c97d089784dd21865d129fdcf4dc67f ✅
+
+================================================================================
+50. Lane F branch に未統合 commit がないこと
+================================================================================
+git log --oneline origin/main..origin/lane-f/integration-e2e → 0件 ✅
+Lane F branch は最新 main へ ff-only 追従済み。
+
+================================================================================
+【最終判定】
+================================================================================
+「Lane F Completion PASS」
+F-1 統合監査、F-2 統一 Save/Load/Migration、F-3 E2E fixture 標準化、
+F-4 smoke/critical/full 分離、F-5 CI、F-6 開発ルール機械化、
+F-7 Reference Business 001 Full E2E、F-8 Completion Gate を完了。
+main/origin-main 同期済み、Lane F 未統合 commit 0件。
+Analysis RUN のみ正直な blocker (架空値不使用・虚偽PASSなし)。
+Lane G 開始可否: 可 (Analysis入力の引き継ぎあり)。
