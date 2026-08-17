@@ -34,6 +34,7 @@ Contributor, language, quality, runtime, packaging, and documentation governance
 | [reference-business-001-tutorial-samples.md](reference-business-001-tutorial-samples.md) | Lane S / Tutorial Sample 区別 |
 | [reference-business-001-lane-handoffs.md](reference-business-001-lane-handoffs.md) | Lane S / Lane A/B/T/V/U への要求・引渡し |
 | [lane-f-integration-audit.md](lane-f-integration-audit.md) | Lane F / F-1 全Lane統合監査 (A/B/T/V/U/S 接続状態・issue分類) |
+| [e2e-fixture-standard.md](e2e-fixture-standard.md) | Lane F / F-3 E2E fixture 標準 (明示fixture・専用環境・禁止事項) |
 | [runtime-ubuntu.md](runtime-ubuntu.md) | Ubuntu runtime notes |
 | [packaging-windows.md](packaging-windows.md) | Windows packaging notes |
 | [../../desktop/electron/README.md](../../desktop/electron/README.md) | Electron / desktop packaging |
