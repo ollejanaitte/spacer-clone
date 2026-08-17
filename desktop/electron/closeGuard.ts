@@ -1,13 +1,5 @@
-const APOLLO_PHASE1_ROUTE_PATH = "/pro/apollo";
-
-function isApolloPathname(pathname: string): boolean {
-  return pathname === APOLLO_PHASE1_ROUTE_PATH || pathname.startsWith(`${APOLLO_PHASE1_ROUTE_PATH}/`);
-}
-
-export function shouldPromptCloseGuardFromUrl(url: string): boolean {
-  try {
-    return isApolloPathname(new URL(url).pathname);
-  } catch {
-    return false;
-  }
+// Phase H-05: /pro App Shell (旧Apollo NN) を撤去したため、/pro を対象とする
+// クローズガードは不要になった。通常業務フローは /app のみ。
+export function shouldPromptCloseGuardFromUrl(_url: string): boolean {
+  return false;
 }

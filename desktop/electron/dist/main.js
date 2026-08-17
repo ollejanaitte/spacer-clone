@@ -61,8 +61,7 @@ function getProductionIndexPath() {
     return node_path_1.default.join(process.resourcesPath, "frontend", "index.html");
 }
 // 新統合システム（Project System）の既定エントリ。
-// R1 以降、Electron 起動時は新システムの業務一覧を表示する。
-// 旧システムは /pro, / 等から引き続き到達可能。
+// 通常製品の Root Shell は /app (NextApp) の1本のみ (Phase H-05)。
 const NEXT_APP_ENTRY = "http://127.0.0.1:5173/app";
 function getAppIconPath() {
     // In dev, the source icon is at the repo root build/. In packaged builds,
