@@ -1,0 +1,254 @@
+================================================================================
+SPACER Lane G — Single App / Single Project Final Completion Report
+================================================================================
+
+1. 作業日時 (JST)
+   - 開始: 2026-08-17 10:46
+   - 完了: 2026-08-17 12:39
+
+2. 開始 main SHA
+   - d91e6caa10408c84bfc9a7fd75efc1f43c3d8558 (Lane F completion, origin/main 実測)
+
+3. 終了 main SHA
+   - ec5951ae69da49d02e8d16e1ff64c30423808370
+
+4. origin/main SHA
+   - ec5951ae69da49d02e8d16e1ff64c30423808370 (local main == origin/main)
+
+5. Lane F 後処理確認
+   - Lane F Final Report commit/push済み (d91e6ca)
+   - Final Report は Discord/Gmail 添付済み (Lane F 担当)
+   - 既存無関係差分: docs/apollo/step4c_appurtenance_haunch/evidence/{load,quantity}.json
+     (Lane G 起因でない。保全し、Lane G commit に含めていない)
+
+6. Lane G branch/worktree
+   - branch: lane-g/sitecontext-unification
+   - worktree: ~/Projects/spacer-clone-lane-g
+   - origin/main から作成、各 G-n 完了時 main へ checkpoint merge し ff-only 追従
+
+7. 未統合 commit 監査
+   - A/B/T/V/U/S/F lane: すべて 0 件 (開始時監査)
+   - Lane G: 0 件 (終了時)
+
+8. G-1 Runtime Ownership Audit
+   - docs/development/lane-g-runtime-ownership-audit.md
+   - Project model / PDC / schema / zod / Ajv / migration / persistence / route /
+     Terrain / viewer / workflow / LINER / RB001 を分類
+
+9. canonical / compatibility / duplicate 分類 (G-1)
+   - CANONICAL: PDC Project (zod), /app NextApp, assetManifest terrain,
+     PersistentProjectManager (filesystem)
+   - COMPATIBILITY: legacy ProjectModel + Ajv JSON-Schema chain, /pro FEM,
+     /pro/platform DesignPlatform, legacy redirects
+   - DUPLICATE/RETIRE: IndexedDB terrain store, filesystemProjectRepository,
+     LINER stale E2E 7件, demoEntry(viewer demo)
+
+10. G-2 Duplicate Runtime Removal
+    - Terrain ownership 最終確定 (下記 11/12)
+    - .sitecontext import で elevation を assetManifest へ埋め込み
+    - filesystemProjectRepository.ts 削除 (production usage 0)
+    - commit c6533e3
+
+11. Terrain 最終 ownership
+    - modules.terrain.data.assetManifest (base64 SCT1 + checksum + size) =
+      実行時正本 + 直列化正本
+    - Save→persistTerrain→project.json / Reopen→manifest から復元 (checksum照合)
+    - ブラウザ/Electron 同一経路、.spacerproj 自己完結
+
+12. IndexedDB / assetManifest 最終関係
+    - IndexedDB を実行時正本とする主張を正式 retire (G-2 文書契約 + G-4 実装削除)
+    - IndexedDB 実装 (createIndexedDbTerrainElevationStore) は zero caller dead code
+      のため削除 (G-4)。メモリ store はテスト専用シームとして維持
+    - 二重正本なし
+
+13. site-context residual PORT
+    - production Terrain store: assetManifest が SPACER 正本 (site-context
+      packageExport 相当)
+    - DEM fetch / DemWizard: production caller なし → defer
+    - businessStore: /app/business (PDC) が canonical に (G-5)
+
+14. G-3 Legacy Migration Completion
+    - PDC unified load が legacy ProjectModel JSON を明示診断で拒否
+      (legacy /pro compatibility path を指示・fail-closed)
+    - migration support matrix: docs/development/lane-g-migration-support-matrix.md
+    - commit f649cff
+
+15. supported legacy matrix
+    - .sitecontext: canonical import (terrain seed)
+    - PDC JSON (semver 1.0.0): canonical
+    - legacy ProjectModel (numeric v1): compatibility (legacy path)
+    - schemaVersion missing: legacy v1 (compat) / PDC fail-closed
+    - future / incompatible: fail-closed
+    - corrupt JSON: fail-closed
+    - LINER RDD: canonical within legacy model
+    - .spacerproj: canonical (single project.json)
+
+16. LINER stale E2E 7件の各判定
+    - 全7件 (p1-d05, p3-f03, p4-d01..d04, p4-d08): RETIRE (根拠付き)
+    - 失敗原因: A-05 fail-closed save ゲートが空FEM+LINER-only 保存を意図的に拒否
+      (現行仕様)。spec はゲート導入前の保存契約を検証する stale spec
+    - 対応: retired/legacy-liner-save-load/ へ移動 + README、
+      FULL tier から除去、testIgnore で既定実行から除外
+    - 同等カバレッジ: App.linerSaveLoad.test.tsx (jsdom) + linerProjectDraft.test.ts (unit)
+
+17. G-4 Old Runtime Retirement
+    - retirement manifest: docs/development/lane-g-runtime-retirement-manifest.md
+    - commit 91d0fd4
+
+18. removed 一覧
+    - IndexedDB terrain store 実装 (terrainAssetStore.ts 内)
+    - saveTerrainBinary / loadTerrainBinary
+    - filesystemProjectRepository.ts (G-2)
+    - LINER stale E2E 7件 (G-3, retired へ移動)
+
+19. retained compatibility 一覧
+    - legacy ProjectModel + Ajv JSON-Schema chain (migration/load boundary)
+    - saveTerrainElevation/loadTerrainElevation/verifyReopenedTerrain (test seam)
+    - TerrainElevationStore interface + memory store (test seam)
+    - /pro FEM App + /pro/platform DesignPlatform (compatibility surface)
+    - unified-viewer-demo.html + demoEntry (Lane V demo harness)
+    - LINER importer localStorage store (import-only)
+
+20. G-5 Single App Completion
+    - docs/development/lane-g-single-app-completion.md
+    - commit 0abffd0
+
+21. canonical production route
+    - /app (NextApp / PDC Project System)
+
+22. /app / /pro 最終関係
+    - /app = canonical production App
+    - /pro = legacy/reference (HomePage "legacy /pro" 明示リンクのみ)
+    - /pro/platform DesignPlatform = compatibility surface (smoke E2E 維持)
+    - lobby 実務編 → /app/business
+
+23. Electron entry
+    - dev: http://127.0.0.1:5173/app (既存)
+    - packaged: file://index.html → /app にルート (G-5 修正)
+    - electron:compile PASS
+
+24. G-6 Single Project Completion
+    - docs/development/lane-g-single-project-completion.md
+    - commit 54bbd14
+
+25. canonical Project type/model
+    - PDC Project (frontend/src/next/project/schema.ts, zod strict)
+    - schemaVersion: "1.0.0" (string semver)
+
+26. canonical Save/Load lifecycle
+    - Save: serializeProject → parseProject (zod, fail-closed) → project.json
+      (PersistentProjectManager / FilesystemProjectPersistence, temp+rename+backup)
+    - Load: JSON.parse → migrateProject (future fail-closed) → parseProject → hydrate
+    - Reopen: restoreFromPersistence on mount
+
+27. legacy boundary
+    - legacy ProjectModel + Ajv chain は migration/load boundary のみ
+    - PDC unified load は legacy 入力を明示診断で拒否
+    - migration 後は canonical PDC Project のみが live runtime
+
+28. workflow state ownership
+    - PDC Project modules 内 (workflowState は modules.road/bridgeLayout)
+    - /app NextApp と /pro workflow が同一 getProjectManager() を共有
+    - 独立した progress store なし
+
+29. analysis input adapter
+    - canonical Road → analysis input: buildRb001RoadDomainDraft + canonical
+      roadData (modules.road.data.roadData) を書き込み、
+      buildDerivedAnalysisDocument → loadRoadEditorDraft が動作
+    - RB001 trusted road fixture に基づく (架空値なし)
+
+30. RB001 Analysis blocker 状態
+    - Road input adapter: DONE (G-6)
+    - Girder section: BLOCKED-INPUT (RB001 固有の trusted section 値なし)
+    - Apollo golden section (AG1) は別橋梁のため流用せず
+    - Analysis は NOT_RUN を正直に維持 (架空値・mock なし)
+
+31. G-7 Final Product Acceptance
+    - docs/development/lane-g-final-product-acceptance.md
+    - commit 6f8ccb5
+
+32. New Project acceptance: PASS (fixture-standardization / smoke)
+33. RB001 acceptance: PASS (3/3 Full E2E)
+34. legacy migration acceptance: PASS (fail-closed + compatibility)
+35. .sitecontext acceptance: PASS (import → canonical → terrain → save/reopen)
+36. old URL redirect: PASS (lobby 実務編 → /app/business)
+37. Electron acceptance: PASS (electron:compile)
+38. Viewer/coordinate acceptance: PASS (EPSG:6674 単一座標系, integrated3d.test)
+39. Terrain reopen acceptance: PASS (assetManifest canonical)
+
+40. G-8 Completion Gate
+    - commit 878eac1 (typecheck fix) + merge ec5951a
+
+41. test:fast: 3500 PASS
+42. test:ui: 786 PASS
+43. test:3d: 209 PASS
+44. typecheck: PASS
+45. build: PASS
+46. E2E smoke: 19 PASS
+47. E2E critical: 40 PASS
+48. E2E full/RB001: 3 PASS
+49. legacy migration E2E: PASS (substructure-persistence / p4-d05 / p4-d06)
+50. test:full (milestone): PASS (3500+786+209+106+26+6+9 全件)
+51. Electron tests/build: electron:compile PASS (Electron E2E は既存設計の範囲)
+52. git diff --check: PASS
+
+53. main checkpoint merge 一覧
+    - G-1: fa86996
+    - G-2: d156fc6
+    - G-3: 2c3b672
+    - G-4: b56c62f
+    - G-5: 0719b21
+    - G-6: 075e45e
+    - G-7: 1fabd58
+    - G-8: ec5951a
+
+54. conflict / 解消
+    - 衝突なし (全て fast-forward/clean merge)
+
+55. Luna 利用: なし
+56. Sol 利用: なし (矛盾・データ損失・設計衝突なし)
+
+57. Discord 記録: 作業開始前・Preflight・G-1〜G-8 各開始/終了・各小step・
+    commit/push・checkpoint merge・削除前・migration/terrain/ownership 変更前後・
+    /app /pro 統合前後・Single Project 前後・Acceptance/Completion Gate・
+    Final Report を随時報告 (まとめ報告なし)
+
+58. I-RIM mail 利用: backend/ai_rim/mail (sender._build_message + send_raw, auth CONNECTED)
+59. Gmail 結果:
+    - Lane G 開始: 送信済み
+    - G-2 完了: 送信済み
+    - G-4 完了: 送信済み
+    - G-6 完了: 送信済み
+    - G-7 結果: 送信済み
+    - G-8 結果: 送信済み
+    - Final Report: 添付送信済み
+
+60. blocker
+    - RB001 Analysis girder section: BLOCKED-INPUT (trusted 値なし → NOT_RUN)
+    - Lane G 全体の完了はこの blocker に依存しない (分離判定)
+
+61. 残課題
+    - RB001 固有の girder section / plate 寸法の trusted source 獲得 (解析RUNに必要)
+    - /pro legacy surface の /app への段階的機能移行 (分析/FEM/LINER)
+    - DEM fetch / DemWizard の production 接続 (必要時)
+
+62. site-context 統合最終判定
+    - 統合完了。canonical Project の module として動作 (standalone runtime なし)
+    - Terrain は assetManifest 正本で import→save→reopen が成立
+
+63. Single App 判定: PASS (production App 1つ = /app)
+
+64. Single Project 判定: PASS (canonical Project runtime 1つ = PDC Project,
+    Save/Load/Migration 1つ)
+
+65. RB001 Analysis readiness 判定: BLOCKED-INPUT
+    - Road input adapter DONE / Girder section は trusted 値なし → NOT_RUN
+    - 架空値は一切使用していない
+
+66. local main == origin/main: 一致 (ec5951a)
+
+67. Lane G 未統合 commit: 0 件
+
+================================================================================
+最終 SHA 確定: ec5951ae69da49d02e8d16e1ff64c30423808370 (main == origin/main)
+================================================================================
