@@ -1,0 +1,59 @@
+name: Milestone E2E (critical + full)
+
+# F-5: 重い E2E tier (critical / full) は milestone / 手動 / schedule 専用。
+# 毎 commit では実行しない (過去の「全件required CIで運用断念」を防ぐ)。
+
+on:
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: "E2E tier to run"
+        required: true
+        type: choice
+        default: critical
+        options:
+          - critical
+          - full
+  schedule:
+    - cron: "0 3 * * 1" # 毎週月曜 03:00 JST 03:00 UTC 相当 (定例 milestone E2E)
+
+jobs:
+  e2e-milestone:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Setup Python venv (E2E backend server requires it)
+        working-directory: .
+        run: |
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install fastapi "uvicorn[standard]" numpy scipy pydantic jsonschema httpx pytest
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E critical
+        if: ${{ inputs.tier == 'critical' || github.event_name == 'schedule' }}
+        run: npm run test:e2e:critical
+      - name: E2E full
+        if: ${{ inputs.tier == 'full' }}
+        run: npm run test:e2e:full
+      - name: Upload failure artifacts (trace/screenshot)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-milestone-failure
+          path: |
+            frontend/test-results/**/*.zip
+            frontend/test-results/**/*.png
+          if-no-files-found: ignore
+          retention-days: 14
