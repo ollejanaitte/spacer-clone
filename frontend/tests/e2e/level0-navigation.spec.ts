@@ -35,15 +35,15 @@ test.describe("level0 navigation", () => {
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("入門編");
   });
 
-  test("professional link opens Design Platform Home without a React page error", async ({ page }) => {
+  test("professional link opens the canonical /app business list without a React page error", async ({ page }) => {
     const pageErrors: string[] = [];
     page.on("pageerror", (error) => pageErrors.push(error.message));
 
     await page.goto("/level0");
     await page.getByRole("button", { name: "実務編で詳しく見る" }).click();
-    // 現行仕様: 実務編は Design Platform Home へ導く。
-    await expect(page).toHaveURL(/\/pro\/platform$/);
-    await expect(page.getByRole("heading", { name: "Design Platform" })).toBeVisible();
+    // G-5 現行仕様: 実務編は canonical /app (NextApp) の業務一覧へ導く。
+    await expect(page).toHaveURL(/\/app\/business$/);
+    await expect(page.getByTestId("business-list-page")).toBeVisible();
     expect(pageErrors).toEqual([]);
   });
 });

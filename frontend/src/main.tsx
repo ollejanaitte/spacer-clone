@@ -11,7 +11,13 @@ import "./styles/tokens.css";
 import "./styles.css";
 
 function getCurrentLocation(): string {
-  if (typeof window === "undefined") return "/";
+  if (typeof window === "undefined") return "/app";
+  // G-5: packaged Electron は file://index.html をロードする (pathname が
+  // /app にも /pro にも一致しない)。この場合 production App の canonical
+  // entry (/app) へ向ける。dev (http) では pathname をそのまま使う。
+  if (window.location.protocol === "file:") {
+    return "/app";
+  }
   return `${window.location.pathname}${window.location.search}`;
 }
 

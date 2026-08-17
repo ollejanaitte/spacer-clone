@@ -55,7 +55,7 @@ describe("Level0Top", () => {
     const buttons = container.querySelectorAll("button") as NodeListOf<HTMLButtonElement>;
     const proButton = Array.from(buttons).find(b => b.textContent?.includes("実務編で詳しく見る"));
     proButton?.click();
-    expect(onNavigate).toHaveBeenCalledWith("/pro/platform");
+    expect(onNavigate).toHaveBeenCalledWith("/app/business");
   });
 
   test("shows the parameter panel when a sample card is clicked", () => {
