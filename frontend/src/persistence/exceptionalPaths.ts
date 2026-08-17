@@ -126,10 +126,11 @@ export const EXCEPTIONAL_PATHS: readonly ExceptionalPathContract[] = [
     location: "frontend/src/platform/storage/businessProjectPersistence.ts",
     validationPolicy: "manifest-schema",
     usesCanonicalChain: false,
-    wired: true,
+    wired: false,
     description:
-      "BusinessProject manifest (engineering-project 0.2.0) を localStorage に保存。独自の" +
-      "validateBusinessProjectManifest で fail-closed。ProjectModel とは無関係の契約群。",
+      "旧Design Platform (frontend/src/platform) の BusinessProject manifest 保存。" +
+      "Phase H-05 で旧Design Platform を物理削除したため、宣言のみ (declared-but-unwired)。" +
+      "正規の業務管理は /app (next/persistence) へ一本化。",
   },
   {
     kind: "apollo-import-export-path-difference",
