@@ -37,13 +37,10 @@ export {
   verifyTerrainAssetChecksum,
   saveTerrainElevation,
   loadTerrainElevation,
-  saveTerrainBinary,
-  loadTerrainBinary,
   verifyReopenedTerrain,
   type TerrainPersistenceError,
 } from "./terrainPersistence";
 export {
-  createIndexedDbTerrainElevationStore,
   createMemoryTerrainElevationStore,
   heightfieldToAsset,
   makeHeightfield,

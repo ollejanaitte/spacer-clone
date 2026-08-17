@@ -4,12 +4,16 @@
 // （Phase 3・Step 3-07 で完成した、SCT1 バイナリ標高を IndexedDB に保存・復元する
 //   既存の Terrain 管理機構。SPACER 専用の新 Terrain 管理システムは作らない。）
 //
-// 接続方針（再実装回避）:
-// - DB 名 / store 名 / keyPath / DB_VERSION は移植元と同一（scp-terrain / elevations /
-//   projectId / 2）。既存実装のセマンティクスをそのまま引き継ぐ。
-// - Heightfield / SCT1 / checksum は frontend/src/terrain の PORT 済み primitive を使用。
-// - IndexedDB はブラウザ専用のため、テスト（node env）ではメモリ実装
-//   （createMemoryTerrainElevationStore）を注入して検証する。
+// 【G-2 / G-4: runtime ownership 最終確定】
+//   - production の実行時正本は project JSON 内 assetManifest (base64 SCT1) と
+//     し、IndexedDB を実行時正本とする主張は正式に retire した。
+//   - 実 IndexedDB 実装 (createIndexedDbTerrainElevationStore / openDb /
+//     IndexedDbLike) は production / test 双方で呼び出し実績が 0 のため
+//     G-4 で削除した (dead code)。
+//   - TerrainElevationStore インターフェースとメモリ実装
+//     (createMemoryTerrainElevationStore) はテスト専用シームとして維持する。
+//   - Heightfield / SCT1 / checksum は frontend/src/terrain の PORT 済み primitive
+//     を使用。
 
 import { Heightfield, NO_DATA } from "./heightfield";
 import type { GridSpec } from "./types";
@@ -34,7 +38,7 @@ export interface TerrainElevationRecord extends TerrainBinaryAsset {
   terrainId: string;
 }
 
-/** Terrain 標高 store の共通 I/F（IndexedDB 実装 + テスト用メモリ実装）。 */
+/** Terrain 標高 store の共通 I/F（テスト用メモリ実装）。 */
 export interface TerrainElevationStore {
   save(projectId: string, terrainId: string, asset: TerrainBinaryAsset): Promise<void>;
   load(projectId: string): Promise<TerrainElevationRecord | null>;
@@ -42,111 +46,10 @@ export interface TerrainElevationStore {
 }
 
 // ---------------------------------------------------------------------------
-// IndexedDB 実装（移植元 terrainAsset.ts の openDb / save / load / delete を PORT）
+// テスト用メモリ実装（node env 検証用。テスト専用シーム）
 // ---------------------------------------------------------------------------
 
-const DB_NAME = "scp-terrain";
-const STORE = "elevations";
-const DB_VERSION = 2;
-
-/** テスト注入用: 実ブラウザの IDBFactory（node env では undefined）。 */
-export type IndexedDbLike = Pick<IDBFactory, "open">;
-
-function openDb(indexedDb: IndexedDbLike | undefined): Promise<IDBDatabase> {
-  if (!indexedDb) {
-    throw new Error("IDB-UNAVAILABLE: IndexedDB is not available in this environment");
-  }
-  return new Promise((resolvePromise, reject) => {
-    const timer = setTimeout(() => {
-      reject(new Error("IDB-OPEN-TIMEOUT"));
-    }, 5000);
-    const req = indexedDb.open(DB_NAME, DB_VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(STORE)) {
-        db.createObjectStore(STORE, { keyPath: "projectId" });
-      }
-    };
-    req.onsuccess = () => {
-      clearTimeout(timer);
-      resolvePromise(req.result);
-    };
-    req.onerror = () => {
-      clearTimeout(timer);
-      reject(req.error);
-    };
-  });
-}
-
-/** IndexedDB ベースの Terrain 標高 store（移植元 terrainAsset.ts の挙動を維持）。 */
-export function createIndexedDbTerrainElevationStore(
-  indexedDb?: IndexedDbLike,
-): TerrainElevationStore {
-  const idb: IndexedDbLike | undefined = indexedDb ?? globalThis.indexedDB;
-  return {
-    async save(projectId, terrainId, asset) {
-      const db = await openDb(idb);
-      await new Promise<void>((resolvePromise, reject) => {
-        const tx = db.transaction(STORE, "readwrite");
-        tx.objectStore(STORE).put({ projectId, terrainId, ...asset });
-        tx.oncomplete = () => resolvePromise();
-        tx.onerror = () => reject(tx.error);
-        tx.onabort = () => reject(tx.error ?? new Error("IDB-SAVE-ABORT"));
-      });
-    },
-    async load(projectId) {
-      const db = await openDb(idb);
-      if (!db.objectStoreNames.contains(STORE)) {
-        throw new Error("IDB-STORE-MISSING");
-      }
-      return new Promise((resolvePromise, reject) => {
-        const timer = setTimeout(() => {
-          reject(new Error("IDB-LOAD-TIMEOUT"));
-        }, 5000);
-        try {
-          const tx = db.transaction(STORE, "readonly");
-          const req = tx.objectStore(STORE).get(projectId);
-          req.onsuccess = () => {
-            clearTimeout(timer);
-            resolvePromise(
-              (req.result as TerrainElevationRecord | undefined) ?? null,
-            );
-          };
-          req.onerror = () => {
-            clearTimeout(timer);
-            reject(req.error);
-          };
-          tx.onabort = () => {
-            clearTimeout(timer);
-            reject(tx.error ?? new Error("IDB-ABORT"));
-          };
-          tx.onerror = () => {
-            clearTimeout(timer);
-            reject(tx.error ?? new Error("IDB-TX-ERR"));
-          };
-        } catch (e) {
-          clearTimeout(timer);
-          reject(e);
-        }
-      });
-    },
-    async delete(projectId) {
-      const db = await openDb(idb);
-      await new Promise<void>((resolvePromise, reject) => {
-        const tx = db.transaction(STORE, "readwrite");
-        tx.objectStore(STORE).delete(projectId);
-        tx.oncomplete = () => resolvePromise();
-        tx.onerror = () => reject(tx.error);
-      });
-    },
-  };
-}
-
-// ---------------------------------------------------------------------------
-// テスト用メモリ実装（node env 検証用。IndexedDB 実装と同一 I/F）
-// ---------------------------------------------------------------------------
-
-/** メモリベースの Terrain 標高 store（テスト用・動作は IndexedDB 実装と同等）。 */
+/** メモリベースの Terrain 標高 store（テスト専用・動作は旧 IndexedDB 実装と同等）。 */
 export function createMemoryTerrainElevationStore(): TerrainElevationStore {
   const records = new Map<string, TerrainElevationRecord>();
   return {

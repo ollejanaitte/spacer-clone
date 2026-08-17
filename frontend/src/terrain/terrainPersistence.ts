@@ -204,23 +204,11 @@ export async function loadTerrainElevation(
   };
 }
 
-/** TerrainBinaryAsset を直接 store へ保存する（PORT 元と同一形状の低レベル I/F）。 */
-export async function saveTerrainBinary(
-  store: TerrainElevationStore,
-  projectId: string,
-  terrainId: string,
-  binary: TerrainBinaryAsset,
-): Promise<void> {
-  await store.save(projectId, terrainId, binary);
-}
-
-/** TerrainBinaryAsset を直接 store から読み出す（PORT 元と同一形状の低レベル I/F）。 */
-export async function loadTerrainBinary(
-  store: TerrainElevationStore,
-  projectId: string,
-): Promise<TerrainBinaryAsset | null> {
-  return store.load(projectId);
-}
+/**
+ * TerrainBinaryAsset を直接 store へ保存する（移植元と同一形状の低レベル I/F）。
+ * G-4: production / test 双方で caller 0 のため retire した (saveTerrainBinary)。
+ * 残存: storeRoundtrip 経由の saveTerrainElevation のみテストで使用。
+ */
 
 /**
  * Reopen 時の整合検証: IndexedDB store から復元した標高と project 内
