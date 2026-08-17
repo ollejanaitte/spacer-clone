@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { buildTutorialSampleProject, buildTutorialHeightfield, TUTORIAL_SAMPLE_PROJECT_NAME, TUTORIAL_ROAD_ID, TUTORIAL_BRIDGE_ID, TUTORIAL_TERRAIN_ID, validateTutorialProject } from "../tutorialSample";
 import { extractTerrainDocument, verifyTerrainAssetChecksum } from "../../../../terrain/terrainPersistence";
-import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../workflow/workflowState";
+import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../next/samples/workflowState";
 import { parseProject } from "../../../../next/project/projectDataCore";
 
 describe("S-10 Tutorial Sample (軽量・学習用)", () => {

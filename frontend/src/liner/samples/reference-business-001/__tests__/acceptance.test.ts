@@ -7,7 +7,7 @@ import { buildRb001Substructure } from "../substructure";
 import { extractTerrainDocument, verifyReopenedTerrain, loadTerrainElevation } from "../../../../terrain/terrainPersistence";
 import { buildGujoSampleAsset, GUJO_COORDINATE_CONTEXT_ID, GUJO_EPSG, GUJO_SAMPLE_TERRAIN_ID } from "../../../../terrain/gujoSample";
 import { createMemoryTerrainElevationStore } from "../../../../terrain/terrainAssetStore";
-import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../workflow/workflowState";
+import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../next/samples/workflowState";
 import { buildRealGujoReferenceScene } from "../../../../viewer/adapters/realScene";
 import { readModuleFromProject } from "../../../../next/modules/adapter";
 import { finalizeCanonicalRoadData } from "../../../../next/modules/road/roadDataSchema";

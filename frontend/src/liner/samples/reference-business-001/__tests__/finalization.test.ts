@@ -10,7 +10,7 @@ import {
   GUJO_SAMPLE_ASSET_PATH,
   GUJO_SOURCE_DATASET,
 } from "../../../../terrain/gujoSample";
-import { readBridgeWorkflowState, readRoadWorkflowState } from "../../../../workflow/workflowState";
+import { readBridgeWorkflowState, readRoadWorkflowState } from "../../../../next/samples/workflowState";
 
 /**
  * S-11 Reference Sample Finalization — RB001 の正式 fixture/sample 化。

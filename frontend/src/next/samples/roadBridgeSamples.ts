@@ -8,7 +8,7 @@
  * the candidate nominal span).
  */
 
-import { buildReferenceBusiness001RoadSample, rb001AlignmentLength } from "../liner/samples/reference-business-001/roadAlignment";
+import { buildReferenceBusiness001RoadSample, rb001AlignmentLength } from "../../liner/samples/reference-business-001/roadAlignment";
 import type { BridgeSpanWorkflowState, RoadBridgeCandidate, RoadWorkflowState } from "./workflowState";
 
 export const RB001_BRIDGE_WORKFLOW_NAME = "長良川橋 (支間割設定)" as const;

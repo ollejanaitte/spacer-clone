@@ -1,20 +1,17 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { ja, type JaDictionary } from "../i18n/ja";
-import type { CanonicalWorkflowStep } from "./canonicalWorkflow";
-import { isWorkflowStepEntryEnabled } from "./canonicalWorkflow";
-import { CanonicalWorkflowNav } from "./CanonicalWorkflowNav";
-import type { SiteContextImportAdapter, SiteContextImportInput, SiteContextImportReport } from "../next/integration/siteContext/adapterContract";
-import { createSiteContextImportAdapter, mapSiteContextPackageToProject } from "../next/integration/siteContext/importAdapter";
-import type { Project } from "../next/project/schema";
+import { ja, type JaDictionary } from "../../i18n/ja";
+import type { SiteContextImportAdapter, SiteContextImportInput, SiteContextImportReport } from "../integration/siteContext/adapterContract";
+import { createSiteContextImportAdapter, mapSiteContextPackageToProject } from "../integration/siteContext/importAdapter";
+import type { Project } from "../project/schema";
 import {
   GUJO_BOUNDS_WGS84,
   buildGujoSampleAsset,
   buildGujoSampleHeightfield,
   buildGujoSampleTerrainDocument,
-} from "../terrain/gujoSample";
-import { fetchDemTiles, tileRangeForBBox, tileResolutionMeters, type GsiDemResult, type TileFetcher } from "../terrain/gsi/gsi";
-import { NO_DATA, type Heightfield } from "../terrain/heightfield";
-import { persistTerrain } from "../terrain/terrainPersistence";
+} from "../../terrain/gujoSample";
+import { fetchDemTiles, tileRangeForBBox, tileResolutionMeters, type GsiDemResult, type TileFetcher } from "../../terrain/gsi/gsi";
+import { NO_DATA, type Heightfield } from "../../terrain/heightfield";
+import { persistTerrain } from "../../terrain/terrainPersistence";
 import { buildSyntheticSiteContextPackage } from "./samplePackage";
 import styles from "./SiteContextPage.module.css";
 
@@ -35,7 +32,6 @@ export interface SiteContextPageProps {
   readonly project: Project;
   readonly onProjectChange: (next: Project) => void;
   readonly onBackToApp: () => void;
-  readonly onNavigateStep: (step: CanonicalWorkflowStep) => void;
   readonly onOpenRoadWorkflow: () => void;
   readonly adapter?: SiteContextImportAdapter;
   readonly packageInput?: SiteContextImportInput;
@@ -103,7 +99,6 @@ export function SiteContextPage({
   project,
   onProjectChange,
   onBackToApp,
-  onNavigateStep,
   onOpenRoadWorkflow,
   adapter,
   packageInput,
@@ -133,14 +128,6 @@ export function SiteContextPage({
       demAbortRef.current?.abort();
     };
   }, []);
-
-  const handleNavigateStep = useCallback(
-    (step: CanonicalWorkflowStep) => {
-      if (!isWorkflowStepEntryEnabled(step)) return;
-      onNavigateStep(step);
-    },
-    [onNavigateStep],
-  );
 
   const runInspect = useCallback(async () => {
     const token = ++importTokenRef.current;
@@ -323,8 +310,6 @@ export function SiteContextPage({
       </section>
 
       <section className={styles.body}>
-        <CanonicalWorkflowNav currentStepId="siteContext" onNavigateStep={handleNavigateStep} />
-
         <div className={styles.panels}>
           <section className={styles.panel} aria-label={text.importSectionTitle} data-testid="site-context-import-panel">
             <h2 className={styles.panelTitle}>{text.importSectionTitle}</h2>

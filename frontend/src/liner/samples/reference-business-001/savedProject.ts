@@ -21,8 +21,8 @@ import { createEmptyProject, parseProject, serializeProject, deserializeProject 
 import type { Project } from "../../../next/project/schema";
 import { persistTerrain, extractTerrainDocument } from "../../../terrain/terrainPersistence";
 import { buildGujoSampleTerrainDocument, buildGujoSampleAsset, GUJO_COORDINATE_CONTEXT, GUJO_COORDINATE_CONTEXT_ID, GUJO_SOURCE_DATASET } from "../../../terrain/gujoSample";
-import { writeRoadWorkflowState, writeBridgeWorkflowState } from "../../../workflow/workflowState";
-import { buildRb001RoadWorkflowState, computeSpanArrangement, RB001_BRIDGE_WORKFLOW_NAME } from "../../../workflow/roadBridgeSamples";
+import { writeRoadWorkflowState, writeBridgeWorkflowState } from "../../../next/samples/workflowState";
+import { buildRb001RoadWorkflowState, computeSpanArrangement, RB001_BRIDGE_WORKFLOW_NAME } from "../../../next/samples/roadBridgeSamples";
 import { buildRb001RoadDomainDraft } from "./roadAlignment";
 import { buildCanonicalRoadData } from "../../../next/modules/road/roadDataSchema";
 import { writeCanonicalRoadDataToProject } from "../../../next/modules/road/roadModuleCanonicalWriter";

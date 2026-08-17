@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { buildRb001CompleteProject, saveCloseReopenRb001Project, RB001_COMPLETE_PROJECT_NAME } from "../savedProject";
 import { parseProject } from "../../../../next/project/projectDataCore";
 import { extractTerrainDocument } from "../../../../terrain/terrainPersistence";
-import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../workflow/workflowState";
+import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../next/samples/workflowState";
 import { RB001_BRIDGE_ID } from "../bridgeArrangement";
 import { GUJO_SAMPLE_TERRAIN_ID } from "../../../../terrain/gujoSample";
 

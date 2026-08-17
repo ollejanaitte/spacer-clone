@@ -23,7 +23,7 @@ import type { Project } from "../../project/schema";
 import { buildRb001CompleteProject } from "../../../liner/samples/reference-business-001/savedProject";
 import { buildRb001Analysis } from "../../../liner/samples/reference-business-001/analysis";
 import { mapSiteContextPackageToProject } from "../../integration/siteContext/importAdapter";
-import { buildSyntheticSiteContextPackage } from "../../../workflow/samplePackage";
+import { buildSyntheticSiteContextPackage } from "../../site-context/samplePackage";
 import { createMemoryTerrainElevationStore } from "../../../terrain/terrainAssetStore";
 import { extractTerrainDocument, loadTerrainElevation } from "../../../terrain/terrainPersistence";
 import { buildGujoSampleAsset, GUJO_SAMPLE_TERRAIN_ID } from "../../../terrain/gujoSample";

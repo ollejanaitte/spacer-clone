@@ -22,7 +22,7 @@ import type { Project } from "../../../next/project/schema";
 import { Heightfield } from "../../../terrain/heightfield";
 import { buildTerrainDocument, buildTerrainAsset } from "../../../terrain/generation";
 import { persistTerrain } from "../../../terrain/terrainPersistence";
-import { writeRoadWorkflowState, writeBridgeWorkflowState, type RoadWorkflowState, type BridgeWorkflowState } from "../../../workflow/workflowState";
+import { writeRoadWorkflowState, writeBridgeWorkflowState, type RoadWorkflowState, type BridgeWorkflowState } from "../../../next/samples/workflowState";
 import type { LinearAlignment } from "../../core/types";
 
 export const TUTORIAL_SAMPLE_PROJECT_NAME = "チュートリアル 体験サンプル (5-Span 高架橋)" as const;

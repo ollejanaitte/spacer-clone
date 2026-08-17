@@ -15,11 +15,11 @@
 import type {
   SiteContextImportInput,
   SiteContextPackage,
-} from "../next/integration/siteContext/adapterContract";
+} from "../integration/siteContext/adapterContract";
 import {
   GUJO_COORDINATE_CONTEXT,
   GUJO_CENTER_EPSG6674,
-} from "../terrain/gujoSample";
+} from "../../terrain/gujoSample";
 
 export const SYNTHETIC_SITE_CONTEXT_PACKAGE_ID = "pkg-gujo-hachiman-synthetic" as const;
 export const SYNTHETIC_SITE_CONTEXT_PROJECT_ID = "111e4567-e89b-12d3-a456-426614174001" as const;

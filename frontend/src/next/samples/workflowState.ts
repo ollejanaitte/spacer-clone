@@ -13,8 +13,8 @@
  * (roadDesignDocument / bridgeLayoutDocument / ...) are preserved untouched.
  */
 
-import { parseProject } from "../next/project/projectDataCore";
-import type { Project } from "../next/project/schema";
+import { parseProject } from "../project/projectDataCore";
+import type { Project } from "../project/schema";
 
 export const ROAD_WORKFLOW_STATE_KEY = "workflowState" as const;
 export const BRIDGE_WORKFLOW_STATE_KEY = "workflowState" as const;
