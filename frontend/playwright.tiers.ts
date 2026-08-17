@@ -73,17 +73,14 @@ export const FULL_SPECS = [
   "p2-d06-viewer-vertical-z.spec.ts",
   "p3-d07-print-dxf-parity.spec.ts",
   "substructure-design-result.spec.ts",
-  // NOTE: 以下の legacy LINER save/load 系は Wave 3 baseline (19dfdfb) 時点で
-  // 既に失敗する pre-existing の stale spec (saveボタン導線変更後未同期)。
-  // Lane F 起因ではない。full tier に置き、KNOWN_BROKEN_PREEXISTING として
-  // docs/development/e2e-tiering.md へ記録する。
-  "p1-d05-liner-ui-save-load.spec.ts",
-  "p3-f03-rdd-bridge-drawing-persistence.spec.ts",
-  "p4-d01-multi-alignment.spec.ts",
-  "p4-d02-ldist.spec.ts",
-  "p4-d03-haunch.spec.ts",
-  "p4-d04-hoso.spec.ts",
-  "p4-d08-roundtrip.spec.ts",
+  // G-3: legacy LINER save/load stale spec 7件は retire 済み。
+  // 理由: A-05 fail-closed save ゲート (validationBoundary.ts) が
+  // 空FEM + LINER-only モデルの保存を意図的に拒否する現行仕様に変更された。
+  // これらの spec はゲート導入前の保存契約を検証しており現行仕様と衝突する。
+  // 同等カバレッジ (LINER roundtrip / fail-closed 拒否 / drawing persistence /
+  //   bridge layout / drawingSettings) は jsdom App.linerSaveLoad.test.tsx と
+  // unit liner/adapters/linerProjectDraft.test.ts で維持済み。
+  // 判定詳細: docs/development/lane-g-migration-support-matrix.md
 ];
 
 /** smoke / critical / full の重複検査: 各 spec は1つの tier にのみ属する。 */

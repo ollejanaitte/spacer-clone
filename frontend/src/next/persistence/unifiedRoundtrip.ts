@@ -57,6 +57,38 @@ function detectSchemaVersion(raw: unknown): string | undefined {
 }
 
 /**
+ * G-3: Legacy ProjectModel format detection.
+ *
+ * The legacy ProjectModel (`frontend/src/types.ts`) uses a *numeric*
+ * `schemaVersion` (v1) and carries the FEM bridge shape (`project`,
+ * `nodes`, `materials`, ...). The PDC `Project` uses a string semver and
+ * module slots. When a legacy JSON reaches the PDC canonical load path we do
+ * not silently fail with a generic message: we return an explicit diagnostic
+ * pointing to the legacy/compatibility path so migration is unambiguous.
+ */
+export function isLegacyProjectModelJson(raw: unknown): boolean {
+  if (!raw || typeof raw !== "object") return false;
+  const record = raw as Record<string, unknown>;
+  const version = record.schemaVersion;
+  if (typeof version === "number") {
+    return true;
+  }
+  // schemaVersion 欠落 + legacy 特有のトップレベルキー (project/nodes/members 等) を
+  // 持つ入力は legacy 形式の可能性が高い。PDC 形式は schemaVersion を必須とするため、
+  // ここでは「legacy 候補」として診断を返す (fail-closed は維持)。
+  return (
+    version === undefined &&
+    isRecordLike(record.project) &&
+    Array.isArray(record.nodes) &&
+    Array.isArray(record.members)
+  );
+}
+
+function isRecordLike(value: unknown): boolean {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+/**
  * Save: serialize → official Schema validation (parseProject) → JSON.
  * Invalid projects are rejected (fail-closed); nothing is written.
  */
@@ -86,6 +118,16 @@ export function loadUnifiedProject(json: string): UnifiedLoadResult {
   }
   const version = detectSchemaVersion(raw);
   if (version === undefined) {
+    if (isLegacyProjectModelJson(raw)) {
+      return {
+        ok: false,
+        issues: [
+          "legacy ProjectModel format detected — load via the legacy /pro compatibility path " +
+            "(validateLoadedProjectJsonBeforeHydrate). PDC unified load requires the current " +
+            "canonical Project format (string semver schemaVersion).",
+        ],
+      };
+    }
     return { ok: false, issues: ["schemaVersion missing or invalid"] };
   }
   const migrated = migrateProject(raw, version);

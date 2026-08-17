@@ -123,6 +123,29 @@ describe("F-2 invalid fail-closed", () => {
     if (!loaded.ok) expect(loaded.issues.join(";")).toContain("schemaVersion");
   });
 
+  it("legacy ProjectModel JSON は PDC unified load で明示的に拒否される (G-3 boundary)", () => {
+    const legacy = {
+      schemaVersion: 1,
+      project: { id: "legacy-1", name: "旧プロジェクト" },
+      nodes: [],
+      materials: [],
+      sections: [],
+      members: [],
+      supports: [],
+      loadCases: [],
+      nodalLoads: [],
+      memberLoads: [],
+      analysisSettings: {},
+    };
+    const loaded = loadUnifiedProject(JSON.stringify(legacy));
+    expect(loaded.ok).toBe(false);
+    if (!loaded.ok) {
+      const diag = loaded.issues.join(";");
+      expect(diag).toContain("legacy ProjectModel");
+      expect(diag).toContain("legacy /pro compatibility path");
+    }
+  });
+
   it("schema不適合 project は save で拒否される", () => {
     const bad = { name: "x" } as unknown as Project;
     const saved = saveUnifiedProject(bad);
