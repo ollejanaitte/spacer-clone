@@ -10,10 +10,10 @@ SPACER Lane G — Single App / Single Project Final Completion Report
    - d91e6caa10408c84bfc9a7fd75efc1f43c3d8558 (Lane F completion, origin/main 実測)
 
 3. 終了 main SHA
-   - ec5951ae69da49d02e8d16e1ff64c30423808370
+   - 3f56687951138ea79d2102f3e1d070b7d4edbc20
 
 4. origin/main SHA
-   - ec5951ae69da49d02e8d16e1ff64c30423808370 (local main == origin/main)
+   - 3f56687951138ea79d2102f3e1d070b7d4edbc20 (local main == origin/main, 実装完了時)
 
 5. Lane F 後処理確認
    - Lane F Final Report commit/push済み (d91e6ca)
@@ -177,7 +177,7 @@ SPACER Lane G — Single App / Single Project Final Completion Report
 39. Terrain reopen acceptance: PASS (assetManifest canonical)
 
 40. G-8 Completion Gate
-    - commit 878eac1 (typecheck fix) + merge ec5951a
+    - commit 878eac1 (typecheck fix) + merge 3f56687
 
 41. test:fast: 3500 PASS
 42. test:ui: 786 PASS
@@ -200,7 +200,7 @@ SPACER Lane G — Single App / Single Project Final Completion Report
     - G-5: 0719b21
     - G-6: 075e45e
     - G-7: 1fabd58
-    - G-8: ec5951a
+    - G-8: 3f56687
 
 54. conflict / 解消
     - 衝突なし (全て fast-forward/clean merge)
@@ -245,7 +245,7 @@ SPACER Lane G — Single App / Single Project Final Completion Report
     - Road input adapter DONE / Girder section は trusted 値なし → NOT_RUN
     - 架空値は一切使用していない
 
-66. local main == origin/main: 一致 (ec5951a)
+66. local main == origin/main: 一致 (3f56687)
 
 67. Lane G 未統合 commit: 0 件
 
