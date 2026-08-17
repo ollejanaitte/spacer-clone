@@ -82,17 +82,10 @@ export function BusinessListPage() {
   return (
     <section className="next-page next-page-wide" data-testid="business-list-page">
       <h1 className="next-page-title">業務一覧</h1>
-      <button
-        type="button"
-        className="next-link-button"
-        data-testid="business-back-home"
-        onClick={() => navigateTo(NEXT_HOME_PATH)}
-      >
-        ☚ 戻る
-      </button>
-      <div className="next-actions">
+      <div className="next-actions next-actions-large">
         <button
           type="button"
+          className="next-entry-new"
           data-testid="new-project-button"
           onClick={() => navigateTo("/app/business/new")}
         >
@@ -100,32 +93,35 @@ export function BusinessListPage() {
         </button>
         <button
           type="button"
-          className="next-action-secondary"
+          className="next-entry-load"
           data-testid="load-business-button"
           onClick={() => navigateTo("/app/business/load")}
         >
-          ⇩ 業務データ読込
+          ⇩ 業務データ読み込み
         </button>
         <button
           type="button"
-          className="next-action-secondary"
+          className="next-entry-sample"
           data-testid="load-reference-business-button"
           onClick={() => void handleLoadReferenceBusiness()}
           disabled={sampleLoading}
         >
-          {sampleLoading ? "読み込み中..." : "☛ サンプル業務読み込み（Reference Business 001）"}
+          {sampleLoading ? "読み込み中..." : "サンプル業務読み込み"}
         </button>
       </div>
 
-      <div className="next-search">
-        <input
-          type="search"
-          placeholder="業務検索（業務名・件番・設計段階）"
-          data-testid="business-search-input"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
+      <details className="next-dev-info" data-testid="business-search-collapsible">
+        <summary>業務検索・開発者向け</summary>
+        <div className="next-search">
+          <input
+            type="search"
+            placeholder="業務検索（業務名・件番・設計段階）"
+            data-testid="business-search-input"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
         />
-      </div>
+        </div>
+      </details>
 
       {message !== null && (
         <div className="next-message" data-testid="business-message">
@@ -199,6 +195,17 @@ export function BusinessListPage() {
           onCancel={deleteConfirm.cancel}
         />
       )}
+
+      <div className="next-footer-actions">
+        <button
+          type="button"
+          className="next-footer-back"
+          data-testid="business-back-home"
+          onClick={() => navigateTo(NEXT_HOME_PATH)}
+        >
+          戻る
+        </button>
+      </div>
     </section>
   );
 }
