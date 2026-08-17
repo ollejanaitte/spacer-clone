@@ -356,37 +356,59 @@
 }
 
 .next-project-head {
-  padding: 16px;
-  border: 1px solid #e2e8f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 20px;
+  border: 1px solid #c5d8ee;
   border-radius: 12px;
-  background: #fff;
-  margin: 12px 0 20px;
+  background: #f0f6fc;
+  margin: 8px 0 16px;
+}
+
+.next-project-head-main {
+  display: grid;
+  gap: 8px;
 }
 
 .next-project-head-name {
   font-size: 18px;
-  margin: 0 0 10px;
+  font-weight: 700;
+  margin: 0;
 }
 
 .next-project-head-meta {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 8px 16px;
-  margin: 0;
-}
-
-.next-project-head-meta div {
   display: flex;
-  gap: 8px;
-  font-size: 13px;
-}
-
-.next-project-head-meta dt {
-  color: #6b7280;
-}
-
-.next-project-head-meta dd {
+  flex-wrap: wrap;
+  gap: 8px 24px;
   margin: 0;
+}
+
+.next-project-meta-item {
+  font-size: 13px;
+  color: #334155;
+}
+
+.next-project-meta-item strong {
+  color: #475569;
+  margin-right: 6px;
+}
+
+.next-project-edit-button {
+  flex: 0 0 auto;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #67c3f0;
+  color: #06283d;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.next-project-edit-button:hover {
+  background: #4fb6ea;
 }
 
 .next-message {
@@ -710,22 +732,28 @@
   margin-top: 8px;
 }
 
-/* 業務プロジェクト トップ（PDF準拠: 左=設計機能 / 右=統合3Dビュー） */
+/* 業務プロジェクト トップ（ODP準拠: 左=7大ボタン / 右=統合3Dビュー） */
 .next-project-top-layout {
   display: grid;
-  grid-template-columns: minmax(320px, 420px) 1fr;
+  grid-template-columns: minmax(360px, 440px) 1fr;
   gap: 16px;
   align-items: start;
   width: 100%;
-  margin: 8px 0 20px;
+  margin: 8px 0 12px;
 }
 
-.next-project-modules-panel,
-.next-project-3d-panel {
+.next-project-modules-panel {
   background: #ffffff;
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   padding: 14px 16px;
+}
+
+.next-project-3d-panel {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 14px;
 }
 
 .next-project-3d-head {
@@ -737,6 +765,61 @@
 
 .next-project-3d-head .next-home-section-title {
   margin: 0;
+}
+
+.next-3d-title {
+  color: #0f6fb0;
+}
+
+/* ODP ①〜⑦ 大型色付きボタン */
+.next-odp-module-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.next-odp-module-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.next-odp-module-button {
+  flex: 1;
+  width: 100%;
+  padding: 16px 18px;
+  border: none;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+  transition: filter 0.15s;
+}
+
+.next-odp-module-button:hover {
+  filter: brightness(1.08);
+}
+
+.next-odp-module-button.c1 { background: #6a2fb0; } /* ① 紫 */
+.next-odp-module-button.c2 { background: #1c3a5e; } /* ② 濃紺 */
+.next-odp-module-button.c3 { background: #0f7fc0; } /* ③ 青 */
+.next-odp-module-button.c4 { background: #3fb4e0; } /* ④ 水色 */
+.next-odp-module-button.c5 { background: #2f9e44; } /* ⑤ 緑 */
+.next-odp-module-button.c6 { background: #7cb518; } /* ⑥ 黄緑 */
+.next-odp-module-button.c7 { background: #f0a500; } /* ⑦ 黄/オレンジ */
+
+.next-odp-module-dot {
+  flex: 0 0 auto;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #2f9e44;
+  border: 1px solid #fff;
+  box-shadow: 0 0 0 1px #2f9e44;
 }
 
 .next-project-3d-viewer {

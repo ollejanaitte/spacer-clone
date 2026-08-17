@@ -5,7 +5,6 @@ import {
   NEXT_HOME_PATH,
   NEXT_NEW_PROJECT_PATH,
   NEXT_PROJECT_HOME_PATH,
-  NEXT_QUICK_PATH,
   isNewProjectPath,
   isEditProjectPath,
   parseEditProjectId,
@@ -16,7 +15,6 @@ import {
 import { HomePage } from "./pages/HomePage";
 import { BusinessListPage } from "./pages/BusinessListPage";
 import { ProjectTopPage } from "./pages/ProjectTopPage";
-import { QuickAnalysisPage } from "./pages/QuickAnalysisPage";
 import { NewProjectPage } from "./pages/NewProjectPage";
 import { EditProjectPage } from "./pages/EditProjectPage";
 import { LoadBusinessPage } from "./pages/LoadBusinessPage";
@@ -40,15 +38,11 @@ type NextRoute =
   | { kind: "editProject"; projectId: string }
   | { kind: "projectHome"; projectId: string }
   | { kind: "moduleShell"; projectId: string; moduleId: string }
-  | { kind: "quick" }
   | { kind: "load" };
 
 function resolveRoute(pathname: string): NextRoute {
   if (pathname === NEXT_HOME_PATH) {
     return { kind: "home" };
-  }
-  if (pathname === NEXT_QUICK_PATH || pathname.startsWith(`${NEXT_QUICK_PATH}/`)) {
-    return { kind: "quick" };
   }
   if (isNewProjectPath(pathname)) {
     return { kind: "newProject" };
@@ -119,9 +113,6 @@ export function NextApp() {
     switch (route.kind) {
       case "home":
         body = <HomePage />;
-        break;
-      case "quick":
-        body = <QuickAnalysisPage />;
         break;
       case "newProject":
         body = <NewProjectPage />;

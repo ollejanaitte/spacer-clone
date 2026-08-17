@@ -8,8 +8,6 @@ import {
   NEXT_BUSINESS_LIST_PATH,
   NEXT_HOME_PATH,
   NEXT_PROJECT_HOME_PATH,
-  NEXT_QUICK_PATH,
-  isQuickPath,
   isNewProjectPath,
   isEditProjectPath,
   editProjectPath,
@@ -46,12 +44,6 @@ describe("next/routes", () => {
     expect(isNextAppPath("/app/business")).toBe(true);
     expect(isNextAppPath("/pro")).toBe(false);
     expect(isNextAppPath("/")).toBe(false);
-  });
-
-  it("isQuickPath はクイック解析のみ判定する", () => {
-    expect(isQuickPath("/app/quick")).toBe(true);
-    expect(isQuickPath("/app/quick/x")).toBe(true);
-    expect(isQuickPath("/app/business")).toBe(false);
   });
 
   it("新規作成・編集パスを判定する", () => {
@@ -112,14 +104,6 @@ describe("NextApp Shell", () => {
     expect(document.querySelector('[data-testid="module-entry-road"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="module-entry-analysis"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="module-entry-cim"]')).toBeTruthy();
-    cleanup(root);
-  });
-
-  it("クイック解析はProjectから独立した入口を表示する", async () => {
-    window.history.pushState({}, "", NEXT_QUICK_PATH);
-    const root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="quick-analysis-page"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="quick-analysis-placeholder"]')).toBeTruthy();
     cleanup(root);
   });
 

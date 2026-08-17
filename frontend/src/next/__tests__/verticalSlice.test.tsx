@@ -118,21 +118,6 @@ describe("R1-03 vertical slice: home -> business -> create -> open -> project to
     cleanup(root);
   });
 
-  it("クイック解析はProject系統と独立している（Project一覧に影響しない）", async () => {
-    const manager = getProjectManager();
-    manager.createProject({
-      name: "業務A",
-      businessNumber: "A-1",
-      designStage: "road-detailed",
-    });
-    window.history.pushState({}, "", "/app/quick");
-    const root = await render(<NextApp />);
-    expect(document.querySelector('[data-testid="quick-analysis-page"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="quick-analysis-placeholder"]')).toBeTruthy();
-    expect(document.querySelector('[data-testid="business-table"]')).toBeNull();
-    cleanup(root);
-  });
-
   it("navigateToでpushState遷移が動作する", async () => {
     window.history.pushState({}, "", NEXT_HOME_PATH);
     const root = await render(<NextApp />);

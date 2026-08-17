@@ -1,9 +1,8 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import ReactDOM from "react-dom/client";
 import { App } from "./App";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { ja } from "./i18n/ja";
-import { LobbyApp } from "./lobby/routes";
 import { NextApp } from "./next/NextApp";
 import { isNextAppPath } from "./next/routes";
 import { redirectLegacyRoutes } from "./timeHistory/routeRedirect";
@@ -32,11 +31,6 @@ function Root() {
     return getCurrentLocation();
   });
 
-  const handleNavigate = useCallback((path: string) => {
-    window.history.pushState({}, "", path);
-    setCurrentLocation(getCurrentLocation());
-  }, []);
-
   // Listen for popstate (back/forward)
   React.useEffect(() => {
     const onPopState = () => setCurrentLocation(getCurrentLocation());
@@ -50,7 +44,7 @@ function Root() {
   if (currentLocation === "/pro" || currentLocation.startsWith("/pro/")) {
     return <App />;
   }
-  return <LobbyApp onNavigate={handleNavigate} currentLocation={currentLocation} />;
+  return <NextApp />;
 }
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
