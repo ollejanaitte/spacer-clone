@@ -33,3 +33,41 @@ jobs:
         run: npm run typecheck
       - name: Build
         run: npm run build
+
+  # F-5: E2E smoke (日常Gate・数分以内)。critical/full は milestone 専用
+  # (milestone-e2e.yml) のため、日常CIを肥大化させない。
+  e2e-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Setup Python venv (E2E backend server requires it)
+        working-directory: .
+        run: |
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          .venv/bin/python -m pip install fastapi "uvicorn[standard]" numpy scipy pydantic jsonschema httpx pytest
+      - name: Install dependencies
+        run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+      - name: E2E smoke
+        run: npm run test:e2e:smoke
+      - name: Upload failure artifacts (trace/screenshot)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-smoke-failure
+          path: |
+            frontend/test-results/**/*.zip
+            frontend/test-results/**/*.png
+          if-no-files-found: ignore
+          retention-days: 7
