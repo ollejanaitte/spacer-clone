@@ -9,6 +9,9 @@ import { buildGujoSampleAsset, GUJO_COORDINATE_CONTEXT_ID, GUJO_EPSG, GUJO_SAMPL
 import { createMemoryTerrainElevationStore } from "../../../../terrain/terrainAssetStore";
 import { readRoadWorkflowState, readBridgeWorkflowState } from "../../../../workflow/workflowState";
 import { buildRealGujoReferenceScene } from "../../../../viewer/adapters/realScene";
+import { readModuleFromProject } from "../../../../next/modules/adapter";
+import { finalizeCanonicalRoadData } from "../../../../next/modules/road/roadDataSchema";
+import { loadRoadEditorDraft } from "../../../../next/modules/road/roadEditorDraft";
 
 /**
  * S-12 Sample Acceptance — Reference Business 001 最終業務 Acceptance。
@@ -85,6 +88,26 @@ describe("S-12 Reference Business 001 Wave 3 Acceptance", () => {
     // girder section 未宣言は fail-closed (架空の解析結果を作らない)
     expect(ok).toBe(false);
     expect(document.validation.issues.some((i) => i.path === "sections[SECTION-GIRDER]")).toBe(true);
+  });
+
+  it("[G-6] canonical road module → analysis input adapter (roadData → editor draft)", () => {
+    // RB001 完成 Project の modules.road.data.roadData (canonical) が
+    // 分析ページが要求する roadEditorDraft 形式へ変換できることを確認する。
+    // これは RB001 固有の trusted road fixture (S-3) に基づく正式 adapter であり、
+    // 架空の道路値は使わない。
+    const { project } = buildRb001CompleteProject();
+    const raw = readModuleFromProject(project, "road")?.data?.roadData;
+    const roadData = finalizeCanonicalRoadData(raw);
+    expect(roadData).toBeDefined();
+    if (!roadData) return;
+    expect(roadData.schemaVersion).toBe("0.3.0");
+    const loaded = loadRoadEditorDraft(roadData);
+    expect(loaded.ok).toBe(true);
+    if (!loaded.ok) return;
+    expect(loaded.draft.alignment.id).toBe("RB001-ROAD-1");
+    expect(loaded.draft.alignment.elements.length).toBeGreaterThan(0);
+    expect(loaded.draft.verticalAlignment.elements.length).toBeGreaterThan(0);
+    expect(loaded.draft.crossSections.length).toBeGreaterThan(0);
   });
 
   it("[Integrated 3D] unified viewer scene assembles all layers in EPSG:6674", () => {

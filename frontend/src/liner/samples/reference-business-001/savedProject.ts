@@ -23,12 +23,15 @@ import { persistTerrain, extractTerrainDocument } from "../../../terrain/terrain
 import { buildGujoSampleTerrainDocument, buildGujoSampleAsset, GUJO_COORDINATE_CONTEXT, GUJO_COORDINATE_CONTEXT_ID, GUJO_SOURCE_DATASET } from "../../../terrain/gujoSample";
 import { writeRoadWorkflowState, writeBridgeWorkflowState } from "../../../workflow/workflowState";
 import { buildRb001RoadWorkflowState, computeSpanArrangement, RB001_BRIDGE_WORKFLOW_NAME } from "../../../workflow/roadBridgeSamples";
+import { buildRb001RoadDomainDraft } from "./roadAlignment";
+import { buildCanonicalRoadData } from "../../../next/modules/road/roadDataSchema";
+import { writeCanonicalRoadDataToProject } from "../../../next/modules/road/roadModuleCanonicalWriter";
 import { buildRb001Superstructure } from "./superstructure";
 import { buildRb001Substructure } from "./substructure";
 import { buildRb001Analysis } from "./analysis";
 import { RB001_BRIDGE_ID, RB001_BRIDGE_NAME, RB001_BRIDGE_LENGTH } from "./bridgeArrangement";
 import { buildRb001BridgeLayout } from "./bridgeArrangement";
-import { REF_BUSINESS_001_ROAD_ID } from "./roadAlignment";
+import { REF_BUSINESS_001_ROAD_ID, REF_BUSINESS_001_ROAD_NAME } from "./roadAlignment";
 import {
   writeSuperstructureModuleToProject,
   writeSubstructureModuleToProject,
@@ -69,8 +72,21 @@ export function buildRb001CompleteProject(): Rb001CompleteProjectResult {
     },
   };
 
-  // road (S-3 workflowState)
+  // road (S-3 workflowState + G-6 canonical roadData)
   project = writeRoadWorkflowState(project, buildRb001RoadWorkflowState("2026-08-16T00:00:00.000Z"));
+  // G-6: canonical Road → analysis input adapter。RB001 trusted road fixture から
+  // domainDraft を構築し、modules.road.data.roadData (canonical) として格納する。
+  // 分析ページ (buildDerivedAnalysisDocument → loadRoadEditorDraft) が同じ
+  // canonical Road を読み込めるようになる。架空の道路値は使わない。
+  project = writeCanonicalRoadDataToProject(
+    project,
+    buildCanonicalRoadData(buildRb001RoadDomainDraft(), {
+      source: "roadInput",
+      migratedAt: "2026-08-16T00:00:00.000Z",
+      roadLabel: REF_BUSINESS_001_ROAD_NAME,
+      legacyId: REF_BUSINESS_001_ROAD_ID,
+    }),
+  );
 
   // bridge layout (S-4 document) + workflowState
   const layout = buildRb001BridgeLayout();

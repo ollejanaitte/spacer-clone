@@ -16,6 +16,7 @@ import type { LinearAlignment } from "../../core/types";
 import type { VerticalElement } from "../../core/geometry/vertical";
 import type { CrossSectionTemplateDraft } from "../../schema/types";
 import { evaluateElementEndState, totalAlignmentLength } from "../../core/geometry/horizontal";
+import type { LinerDomainDraftVNext, AlignmentBundleDraft } from "../../schema/types";
 
 export const REF_BUSINESS_001_ROAD_ID = "RB001-ROAD-1";
 export const REF_BUSINESS_001_ROAD_NAME = "郡上市八幡 山岳道路 (長良川横断)";
@@ -168,5 +169,50 @@ export function buildReferenceBusiness001RoadSample(): Rb001RoadSample {
     ],
     stationDefinition: { originDisplayedStation: 0, equations: [] },
     bridgeCandidate: RB001_BRIDGE_CANDIDATE,
+  };
+}
+
+/**
+ * G-6: RB001 canonical road domain draft.
+ *
+ * RB001 の trusted road alignment (horizontal / vertical / crossSection) から
+ * LinerDomainDraftVNext を構築する。これは modules.road.data.roadData の
+ * canonical domainDraft として格納され、分析ページ (buildDerivedAnalysisDocument
+ * → loadRoadEditorDraft) が同じ canonical Road を読み込むための正式 adapter である。
+ * 架空の道路値は使わない — すべて既存 RB001 fixture (S-3) の値に基づく。
+ */
+export function buildRb001RoadDomainDraft(): LinerDomainDraftVNext {
+  const sample = buildReferenceBusiness001RoadSample();
+  const bundle: AlignmentBundleDraft = {
+    id: REF_BUSINESS_001_ROAD_ID,
+    name: REF_BUSINESS_001_ROAD_NAME,
+    enabled: true,
+    sortIndex: 0,
+    alignment: sample.horizontal as unknown as AlignmentBundleDraft["alignment"],
+    stationDefinition: sample.stationDefinition as unknown as AlignmentBundleDraft["stationDefinition"],
+    verticalAlignment: {
+      id: "VA-RB001",
+      elements: sample.vertical as unknown as AlignmentBundleDraft["verticalAlignment"]["elements"],
+    },
+    crossSections: sample.crossSections as unknown as AlignmentBundleDraft["crossSections"],
+    crossSlopeIntervals: sample.crossSlopeIntervals as unknown as AlignmentBundleDraft["crossSlopeIntervals"],
+    widthChangePoints: sample.widthChangePoints as unknown as AlignmentBundleDraft["widthChangePoints"],
+    gridDefinitions: [],
+    spans: [],
+    piers: [],
+  };
+  return {
+    id: REF_BUSINESS_001_ROAD_ID,
+    linerModelId: REF_BUSINESS_001_ROAD_MODEL_ID,
+    coordinatePolicyId: "rb001-gujo-6674",
+    alignments: [bundle],
+    activeAlignmentId: REF_BUSINESS_001_ROAD_ID,
+    activeLineId: "C",
+    generationSettings: {},
+    sampling: {
+      display: { maxChordLength: 0.5, maxSagitta: 0.01, minSegmentsPerElement: 4 },
+      dxf: { maxChordLength: 0.1, maxSagitta: 0.005, minSegmentsPerElement: 4 },
+      frame: { maxMemberLength: 0.25, maxSagitta: 0.005, stationIntervalFallback: 0.25 },
+    },
   };
 }
