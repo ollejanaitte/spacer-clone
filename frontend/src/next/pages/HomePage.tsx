@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Project } from "../project/schema";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
-import { navigateTo, NEXT_BUSINESS_LIST_PATH, NEXT_QUICK_PATH, LEGACY_SYSTEM_PATH } from "../routes";
+import { navigateTo, NEXT_BUSINESS_LIST_PATH, LEGACY_SYSTEM_PATH } from "../routes";
 
 export type RecentDataItem =
   | { kind: "project"; project: Project }
@@ -50,7 +50,7 @@ export function HomePage() {
             type="button"
             className="next-home-secondary"
             data-testid="home-go-quick"
-            onClick={() => navigateTo(NEXT_QUICK_PATH)}
+            onClick={() => window.location.assign(LEGACY_SYSTEM_PATH)}
           >
             レガシーモード ➥
           </button>
