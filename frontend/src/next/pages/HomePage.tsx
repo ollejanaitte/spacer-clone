@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import type { Project } from "../project/schema";
 import { getProjectManager } from "../project/projectManagerInstance";
 import { designStageDisplayName, getBusinessNumber } from "../project/businessMetadata";
-import { navigateTo, NEXT_BUSINESS_LIST_PATH } from "../routes";
+import { LEGACY_PRO_PATH, navigateTo, NEXT_BUSINESS_LIST_PATH } from "../routes";
 
 export type RecentDataItem =
   | { kind: "project"; project: Project }
@@ -40,6 +40,21 @@ export function HomePage() {
             onClick={() => navigateTo(NEXT_BUSINESS_LIST_PATH)}
           >
             業務一覧へ ➥
+          </button>
+        </article>
+
+        <article className="next-home-card" data-testid="home-legacy-entry">
+          <h2 className="next-home-card-title">レガシーモード（クラシック画面）</h2>
+          <p className="next-hint">
+            従来のクラシックUI（FEM骨組みモデル表示など）を開きます。
+          </p>
+          <button
+            type="button"
+            className="next-home-secondary"
+            data-testid="home-go-legacy"
+            onClick={() => navigateTo(LEGACY_PRO_PATH)}
+          >
+            レガシーモードを開く ➥
           </button>
         </article>
       </div>

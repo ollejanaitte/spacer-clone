@@ -30,6 +30,16 @@ export function isNextAppPath(pathname: string): boolean {
   return pathname === NEXT_APP_ROOT || pathname.startsWith(`${NEXT_APP_ROOT}/`);
 }
 
+export const LEGACY_PRO_PATH = "/pro";
+
+export function isLegacyProPath(pathname: string): boolean {
+  return (
+    pathname === LEGACY_PRO_PATH ||
+    pathname.startsWith(`${LEGACY_PRO_PATH}/`) ||
+    pathname.startsWith(`${LEGACY_PRO_PATH}?`)
+  );
+}
+
 export function isNewProjectPath(pathname: string): boolean {
   return pathname === NEXT_NEW_PROJECT_PATH;
 }

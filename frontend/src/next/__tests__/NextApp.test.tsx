@@ -57,7 +57,7 @@ describe("next/routes", () => {
 });
 
 describe("NextApp Shell", () => {
-  it("ホーム（/app）で正規フロー1本（業務一覧へ）のみを表示し、レガシー第二入口を持たない", async () => {
+  it("ホーム（/app）で業務一覧入口とレガシーモード入口を表示する", async () => {
     window.history.pushState({}, "", NEXT_HOME_PATH);
     const root = await render(<NextApp />);
     expect(document.querySelector('[data-testid="next-app"]')).toBeTruthy();
@@ -68,6 +68,8 @@ describe("NextApp Shell", () => {
     expect(document.querySelector('[data-testid="home-go-business"]')?.textContent).toContain("業務一覧へ");
     expect(document.querySelector('[data-testid="home-go-quick"]')).toBeNull();
     expect(document.querySelector('[data-testid="home-recent-empty"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="home-legacy-entry"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="home-go-legacy"]')?.textContent).toContain("レガシーモードを開く");
     cleanup(root);
   });
 
