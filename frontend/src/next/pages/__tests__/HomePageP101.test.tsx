@@ -25,7 +25,7 @@ afterEach(() => {
 });
 
 describe("P1-01 旧/新導線整理", () => {
-  it("HomePageは正規フロー1本（業務一覧へ）のみとし、レガシー第二入口を露出しない", async () => {
+  it("HomePageは正規フロー（業務一覧へ）とレガシーモード入口を表示する", async () => {
     const root = await render(<HomePage />);
     expect(document.querySelector('[data-testid="home-title"]')?.textContent).toContain("橋梁設計統合システム");
     expect(document.querySelector('[data-testid="home-business-entry"]')).toBeTruthy();
@@ -35,6 +35,21 @@ describe("P1-01 旧/新導線整理", () => {
     expect(document.querySelector('[data-testid="home-dev-info"]')).toBeTruthy();
     expect(document.querySelector('[data-testid="home-dev-info"]')?.textContent).toContain("production正");
     expect(document.querySelector('[data-testid="home-legacy-reference"]')).toBeNull();
+    expect(document.querySelector('[data-testid="home-legacy-entry"]')).toBeTruthy();
+    expect(document.querySelector('[data-testid="home-legacy-entry"]')?.textContent).toContain("レガシーモード（クラシック画面）");
+    expect(document.querySelector('[data-testid="home-go-legacy"]')?.textContent).toContain("レガシーモードを開く");
+    root.unmount();
+  });
+
+  it("レガシーモードボタンで /pro へ遷移する", async () => {
+    window.history.pushState({}, "", "/app");
+    const root = await render(<HomePage />);
+    const button = document.querySelector('[data-testid="home-go-legacy"]');
+    if (!button) throw new Error("home-go-legacy button not found");
+    await act(async () => {
+      button.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    });
+    expect(window.location.pathname).toBe("/pro");
     root.unmount();
   });
 });
